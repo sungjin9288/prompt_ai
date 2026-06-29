@@ -1998,6 +1998,40 @@ const supabaseRestImportAdapter = createSupabaseRestImportAdapter({
   serviceRoleKey: "service-role-key",
   supabaseUrl: "https://example.supabase.co/",
 });
+const supabaseRestImportFetchCalls = [];
+const supabaseRestImportHttpAdapter = createSupabaseRestImportAdapter({
+  fetch: async (url, options) => {
+    supabaseRestImportFetchCalls.push({
+      body: options.body,
+      headers: options.headers,
+      method: options.method,
+      url: String(url),
+    });
+
+    return {
+      ok: true,
+      status: 201,
+      statusText: "Created",
+      async text() {
+        return "";
+      },
+    };
+  },
+  serviceRoleKey: "service-role-key",
+  supabaseUrl: "https://example.supabase.co/",
+});
+const failedSupabaseRestImportHttpAdapter = createSupabaseRestImportAdapter({
+  fetch: async () => ({
+    ok: false,
+    status: 500,
+    statusText: "Server Error",
+    async text() {
+      return "db down";
+    },
+  }),
+  serviceRoleKey: "service-role-key",
+  supabaseUrl: "https://example.supabase.co/",
+});
 
 await assert.rejects(
   () =>
@@ -2022,6 +2056,52 @@ assert.deepEqual(
   ),
   { insertedRows: 0, note: "No rows to insert." },
   "Supabase REST import adapter should skip empty insert batches without calling Supabase",
+);
+
+assert.deepEqual(
+  normalizePlain(
+    await supabaseRestImportHttpAdapter.insertRows({
+      dependency: "prompt asset",
+      order: 2,
+      rows: [{ id: "row-1", title: "Validated prompt" }],
+      table: "prompt_assets",
+    }),
+  ),
+  {
+    insertedRows: 1,
+    note: "Inserted via Supabase REST into prompt_assets.",
+  },
+  "Supabase REST import adapter should report inserted row count after a successful REST request",
+);
+
+assert.deepEqual(
+  normalizePlain(supabaseRestImportFetchCalls),
+  [
+    {
+      body: JSON.stringify([{ id: "row-1", title: "Validated prompt" }]),
+      headers: {
+        apikey: "service-role-key",
+        Authorization: "Bearer service-role-key",
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      method: "POST",
+      url: "https://example.supabase.co/rest/v1/prompt_assets",
+    },
+  ],
+  "Supabase REST import adapter should build the expected REST insert request without leaking writes outside the verifier stub",
+);
+
+await assert.rejects(
+  () =>
+    failedSupabaseRestImportHttpAdapter.insertRows({
+      dependency: "prompt asset",
+      order: 2,
+      rows: [{ id: "row-1" }],
+      table: "prompt_assets",
+    }),
+  /Supabase insert failed for prompt_assets: 500 Server Error \/ db down/,
+  "Supabase REST import adapter should preserve Supabase failure status and body in the error message",
 );
 
 assert.deepEqual(

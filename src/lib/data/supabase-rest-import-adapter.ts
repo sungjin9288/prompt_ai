@@ -17,6 +17,7 @@ const allowedImportTables = new Set([
 ]);
 
 export interface SupabaseRestImportAdapterConfig {
+  fetch?: typeof fetch;
   serviceRoleKey: string;
   supabaseUrl: string;
 }
@@ -51,6 +52,7 @@ export function getSupabaseRestImportEnvironmentStatus(): SupabaseRestImportEnvi
 export function createSupabaseRestImportAdapter(
   config: SupabaseRestImportAdapterConfig,
 ): SupabaseImportInsertAdapter {
+  const fetchRows = config.fetch ?? fetch;
   const supabaseUrl = normalizeSupabaseUrl(config.supabaseUrl);
   const serviceRoleKey = config.serviceRoleKey.trim();
 
@@ -70,7 +72,7 @@ export function createSupabaseRestImportAdapter(
         return { insertedRows: 0, note: "No rows to insert." };
       }
 
-      const response = await fetch(
+      const response = await fetchRows(
         `${supabaseUrl}/rest/v1/${encodeURIComponent(request.table)}`,
         {
           body: JSON.stringify(request.rows),

@@ -206,7 +206,7 @@ assertFileIncludes(
 assertFileIncludes(
   readme,
   "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안은 각각 `Learning 준비도로 돌아가기`, `Learning 조건으로 돌아가기`, `Learning 메모리로 돌아가기`, `Learning 피드백 큐로 돌아가기` 복귀 액션 라벨로 원래 조건을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시합니다.",
-  "README should document Learning Studio draft storage fallback",
+  "README should document Learning Studio draft return actions and storage fallback",
 );
 assertFileIncludes(
   readme,
@@ -386,13 +386,24 @@ assertFileIncludes(
 assertFileIncludes(
   prd,
   "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안은 각각 `Learning 준비도로 돌아가기`, `Learning 조건으로 돌아가기`, `Learning 메모리로 돌아가기`, `Learning 피드백 큐로 돌아가기` 복귀 액션 라벨로 원래 조건을 복원해야 하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
-  "PRD should document Learning Studio draft storage fallback",
+  "PRD should document Learning Studio draft return actions and storage fallback",
 );
-assertFileNotIncludes(
-  prd,
-  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
-  "PRD should not keep the old Learning draft fallback wording without return action labels",
-);
+const staleLearningDraftFallbackOnlyContract = [
+  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안",
+  "저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시",
+].join(" ");
+
+for (const [sourceName, fileSource, suffix] of [
+  ["README", readme, "합니다."],
+  ["PRD", prd, "해야 한다."],
+  ["Development brief", devBrief, "함"],
+]) {
+  assertFileNotIncludes(
+    fileSource,
+    `${staleLearningDraftFallbackOnlyContract}${suffix}`,
+    `${sourceName} should not keep the Learning draft fallback wording without return action labels`,
+  );
+}
 assertFileIncludes(
   prd,
   "`큐 조건 링크 복사`",
@@ -538,7 +549,7 @@ assertFileIncludes(
 assertFileIncludes(
   devBrief,
   "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안은 각각 `Learning 준비도로 돌아가기`, `Learning 조건으로 돌아가기`, `Learning 메모리로 돌아가기`, `Learning 피드백 큐로 돌아가기` 복귀 액션 라벨로 원래 조건을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시함",
-  "Development brief should document Learning Studio draft storage fallback",
+  "Development brief should document Learning Studio draft return actions and storage fallback",
 );
 
 writeLearningFeedbackEvidence(outputPath, buildLearningFeedbackEvidenceText());

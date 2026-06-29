@@ -72,6 +72,23 @@ function getInsertRows(batch: SupabaseImportExecutionBatch) {
   return batch.rows.map((row) => row.payload);
 }
 
+function getInsertErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    return error.message;
+  }
+
+  return "Unknown insert error";
+}
+
 export function validateSupabaseImportExecutionPlan(
   plan: SupabaseImportExecutionPlan,
 ): SupabaseImporterValidationResult {
@@ -191,7 +208,7 @@ export async function runSupabaseImportExecutionPlan(
         dependency: request.dependency,
         expectedRows: request.rows.length,
         insertedRows: 0,
-        note: error instanceof Error ? error.message : "Unknown insert error",
+        note: getInsertErrorMessage(error),
         order: request.order,
         status: "failed",
         table: request.table,

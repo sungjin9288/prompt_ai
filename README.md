@@ -437,7 +437,9 @@ and evidence fallback before loading it in Chrome. Add
 `-- --out path/to/chrome-smoke.md` to save the local smoke evidence packet.
 `npm run smoke:learning-feedback` checks the Learning feedback-improvement
 queue, low-confidence Studio validation draft, Library validation filter, queue
-report links, and manual copy fallback contract.
+report links, and manual copy fallback contract. Add
+`-- --out path/to/learning-feedback-smoke.md` to save the local Learning smoke
+evidence packet.
 `npm run verify` and `npm run verify:evidence` use the same verification check
 manifest so the executed gate and the handoff evidence stay aligned. Evidence
 records include both the npm script name and the resolved command.
@@ -563,8 +565,10 @@ terms from returning.
   `npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md`를 붙입니다.
 - Learning feedback 개선 큐 정리: `npm run smoke:learning-feedback`로 낮은
   신뢰도 Studio 검증 초안, 큐 리포트, Library 검증 저장본 필터 계약을 먼저
-  확인한 뒤 실제 낮은 신뢰도 메모리를 Studio 검증 초안으로 보내고 Library에서
-  추적합니다.
+  확인합니다. 증빙 파일이 필요하면
+  `npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md`를
+  붙입니다. 그 뒤 실제 낮은 신뢰도 메모리를 Studio 검증 초안으로 보내고
+  Library에서 추적합니다.
 - Release candidate 정리: 관련 변경을 묶기 전 `npm run verify:evidence`로
   최신 증빙을 만들고 `npm run verify:release-candidate`로 active evidence,
   secret scan, 루트 임시 산출물 정리를 확인합니다. 첫 grouped commit 전에는

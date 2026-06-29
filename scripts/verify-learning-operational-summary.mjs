@@ -1,5 +1,55 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
+
+function getOutputPath(args) {
+  const outIndex = args.indexOf("--out");
+
+  if (outIndex === -1) {
+    return null;
+  }
+
+  const outputPath = args[outIndex + 1];
+
+  assert.ok(outputPath, "--out requires a file path");
+  assert.equal(
+    args.length,
+    outIndex + 2,
+    "smoke:learning-feedback only accepts --out <file>",
+  );
+
+  return outputPath;
+}
+
+function buildLearningFeedbackEvidenceText() {
+  return [
+    "# Learning Feedback Smoke Evidence",
+    "",
+    "- route: /learning?review=low-confidence&q=feedback-improvement",
+    "- source: learning-feedback-improvement",
+    "- sourceVariant: learning-low-confidence-validation",
+    "- validationLibraryFilter: /library?studioSource=learning-feedback-improvement&studioVariant=learning-low-confidence-validation",
+    "",
+    "## Verified contract",
+    "- Learning renders readiness, low-confidence review, manual memory, and Studio handoff steps in order.",
+    "- Feedback-improvement queue metrics stay compact on mobile and desktop.",
+    "- Queue actions are grouped into review, Studio, and record steps.",
+    "- Low-confidence feedback rules use a separate Studio validation draft and Library filter.",
+    "- Queue reports include condition links, validation Library links, metrics, actions, and memory details.",
+    "- Clipboard and Studio draft failures keep manual copy fallbacks in the current panel.",
+  ].join("\n");
+}
+
+function writeLearningFeedbackEvidence(outputPath, evidenceText) {
+  if (!outputPath) {
+    return;
+  }
+
+  mkdirSync(dirname(outputPath), { recursive: true });
+  writeFileSync(outputPath, `${evidenceText}\n`, "utf8");
+}
+
+const outputPath = getOutputPath(process.argv.slice(2));
 
 const source = readFileSync("src/components/learning/learning-view.tsx", "utf8");
 const promptTypes = readFileSync("src/lib/prompt/types.ts", "utf8");
@@ -469,5 +519,7 @@ assertFileIncludes(
   "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시함",
   "Development brief should document Learning Studio draft storage fallback",
 );
+
+writeLearningFeedbackEvidence(outputPath, buildLearningFeedbackEvidenceText());
 
 console.log("Learning operational summary verification passed.");

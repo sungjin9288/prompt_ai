@@ -70,6 +70,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /-- --out path\/to\/learning-feedback-smoke\.md/,
+  "README should document the Learning feedback smoke evidence output path",
+);
+assert.match(
+  readme,
   /production build lock/,
   "README should mention the Next.js build lock limitation",
 );
@@ -207,6 +212,11 @@ assert.match(
   readme,
   /Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked\s+extension 파일 계약을 먼저 확인[\s\S]*?npm run smoke:chrome-extension -- --out docs\/evidence\/chrome-extension-smoke\.md/,
   "README should route Chrome next-step smoke through npm run smoke:chrome-extension",
+);
+assert.match(
+  readme,
+  /Learning feedback 개선 큐 정리:[\s\S]*?npm run smoke:learning-feedback[\s\S]*?npm run smoke:learning-feedback -- --out docs\/evidence\/learning-feedback-smoke\.md/,
+  "README should route Learning feedback next-step smoke through npm run smoke:learning-feedback with evidence output",
 );
 assert.match(
   readme,

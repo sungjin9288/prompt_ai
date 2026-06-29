@@ -895,8 +895,13 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prdSource,
+  "개선 효과 패널의 Studio 저장 출처 운영/출처 상태 조치 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 Dashboard 패널 맥락을 복원하고, 출처 상태 후보 초안은 `Library 후보로 돌아가기` 복귀 액션 라벨로 대표 후보를 복원해야 하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시해야 한다.",
+  "PRD should document Dashboard improvement panel Studio draft return actions and storage fallback",
+);
+assertFileNotIncludes(
+  prdSource,
   "개선 효과 패널의 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시해야 한다.",
-  "PRD should document Dashboard improvement panel Studio draft storage fallback",
+  "PRD should not keep the Dashboard improvement panel fallback-only Studio draft contract",
 );
 assertFileIncludes(
   prdSource,

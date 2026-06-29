@@ -748,6 +748,8 @@ for (const requiredText of [
   "Copy-ready handoff, not direct account automation",
   "Scoped implementation brief with operator approval gates",
   "Direct local tool calls through the stdio MCP bridge",
+  "Save smoke evidence, then confirm sensitive text and missing context before copy.",
+  "Check smoke evidence, final prompt, answer language, and assumptions first.",
   "Operator check",
   "Target AI",
   "Action",
@@ -784,7 +786,8 @@ for (const requiredText of [
   "Final review:",
   "전체 운영 패키지",
   "아래 체크리스트를 직접 선택해 복사하세요.",
-  "Gate: refine automatically, deliver with review.",
+  "Gate: refine automatically, save local smoke evidence, deliver with review.",
+  "- Save local smoke evidence before delivery.",
   "confirmSave: true",
 ]) {
   assertIncludes(
@@ -796,7 +799,7 @@ for (const requiredText of [
 
 assert.match(
   environmentPlaybookPanel,
-  /const environmentSummaryItems = \[[\s\S]*?label: "연결 환경"[\s\S]*?environmentPlaybooks\.length[\s\S]*?label: "대상 AI"[\s\S]*?GPT, Claude, Codex, Gemini[\s\S]*?label: "운영 gate"[\s\S]*?review-required[\s\S]*?label: "피드백 경로"[\s\S]*?confirmSave/,
+  /const environmentSummaryItems = \[[\s\S]*?label: "연결 환경"[\s\S]*?environmentPlaybooks\.length[\s\S]*?label: "대상 AI"[\s\S]*?GPT, Claude, Codex, Gemini[\s\S]*?label: "운영 gate"[\s\S]*?evidence \+ review-required[\s\S]*?label: "피드백 경로"[\s\S]*?confirmSave/,
   "Environment playbook panel should derive environment count, target AI coverage, review gate, and feedback path",
 );
 assert.match(
@@ -2551,7 +2554,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "연결 환경, 대상 AI 범위, review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여주고",
+  "연결 환경, 대상 AI 범위, smoke evidence 저장과 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여주고",
   "README should document environment playbook summary metrics",
 );
 assertIncludes(
@@ -2886,7 +2889,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 환경별 실행 가이드는 연결 환경, 대상 AI 범위, review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여줘야 한다.",
+  "Integrations 환경별 실행 가이드는 연결 환경, 대상 AI 범위, smoke evidence 저장과 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여줘야 한다.",
   "PRD should document environment playbook summary metrics",
 );
 assertIncludes(
@@ -3026,7 +3029,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "환경별 실행 가이드에서 연결 환경, 대상 AI 범위, review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여주고",
+  "환경별 실행 가이드에서 연결 환경, 대상 AI 범위, smoke evidence 저장과 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여주고",
   "Development brief should document environment playbook summary metrics",
 );
 assertIncludes(

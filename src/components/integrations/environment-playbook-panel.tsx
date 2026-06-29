@@ -21,7 +21,8 @@ const environmentPlaybooks = [
     action: "Call local refine API with page context and target AI hint.",
     output:
       "Review-required handoff package for ChatGPT, Claude, Codex, or Gemini.",
-    operatorCheck: "Confirm sensitive text and missing context before copy.",
+    operatorCheck:
+      "Save smoke evidence, then confirm sensitive text and missing context before copy.",
     targetModels: ["gpt", "claude", "codex", "gemini"],
   },
   {
@@ -31,7 +32,8 @@ const environmentPlaybooks = [
     action: "Run the copy-ready English or Korean-English hybrid prompt.",
     output:
       "External AI result that can be summarized back as execution feedback.",
-    operatorCheck: "Check final prompt, answer language, and assumptions first.",
+    operatorCheck:
+      "Check smoke evidence, final prompt, answer language, and assumptions first.",
     targetModels: ["gpt", "claude", "gemini"],
   },
   {
@@ -65,7 +67,7 @@ const environmentPlaybooks = [
 const environmentSummaryItems = [
   { label: "연결 환경", value: `${environmentPlaybooks.length}개` },
   { label: "대상 AI", value: "GPT, Claude, Codex, Gemini" },
-  { label: "운영 gate", value: "review-required" },
+  { label: "운영 gate", value: "evidence + review-required" },
   { label: "피드백 경로", value: "confirmSave" },
 ];
 
@@ -89,7 +91,7 @@ function buildEnvironmentPlaybookChecklist(
     `- Operator check: ${playbook.operatorCheck}`,
     `- Target AI: ${formatTargetModels(playbook.targetModels)}`,
     "",
-    "Gate: refine automatically, deliver with review.",
+    "Gate: refine automatically, save local smoke evidence, deliver with review.",
   ].join("\n");
 }
 
@@ -97,7 +99,7 @@ function buildAllEnvironmentPlaybookChecklist() {
   return [
     "# Prompt AI Studio External AI Operations Checklist",
     "",
-    "Gate: refine automatically, deliver with review.",
+    "Gate: refine automatically, save local smoke evidence, deliver with review.",
     "Scope: Chrome extension, ChatGPT / Claude / Gemini, Codex, MCP client.",
     "",
     ...environmentPlaybooks.flatMap((playbook, index) => [
@@ -112,6 +114,7 @@ function buildAllEnvironmentPlaybookChecklist() {
       "",
     ]),
     "Final review:",
+    "- Save local smoke evidence before delivery.",
     "- Confirm the final prompt language strategy before pasting.",
     "- Confirm sensitive data and missing context before delivery.",
     "- Save execution feedback only after the operator has reviewed the result.",

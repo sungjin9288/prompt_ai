@@ -64,6 +64,18 @@ const operatorNextActions = [
     operatorTask:
       "외부 AI 실행 결과를 요약하고, 저장 동의가 있을 때만 feedback inbox에 남깁니다.",
   },
+  {
+    action:
+      "Generate release evidence and run the release-candidate gate before grouped commit or handoff.",
+    completionGate:
+      "verify:evidence pass 기록과 verify:release-candidate 통과가 확인됩니다.",
+    evidence:
+      "npm run verify:evidence -- --out-dir docs/evidence; npm run verify:release-candidate",
+    href: "#integrations-next-actions",
+    label: "6. 검증·커밋 정리",
+    operatorTask:
+      "관련 변경을 묶기 전 release evidence를 새로 만들고 release-candidate를 실행합니다.",
+  },
 ] satisfies Array<{
   action: string;
   completionGate: string;
@@ -78,7 +90,8 @@ type OperatorNextAction = (typeof operatorNextActions)[number];
 const operatorActionSummaryItems = [
   {
     label: "현재 순서",
-    value: "서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장",
+    value:
+      "서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장 → release gate",
   },
   {
     label: "첫 검증",
@@ -90,7 +103,7 @@ const operatorActionSummaryItems = [
   },
   {
     label: "학습 루프",
-    value: "confirmSave true일 때만 Feedback inbox에 저장",
+    value: "confirmSave true 저장 후 release evidence로 변경 이력을 남김",
   },
 ] satisfies Array<{
   label: string;
@@ -115,6 +128,7 @@ function buildOperatorNextActionChecklist(item: OperatorNextAction) {
     "- Save local smoke evidence before external AI delivery.",
     "- Confirm this single operator action before moving to the next connection step.",
     "- Do not send unreviewed content to an external AI account.",
+    "- Run release evidence and release-candidate checks before a grouped commit or handoff.",
   ].join("\n");
 }
 
@@ -139,6 +153,7 @@ function buildOperatorNextActionsChecklist() {
     "- Save local smoke evidence before external AI delivery.",
     "- Do not paste into GPT, Claude, Codex, or Gemini before reviewing the handoff package.",
     "- Save feedback only when confirmSave is true.",
+    "- Run release evidence and release-candidate checks before a grouped commit or handoff.",
   ].join("\n");
 }
 
@@ -397,7 +412,7 @@ export function OperatorNextActionsPanel() {
     <Panel>
       <PanelHeader
         title="운영자 다음 조치"
-        description="지금 유저가 직접 확인해야 하는 설치, 연결, smoke evidence, 전달, 피드백 저장 순서를 먼저 고정합니다."
+        description="지금 유저가 직접 확인해야 하는 설치, 연결, smoke evidence, 전달, 피드백 저장, release gate 순서를 먼저 고정합니다."
       />
       <OperatorActionSummary />
       <OperatorActionToolbar

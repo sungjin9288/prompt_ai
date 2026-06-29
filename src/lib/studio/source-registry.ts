@@ -372,7 +372,7 @@ const promptStudioSourceRegistry = {
     dashboardNextAction: "외부 AI 연결 운영 기준이 저장 결과에 반영됐는지 확인",
     libraryFilterLabel: "Integrations 운영 체크리스트",
     librarySourceLabel: "Integrations 외부 AI 운영 체크리스트",
-    sourceActionLabel: "Integrations 보기",
+    sourceActionLabel: "Integrations 원본 섹션으로 돌아가기",
     studioLabel: "Integrations 외부 AI 운영 체크리스트",
     studioNextAction:
       "Chrome, 외부 Gen AI, Codex, MCP 연결 운영 기준을 점검하고 다음 개선 액션을 정리하세요.",

@@ -1870,6 +1870,11 @@ assertIncludes(
 );
 assertIncludes(
   sourceRegistry,
+  "Integrations 원본 섹션으로 돌아가기",
+  "Prompt Studio source registry should label integrations operations checklist returns to the original section",
+);
+assertIncludes(
+  sourceRegistry,
   '"mcp-feedback-improvement"',
   "Prompt Studio source registry should include MCP feedback improvement",
 );
@@ -2740,6 +2745,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
+  "README should document integrations operations checklist source return action label",
+);
+assertIncludes(
+  readme,
   "저장 실패 시 이동하지 않고 수동 복사용 운영 가이드 원문을 표시",
   "README should document external AI operator guide Studio draft fallback",
 );
@@ -3030,7 +3040,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations operations checklist 계열 Studio 전송은 운영자 다음 조치, 외부 AI 운영 가이드, 환경별 실행 가이드, MCP smoke runbook 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
+  "Integrations operations checklist 계열 Studio 전송은 운영자 다음 조치, 외부 AI 운영 가이드, 환경별 실행 가이드, MCP smoke runbook 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다. Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해 각 초안이 저장한 원본 섹션 앵커로 돌아가야 한다.",
   "PRD should document integrations operations checklist Studio draft fallback",
 );
 assertIncludes(
@@ -3302,6 +3312,11 @@ assertIncludes(
   developmentBrief,
   "Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며",
   "Development brief should document operator next actions Studio source anchor",
+);
+assertIncludes(
+  developmentBrief,
+  "Integrations operations checklist 계열 Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해",
+  "Development brief should document integrations operations checklist source return action label",
 );
 assertIncludes(
   developmentBrief,

@@ -831,10 +831,10 @@ for (const requiredText of [
   "Copy-ready handoff, not direct account automation",
   "Scoped implementation brief with operator approval gates",
   "Direct local tool calls through the stdio MCP bridge",
-  "Save local smoke evidence, then confirm sensitive text, missing context, and reviewRequired before copy.",
-  "Check local smoke evidence, final prompt, answer language, assumptions, and reviewRequired before paste.",
-  "Save local smoke evidence, then review files, checks, destructive commands, migrations, and external writes.",
-  "Save local smoke evidence before delivery, then save execution feedback only with confirmSave: true after review.",
+  "Run npm run smoke:integrations, then confirm sensitive text, missing context, and reviewRequired before copy.",
+  "Check npm run smoke:integrations evidence, final prompt, answer language, assumptions, and reviewRequired before paste.",
+  "Run npm run smoke:integrations, then review files, checks, destructive commands, migrations, and external writes.",
+  "Run npm run smoke:integrations before delivery, then save execution feedback only with confirmSave: true after review.",
   "Operator check",
   "Target AI",
   "Action",
@@ -871,10 +871,10 @@ for (const requiredText of [
   "Final review:",
   "전체 운영 패키지",
   "아래 체크리스트를 직접 선택해 복사하세요.",
-  "Gate: refine automatically, save local smoke evidence, deliver with review.",
+  "Gate: refine automatically, run npm run smoke:integrations, deliver with review.",
   "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
   "Keep local-smoke-evidence before target-ai-handoff.",
-  "- Save local smoke evidence before delivery.",
+  "- Run npm run smoke:integrations before delivery.",
   "confirmSave: true",
 ]) {
   assertIncludes(
@@ -896,7 +896,7 @@ assert.match(
 );
 assert.match(
   environmentPlaybookPanel,
-  /function buildEnvironmentPlaybookChecklist[\s\S]*?Gate: refine automatically, save local smoke evidence, deliver with review\.[\s\S]*?\.\.\.environmentEvidenceTrace[\s\S]*?function buildAllEnvironmentPlaybookChecklist[\s\S]*?Gate: refine automatically, save local smoke evidence, deliver with review\.[\s\S]*?Scope: Chrome extension, ChatGPT \/ Claude \/ Gemini, Codex, MCP client\.[\s\S]*?\.\.\.environmentEvidenceTrace/,
+  /function buildEnvironmentPlaybookChecklist[\s\S]*?Gate: refine automatically, run npm run smoke:integrations, deliver with review\.[\s\S]*?\.\.\.environmentEvidenceTrace[\s\S]*?function buildAllEnvironmentPlaybookChecklist[\s\S]*?Gate: refine automatically, run npm run smoke:integrations, deliver with review\.[\s\S]*?Scope: Chrome extension, ChatGPT \/ Claude \/ Gemini, Codex, MCP client\.[\s\S]*?\.\.\.environmentEvidenceTrace/,
   "Environment playbook copied checklists should include the shared evidence trace after the delivery gate",
 );
 assert.match(
@@ -2773,12 +2773,12 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "연결 환경, 대상 AI 범위, smoke evidence 저장과 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여주고",
+  "연결 환경, 대상 AI 범위, `npm run smoke:integrations` smoke evidence와 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여주고",
   "README should document environment playbook summary metrics",
 );
 assertIncludes(
   readme,
-  "각 환경의 operator check에서 local smoke evidence 저장을 외부 전달과 confirmSave 저장보다 먼저 고정합니다.",
+  "각 환경의 operator check에서 `npm run smoke:integrations` 실행을 외부 전달과 confirmSave 저장보다 먼저 고정합니다.",
   "README should document environment operator checks as evidence-first",
 );
 assertIncludes(
@@ -3243,12 +3243,12 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 환경별 실행 가이드는 연결 환경, 대상 AI 범위, smoke evidence 저장과 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여줘야 한다.",
+  "Integrations 환경별 실행 가이드는 연결 환경, 대상 AI 범위, `npm run smoke:integrations` smoke evidence와 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여줘야 한다.",
   "PRD should document environment playbook summary metrics",
 );
 assertIncludes(
   prd,
-  "Integrations 환경별 실행 가이드는 Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 operator check에서 local smoke evidence 저장을 외부 전달과 confirmSave 저장보다 먼저 확인하게 해야 한다.",
+  "Integrations 환경별 실행 가이드는 Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 operator check에서 `npm run smoke:integrations` 실행을 외부 전달과 confirmSave 저장보다 먼저 확인하게 해야 한다.",
   "PRD should document environment operator checks as evidence-first",
 );
 assertIncludes(
@@ -3403,12 +3403,12 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "환경별 실행 가이드에서 연결 환경, 대상 AI 범위, smoke evidence 저장과 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여주고",
+  "환경별 실행 가이드에서 연결 환경, 대상 AI 범위, `npm run smoke:integrations` smoke evidence와 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여주고",
   "Development brief should document environment playbook summary metrics",
 );
 assertIncludes(
   developmentBrief,
-  "각 환경의 operator check에서 local smoke evidence 저장을 외부 전달과 confirmSave 저장보다 먼저 고정한다.",
+  "각 환경의 operator check에서 `npm run smoke:integrations` 실행을 외부 전달과 confirmSave 저장보다 먼저 고정한다.",
   "Development brief should document environment operator checks as evidence-first",
 );
 assertIncludes(

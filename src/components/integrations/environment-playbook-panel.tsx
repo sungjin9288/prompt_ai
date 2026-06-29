@@ -22,7 +22,7 @@ const environmentPlaybooks = [
     output:
       "Review-required handoff package for ChatGPT, Claude, Codex, or Gemini.",
     operatorCheck:
-      "Save local smoke evidence, then confirm sensitive text, missing context, and reviewRequired before copy.",
+      "Run npm run smoke:integrations, then confirm sensitive text, missing context, and reviewRequired before copy.",
     targetModels: ["gpt", "claude", "codex", "gemini"],
   },
   {
@@ -33,7 +33,7 @@ const environmentPlaybooks = [
     output:
       "External AI result that can be summarized back as execution feedback.",
     operatorCheck:
-      "Check local smoke evidence, final prompt, answer language, assumptions, and reviewRequired before paste.",
+      "Check npm run smoke:integrations evidence, final prompt, answer language, assumptions, and reviewRequired before paste.",
     targetModels: ["gpt", "claude", "gemini"],
   },
   {
@@ -43,7 +43,7 @@ const environmentPlaybooks = [
     action: "Use the prompt as an implementation brief, not an auto-run command.",
     output: "Patch, verification evidence, and feedback summary.",
     operatorCheck:
-      "Save local smoke evidence, then review files, checks, destructive commands, migrations, and external writes.",
+      "Run npm run smoke:integrations, then review files, checks, destructive commands, migrations, and external writes.",
     targetModels: ["codex"],
   },
   {
@@ -53,7 +53,7 @@ const environmentPlaybooks = [
     action: "Use Prompt AI Studio as a local prompt refinement tool.",
     output: "Structured content plus copy-ready review-required text.",
     operatorCheck:
-      "Save local smoke evidence before delivery, then save execution feedback only with confirmSave: true after review.",
+      "Run npm run smoke:integrations before delivery, then save execution feedback only with confirmSave: true after review.",
     targetModels: ["gpt", "claude", "codex"],
   },
 ] satisfies Array<{
@@ -98,7 +98,7 @@ function buildEnvironmentPlaybookChecklist(
     `- Operator check: ${playbook.operatorCheck}`,
     `- Target AI: ${formatTargetModels(playbook.targetModels)}`,
     "",
-    "Gate: refine automatically, save local smoke evidence, deliver with review.",
+    "Gate: refine automatically, run npm run smoke:integrations, deliver with review.",
     ...environmentEvidenceTrace,
   ].join("\n");
 }
@@ -107,7 +107,7 @@ function buildAllEnvironmentPlaybookChecklist() {
   return [
     "# Prompt AI Studio External AI Operations Checklist",
     "",
-    "Gate: refine automatically, save local smoke evidence, deliver with review.",
+    "Gate: refine automatically, run npm run smoke:integrations, deliver with review.",
     "Scope: Chrome extension, ChatGPT / Claude / Gemini, Codex, MCP client.",
     ...environmentEvidenceTrace,
     "",
@@ -123,7 +123,7 @@ function buildAllEnvironmentPlaybookChecklist() {
       "",
     ]),
     "Final review:",
-    "- Save local smoke evidence before delivery.",
+    "- Run npm run smoke:integrations before delivery.",
     "- Confirm the final prompt language strategy before pasting.",
     "- Confirm sensitive data and missing context before delivery.",
     "- Save execution feedback only after the operator has reviewed the result.",

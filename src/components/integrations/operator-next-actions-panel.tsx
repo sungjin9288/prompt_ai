@@ -110,6 +110,27 @@ const operatorActionSummaryItems = [
   value: string;
 }>;
 
+const operatorEvidenceFieldGroups = [
+  {
+    fields:
+      "runtime, source, review gate, target AI, session, evidence result, feedback record",
+    label: "Chrome loaded extension",
+  },
+  {
+    fields:
+      "client, target AI, tool sequence, review gate, evidence result, feedback record",
+    label: "MCP client",
+  },
+  {
+    fields:
+      "low-confidence condition, Studio validation draft, Library validation filter, release evidence command, release candidate command, feedback memory action",
+    label: "Learning feedback",
+  },
+] satisfies Array<{
+  fields: string;
+  label: string;
+}>;
+
 type CopyState = "idle" | "operator-actions" | "error" | string;
 
 function buildOperatorNextActionChecklist(item: OperatorNextAction) {
@@ -138,6 +159,12 @@ function buildOperatorNextActionsChecklist() {
     "",
     "Gate: local-first automation, smoke evidence saved, review-required external delivery, confirmed feedback save.",
     "Scope: /integrations operator action package.",
+    "",
+    "## Actual evidence fields",
+    "",
+    ...operatorEvidenceFieldGroups.flatMap((item) => [
+      `- ${item.label}: ${item.fields}`,
+    ]),
     "",
     ...operatorNextActions.flatMap((item) => [
       `## ${item.label}`,
@@ -211,6 +238,29 @@ function OperatorActionSummary() {
           </p>
         </div>
       ))}
+    </div>
+  );
+}
+
+function OperatorEvidenceFieldChecklist() {
+  return (
+    <div
+      className="border-b border-line px-5 py-4"
+      data-testid="operator-evidence-field-checklist"
+    >
+      <p className="text-sm font-semibold text-foreground">
+        실제 증빙 필드
+      </p>
+      <div className="mt-3 grid gap-3 md:grid-cols-3">
+        {operatorEvidenceFieldGroups.map((item) => (
+          <div className="min-w-0" key={item.label}>
+            <p className="text-xs font-semibold text-soft">{item.label}</p>
+            <p className="mt-1 break-words text-xs leading-5 text-muted">
+              {item.fields}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -415,6 +465,7 @@ export function OperatorNextActionsPanel() {
         description="지금 유저가 직접 확인해야 하는 설치, 연결, smoke evidence, 전달, 피드백 저장, release gate 순서를 먼저 고정합니다."
       />
       <OperatorActionSummary />
+      <OperatorEvidenceFieldChecklist />
       <OperatorActionToolbar
         onCopyAll={copyOperatorActions}
         onOpenAllInStudio={openOperatorActionsInStudio}

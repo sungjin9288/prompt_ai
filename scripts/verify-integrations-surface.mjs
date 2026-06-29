@@ -465,17 +465,29 @@ for (const requiredText of [
   "npm run verify:evidence -- --out-dir docs/evidence; npm run verify:release-candidate",
   "OperatorNextAction",
   "operatorActionSummaryItems",
+  "operatorEvidenceFieldGroups",
   "buildOperatorNextActionChecklist",
   "buildOperatorNextActionsChecklist",
   "OperatorActionSummary",
+  "OperatorEvidenceFieldChecklist",
   "OperatorActionToolbar",
   "OperatorActionDetail",
   "OperatorActionList",
   "OperatorManualCopyTextarea",
   "OperatorManualCopyNotice",
   'data-testid="operator-next-actions-summary"',
+  'data-testid="operator-evidence-field-checklist"',
   'data-testid="operator-next-actions-toolbar"',
   'data-testid="operator-next-actions-list"',
+  "Actual evidence fields",
+  "실제 증빙 필드",
+  "Chrome loaded extension",
+  "runtime, source, review gate, target AI, session, evidence result, feedback record",
+  "MCP client",
+  "client, target AI, tool sequence, review gate, evidence result, feedback record",
+  "Learning feedback",
+  "low-confidence condition, Studio validation draft, Library validation filter, release evidence command, release candidate command, feedback memory action",
+  "## Actual evidence fields",
   "현재 순서",
   "서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장 → release gate",
   "첫 검증",
@@ -547,6 +559,21 @@ assert.match(
   operatorNextActionsPanel,
   /function OperatorActionSummary\(\)[\s\S]*?data-testid="operator-next-actions-summary"[\s\S]*?operatorActionSummaryItems\.map[\s\S]*?item\.label[\s\S]*?item\.value[\s\S]*?<OperatorActionSummary \/>/,
   "Operator next actions panel should render a compact summary from dedicated summary items",
+);
+assert.match(
+  operatorNextActionsPanel,
+  /const operatorEvidenceFieldGroups = \[[\s\S]*?runtime, source, review gate, target AI, session, evidence result, feedback record[\s\S]*?label: "Chrome loaded extension"[\s\S]*?client, target AI, tool sequence, review gate, evidence result, feedback record[\s\S]*?label: "MCP client"[\s\S]*?low-confidence condition, Studio validation draft, Library validation filter, release evidence command, release candidate command, feedback memory action[\s\S]*?label: "Learning feedback"/,
+  "Operator next actions panel should define the actual evidence fields for Chrome, MCP, and Learning smoke runs",
+);
+assert.match(
+  operatorNextActionsPanel,
+  /function buildOperatorNextActionsChecklist\(\)[\s\S]*?## Actual evidence fields[\s\S]*?operatorEvidenceFieldGroups\.flatMap[\s\S]*?`\- \$\{item\.label\}: \$\{item\.fields\}`[\s\S]*?operatorNextActions\.flatMap/,
+  "Operator next actions checklist should include actual evidence fields before step details",
+);
+assert.match(
+  operatorNextActionsPanel,
+  /function OperatorEvidenceFieldChecklist\(\)[\s\S]*?data-testid="operator-evidence-field-checklist"[\s\S]*?실제 증빙 필드[\s\S]*?operatorEvidenceFieldGroups\.map[\s\S]*?item\.label[\s\S]*?item\.fields[\s\S]*?<OperatorEvidenceFieldChecklist \/>/,
+  "Operator next actions panel should render the actual evidence field checklist before action controls",
 );
 assert.match(
   operatorNextActionsPanel,
@@ -2798,6 +2825,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 보여줍니다.",
+  "README should document operator next actions actual evidence fields",
+);
+assertIncludes(
+  readme,
   "Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
   "README should document integrations operations checklist source return action label",
 );
@@ -3116,6 +3148,11 @@ assertIncludes(
   "Integrations operations checklist 계열 Studio 전송은 운영자 다음 조치, 외부 AI 운영 가이드, 환경별 실행 가이드, MCP smoke runbook 초안의 복귀 액션 라벨을 `Integrations 원본 섹션으로 돌아가기`로 표시해 각 초안이 저장한 원본 섹션 앵커로 돌아가야 하며, 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
   "PRD should document integrations operations checklist Studio draft return actions and fallback",
 );
+assertIncludes(
+  prd,
+  "Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 확인하게 해야 한다.",
+  "PRD should document operator next actions actual evidence fields",
+);
 assertNotIncludes(
   prd,
   "Integrations operations checklist 계열 Studio 전송은 운영자 다음 조치, 외부 AI 운영 가이드, 환경별 실행 가이드, MCP smoke runbook 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
@@ -3395,6 +3432,11 @@ assertIncludes(
   developmentBrief,
   "Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
   "Development brief should document operator next actions Studio source anchor",
+);
+assertIncludes(
+  developmentBrief,
+  "Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 확인하게 한다.",
+  "Development brief should document operator next actions actual evidence fields",
 );
 assertIncludes(
   developmentBrief,

@@ -1543,6 +1543,7 @@ for (const requiredText of [
   "tools/list",
   "refine_prompt",
   "npm run dev",
+  "npm run smoke:integrations",
   "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
   "npm run verify:integrations",
   "review-required handoff package",
@@ -1564,7 +1565,7 @@ assert.match(
 );
 assert.match(
   connectionReadinessPanel,
-  /const smokeTestCommands = \[[\s\S]*?npm run dev[\s\S]*?npm run smoke:chrome-extension -- --out output\/smoke\/chrome-extension-smoke\.md[\s\S]*?npm run smoke:mcp -- --out output\/smoke\/mcp-bridge-smoke\.md[\s\S]*?npm run smoke:learning-feedback -- --out output\/smoke\/learning-feedback-smoke\.md[\s\S]*?npm run verify:integrations/,
+  /const smokeTestCommands = \[[\s\S]*?npm run dev[\s\S]*?npm run smoke:integrations[\s\S]*?npm run smoke:chrome-extension -- --out output\/smoke\/chrome-extension-smoke\.md[\s\S]*?npm run smoke:mcp -- --out output\/smoke\/mcp-bridge-smoke\.md[\s\S]*?npm run smoke:learning-feedback -- --out output\/smoke\/learning-feedback-smoke\.md[\s\S]*?npm run verify:integrations/,
   "Connection readiness smoke command copy should include local smoke evidence output commands",
 );
 assert.match(
@@ -2842,6 +2843,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "`npm run smoke:integrations`를 포함한 smoke 명령, smoke evidence 저장과 review-required 승인 gate",
+  "README should document connection readiness integrated smoke command",
+);
+assertIncludes(
+  readme,
   "Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
   "README should document integrations operations checklist source return action label",
 );
@@ -3187,7 +3193,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 연결 준비도는 연결 표면, 첫 실행 표면, smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여줘야 한다.",
+  "Integrations 연결 준비도는 연결 표면, 첫 실행 표면, `npm run smoke:integrations`를 포함한 smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여줘야 한다.",
   "PRD should document connection readiness summary metrics",
 );
 assertIncludes(
@@ -3297,7 +3303,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations 연결 준비도 점검에서 연결 표면, 첫 실행 표면, smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여주고",
+  "Integrations 연결 준비도 점검에서 연결 표면, 첫 실행 표면, `npm run smoke:integrations`를 포함한 smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여주고",
   "Development brief should document connection readiness summary metrics",
 );
 assertIncludes(

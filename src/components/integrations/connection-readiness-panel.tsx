@@ -80,6 +80,7 @@ const readinessChecks = [
 
 const smokeTestCommands = [
   "npm run dev",
+  "npm run smoke:integrations",
   "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
   "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
   "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",

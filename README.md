@@ -492,7 +492,9 @@ README.
 Supabase import execution packet manifest, waiting summary, copy gate, and
 next-action note as copy-ready operational artifacts. It also parses `/data`
 copy handlers and fails if a `copyDataText` call omits the failure notice and
-metadata-rich manual fallback body.
+metadata-rich manual fallback body. It also checks that the Supabase REST
+import adapter keeps write gates server-only, rejects unexpected tables, and
+skips empty batches without calling Supabase.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

@@ -46,6 +46,10 @@ const {
 } = loadTypescriptModule(
   "src/lib/data/supabase-import-execution-packet-manifest.ts",
 );
+const {
+  createSupabaseRestImportAdapter,
+  getSupabaseRestImportEnvironmentStatus,
+} = loadTypescriptModule("src/lib/data/supabase-rest-import-adapter.ts");
 
 function assertDataMatches(pattern, message) {
   assert.match(dataSource, pattern, message);
@@ -73,6 +77,35 @@ function assertFileNotIncludes(fileSource, text, message) {
 
 function normalizePlain(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function withSupabaseImportEnv(env, callback) {
+  const keys = [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "SUPABASE_IMPORT_EXECUTION_ENABLED",
+    "SUPABASE_SERVICE_ROLE_KEY",
+  ];
+  const previous = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+
+  try {
+    for (const key of keys) {
+      if (env[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = env[key];
+      }
+    }
+
+    return callback();
+  } finally {
+    for (const key of keys) {
+      if (previous[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = previous[key];
+      }
+    }
+  }
 }
 
 function getLineNumber(position) {
@@ -1516,6 +1549,87 @@ assertFileIncludes(
   readme,
   "npm run verify:data-management",
   "README Scripts should document the data-management verification command",
+);
+
+assert.throws(
+  () =>
+    createSupabaseRestImportAdapter({
+      serviceRoleKey: "",
+      supabaseUrl: "https://example.supabase.co",
+    }),
+  /SUPABASE_SERVICE_ROLE_KEY is required/,
+  "Supabase REST import adapter should require the server-only service role key",
+);
+
+assert.throws(
+  () =>
+    createSupabaseRestImportAdapter({
+      serviceRoleKey: "service-role-key",
+      supabaseUrl: "",
+    }),
+  /NEXT_PUBLIC_SUPABASE_URL is required/,
+  "Supabase REST import adapter should require a Supabase URL",
+);
+
+const supabaseRestImportAdapter = createSupabaseRestImportAdapter({
+  serviceRoleKey: "service-role-key",
+  supabaseUrl: "https://example.supabase.co/",
+});
+
+await assert.rejects(
+  () =>
+    supabaseRestImportAdapter.insertRows({
+      dependency: "not allowed",
+      order: 1,
+      rows: [{ id: "row-1" }],
+      table: "unexpected_table",
+    }),
+  /Import table is not allowed: unexpected_table/,
+  "Supabase REST import adapter should reject tables outside the import allowlist before any request",
+);
+
+assert.deepEqual(
+  normalizePlain(
+    await supabaseRestImportAdapter.insertRows({
+      dependency: "workspace",
+      order: 1,
+      rows: [],
+      table: "workspaces",
+    }),
+  ),
+  { insertedRows: 0, note: "No rows to insert." },
+  "Supabase REST import adapter should skip empty insert batches without calling Supabase",
+);
+
+assert.deepEqual(
+  normalizePlain(
+    withSupabaseImportEnv({}, () => getSupabaseRestImportEnvironmentStatus()),
+  ),
+  {
+    executionEnabled: false,
+    serviceRoleKeyConfigured: false,
+    supabaseUrlConfigured: false,
+  },
+  "Supabase REST import environment status should default every write gate to closed",
+);
+
+assert.deepEqual(
+  normalizePlain(
+    withSupabaseImportEnv(
+      {
+        NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+        SUPABASE_IMPORT_EXECUTION_ENABLED: "true",
+        SUPABASE_SERVICE_ROLE_KEY: "service-role-key",
+      },
+      () => getSupabaseRestImportEnvironmentStatus(),
+    ),
+  ),
+  {
+    executionEnabled: true,
+    serviceRoleKeyConfigured: true,
+    supabaseUrlConfigured: true,
+  },
+  "Supabase REST import environment status should only open when explicit server-side gates are configured",
 );
 
 console.log(

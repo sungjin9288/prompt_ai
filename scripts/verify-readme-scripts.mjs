@@ -200,6 +200,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the Supabase REST\s+import adapter keeps write gates server-only, rejects unexpected tables, and\s+skips empty batches without calling Supabase/,
+  "README should document the data-management Supabase REST adapter guard verification scope",
+);
+assert.match(
+  readme,
   /verify:integrations` checks that the Integrations route, navigation,\s+Chrome\/Gen AI\/MCP surfaces, MCP tool contract, and product docs stay aligned/,
   "README should document the integrations verification scope",
 );

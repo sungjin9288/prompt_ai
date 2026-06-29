@@ -256,6 +256,41 @@ function getDraftSourceKindMeta(source: StudioDraft["source"]) {
   };
 }
 
+function buildLibraryHref(params: URLSearchParams) {
+  const query = params.toString();
+  const href = query ? `/library?${query}` : "/library";
+
+  return normalizeInternalHref(href) ?? "/library";
+}
+
+function buildLibraryStudioSourceHref({
+  promptId,
+  source,
+  sourceVariant,
+  studioPersistence,
+}: {
+  promptId?: string;
+  source: StudioDraft["source"];
+  sourceVariant?: StudioDraft["sourceVariant"];
+  studioPersistence?: "chain" | "ops";
+}) {
+  const params = new URLSearchParams({ studioSource: source });
+
+  if (studioPersistence) {
+    params.set("studio", studioPersistence);
+  }
+
+  if (promptId) {
+    params.set("prompt", promptId);
+  }
+
+  if (sourceVariant) {
+    params.set("studioVariant", sourceVariant);
+  }
+
+  return buildLibraryHref(params);
+}
+
 function buildStudioDraftSourceHref(draft: StudioDraft) {
   const sourceHref = normalizeInternalHref(draft.sourceHref);
 
@@ -278,11 +313,7 @@ function buildStudioDraftSourceHref(draft: StudioDraft) {
       params.set("version", draft.sourceVersionModel);
     }
 
-    const query = params.toString();
-
-    const href = query ? `/library?${query}` : "/library";
-
-    return normalizeInternalHref(href) ?? "/library";
+    return buildLibraryHref(params);
   }
 
   if (draft.source === "learning-memory" && draft.sourceTitle) {
@@ -292,17 +323,10 @@ function buildStudioDraftSourceHref(draft: StudioDraft) {
   }
 
   if (draft.source.startsWith("library-")) {
-    const params = new URLSearchParams({
-      studioSource: draft.source,
+    return buildLibraryStudioSourceHref({
+      source: draft.source,
+      sourceVariant: draft.sourceVariant,
     });
-
-    if (draft.sourceVariant) {
-      params.set("studioVariant", draft.sourceVariant);
-    }
-
-    const query = params.toString();
-
-    return normalizeInternalHref(`/library?${query}`) ?? "/library";
   }
 
   if (draft.source.startsWith("skills-")) {
@@ -327,7 +351,7 @@ function buildSavedPromptLibraryHref(prompt: PromptAsset, version?: TargetModel)
     params.set("version", version);
   }
 
-  return normalizeInternalHref(`/library?${params.toString()}`) ?? "/library";
+  return buildLibraryHref(params);
 }
 
 function buildSavedPromptSkillHref(prompt: PromptAsset) {
@@ -341,16 +365,11 @@ function buildSavedPromptStudioSourceHref(prompt: PromptAsset) {
     return null;
   }
 
-  const params = new URLSearchParams({
-    studioSource: prompt.studioSource.source,
-    prompt: prompt.id,
+  return buildLibraryStudioSourceHref({
+    promptId: prompt.id,
+    source: prompt.studioSource.source,
+    sourceVariant: prompt.studioSource.sourceVariant,
   });
-
-  if (prompt.studioSource.sourceVariant) {
-    params.set("studioVariant", prompt.studioSource.sourceVariant);
-  }
-
-  return normalizeInternalHref(`/library?${params.toString()}`) ?? "/library";
 }
 
 function getSavedPromptStudioPersistenceFilter(prompt: PromptAsset) {
@@ -375,7 +394,7 @@ function buildSavedPromptStudioPersistenceHref(prompt: PromptAsset) {
     prompt: prompt.id,
   });
 
-  return normalizeInternalHref(`/library?${params.toString()}`) ?? "/library";
+  return buildLibraryHref(params);
 }
 
 function buildSavedPromptStudioOperationalGroupHref(prompt: PromptAsset) {
@@ -389,17 +408,12 @@ function buildSavedPromptStudioOperationalGroupHref(prompt: PromptAsset) {
     return null;
   }
 
-  const params = new URLSearchParams({
-    studio: studioPersistence,
-    studioSource: prompt.studioSource.source,
-    prompt: prompt.id,
+  return buildLibraryStudioSourceHref({
+    promptId: prompt.id,
+    source: prompt.studioSource.source,
+    sourceVariant: prompt.studioSource.sourceVariant,
+    studioPersistence,
   });
-
-  if (prompt.studioSource.sourceVariant) {
-    params.set("studioVariant", prompt.studioSource.sourceVariant);
-  }
-
-  return normalizeInternalHref(`/library?${params.toString()}`) ?? "/library";
 }
 
 function collectRecentFeedback(prompts: PromptAsset[]) {

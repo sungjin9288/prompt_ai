@@ -127,11 +127,11 @@ assertMatches(
   "Studio generated save summary should expose sourceVariant-aware source actions and explain the Library source filter after saved Studio-source results",
 );
 assertMatches(
-  /function buildSavedPromptStudioOperationalGroupHref\(prompt: PromptAsset\)[\s\S]*?studio: studioPersistence[\s\S]*?studioSource: prompt\.studioSource\.source[\s\S]*?prompt: prompt\.id[\s\S]*?prompt\.studioSource\.sourceVariant[\s\S]*?params\.set\("studioVariant", prompt\.studioSource\.sourceVariant\)/,
+  /function buildSavedPromptStudioOperationalGroupHref\(prompt: PromptAsset\)[\s\S]*?return buildLibraryStudioSourceHref\(\{[\s\S]*?promptId: prompt\.id[\s\S]*?source: prompt\.studioSource\.source[\s\S]*?sourceVariant: prompt\.studioSource\.sourceVariant[\s\S]*?studioPersistence[\s\S]*?\}\)/,
   "Studio generated save summary should build a sourceVariant-aware combined Library operation group href for saved Studio-source prompts",
 );
 assertMatches(
-  /function buildSavedPromptStudioSourceHref\(prompt: PromptAsset\)[\s\S]*?studioSource: prompt\.studioSource\.source[\s\S]*?prompt: prompt\.id[\s\S]*?prompt\.studioSource\.sourceVariant[\s\S]*?params\.set\("studioVariant", prompt\.studioSource\.sourceVariant\)/,
+  /function buildSavedPromptStudioSourceHref\(prompt: PromptAsset\)[\s\S]*?return buildLibraryStudioSourceHref\(\{[\s\S]*?promptId: prompt\.id[\s\S]*?source: prompt\.studioSource\.source[\s\S]*?sourceVariant: prompt\.studioSource\.sourceVariant[\s\S]*?\}\)/,
   "Studio generated save summary should build a sourceVariant-aware Library source href for saved Studio-source prompts",
 );
 assertMatches(

@@ -69,6 +69,10 @@ function assertFileIncludes(fileSource, text, message) {
   assert.ok(fileSource.includes(text), message);
 }
 
+function assertFileNotIncludes(fileSource, text, message) {
+  assert.ok(!fileSource.includes(text), message);
+}
+
 assertMatches(
   /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
   "Learning should reuse the shared context operating flow component",
@@ -383,6 +387,11 @@ assertFileIncludes(
   prd,
   "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안은 각각 `Learning 준비도로 돌아가기`, `Learning 조건으로 돌아가기`, `Learning 메모리로 돌아가기`, `Learning 피드백 큐로 돌아가기` 복귀 액션 라벨로 원래 조건을 복원해야 하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
   "PRD should document Learning Studio draft storage fallback",
+);
+assertFileNotIncludes(
+  prd,
+  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
+  "PRD should not keep the old Learning draft fallback wording without return action labels",
 );
 assertFileIncludes(
   prd,

@@ -47,6 +47,10 @@ for (const check of verificationChecks) {
   seenLabels.add(check.label);
 }
 
+const sharedVerificationScriptNames = new Set(
+  verificationChecks.map((check) => check.scriptName),
+);
+
 assert.equal(
   verificationChecks[0]?.scriptName,
   "verify:manifest",
@@ -69,6 +73,14 @@ for (const check of releaseCandidateChecks) {
     check.args,
     ["run", check.scriptName],
     `${check.label} release gate args should match scriptName`,
+  );
+  assert.ok(
+    scripts[check.scriptName],
+    `${check.label} release gate check references missing package script ${check.scriptName}`,
+  );
+  assert.ok(
+    sharedVerificationScriptNames.has(check.scriptName),
+    `${check.label} release gate check should stay in the shared verification manifest`,
   );
 }
 

@@ -36,6 +36,7 @@ const expectedSmokeFiles = [
       /Queue record actions include release evidence and release-candidate command copy/,
       /Queue reports include condition links, validation Library links, metrics, release gate commands/,
       /Clipboard and Studio draft failures keep manual copy fallbacks/,
+      /Manual memories can be added, edited, deleted, and protected from duplicate scope plus content records/,
     ],
   },
   {

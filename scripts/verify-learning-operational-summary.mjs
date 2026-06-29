@@ -38,6 +38,7 @@ function buildLearningFeedbackEvidenceText() {
     "- Low-confidence feedback rules use a separate Studio validation draft and Library filter.",
     "- Queue reports include condition links, validation Library links, metrics, release gate commands, actions, and memory details.",
     "- Clipboard and Studio draft failures keep manual copy fallbacks in the current panel.",
+    "- Manual memories can be added, edited, deleted, and protected from duplicate scope plus content records.",
   ].join("\n");
 }
 
@@ -180,6 +181,26 @@ assertMatches(
   "Learning manual memory panel should render numbered workflow cards before the input form",
 );
 assertMatches(
+  /function normalizeMemoryContent\(value: string\)[\s\S]*?value\.replace\(\/\\s\+\/g, " "\)\.trim\(\)\.toLowerCase\(\)[\s\S]*?function findDuplicateMemory\([\s\S]*?exceptId\?: string[\s\S]*?memory\.id !== exceptId[\s\S]*?memory\.scope === scope[\s\S]*?normalizeMemoryContent\(memory\.content\) === normalized/,
+  "Learning manual memories should detect duplicate content within the same scope while allowing the edited record itself",
+);
+assertMatches(
+  /function saveManualMemory\(\)[\s\S]*?const duplicate = findDuplicateMemory\(memories, manualScope, content\)[\s\S]*?이미 같은 scope에 같은 내용의 메모리가 있습니다[\s\S]*?sourceType: "manual"[\s\S]*?setMemories\(\(current\) => \[nextMemory, \.\.\.current\]\)[\s\S]*?updateScopeFilter\(manualScope\)/,
+  "Learning manual memory create flow should block same-scope duplicates and move the operator to the saved scope",
+);
+assertMatches(
+  /function startEditingManualMemory\(memory: LearningMemory\)[\s\S]*?memory\.sourceType !== "manual"[\s\S]*?setEditingMemoryId\(memory\.id\)[\s\S]*?setEditScope\(memory\.scope\)[\s\S]*?setEditContent\(memory\.content\)[\s\S]*?function saveEditedManualMemory\(memoryId: string\)[\s\S]*?findDuplicateMemory\(memories, editScope, content, memoryId\)[\s\S]*?이미 같은 scope에 같은 내용의 메모리가 있습니다[\s\S]*?memory\.id === memoryId && memory\.sourceType === "manual"[\s\S]*?updatedAt: now[\s\S]*?updateScopeFilter\(editScope\)/,
+  "Learning manual memory edit flow should be limited to manual memories, block duplicates, and update the active scope",
+);
+assertMatches(
+  /function deleteManualMemory\(memory: LearningMemory\)[\s\S]*?memory\.sourceType !== "manual"[\s\S]*?window\.confirm\([\s\S]*?수동 메모리를 삭제할까요\?[\s\S]*?setMemories\(\(current\) => current\.filter\(\(item\) => item\.id !== memory\.id\)\)[\s\S]*?setDeletedManualMemoryTitle\(memory\.title\)[\s\S]*?수동 메모리 삭제됨 · \{deletedManualMemoryTitle\}/,
+  "Learning manual memory delete flow should be limited to manual memories, ask for confirmation, and show the deleted title",
+);
+assertMatches(
+  /memory\.sourceType === "manual" \? \([\s\S]*?onClick=\{\(\) => startEditingManualMemory\(memory\)\}[\s\S]*?수동 메모리 편집[\s\S]*?onClick=\{\(\) => deleteManualMemory\(memory\)\}[\s\S]*?수동 메모리 삭제/,
+  "Learning memory cards should expose edit and delete actions only for manual memories",
+);
+assertMatches(
   /data-testid="learning-feedback-improvement-queue"[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-low-confidence-link"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-release-gate"[\s\S]*?data-testid="learning-feedback-improvement-queue-manual-copy"[\s\S]*?LearningManualCopyPanel[\s\S]*?!feedbackImprovementFilterActive &&[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?LearningManualCopyPanel/,
   "Learning feedback-improvement queue should show copy fallback inside the queue and avoid duplicate filter-panel fallback",
 );
@@ -242,6 +263,11 @@ assertFileIncludes(
   readme,
   "Learning 수동 메모리 추가는 `01 범위 선택`, `02 규칙 작성`, `03 생성 반영` 단계 카드로 학습 scope, 재사용 규칙, 저장 후 Studio 반영 순서를 폼보다 먼저 보여줍니다.",
   "README should document the numbered Learning manual memory workflow cards",
+);
+assertFileIncludes(
+  readme,
+  "Learning 수동 메모리 추가/수정/삭제와 같은 scope+내용 중복 저장 방지로 회사 기준, 개인 선호, 분야 규칙, 스킬 패턴 직접 보강",
+  "README should document manual Learning memory edit, delete, and duplicate guards",
 );
 assertFileIncludes(
   readme,
@@ -580,6 +606,16 @@ assertFileIncludes(
   devBrief,
   "Learning 수동 메모리 추가는 `01 범위 선택`, `02 규칙 작성`, `03 생성 반영` 단계 카드로 학습 scope, 재사용 규칙, 저장 후 Studio 반영 순서를 폼보다 먼저 보여줌",
   "Development brief should document the numbered Learning manual memory workflow cards",
+);
+assertFileIncludes(
+  prd,
+  "`manual` 메모리는 목록에서 수정하거나 삭제할 수 있어 잘못 입력한 학습 기준을 정리할 수 있으며, 같은 scope에 같은 내용을 반복 저장하지 못하게 막는다.",
+  "PRD should document manual Learning memory edit, delete, and duplicate guards",
+);
+assertFileIncludes(
+  devBrief,
+  "프로필, 회사 맥락, 피드백이 실제 프롬프트에 반영되는지를 우선 검증한다.",
+  "Development brief should preserve the learning-context implementation priority",
 );
 assertFileIncludes(
   devBrief,

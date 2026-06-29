@@ -135,6 +135,16 @@ function feedbackStatusLabel(status: "collect_feedback" | "improve" | "healthy")
   }
 }
 
+function buildSkillsRouteHref(
+  pathname: "/library" | "/skills",
+  params: URLSearchParams,
+) {
+  const query = params.toString();
+  const href = query ? `${pathname}?${query}` : pathname;
+
+  return normalizeInternalHref(href) ?? pathname;
+}
+
 function buildPromptLibraryHref(promptId: string, version?: TargetModel) {
   const params = new URLSearchParams({ prompt: promptId });
 
@@ -142,13 +152,13 @@ function buildPromptLibraryHref(promptId: string, version?: TargetModel) {
     params.set("version", version);
   }
 
-  return normalizeInternalHref(`/library?${params.toString()}`) ?? "/library";
+  return buildSkillsRouteHref("/library", params);
 }
 
 function buildSkillHref(skillId: string) {
   const params = new URLSearchParams({ skill: skillId });
 
-  return normalizeInternalHref(`/skills?${params.toString()}`) ?? "/skills";
+  return buildSkillsRouteHref("/skills", params);
 }
 
 function buildSkillRunLibraryHref(prompt: PromptAsset) {

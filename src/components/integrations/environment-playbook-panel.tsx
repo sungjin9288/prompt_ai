@@ -22,7 +22,7 @@ const environmentPlaybooks = [
     output:
       "Review-required handoff package for ChatGPT, Claude, Codex, or Gemini.",
     operatorCheck:
-      "Save smoke evidence, then confirm sensitive text and missing context before copy.",
+      "Save local smoke evidence, then confirm sensitive text, missing context, and reviewRequired before copy.",
     targetModels: ["gpt", "claude", "codex", "gemini"],
   },
   {
@@ -33,7 +33,7 @@ const environmentPlaybooks = [
     output:
       "External AI result that can be summarized back as execution feedback.",
     operatorCheck:
-      "Check smoke evidence, final prompt, answer language, and assumptions first.",
+      "Check local smoke evidence, final prompt, answer language, assumptions, and reviewRequired before paste.",
     targetModels: ["gpt", "claude", "gemini"],
   },
   {
@@ -42,7 +42,8 @@ const environmentPlaybooks = [
     trigger: "Send a development task package with files, checks, and guardrails.",
     action: "Use the prompt as an implementation brief, not an auto-run command.",
     output: "Patch, verification evidence, and feedback summary.",
-    operatorCheck: "Review destructive commands, migrations, and external writes.",
+    operatorCheck:
+      "Save local smoke evidence, then review files, checks, destructive commands, migrations, and external writes.",
     targetModels: ["codex"],
   },
   {
@@ -51,7 +52,8 @@ const environmentPlaybooks = [
     trigger: "Call get_context_profile, refine_prompt, or create_handoff_package.",
     action: "Use Prompt AI Studio as a local prompt refinement tool.",
     output: "Structured content plus copy-ready review-required text.",
-    operatorCheck: "Save execution feedback only with confirmSave: true.",
+    operatorCheck:
+      "Save local smoke evidence before delivery, then save execution feedback only with confirmSave: true after review.",
     targetModels: ["gpt", "claude", "codex"],
   },
 ] satisfies Array<{

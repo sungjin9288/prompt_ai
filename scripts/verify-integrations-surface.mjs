@@ -749,8 +749,10 @@ for (const requiredText of [
   "Copy-ready handoff, not direct account automation",
   "Scoped implementation brief with operator approval gates",
   "Direct local tool calls through the stdio MCP bridge",
-  "Save smoke evidence, then confirm sensitive text and missing context before copy.",
-  "Check smoke evidence, final prompt, answer language, and assumptions first.",
+  "Save local smoke evidence, then confirm sensitive text, missing context, and reviewRequired before copy.",
+  "Check local smoke evidence, final prompt, answer language, assumptions, and reviewRequired before paste.",
+  "Save local smoke evidence, then review files, checks, destructive commands, migrations, and external writes.",
+  "Save local smoke evidence before delivery, then save execution feedback only with confirmSave: true after review.",
   "Operator check",
   "Target AI",
   "Action",
@@ -2560,6 +2562,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "각 환경의 operator check에서 local smoke evidence 저장을 외부 전달과 confirmSave 저장보다 먼저 고정합니다.",
+  "README should document environment operator checks as evidence-first",
+);
+assertIncludes(
+  readme,
   "docs/external-ai-operator-guide.md",
   "README should link the external AI operator guide",
 );
@@ -2894,6 +2901,11 @@ assertIncludes(
   "PRD should document environment playbook summary metrics",
 );
 assertIncludes(
+  prd,
+  "Integrations 환경별 실행 가이드는 Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 operator check에서 local smoke evidence 저장을 외부 전달과 confirmSave 저장보다 먼저 확인하게 해야 한다.",
+  "PRD should document environment operator checks as evidence-first",
+);
+assertIncludes(
   developmentBrief,
   "### `/integrations`",
   "Development brief should document the Integrations route",
@@ -3032,6 +3044,11 @@ assertIncludes(
   developmentBrief,
   "환경별 실행 가이드에서 연결 환경, 대상 AI 범위, smoke evidence 저장과 review-required gate, confirmSave 피드백 경로를 모바일 2열 요약으로 먼저 보여주고",
   "Development brief should document environment playbook summary metrics",
+);
+assertIncludes(
+  developmentBrief,
+  "각 환경의 operator check에서 local smoke evidence 저장을 외부 전달과 confirmSave 저장보다 먼저 고정한다.",
+  "Development brief should document environment operator checks as evidence-first",
 );
 assertIncludes(
   developmentBrief,

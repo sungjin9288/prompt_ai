@@ -18,6 +18,10 @@ const manifestSource = readFileSync(
   "src/lib/data/supabase-import-execution-packet-manifest.ts",
   "utf8",
 );
+const supabaseImportRouteSource = readFileSync(
+  "src/app/api/data/supabase-import/route.ts",
+  "utf8",
+);
 const readme = readFileSync("README.md", "utf8");
 const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
 const developmentBrief = readFileSync(
@@ -1549,6 +1553,21 @@ assertFileIncludes(
   readme,
   "npm run verify:data-management",
   "README Scripts should document the data-management verification command",
+);
+assert.match(
+  supabaseImportRouteSource,
+  /if \(execute\) \{[\s\S]*?if \(!environmentStatus\.executionEnabled\) \{[\s\S]*?status: "execution-disabled"[\s\S]*?\{ status: 403 \}[\s\S]*?if \(body\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?status: "confirmation-required"[\s\S]*?\{ status: 400 \}[\s\S]*?if \([\s\S]*?!environmentStatus\.supabaseUrlConfigured[\s\S]*?!environmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?status: "environment-incomplete"[\s\S]*?\{ status: 503 \}[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
+  "Supabase import route should check execution enabled, confirmation, and env readiness before constructing the write adapter",
+);
+assert.match(
+  supabaseImportRouteSource,
+  /status: "environment-incomplete"[\s\S]*?requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION[\s\S]*?validation/,
+  "Supabase import route should return the required confirmation string with environment-incomplete execute responses",
+);
+assert.match(
+  supabaseImportRouteSource,
+  /- executionEnabled: \$\{environment\.executionEnabled\}[\s\S]*?- supabaseUrlConfigured: \$\{environment\.supabaseUrlConfigured\}[\s\S]*?- serviceRoleKeyConfigured: \$\{environment\.serviceRoleKeyConfigured\}[\s\S]*?This artifact intentionally contains only configuration booleans/,
+  "Supabase import route audit artifact should expose only gate booleans, not secret values",
 );
 
 assert.throws(

@@ -205,6 +205,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the import\s+route returns explicit execute-gate responses before any write adapter can run/,
+  "README should document the data-management Supabase import route gate verification scope",
+);
+assert.match(
+  readme,
   /verify:integrations` checks that the Integrations route, navigation,\s+Chrome\/Gen AI\/MCP surfaces, MCP tool contract, and product docs stay aligned/,
   "README should document the integrations verification scope",
 );

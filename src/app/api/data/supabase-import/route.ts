@@ -340,6 +340,7 @@ export async function POST(request: Request) {
             environment: environmentStatus,
             error,
             insertOrder: summarizedInsertOrderWithoutPayload,
+            requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
             status: "environment-incomplete",
             validation,
           },

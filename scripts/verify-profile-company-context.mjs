@@ -305,23 +305,21 @@ assertFileIncludes(
   "Development brief should document the numbered Profile/Company AI application workflow cards",
 );
 
-const staleProfileCompanyDraftFallback =
-  "Profile/Company AI 적용 프리뷰의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시";
+const staleProfileCompanyDraftFallbackOnlyContract = [
+  "Profile/Company AI 적용 프리뷰의 Studio 초안",
+  "저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시",
+].join(" ");
 
-assertFileNotIncludes(
-  readme,
-  `${staleProfileCompanyDraftFallback}합니다.`,
-  "README should not keep the Profile/Company fallback-only Studio draft contract",
-);
-assertFileNotIncludes(
-  prd,
-  `${staleProfileCompanyDraftFallback}해야 한다.`,
-  "PRD should not keep the Profile/Company fallback-only Studio draft contract",
-);
-assertFileNotIncludes(
-  developmentBrief,
-  `${staleProfileCompanyDraftFallback}한다.`,
-  "Development brief should not keep the Profile/Company fallback-only Studio draft contract",
-);
+for (const [sourceName, fileSource, suffix] of [
+  ["README", readme, "합니다."],
+  ["PRD", prd, "해야 한다."],
+  ["Development brief", developmentBrief, "한다."],
+]) {
+  assertFileNotIncludes(
+    fileSource,
+    `${staleProfileCompanyDraftFallbackOnlyContract}${suffix}`,
+    `${sourceName} should not keep the Profile/Company draft fallback wording without return action labels`,
+  );
+}
 
 console.log("Profile and Company context operating flow verification passed.");

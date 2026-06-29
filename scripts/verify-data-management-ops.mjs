@@ -1636,6 +1636,113 @@ assert.deepEqual(
   "Supabase importer runner should stop before calling the insert adapter when validation has blockers",
 );
 
+const validWorkspaceId = "00000000-0000-4000-8000-000000000001";
+const validOwnerUserId = "00000000-0000-4000-8000-000000000002";
+const validPromptId = "00000000-0000-4000-8000-000000000003";
+const validVersionId = "00000000-0000-4000-8000-000000000004";
+const successfulPlanInsertCalls = [];
+const successfulPlanResult = await runSupabaseImportExecutionPlan(
+  {
+    archiveTraceFields: [],
+    batches: [
+      {
+        dependency: "workspace",
+        order: 1,
+        rows: [
+          {
+            localId: "workspace-local",
+            payload: { id: validWorkspaceId, name: "Validated workspace" },
+            resolvedId: validWorkspaceId,
+            source: "test",
+          },
+        ],
+        table: "workspaces",
+      },
+      {
+        dependency: "prompt asset",
+        order: 2,
+        rows: [
+          {
+            localId: "prompt-local",
+            payload: {
+              id: validPromptId,
+              title: "Validated prompt",
+              workspace_id: validWorkspaceId,
+            },
+            resolvedId: validPromptId,
+            source: "test",
+          },
+          {
+            localId: "version-local",
+            payload: {
+              id: validVersionId,
+              prompt_asset_id: validPromptId,
+              workspace_id: validWorkspaceId,
+            },
+            resolvedId: validVersionId,
+            source: "test",
+          },
+        ],
+        table: "prompt_assets",
+      },
+    ],
+    generatedUuidCount: 0,
+    ownerUserId: validOwnerUserId,
+    totalRows: 3,
+    unresolvedPendingReferences: [],
+    uuidMap: {},
+    workspaceId: validWorkspaceId,
+  },
+  {
+    async insertRows(request) {
+      successfulPlanInsertCalls.push({
+        order: request.order,
+        rows: request.rows.length,
+        table: request.table,
+      });
+
+      return { insertedRows: request.rows.length };
+    },
+  },
+);
+
+assert.deepEqual(
+  normalizePlain({
+    completedRows: successfulPlanResult.completedRows,
+    insertCalls: successfulPlanInsertCalls,
+    status: successfulPlanResult.status,
+    tableResults: successfulPlanResult.tableResults.map((tableResult) => ({
+      insertedRows: tableResult.insertedRows,
+      order: tableResult.order,
+      status: tableResult.status,
+      table: tableResult.table,
+    })),
+  }),
+  {
+    completedRows: 3,
+    insertCalls: [
+      { order: 1, rows: 1, table: "workspaces" },
+      { order: 2, rows: 2, table: "prompt_assets" },
+    ],
+    status: "completed",
+    tableResults: [
+      {
+        insertedRows: 1,
+        order: 1,
+        status: "inserted",
+        table: "workspaces",
+      },
+      {
+        insertedRows: 2,
+        order: 2,
+        status: "inserted",
+        table: "prompt_assets",
+      },
+    ],
+  },
+  "Supabase importer runner should call the insert adapter in order and record inserted row counts for valid plans",
+);
+
 assert.throws(
   () =>
     createSupabaseRestImportAdapter({

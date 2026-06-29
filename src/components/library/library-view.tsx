@@ -4634,19 +4634,7 @@ export function LibraryView({
       return;
     }
 
-    const filterHref = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const filterHref = buildCurrentLibraryHref({
       promptId: "",
       version: undefined,
       detailMode: "current",
@@ -4671,19 +4659,7 @@ export function LibraryView({
       return;
     }
 
-    const filterHref = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const filterHref = buildCurrentLibraryHref({
       promptId: "",
       version: undefined,
       detailMode: "current",
@@ -4705,19 +4681,7 @@ export function LibraryView({
       return;
     }
 
-    const filterHref = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const filterHref = buildCurrentLibraryHref({
       promptId: "",
       version: undefined,
       detailMode: "current",
@@ -4763,19 +4727,7 @@ export function LibraryView({
       return;
     }
 
-    const filterHref = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const filterHref = buildCurrentLibraryHref({
       promptId: "",
       version: undefined,
       detailMode: "current",
@@ -4799,19 +4751,7 @@ export function LibraryView({
       return;
     }
 
-    const filterHref = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const filterHref = buildCurrentLibraryHref({
       promptId: "",
       version: undefined,
       detailMode: "current",
@@ -4833,19 +4773,7 @@ export function LibraryView({
       return;
     }
 
-    const filterHref = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const filterHref = buildCurrentLibraryHref({
       promptId: "",
       version: undefined,
       detailMode: "current",
@@ -4994,19 +4922,7 @@ export function LibraryView({
       return;
     }
 
-    const filterHref = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const filterHref = buildCurrentLibraryHref({
       promptId: "",
       version: undefined,
       detailMode: "current",

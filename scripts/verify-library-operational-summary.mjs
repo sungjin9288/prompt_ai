@@ -657,7 +657,7 @@ assertIncludes(
   "Library storage-mode reports should guide missing saved-source metadata review",
 );
 assertMatches(
-  /function copyStudioSourceFilterLink\(\)[\s\S]*?studioPersistence: studioPersistenceFilter[\s\S]*?studioSource: studioSourceFilter[\s\S]*?promptId: ""[\s\S]*?id: "studio-source-link"[\s\S]*?title: "Studio 저장 출처 조건 링크"[\s\S]*?setFilterLinkCopied\(copiedToClipboard\)/,
+  /function copyStudioSourceFilterLink\(\)[\s\S]*?const filterHref = buildCurrentLibraryHref\(\{[\s\S]*?promptId: ""[\s\S]*?id: "studio-source-link"[\s\S]*?title: "Studio 저장 출처 조건 링크"[\s\S]*?setFilterLinkCopied\(copiedToClipboard\)/,
   "Library Studio source action panel should copy a shareable saved-source condition link",
 );
 assertMatches(
@@ -697,7 +697,7 @@ assertMatches(
   "Library Studio source candidates should open Studio drafts with saved-source wording",
 );
 assertMatches(
-  /function copyStudioOperationalGroupFilterLink\(\)[\s\S]*?studioPersistence: studioPersistenceFilter[\s\S]*?studioSource: studioSourceFilter[\s\S]*?promptId: ""[\s\S]*?id: "studio-operational-group-link"[\s\S]*?title: "Studio 운영 묶음 조건 링크"[\s\S]*?setFilterLinkCopied\(copiedToClipboard\)/,
+  /function copyStudioOperationalGroupFilterLink\(\)[\s\S]*?const filterHref = buildCurrentLibraryHref\(\{[\s\S]*?promptId: ""[\s\S]*?id: "studio-operational-group-link"[\s\S]*?title: "Studio 운영 묶음 조건 링크"[\s\S]*?setFilterLinkCopied\(copiedToClipboard\)/,
   "Library combined operation cohort panel should copy a shareable filter link without binding a selected prompt",
 );
 assertMatches(

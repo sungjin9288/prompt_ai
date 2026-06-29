@@ -624,7 +624,9 @@ for (const requiredText of [
   "외부 AI로 넘기기 전에 Chrome, MCP, Learning feedback 증거 파일을 남깁니다.",
   "외부 AI에 수동 전달",
   "실행 결과 저장 판단",
-  "자동화는 정제까지, 외부 전달은 검토 후 복사.",
+  "Gate: local-first automation, smoke evidence saved, review-required external delivery, confirmed feedback save.",
+  "자동화는 정제까지, 외부 전달은 증거 저장 후 검토 복사.",
+  "smoke evidence, handoff package, reviewRequired",
   "MCP 기본값 예시",
   "PROMPT_AI_STUDIO_TARGET_AI=codex",
   "PROMPT_AI_STUDIO_SOURCE_URL=mcp://codex",
@@ -689,7 +691,7 @@ assert.match(
 );
 assert.match(
   externalAiOperatorGuidePanel,
-  /function ExternalAiOperatorGate\(\)[\s\S]*?Operator Gate[\s\S]*?자동화는 정제까지, 외부 전달은 검토 후 복사\.[\s\S]*?handoff package[\s\S]*?reviewRequired[\s\S]*?<ExternalAiOperatorGate \/>/,
+  /function ExternalAiOperatorGate\(\)[\s\S]*?Operator Gate[\s\S]*?자동화는 정제까지, 외부 전달은 증거 저장 후 검토 복사\.[\s\S]*?smoke evidence, handoff package, reviewRequired[\s\S]*?<ExternalAiOperatorGate \/>/,
   "External AI operator guide should render the operator gate through a dedicated component",
 );
 assert.match(

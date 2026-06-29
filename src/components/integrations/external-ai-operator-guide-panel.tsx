@@ -135,7 +135,7 @@ function buildExternalAiOperatorGuidePackage() {
   return [
     "# Prompt AI Studio External AI Operator Guide",
     "",
-    "Gate: local-first automation, review-required external delivery, confirmed feedback save.",
+    "Gate: local-first automation, smoke evidence saved, review-required external delivery, confirmed feedback save.",
     "Scope: Chrome, Codex, Claude, GPT-compatible MCP client, Gemini handoff.",
     "",
     "## Target AI delivery rules",
@@ -275,11 +275,12 @@ function ExternalAiOperatorGate() {
         Operator Gate
       </p>
       <p className="mt-2 text-sm font-semibold text-foreground">
-        자동화는 정제까지, 외부 전달은 검토 후 복사.
+        자동화는 정제까지, 외부 전달은 증거 저장 후 검토 복사.
       </p>
       <p className="mt-2 text-sm leading-6 text-muted">
         Chrome, MCP, Codex에서 생성된 결과는 GPT, Claude, Codex, Gemini에
-        붙여넣기 전에 handoff package와 reviewRequired를 먼저 확인합니다.
+        붙여넣기 전에 smoke evidence, handoff package, reviewRequired를 먼저
+        확인합니다.
       </p>
     </div>
   );

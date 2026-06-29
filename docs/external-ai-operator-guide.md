@@ -38,6 +38,18 @@ npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.m
 - GPT, Claude, Codex, Gemini에 자동 전송하지 않고 handoff package를 먼저 읽습니다.
 - 실행 결과가 의미 있을 때만 `save_execution_feedback`에 `confirmSave: true`를 사용합니다.
 
+## 실행 증거 체크
+
+외부 AI로 넘기기 전후에는 아래 순서대로 증거를 남깁니다.
+
+1. 로컬 연결: `localhost:3000`과 `POST /api/integrations/refine` 응답을 확인합니다.
+2. 정제 결과: `reviewRequired true`와 target handoff package를 확인합니다.
+3. 증거 저장: Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.
+4. 전달 승인: copy-ready prompt와 missing context review를 확인한 뒤 붙여넣습니다.
+5. 피드백 증거: rating, result summary, inbox record를 `confirmSave: true` 후 확인합니다.
+
+자동화 기본 원칙은 `Refine automatically, save evidence, deliver with review.`입니다. 감사 출처는 `chrome-selection`, `mcp-refine`, `local-smoke-evidence`, `target-ai-handoff` 순서로 남기고, `local-smoke-evidence`가 `target-ai-handoff`보다 먼저 있어야 합니다.
+
 ## Chrome으로 테스트
 
 1. 확장 파일 계약을 먼저 확인합니다.

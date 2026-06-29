@@ -41,6 +41,10 @@ function assertFileIncludes(fileSource, text, message) {
   assert.ok(fileSource.includes(text), message);
 }
 
+function assertFileNotIncludes(fileSource, text, message) {
+  assert.ok(!fileSource.includes(text), message);
+}
+
 assertSharedMatches(
   /export interface ContextOperatingFlowItem[\s\S]*?actionLabel: string[\s\S]*?detail: string[\s\S]*?disabled\?: boolean[\s\S]*?href\?: string[\s\S]*?onAction\?: \(\) => void[\s\S]*?step: string[\s\S]*?title: string/,
   "Context operating flow should expose a shared typed item shape",
@@ -196,8 +200,18 @@ assertFileIncludes(
 );
 assertFileIncludes(
   sourceRegistrySource,
+  'sourceActionLabel: "Profile로 돌아가기"',
+  "Source registry should expose the Profile return action label",
+);
+assertFileIncludes(
+  sourceRegistrySource,
   "Company 회사 기준 적용 프리뷰",
   "Source registry should label Company context application drafts",
+);
+assertFileIncludes(
+  sourceRegistrySource,
+  'sourceActionLabel: "Company로 돌아가기"',
+  "Source registry should expose the Company return action label",
 );
 
 assertFileIncludes(
@@ -227,8 +241,8 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Profile/Company AI 적용 프리뷰의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시합니다.",
-  "README should document Profile/Company Studio draft fallback",
+  "Profile/Company AI 적용 프리뷰의 Studio 초안은 각각 `Profile로 돌아가기`, `Company로 돌아가기` 복귀 액션 라벨로 원래 기준 화면을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시합니다.",
+  "README should document Profile/Company Studio draft return actions and fallback",
 );
 assertFileIncludes(
   readme,
@@ -262,8 +276,8 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prd,
-  "Profile/Company AI 적용 프리뷰의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시해야 한다.",
-  "PRD should document Profile/Company Studio draft fallback",
+  "Profile/Company AI 적용 프리뷰의 Studio 초안은 각각 `Profile로 돌아가기`, `Company로 돌아가기` 복귀 액션 라벨로 원래 기준 화면을 복원해야 하며, 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시해야 한다.",
+  "PRD should document Profile/Company Studio draft return actions and fallback",
 );
 assertFileIncludes(
   prd,
@@ -282,13 +296,32 @@ assertFileIncludes(
 );
 assertFileIncludes(
   developmentBrief,
-  "Profile/Company AI 적용 프리뷰의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시한다.",
-  "Development brief should document Profile/Company Studio draft fallback",
+  "Profile/Company AI 적용 프리뷰의 Studio 초안은 각각 `Profile로 돌아가기`, `Company로 돌아가기` 복귀 액션 라벨로 원래 기준 화면을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시한다.",
+  "Development brief should document Profile/Company Studio draft return actions and fallback",
 );
 assertFileIncludes(
   developmentBrief,
   "Profile/Company AI 적용 프리뷰는 `01 기준 확인`, `02 적용 문구`, `03 Studio 전송` 단계 카드로 기준 점검, 영어/한영 하이브리드 지시문 적용, 외부 AI handoff 순서를 먼저 보여준다.",
   "Development brief should document the numbered Profile/Company AI application workflow cards",
+);
+
+const staleProfileCompanyDraftFallback =
+  "Profile/Company AI 적용 프리뷰의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시";
+
+assertFileNotIncludes(
+  readme,
+  `${staleProfileCompanyDraftFallback}합니다.`,
+  "README should not keep the Profile/Company fallback-only Studio draft contract",
+);
+assertFileNotIncludes(
+  prd,
+  `${staleProfileCompanyDraftFallback}해야 한다.`,
+  "PRD should not keep the Profile/Company fallback-only Studio draft contract",
+);
+assertFileNotIncludes(
+  developmentBrief,
+  `${staleProfileCompanyDraftFallback}한다.`,
+  "Development brief should not keep the Profile/Company fallback-only Studio draft contract",
 );
 
 console.log("Profile and Company context operating flow verification passed.");

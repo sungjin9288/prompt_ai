@@ -159,7 +159,7 @@ Studio 초안 출처 관리:
 - Profile/Company 보강 화면의 `returnTo`와 저장 후 업데이트 신호 경로도 `normalizeInternalHref` 규칙을 거쳐 내부 경로만 사용한다.
 - Profile/Company 맥락 요약은 필수 완료, 부족 항목, 확장 기준, 복귀 위치를 모바일 2열과 데스크톱 4열로 먼저 보여준다.
 - Profile/Company AI 적용 프리뷰는 입력한 개인/회사 기준을 GPT, Claude, Codex, Gemini에 붙일 수 있는 영어 또는 한영 하이브리드 적용 지시문으로 미리 보여주고 복사하거나 Studio 초안으로 보낸다.
-- Profile/Company AI 적용 프리뷰의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시한다.
+- Profile/Company AI 적용 프리뷰의 Studio 초안은 각각 `Profile로 돌아가기`, `Company로 돌아가기` 복귀 액션 라벨로 원래 기준 화면을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 적용 프롬프트 원문을 표시한다.
 - Profile/Company AI 적용 프리뷰는 `01 기준 확인`, `02 적용 문구`, `03 Studio 전송` 단계 카드로 기준 점검, 영어/한영 하이브리드 지시문 적용, 외부 AI handoff 순서를 먼저 보여준다.
 - 내부 링크를 복사용 절대 URL로 바꿀 때는 `formatAbsoluteInternalHref`를 사용한다.
 - UI 컴포넌트에서 `@/lib/studio/href`를 직접 import하면 lint가 실패한다. 화면에서는 공용 navigation helper를 사용하고, Studio wrapper는 draft/source meta 계층에만 둔다.

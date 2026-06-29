@@ -3,6 +3,10 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
+import {
+  buildGitProvenanceLines,
+  formatWorkingTreeStatus,
+} from "./lib/git-provenance.mjs";
 
 const scriptPath = "scripts/verify-evidence.mjs";
 
@@ -16,6 +20,25 @@ function runEvidence(args, options = {}) {
     },
   });
 }
+
+assert.equal(formatWorkingTreeStatus(""), "clean");
+assert.equal(formatWorkingTreeStatus(" M README.md"), "dirty");
+assert.equal(formatWorkingTreeStatus("unavailable"), "unavailable");
+assert.deepEqual(
+  buildGitProvenanceLines({
+    branch: "main",
+    changedFiles: 0,
+    commit: "abc1234",
+    status: "",
+  }),
+  [
+    "- branch: main",
+    "- commit: abc1234",
+    "- workingTree: clean",
+    "- changedFiles: 0",
+  ],
+  "git provenance helper should format the shared evidence lines",
+);
 
 const helpResult = runEvidence(["--help"]);
 

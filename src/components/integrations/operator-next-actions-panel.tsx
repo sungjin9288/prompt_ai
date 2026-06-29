@@ -117,7 +117,7 @@ const operatorEvidenceFieldGroups = [
   },
   {
     fields:
-      "client, target AI, tool sequence, review gate, evidence result, feedback record",
+      "client, target AI, tool sequence, review gate, evidence result, integrated smoke result, feedback record",
     label: "MCP client",
   },
   {

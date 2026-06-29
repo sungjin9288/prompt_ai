@@ -39,6 +39,7 @@ type McpClientEvidenceDraft = {
   client: string;
   evidenceResult: string;
   feedbackRecord: string;
+  integratedSmoke: string;
   reviewGate: string;
   targetAI: string;
   toolSequence: string;
@@ -274,6 +275,11 @@ const mcpClientEvidenceFields = [
     placeholder: "review-required handoff checked and smoke evidence saved",
   },
   {
+    key: "integratedSmoke",
+    label: "Integrated smoke",
+    placeholder: "npm run smoke:integrations passed before external delivery",
+  },
+  {
     key: "feedbackRecord",
     label: "Feedback record",
     placeholder: "confirmSave true record appears in Feedback inbox",
@@ -464,7 +470,7 @@ function buildMcpClientEvidencePacket(draft: McpClientEvidenceDraft) {
     "# Prompt AI Studio MCP Client Smoke Evidence",
     "",
     "Surface: MCP client",
-    "Gate: actual MCP client smoke, review-required package, local evidence before target handoff.",
+    "Gate: actual MCP client smoke, review-required package, npm run smoke:integrations before target handoff.",
     "",
     ...mcpClientEvidenceFields.map(
       (field) =>
@@ -476,6 +482,7 @@ function buildMcpClientEvidencePacket(draft: McpClientEvidenceDraft) {
     "",
     "Operator decision:",
     "- Copy only after the MCP client returned a review-required package.",
+    "- Run npm run smoke:integrations before pasting into an external AI client.",
     "- Save execution feedback only after the external AI result is reviewed.",
   ].join("\n");
 }
@@ -503,6 +510,10 @@ function buildMcpClientFeedbackPayload(draft: McpClientEvidenceDraft) {
         `Evidence: ${formatMcpClientEvidenceValue(
           draft.evidenceResult,
           "review-required handoff checked and smoke evidence saved",
+        )}`,
+        `Integrated smoke: ${formatMcpClientEvidenceValue(
+          draft.integratedSmoke,
+          "npm run smoke:integrations passed before external delivery",
         )}`,
         `Feedback record: ${formatMcpClientEvidenceValue(
           draft.feedbackRecord,
@@ -1277,8 +1288,8 @@ function McpActualClientEvidenceSection({
           </p>
           <p className="mt-2 text-sm leading-6 text-muted">
             실제 MCP client에서 확인한 결과를 그대로 적고, review-required
-            smoke 증빙과 confirmSave 전 feedback payload를 같은 기준으로
-            복사합니다.
+            package, 통합 smoke, confirmSave 전 feedback payload를 같은
+            기준으로 복사합니다.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -1347,6 +1358,7 @@ export function McpConnectionPanel() {
       client: "",
       evidenceResult: "",
       feedbackRecord: "",
+      integratedSmoke: "",
       reviewGate: "",
       targetAI: "",
       toolSequence: "",

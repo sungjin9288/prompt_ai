@@ -489,7 +489,7 @@ for (const requiredText of [
   "Chrome loaded extension",
   "runtime, source, review gate, target AI, session, evidence result, feedback record",
   "MCP client",
-  "client, target AI, tool sequence, review gate, evidence result, feedback record",
+  "client, target AI, tool sequence, review gate, evidence result, integrated smoke result, feedback record",
   "Learning feedback",
   "low-confidence condition, Studio validation draft, Library validation filter, release evidence command, release candidate command, feedback memory action",
   "## Actual evidence fields",
@@ -567,7 +567,7 @@ assert.match(
 );
 assert.match(
   operatorNextActionsPanel,
-  /const operatorEvidenceFieldGroups = \[[\s\S]*?runtime, source, review gate, target AI, session, evidence result, feedback record[\s\S]*?label: "Chrome loaded extension"[\s\S]*?client, target AI, tool sequence, review gate, evidence result, feedback record[\s\S]*?label: "MCP client"[\s\S]*?low-confidence condition, Studio validation draft, Library validation filter, release evidence command, release candidate command, feedback memory action[\s\S]*?label: "Learning feedback"/,
+  /const operatorEvidenceFieldGroups = \[[\s\S]*?runtime, source, review gate, target AI, session, evidence result, feedback record[\s\S]*?label: "Chrome loaded extension"[\s\S]*?client, target AI, tool sequence, review gate, evidence result, integrated smoke result, feedback record[\s\S]*?label: "MCP client"[\s\S]*?low-confidence condition, Studio validation draft, Library validation filter, release evidence command, release candidate command, feedback memory action[\s\S]*?label: "Learning feedback"/,
   "Operator next actions panel should define the actual evidence fields for Chrome, MCP, and Learning smoke runs",
 );
 assert.match(
@@ -1259,7 +1259,10 @@ for (const requiredText of [
   "buildMcpClientFeedbackInboxCheck",
   "Prompt AI Studio MCP Client Smoke Evidence",
   "Prompt AI Studio MCP Client Feedback Inbox Check",
-  "actual MCP client smoke, review-required package, local evidence before target handoff",
+  "actual MCP client smoke, review-required package, npm run smoke:integrations before target handoff",
+  "Integrated smoke",
+  "integratedSmoke",
+  "npm run smoke:integrations passed before external delivery",
   "Set confirmSave to true only after the operator reviews the actual MCP client result.",
   'data-testid="mcp-actual-client-evidence"',
   "review-required handoff checked and smoke evidence saved",
@@ -1390,12 +1393,12 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
-  /function buildMcpClientEvidencePacket\(draft: McpClientEvidenceDraft\)[\s\S]*?Prompt AI Studio MCP Client Smoke Evidence[\s\S]*?actual MCP client smoke, review-required package, local evidence before target handoff[\s\S]*?mcpClientEvidenceFields\.map[\s\S]*?draft\[field\.key\][\s\S]*?Copy only after the MCP client returned a review-required package[\s\S]*?Save execution feedback only after the external AI result is reviewed/,
+  /function buildMcpClientEvidencePacket\(draft: McpClientEvidenceDraft\)[\s\S]*?Prompt AI Studio MCP Client Smoke Evidence[\s\S]*?actual MCP client smoke, review-required package, npm run smoke:integrations before target handoff[\s\S]*?mcpClientEvidenceFields\.map[\s\S]*?draft\[field\.key\][\s\S]*?Copy only after the MCP client returned a review-required package[\s\S]*?Run npm run smoke:integrations before pasting into an external AI client[\s\S]*?Save execution feedback only after the external AI result is reviewed/,
   "MCP connection panel should build a copyable actual MCP client smoke evidence packet",
 );
 assert.match(
   mcpConnectionPanel,
-  /function buildMcpClientFeedbackPayload\(draft: McpClientEvidenceDraft\)[\s\S]*?promptId: `mcp-client-smoke-\$\{targetAI\.toLowerCase\(\)\}`[\s\S]*?Set confirmSave to true only after the operator reviews the actual MCP client result[\s\S]*?confirmSave: false[\s\S]*?reviewGate:[\s\S]*?Set confirmSave to true only after the operator reviews the actual MCP client result/,
+  /function buildMcpClientFeedbackPayload\(draft: McpClientEvidenceDraft\)[\s\S]*?promptId: `mcp-client-smoke-\$\{targetAI\.toLowerCase\(\)\}`[\s\S]*?Integrated smoke:[\s\S]*?draft\.integratedSmoke[\s\S]*?npm run smoke:integrations passed before external delivery[\s\S]*?Set confirmSave to true only after the operator reviews the actual MCP client result[\s\S]*?confirmSave: false[\s\S]*?reviewGate:[\s\S]*?Set confirmSave to true only after the operator reviews the actual MCP client result/,
   "MCP connection panel should build a gated save_execution_feedback payload from actual MCP client evidence",
 );
 assert.match(
@@ -1405,7 +1408,7 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
-  /function McpActualClientEvidenceSection[\s\S]*?draft: McpClientEvidenceDraft[\s\S]*?onCopyFeedback[\s\S]*?onCopyFeedbackCheck[\s\S]*?data-testid="mcp-actual-client-evidence"[\s\S]*?Actual client evidence[\s\S]*?실제 MCP client에서 확인한 결과를 그대로 적고[\s\S]*?MCP client 증빙 복사[\s\S]*?onClick=\{onCopyFeedback\}[\s\S]*?MCP feedback payload 복사[\s\S]*?onClick=\{onCopyFeedbackCheck\}[\s\S]*?MCP inbox 확인 복사[\s\S]*?mcpClientEvidenceFields\.map[\s\S]*?className=\{inputClass\}[\s\S]*?onChange\(field\.key, event\.target\.value\)[\s\S]*?value=\{draft\[field\.key\]\}/,
+  /function McpActualClientEvidenceSection[\s\S]*?draft: McpClientEvidenceDraft[\s\S]*?onCopyFeedback[\s\S]*?onCopyFeedbackCheck[\s\S]*?data-testid="mcp-actual-client-evidence"[\s\S]*?Actual client evidence[\s\S]*?실제 MCP client에서 확인한 결과를 그대로 적고[\s\S]*?통합 smoke[\s\S]*?MCP client 증빙 복사[\s\S]*?onClick=\{onCopyFeedback\}[\s\S]*?MCP feedback payload 복사[\s\S]*?onClick=\{onCopyFeedbackCheck\}[\s\S]*?MCP inbox 확인 복사[\s\S]*?mcpClientEvidenceFields\.map[\s\S]*?className=\{inputClass\}[\s\S]*?onChange\(field\.key, event\.target\.value\)[\s\S]*?value=\{draft\[field\.key\]\}/,
   "MCP connection panel should render actual MCP client evidence inputs with copy support",
 );
 assert.match(
@@ -2986,7 +2989,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "실제 MCP client에서 확인한 client/tool sequence/review gate/target AI/evidence result/feedback record를 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사하게 합니다.",
+  "실제 MCP client에서 확인한 client/tool sequence/review gate/target AI/evidence result/integrated smoke result/feedback record를 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사하게 합니다.",
   "README should document actual MCP client smoke evidence copy flow",
 );
 assertIncludes(
@@ -3261,7 +3264,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations MCP 실제 client smoke 증빙은 client, tool sequence, review gate, target AI, evidence result, feedback record를 입력해 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사할 수 있어야 한다.",
+  "Integrations MCP 실제 client smoke 증빙은 client, tool sequence, review gate, target AI, evidence result, integrated smoke result, feedback record를 입력해 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사할 수 있어야 한다.",
   "PRD should document actual MCP client smoke evidence copy flow",
 );
 assertIncludes(
@@ -3616,7 +3619,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "실제 MCP client에서 확인한 client/tool sequence/review gate/target AI/evidence result/feedback record를 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사하게 함.",
+  "실제 MCP client에서 확인한 client/tool sequence/review gate/target AI/evidence result/integrated smoke result/feedback record를 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사하게 함.",
   "Development brief should document actual MCP client smoke evidence copy flow",
 );
 assertIncludes(

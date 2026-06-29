@@ -201,7 +201,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시합니다.",
+  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안은 각각 `Learning 준비도로 돌아가기`, `Learning 조건으로 돌아가기`, `Learning 메모리로 돌아가기`, `Learning 피드백 큐로 돌아가기` 복귀 액션 라벨로 원래 조건을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시합니다.",
   "README should document Learning Studio draft storage fallback",
 );
 assertFileIncludes(
@@ -381,7 +381,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prd,
-  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
+  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안은 각각 `Learning 준비도로 돌아가기`, `Learning 조건으로 돌아가기`, `Learning 메모리로 돌아가기`, `Learning 피드백 큐로 돌아가기` 복귀 액션 라벨로 원래 조건을 복원해야 하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
   "PRD should document Learning Studio draft storage fallback",
 );
 assertFileIncludes(
@@ -504,6 +504,18 @@ assertFileIncludes(
   "Learning 준비도 리포트",
   "Studio source registry should label Learning readiness drafts",
 );
+for (const sourceActionLabel of [
+  "Learning 준비도로 돌아가기",
+  "Learning 조건으로 돌아가기",
+  "Learning 메모리로 돌아가기",
+  "Learning 피드백 큐로 돌아가기",
+]) {
+  assertFileIncludes(
+    sourceRegistry,
+    sourceActionLabel,
+    `Studio source registry should include ${sourceActionLabel}`,
+  );
+}
 assertFileIncludes(
   devBrief,
   "Learning 피드백 개선 큐는 `01 검토`, `02 Studio`, `03 기록` 단계 카드를 함께 보여줘 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록 순서를 바로 읽게 함",
@@ -516,7 +528,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   devBrief,
-  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시함",
+  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안은 각각 `Learning 준비도로 돌아가기`, `Learning 조건으로 돌아가기`, `Learning 메모리로 돌아가기`, `Learning 피드백 큐로 돌아가기` 복귀 액션 라벨로 원래 조건을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시함",
   "Development brief should document Learning Studio draft storage fallback",
 );
 

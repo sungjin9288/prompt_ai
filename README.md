@@ -124,7 +124,7 @@
 - Learning 준비도 리포트에 낮은 신뢰도, 최근 업데이트, scope별 점검 절대 URL을 포함
 - Learning 준비도 리포트를 Studio 초안으로 전송하고 `learning-readiness` 저장 출처로 추적
 - Learning 필터 결과 리포트에 현재 조건 절대 URL을 포함
-- Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시합니다.
+- Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안은 각각 `Learning 준비도로 돌아가기`, `Learning 조건으로 돌아가기`, `Learning 메모리로 돌아가기`, `Learning 피드백 큐로 돌아가기` 복귀 액션 라벨로 원래 조건을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시합니다.
 - Learning 운영 리포트/조건 링크/필터 결과/개별 메모리 복사의 clipboard fallback, 실패 상태, 수동 복사용 textarea 표시
 - Learning 낮은 신뢰도/수동/자동 생성 검토 기준 필터와 신뢰도/업데이트 정렬
 - Learning 수동 메모리 추가/수정/삭제와 같은 scope+내용 중복 저장 방지로 회사 기준, 개인 선호, 분야 규칙, 스킬 패턴 직접 보강

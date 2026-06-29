@@ -2700,7 +2700,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Studio 초안 원본 경로는 `#integrations-environment-guide`로 돌아오게 합니다.",
+  "Studio 초안 원본 경로는 `#integrations-environment-guide`로 돌아오며",
   "README should document environment checklist Studio source anchor",
 );
 assertIncludes(
@@ -2750,13 +2750,28 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "Studio 초안 원본 경로는 `#integrations-operator-guide`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
+  "README should document external AI operator guide Studio source return action label",
+);
+assertIncludes(
+  readme,
   "저장 실패 시 이동하지 않고 수동 복사용 운영 가이드 원문을 표시",
   "README should document external AI operator guide Studio draft fallback",
 );
 assertIncludes(
   readme,
+  "Studio 초안 원본 경로는 `#integrations-environment-guide`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시합니다.",
+  "README should document environment checklist Studio source return action label",
+);
+assertIncludes(
+  readme,
   "Studio 초안 저장 실패 시 이동하지 않고 수동 복사용 체크리스트 원문을 표시",
   "README should document environment checklist Studio draft fallback",
+);
+assertIncludes(
+  readme,
+  "Studio 초안 원본 경로는 `#integrations-mcp-connection`으로 돌아오고, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시합니다.",
+  "README should document MCP runbook Studio source return action label",
 );
 assertIncludes(
   readme,
@@ -2770,7 +2785,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Studio 초안 원본 경로는 `#integrations-mcp-connection`으로 돌아오게 합니다.",
+  "Studio 초안 원본 경로는 `#integrations-mcp-connection`으로 돌아오고",
   "README should document MCP runbook Studio source anchor",
 );
 assertIncludes(

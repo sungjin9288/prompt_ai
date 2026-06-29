@@ -1098,7 +1098,7 @@ for (const requiredText of [
   "03 검증과 학습",
   "local server + MCP bridge self-test",
   "shared config, target AI별 handoff contract",
-  "reviewRequired smoke evidence + confirmed feedback",
+  "reviewRequired package + npm run smoke:integrations + confirmed feedback",
   "McpSetupCommandBar",
   "McpClientConfigPanel",
   "McpSetupManualCopyTextarea",
@@ -1129,6 +1129,7 @@ for (const requiredText of [
   "save_execution_feedback",
   "MCP config 복사",
   "Self-test 명령 복사",
+  "통합 smoke 명령 복사",
   "Dev server 명령 복사",
   "clientSetupExamples",
   "Client examples",
@@ -1174,6 +1175,7 @@ for (const requiredText of [
   "reviewRequired",
   "destructive-command approval notes",
   "does not assume repo access",
+  "names npm run smoke:integrations before delivery",
   "smoke-prompt",
   "smokeFeedbackTemplates",
   "Smoke feedback payloads",
@@ -1224,6 +1226,7 @@ for (const requiredText of [
   "buildMcpFeedbackInboxApiCheckList",
   "buildMcpFeedbackInboxCurlCheckList",
   "Prompt AI Studio MCP End-to-End Smoke Runbook",
+  "npm run smoke:integrations",
   "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
   "Keep local-smoke-evidence before target-ai-handoff.",
   "data-testid=\"mcp-runbook-evidence-trace-summary\"",
@@ -1287,7 +1290,7 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
-  /const mcpSetupWorkflowSteps = \[[\s\S]*?local server \+ MCP bridge self-test[\s\S]*?label: "01 로컬 준비"[\s\S]*?shared config, target AI별 handoff contract[\s\S]*?label: "02 클라이언트 연결"[\s\S]*?reviewRequired smoke evidence \+ confirmed feedback[\s\S]*?label: "03 검증과 학습"/,
+  /const mcpSetupWorkflowSteps = \[[\s\S]*?local server \+ MCP bridge self-test[\s\S]*?label: "01 로컬 준비"[\s\S]*?shared config, target AI별 handoff contract[\s\S]*?label: "02 클라이언트 연결"[\s\S]*?reviewRequired package \+ npm run smoke:integrations \+ confirmed feedback[\s\S]*?label: "03 검증과 학습"/,
   "MCP connection panel should define a visible setup workflow for local setup, client config, and feedback verification",
 );
 assert.match(
@@ -1297,7 +1300,7 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
-  /function buildMcpEndToEndSmokeRunbook\(\)[\s\S]*?Gate: local-first automation, smoke evidence saved, review-required external delivery, and confirmSave only after operator review\.[\s\S]*?\.\.\.mcpEvidenceTrace[\s\S]*?Steps:/,
+  /function buildMcpEndToEndSmokeRunbook\(\)[\s\S]*?Gate: local-first automation, smoke evidence saved, review-required external delivery, and confirmSave only after operator review\.[\s\S]*?\.\.\.mcpEvidenceTrace[\s\S]*?Steps:[\s\S]*?mcpIntegratedSmokeCommand/,
   "MCP end-to-end smoke runbook should include the shared evidence trace before runbook steps",
 );
 assert.match(
@@ -1327,7 +1330,12 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
-  /function McpSetupCommandBar[\s\S]*?data-testid="mcp-setup-command-bar"[\s\S]*?onCopy\(mcpConfigJson, "config"\)[\s\S]*?MCP config 복사[\s\S]*?onCopy\(mcpSelfTestCommand, "self-test"\)[\s\S]*?Self-test 명령 복사[\s\S]*?onCopy\(mcpDevCommand, "dev"\)[\s\S]*?Dev server 명령 복사[\s\S]*?<McpSetupCommandBar onCopy=\{copyValue\} \/>/,
+  /const mcpIntegratedSmokeCommand = "npm run smoke:integrations";/,
+  "MCP connection should expose the integrated local smoke preflight command",
+);
+assert.match(
+  mcpConnectionPanel,
+  /function McpSetupCommandBar[\s\S]*?data-testid="mcp-setup-command-bar"[\s\S]*?onCopy\(mcpConfigJson, "config"\)[\s\S]*?MCP config 복사[\s\S]*?onCopy\(mcpSelfTestCommand, "self-test"\)[\s\S]*?Self-test 명령 복사[\s\S]*?onCopy\(mcpIntegratedSmokeCommand, "integrated-smoke"\)[\s\S]*?통합 smoke 명령 복사[\s\S]*?onCopy\(mcpDevCommand, "dev"\)[\s\S]*?Dev server 명령 복사[\s\S]*?<McpSetupCommandBar onCopy=\{copyValue\} \/>/,
   "MCP connection panel should render setup copy commands through a dedicated command bar",
 );
 assert.match(
@@ -2958,6 +2966,16 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "reviewRequired package, `npm run smoke:integrations`, confirmSave feedback 순서를 구분합니다.",
+  "README should document MCP integrated smoke preflight order",
+);
+assertIncludes(
+  readme,
+  "self-test 명령, 통합 smoke 명령, dev server 명령",
+  "README should document MCP integrated smoke command copy",
+);
+assertIncludes(
+  readme,
   "Claude/Codex/GPT-compatible client별 config scope, target AI, use case, operator gate를 카드로 먼저 구분하고",
   "README should document MCP client setup cards",
 );
@@ -3210,6 +3228,11 @@ assertIncludes(
   prd,
   "Integrations MCP 연결 설정은 대상 클라이언트 수, 공유 mcpServers config, --self-test 첫 검증, confirmSave 피드백 gate를 모바일 2열 요약으로 먼저 보여줘야 한다.",
   "PRD should document MCP connection summary metrics",
+);
+assertIncludes(
+  prd,
+  "Integrations MCP 연결 설정은 `01 로컬 준비`, `02 클라이언트 연결`, `03 검증과 학습` 단계 카드로 dev server/self-test, shared mcpServers config, reviewRequired package, `npm run smoke:integrations`, confirmSave feedback 순서를 먼저 보여줘야 한다.",
+  "PRD should document MCP integrated smoke preflight order",
 );
 assertIncludes(
   prd,
@@ -3570,6 +3593,16 @@ assertIncludes(
   developmentBrief,
   "Integrations MCP 연결 설정은 대상 클라이언트 수, 공유 mcpServers config, --self-test 첫 검증, confirmSave 피드백 gate를 모바일 2열 요약으로 먼저 보여주고",
   "Development brief should document MCP connection summary metrics",
+);
+assertIncludes(
+  developmentBrief,
+  "reviewRequired package, `npm run smoke:integrations`, confirmSave feedback 순서를 구분한다.",
+  "Development brief should document MCP integrated smoke preflight order",
+);
+assertIncludes(
+  developmentBrief,
+  "self-test 명령, 통합 smoke 명령, dev server 명령",
+  "Development brief should document MCP integrated smoke command copy",
 );
 assertIncludes(
   developmentBrief,

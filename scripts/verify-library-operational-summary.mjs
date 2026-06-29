@@ -444,7 +444,7 @@ assertMatches(
   "Library selected operational summary should expose sourceVariant-aware shareable operation, source, and persistence links with local fallback",
 );
 assertMatches(
-  /function copySourceReasonFilterLink\(\)[\s\S]*?sourceReason: sourceReasonFilter[\s\S]*?promptId: ""[\s\S]*?id: "source-health-filter-link"[\s\S]*?title: "출처 사유 조건 링크"[\s\S]*?setFilterLinkCopied\(copiedToClipboard\)/,
+  /function copySourceReasonFilterLink\(\)[\s\S]*?const filterHref = buildCurrentLibraryHref\(\{[\s\S]*?promptId: ""[\s\S]*?id: "source-health-filter-link"[\s\S]*?title: "출처 사유 조건 링크"[\s\S]*?setFilterLinkCopied\(copiedToClipboard\)/,
   "Library source-health action panel should copy a shareable source-reason condition link",
 );
 assertMatches(
@@ -621,7 +621,7 @@ assertMatches(
   "Library Studio persistence candidates should keep manual fallback when draft storage fails",
 );
 assertMatches(
-  /function copyStudioPersistenceFilterLink\(\)[\s\S]*?studioPersistence: studioPersistenceFilter[\s\S]*?studioSource: studioSourceFilter[\s\S]*?promptId: ""[\s\S]*?id: "studio-persistence-link"[\s\S]*?"저장 출처 메타 없음 큐 링크"[\s\S]*?"Studio 저장 방식 조건 링크"[\s\S]*?setFilterLinkCopied\(copiedToClipboard\)/,
+  /function copyStudioPersistenceFilterLink\(\)[\s\S]*?const filterHref = buildCurrentLibraryHref\(\{[\s\S]*?promptId: ""[\s\S]*?id: "studio-persistence-link"[\s\S]*?"저장 출처 메타 없음 큐 링크"[\s\S]*?"Studio 저장 방식 조건 링크"[\s\S]*?setFilterLinkCopied\(copiedToClipboard\)/,
   "Library Studio persistence action panel should copy a shareable storage-mode condition link and queue link for missing saved-source metadata",
 );
 assertMatches(

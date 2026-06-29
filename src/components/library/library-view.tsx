@@ -4967,19 +4967,7 @@ export function LibraryView({
       return;
     }
 
-    const href = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const href = buildCurrentLibraryHref({
       promptId: selected.id,
       version: activeVersion.targetModel,
       detailMode: activePromptDetailMode,
@@ -5099,19 +5087,7 @@ export function LibraryView({
       return;
     }
 
-    const detailHref = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const detailHref = buildCurrentLibraryHref({
       promptId: selected.id,
       version: activeVersion?.targetModel,
       detailMode: activePromptDetailMode,
@@ -5144,19 +5120,7 @@ export function LibraryView({
       return;
     }
 
-    const detailHref = buildLibraryFilterHref({
-      search: query,
-      sort: sortMode,
-      language: languageFilter,
-      output: outputLanguageFilter,
-      model: targetModelFilter,
-      engine: generationEngineFilter,
-      learning: learningScopeFilter,
-      improvement: improvementFilter,
-      sourceReason: sourceReasonFilter,
-      studioPersistence: studioPersistenceFilter,
-      studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+    const detailHref = buildCurrentLibraryHref({
       promptId: selected.id,
       version: activeVersion?.targetModel,
       detailMode: activePromptDetailMode,
@@ -5468,19 +5432,7 @@ export function LibraryView({
       sourceVersionId: activeVersion.id,
       sourceVersionModel: activeVersion.targetModel,
       sourceTitle: selected.title,
-      sourceHref: buildLibraryFilterHref({
-        search: query,
-        sort: sortMode,
-        language: languageFilter,
-        output: outputLanguageFilter,
-        model: targetModelFilter,
-        engine: generationEngineFilter,
-        learning: learningScopeFilter,
-        improvement: improvementFilter,
-        sourceReason: sourceReasonFilter,
-        studioPersistence: studioPersistenceFilter,
-        studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+      sourceHref: buildCurrentLibraryHref({
         promptId: selected.id,
         version: activeVersion.targetModel,
         detailMode: activePromptDetailMode,
@@ -5541,19 +5493,7 @@ export function LibraryView({
         createdAt: feedback.createdAt,
       },
       sourceTitle: selected.title,
-      sourceHref: buildLibraryFilterHref({
-        search: query,
-        sort: sortMode,
-        language: languageFilter,
-        output: outputLanguageFilter,
-        model: targetModelFilter,
-        engine: generationEngineFilter,
-        learning: learningScopeFilter,
-        improvement: improvementFilter,
-        sourceReason: sourceReasonFilter,
-        studioPersistence: studioPersistenceFilter,
-        studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+      sourceHref: buildCurrentLibraryHref({
         promptId: selected.id,
         version: feedbackVersion.targetModel,
         detailMode: activePromptDetailMode,
@@ -5608,19 +5548,7 @@ export function LibraryView({
       sourceVersionId: improvedVersion.id,
       sourceVersionModel: improvedVersion.targetModel,
       sourceTitle: selected.title,
-      sourceHref: buildLibraryFilterHref({
-        search: query,
-        sort: sortMode,
-        language: languageFilter,
-        output: outputLanguageFilter,
-        model: targetModelFilter,
-        engine: generationEngineFilter,
-        learning: learningScopeFilter,
-        improvement: improvementFilter,
-        sourceReason: sourceReasonFilter,
-        studioPersistence: studioPersistenceFilter,
-        studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+      sourceHref: buildCurrentLibraryHref({
         promptId: selected.id,
         version: improvedVersion.targetModel,
         detailMode: "comparison",

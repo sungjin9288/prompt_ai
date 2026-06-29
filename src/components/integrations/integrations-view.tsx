@@ -983,7 +983,9 @@ export function IntegrationsView() {
 
       <GateSummaryPanel />
 
-      <OperatorNextActionsPanel />
+      <div className="scroll-mt-24" id="integrations-next-actions">
+        <OperatorNextActionsPanel />
+      </div>
 
       <ExternalAiOperatorGuidePanel />
 

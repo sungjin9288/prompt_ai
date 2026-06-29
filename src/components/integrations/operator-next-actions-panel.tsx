@@ -349,7 +349,7 @@ export function OperatorNextActionsPanel() {
       targetModels: ["gpt", "claude", "codex", "gemini"],
       outputLanguage: "korean",
       sourceTitle: "Integrations 운영자 다음 조치",
-      sourceHref: "/integrations",
+      sourceHref: "/integrations#integrations-next-actions",
       createdAt: new Date().toISOString(),
     });
 
@@ -380,7 +380,7 @@ export function OperatorNextActionsPanel() {
       targetModels: ["gpt", "claude", "codex", "gemini"],
       outputLanguage: "korean",
       sourceTitle: `Integrations ${item.label}`,
-      sourceHref: "/integrations",
+      sourceHref: "/integrations#integrations-next-actions",
       createdAt: new Date().toISOString(),
     });
 

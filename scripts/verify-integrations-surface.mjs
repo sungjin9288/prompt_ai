@@ -261,6 +261,7 @@ for (const requiredText of [
   "#integrations-feedback-inbox",
   "#integrations-operator-guide",
   'id="integrations-operation-flow"',
+  'id="integrations-next-actions"',
   'id="integrations-refine-tester"',
   'id="integrations-mcp-connection"',
   'id="integrations-readiness"',
@@ -501,10 +502,10 @@ for (const requiredText of [
   'source: "integrations-operations-checklist"',
   'router.push("/studio?draft=integrations-operations-checklist")',
   'sourceTitle: "Integrations 운영자 다음 조치"',
+  'sourceHref: "/integrations#integrations-next-actions"',
   "External AI integrations · single operator action",
   "Confirm this single operator action before moving to the next connection step.",
   "Do not send unreviewed content to an external AI account.",
-  'sourceHref: "/integrations"',
   'targetModels: ["gpt", "claude", "codex", "gemini"]',
   "Operator next actions manual copy",
   "운영자 다음 조치 패키지를 복사했습니다.",
@@ -569,8 +570,18 @@ assert.match(
 );
 assert.match(
   operatorNextActionsPanel,
+  /function openOperatorActionsInStudio\(\)[\s\S]*?writeStudioDraft\(\{[\s\S]*?sourceTitle: "Integrations 운영자 다음 조치"[\s\S]*?sourceHref: "\/integrations#integrations-next-actions"/,
+  "Operator next actions full Studio draft should return to the next actions anchor",
+);
+assert.match(
+  operatorNextActionsPanel,
   /function openOperatorActionInStudio\(item: OperatorNextAction\)[\s\S]*?const rawInput = buildOperatorNextActionChecklist\(item\)[\s\S]*?const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "integrations-operations-checklist"[\s\S]*?rawInput[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setCopyState\("draftError"\)[\s\S]*?setManualCopyText\(rawInput\)[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=integrations-operations-checklist"\)/,
   "Operator next actions panel should keep the single next-action checklist in manual fallback when Studio draft storage fails",
+);
+assert.match(
+  operatorNextActionsPanel,
+  /function openOperatorActionInStudio\(item: OperatorNextAction\)[\s\S]*?writeStudioDraft\(\{[\s\S]*?sourceTitle: `Integrations \$\{item\.label\}`[\s\S]*?sourceHref: "\/integrations#integrations-next-actions"/,
+  "Operator next actions single Studio draft should return to the next actions anchor",
 );
 assert.match(
   operatorNextActionsPanel,
@@ -2714,8 +2725,13 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Studio 초안 저장 실패 시 이동하지 않고 수동 복사용 다음 조치 원문을 표시",
+  "저장 실패 시 이동하지 않고 수동 복사용 다음 조치 원문을 표시",
   "README should document operator next actions Studio draft fallback",
+);
+assertIncludes(
+  readme,
+  "Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며",
+  "README should document operator next actions Studio source anchor",
 );
 assertIncludes(
   readme,
@@ -3009,6 +3025,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "Integrations 운영자 다음 조치 Studio 초안의 원본 경로는 `/integrations#integrations-next-actions`로 저장해 Studio에서 원본으로 돌아갈 때 운영자 다음 조치 섹션을 복원해야 한다.",
+  "PRD should document operator next actions Studio source anchor",
+);
+assertIncludes(
+  prd,
   "Integrations 연결 준비도는 연결 표면, 첫 실행 표면, smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여줘야 한다.",
   "PRD should document connection readiness summary metrics",
 );
@@ -3259,8 +3280,13 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Studio 초안 저장 실패 시 이동하지 않고 수동 복사용 다음 조치 원문 표시",
+  "저장 실패 시 이동하지 않고 수동 복사용 다음 조치 원문 표시",
   "Development brief should document operator next actions Studio draft fallback",
+);
+assertIncludes(
+  developmentBrief,
+  "Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며",
+  "Development brief should document operator next actions Studio source anchor",
 );
 assertIncludes(
   developmentBrief,

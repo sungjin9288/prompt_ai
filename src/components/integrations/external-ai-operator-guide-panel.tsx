@@ -54,9 +54,9 @@ const externalAiOperatorSteps = [
   {
     action: "로컬 smoke evidence 저장",
     commands: [
-      "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
-      "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
-      "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+      "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
+      "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
+      "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
     ],
     detail:
       "외부 AI로 넘기기 전에 Chrome, MCP, Learning feedback 증거 파일을 남깁니다.",

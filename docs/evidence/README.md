@@ -1,7 +1,9 @@
 # Verification Evidence
 
 This directory keeps release or handoff verification records generated from the
-shared verification manifest.
+shared verification manifest. Local smoke packets belong in `output/smoke` or a
+private handoff folder unless they are promoted into a timestamped release
+record.
 
 Create a fresh record when a change is ready for review:
 

@@ -28,7 +28,7 @@ const mcpConfigJson = `{
 }`;
 
 const mcpSelfTestCommand =
-  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md";
+  "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md";
 
 const mcpDevCommand = "npm run dev";
 

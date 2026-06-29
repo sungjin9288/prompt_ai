@@ -210,17 +210,17 @@ assert.match(
 );
 assert.match(
   readme,
-  /MCP부터 시작할 때는 `npm run smoke:mcp`로 로컬 bridge 계약을 먼저 확인[\s\S]*?npm run smoke:mcp -- --out docs\/evidence\/mcp-bridge-smoke\.md/,
+  /MCP부터 시작할 때는 `npm run smoke:mcp`로 로컬 bridge 계약을 먼저 확인[\s\S]*?npm run smoke:mcp -- --out output\/smoke\/mcp-bridge-smoke\.md/,
   "README should route MCP next-step smoke through npm run smoke:mcp with evidence output",
 );
 assert.match(
   readme,
-  /Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked\s+extension 파일 계약을 먼저 확인[\s\S]*?npm run smoke:chrome-extension -- --out docs\/evidence\/chrome-extension-smoke\.md/,
+  /Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked\s+extension 파일 계약을 먼저 확인[\s\S]*?npm run smoke:chrome-extension -- --out output\/smoke\/chrome-extension-smoke\.md/,
   "README should route Chrome next-step smoke through npm run smoke:chrome-extension",
 );
 assert.match(
   readme,
-  /Learning feedback 개선 큐 정리:[\s\S]*?npm run smoke:learning-feedback[\s\S]*?npm run smoke:learning-feedback -- --out docs\/evidence\/learning-feedback-smoke\.md/,
+  /Learning feedback 개선 큐 정리:[\s\S]*?npm run smoke:learning-feedback[\s\S]*?npm run smoke:learning-feedback -- --out output\/smoke\/learning-feedback-smoke\.md/,
   "README should route Learning feedback next-step smoke through npm run smoke:learning-feedback with evidence output",
 );
 assert.match(

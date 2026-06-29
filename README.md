@@ -565,15 +565,15 @@ terms from returning.
   선택해 review-required handoff package와 feedback inbox 저장 흐름을 확인합니다.
   Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked
   extension 파일 계약을 먼저 확인합니다. 증빙 파일이 필요하면
-  `npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md`를
+  `npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md`를
   붙입니다.
   MCP부터 시작할 때는 `npm run smoke:mcp`로 로컬 bridge 계약을 먼저 확인합니다.
   증빙 파일이 필요하면
-  `npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md`를 붙입니다.
+  `npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md`를 붙입니다.
 - Learning feedback 개선 큐 정리: `npm run smoke:learning-feedback`로 낮은
   신뢰도 Studio 검증 초안, 큐 리포트, Library 검증 저장본 필터 계약을 먼저
   확인합니다. 증빙 파일이 필요하면
-  `npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md`를
+  `npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md`를
   붙입니다. 그 뒤 실제 낮은 신뢰도 메모리를 Studio 검증 초안으로 보내고
   Library에서 추적합니다.
 - Release candidate 정리: 관련 변경을 묶기 전 `npm run verify:evidence`로

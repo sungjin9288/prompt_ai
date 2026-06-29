@@ -7,6 +7,7 @@ const scanRoots = [
   "docs",
   "eslint.config.mjs",
   "next.config.ts",
+  "output/smoke",
   "package.json",
   "scripts",
   "src",

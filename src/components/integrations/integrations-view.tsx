@@ -144,7 +144,7 @@ const executionEvidenceRows = [
 const smokeEvidenceRows = [
   {
     label: "MCP bridge",
-    command: "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
+    command: "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
     evidence: "tools/list, refine_prompt, create_handoff_package, local evidence file",
     href: "#integrations-mcp-connection",
     result: "MCP smoke evidence",
@@ -152,7 +152,7 @@ const smokeEvidenceRows = [
   {
     label: "Chrome popup",
     command:
-      "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
+      "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
     evidence: "manifest, local-only permissions, popup evidence fallback",
     href: "#integrations-readiness",
     result: "Chrome smoke evidence",
@@ -160,7 +160,7 @@ const smokeEvidenceRows = [
   {
     label: "Learning feedback",
     command:
-      "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+      "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
     evidence: "low-confidence validation draft, Library filter, queue fallback",
     href: "/learning?review=low-confidence&q=feedback-improvement#learning-feedback-improvement-queue",
     result: "Learning smoke evidence",

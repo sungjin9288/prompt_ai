@@ -38,7 +38,7 @@ const operatorNextActions = [
     completionGate:
       "Chrome, MCP, Learning feedback smoke evidence 파일이 모두 생성됩니다.",
     evidence:
-      "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md; npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md; npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+      "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md; npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md; npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
     href: "#integrations-smoke-evidence-path",
     label: "3. 로컬 smoke evidence 저장",
     operatorTask:

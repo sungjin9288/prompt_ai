@@ -223,9 +223,9 @@ for (const requiredText of [
   "SmokeEvidencePath",
   "Smoke 증거 경로",
   'data-testid="integrations-smoke-evidence-path"',
-  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
-  "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
-  "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+  "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
+  "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
+  "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
   "Learning smoke evidence",
   "Evidence",
   "Chrome, MCP, Learning smoke evidence",
@@ -370,7 +370,7 @@ assert.match(
 );
 assert.match(
   view,
-  /const smokeEvidenceRows = \[[\s\S]*?label: "MCP bridge"[\s\S]*?npm run smoke:mcp -- --out docs\/evidence\/mcp-bridge-smoke\.md[\s\S]*?tools\/list, refine_prompt, create_handoff_package, local evidence file[\s\S]*?result: "MCP smoke evidence"[\s\S]*?label: "Chrome popup"[\s\S]*?npm run smoke:chrome-extension -- --out docs\/evidence\/chrome-extension-smoke\.md[\s\S]*?manifest, local-only permissions, popup evidence fallback[\s\S]*?result: "Chrome smoke evidence"[\s\S]*?label: "Learning feedback"[\s\S]*?npm run smoke:learning-feedback -- --out docs\/evidence\/learning-feedback-smoke\.md[\s\S]*?low-confidence validation draft, Library filter, queue fallback[\s\S]*?\/learning\?review=low-confidence&q=feedback-improvement#learning-feedback-improvement-queue[\s\S]*?result: "Learning smoke evidence"/,
+  /const smokeEvidenceRows = \[[\s\S]*?label: "MCP bridge"[\s\S]*?npm run smoke:mcp -- --out output\/smoke\/mcp-bridge-smoke\.md[\s\S]*?tools\/list, refine_prompt, create_handoff_package, local evidence file[\s\S]*?result: "MCP smoke evidence"[\s\S]*?label: "Chrome popup"[\s\S]*?npm run smoke:chrome-extension -- --out output\/smoke\/chrome-extension-smoke\.md[\s\S]*?manifest, local-only permissions, popup evidence fallback[\s\S]*?result: "Chrome smoke evidence"[\s\S]*?label: "Learning feedback"[\s\S]*?npm run smoke:learning-feedback -- --out output\/smoke\/learning-feedback-smoke\.md[\s\S]*?low-confidence validation draft, Library filter, queue fallback[\s\S]*?\/learning\?review=low-confidence&q=feedback-improvement#learning-feedback-improvement-queue[\s\S]*?result: "Learning smoke evidence"/,
   "Integrations smoke evidence path should define MCP, Chrome, and Learning evidence output commands",
 );
 assert.match(
@@ -454,7 +454,7 @@ for (const requiredText of [
   "Chrome handoff 또는 MCP refine_prompt 결과에 reviewRequired가 포함됩니다.",
   "외부 AI에 붙여넣기 전에 Chrome, MCP, Learning feedback smoke evidence 명령을 실행합니다.",
   "Chrome, MCP, Learning feedback smoke evidence 파일이 모두 생성됩니다.",
-  "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md; npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md; npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+  "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md; npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md; npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
   "정제 결과를 그대로 자동 전송하지 않고, 복사 전에 최종 prompt package를 검토합니다.",
   "대상 AI, 언어 전략, 가정, 누락 맥락을 확인한 handoff package만 전달합니다.",
   "외부 AI 실행 결과를 요약하고, 저장 동의가 있을 때만 feedback inbox에 남깁니다.",
@@ -646,9 +646,9 @@ for (const requiredText of [
   "연결 표면 1개 선택",
   "review-required 결과 확인",
   "로컬 smoke evidence 저장",
-  "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
-  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
-  "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+  "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
+  "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
+  "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
   "외부 AI로 넘기기 전에 Chrome, MCP, Learning feedback 증거 파일을 남깁니다.",
   "외부 AI에 수동 전달",
   "실행 결과 저장 판단",
@@ -1260,7 +1260,7 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
-  /const mcpSelfTestCommand =[\s\S]*?"npm run smoke:mcp -- --out docs\/evidence\/mcp-bridge-smoke\.md";/,
+  /const mcpSelfTestCommand =[\s\S]*?"npm run smoke:mcp -- --out output\/smoke\/mcp-bridge-smoke\.md";/,
   "MCP connection self-test command should save a local evidence packet",
 );
 assert.match(
@@ -1461,7 +1461,7 @@ for (const requiredText of [
   "tools/list",
   "refine_prompt",
   "npm run dev",
-  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
+  "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
   "npm run verify:integrations",
   "review-required handoff package",
   "copyTextToClipboard",
@@ -1482,7 +1482,7 @@ assert.match(
 );
 assert.match(
   connectionReadinessPanel,
-  /const smokeTestCommands = \[[\s\S]*?npm run dev[\s\S]*?npm run smoke:chrome-extension -- --out docs\/evidence\/chrome-extension-smoke\.md[\s\S]*?npm run smoke:mcp -- --out docs\/evidence\/mcp-bridge-smoke\.md[\s\S]*?npm run smoke:learning-feedback -- --out docs\/evidence\/learning-feedback-smoke\.md[\s\S]*?npm run verify:integrations/,
+  /const smokeTestCommands = \[[\s\S]*?npm run dev[\s\S]*?npm run smoke:chrome-extension -- --out output\/smoke\/chrome-extension-smoke\.md[\s\S]*?npm run smoke:mcp -- --out output\/smoke\/mcp-bridge-smoke\.md[\s\S]*?npm run smoke:learning-feedback -- --out output\/smoke\/learning-feedback-smoke\.md[\s\S]*?npm run verify:integrations/,
   "Connection readiness smoke command copy should include local smoke evidence output commands",
 );
 assert.match(
@@ -2397,7 +2397,7 @@ for (const requiredText of [
   "http://localhost:3000/integrations",
   "npm run verify:integrations",
   "로컬 smoke evidence 저장",
-  "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+  "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
   "실행 증거 체크",
   "로컬 연결: `localhost:3000`과 `POST /api/integrations/refine` 응답을 확인합니다.",
   "정제 결과: `reviewRequired true`와 target handoff package를 확인합니다.",
@@ -2409,13 +2409,13 @@ for (const requiredText of [
   "`local-smoke-evidence`가 `target-ai-handoff`보다 먼저 있어야 합니다.",
   "Chrome으로 테스트",
   "npm run smoke:chrome-extension",
-  "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
+  "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
   "Refine with Prompt AI Studio",
   "Studio URL: http://localhost:3000",
   "Codex MCP 설정",
   "npm run smoke:mcp",
-  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
-  "mcp/prompt-ai-studio.mjs --self-test --out docs/evidence/mcp-bridge-smoke.md",
+  "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
+  "mcp/prompt-ai-studio.mjs --self-test --out output/smoke/mcp-bridge-smoke.md",
   "PROMPT_AI_STUDIO_TARGET_AI",
   "PROMPT_AI_STUDIO_SOURCE_URL",
   "Use prompt-ai-studio get_context_profile, then refine_prompt.",

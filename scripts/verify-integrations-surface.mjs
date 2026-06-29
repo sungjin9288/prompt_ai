@@ -278,7 +278,8 @@ for (const requiredText of [
   "개발 지시",
   "도구 호출",
   "선택 텍스트를 local refine API로 보냅니다.",
-  "reviewRequired package만 외부 AI에 붙여넣습니다.",
+  "로컬 smoke evidence 저장 후 reviewRequired package만 붙여넣습니다.",
+  "로컬 증거 저장과 붙여넣기 전 최종 리뷰",
   "파일 범위, 검증 명령, 완료 기준을 포함합니다.",
   "refine, context, handoff, feedback 도구를 연결합니다.",
   "Refine automatically, save evidence, deliver with review.",
@@ -2441,7 +2442,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Integrations 지원 환경 요약: Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고 각 상세 섹션으로 이동",
+  "Integrations 지원 환경 요약: Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고, 외부 AI 표면은 로컬 smoke evidence 저장 후 reviewRequired package만 전달하는 기준을 명시",
   "README should document the integrations support environment summary",
 );
 assertIncludes(
@@ -2771,7 +2772,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 지원 환경 요약은 Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고 각 상세 섹션으로 이동하게 해야 한다.",
+  "Integrations 지원 환경 요약은 Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고, 외부 AI 표면은 로컬 smoke evidence 저장 후 reviewRequired package만 전달하는 기준을 명시해야 한다.",
   "PRD should document the integrations support environment summary",
 );
 assertIncludes(
@@ -2906,7 +2907,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations 지원 환경 요약에서 Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고 각 상세 섹션으로 이동하게 한다",
+  "Integrations 지원 환경 요약에서 Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고, 외부 AI 표면은 로컬 smoke evidence 저장 후 reviewRequired package만 전달하는 기준을 명시하게 한다",
   "Development brief should document the integrations support environment summary",
 );
 assertIncludes(

@@ -34,9 +34,9 @@ const connectionSurfaces = [
     href: "#integrations-environment-guide",
     role: "정제된 영어 또는 한영 하이브리드 전문 프롬프트를 대상 AI별 실행 지시서로 전달합니다.",
     status: "검토 전달",
-    summary: "reviewRequired package만 외부 AI에 붙여넣습니다.",
+    summary: "로컬 smoke evidence 저장 후 reviewRequired package만 붙여넣습니다.",
     handoff: "target model, final prompt, output language, quality notes",
-    guard: "붙여넣기 전 최종 리뷰",
+    guard: "로컬 증거 저장과 붙여넣기 전 최종 리뷰",
   },
   {
     channel: "Codex",

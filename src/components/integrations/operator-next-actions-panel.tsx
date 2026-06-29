@@ -86,7 +86,7 @@ const operatorActionSummaryItems = [
   },
   {
     label: "전달 원칙",
-    value: "reviewRequired package 확인 후 GPT, Claude, Codex, Gemini에 전달",
+    value: "smoke evidence 저장 후 reviewRequired package만 전달",
   },
   {
     label: "학습 루프",
@@ -103,7 +103,7 @@ function buildOperatorNextActionChecklist(item: OperatorNextAction) {
   return [
     `# Prompt AI Studio Operator Next Action: ${item.label}`,
     "",
-    "Gate: local-first automation, review-required external delivery, confirmed feedback save.",
+    "Gate: local-first automation, smoke evidence saved, review-required external delivery, confirmed feedback save.",
     "",
     `- Action: ${item.action}`,
     `- 내가 할 일: ${item.operatorTask}`,
@@ -112,6 +112,7 @@ function buildOperatorNextActionChecklist(item: OperatorNextAction) {
     `- Detail link: /integrations${item.href}`,
     "",
     "Final review:",
+    "- Save local smoke evidence before external AI delivery.",
     "- Confirm this single operator action before moving to the next connection step.",
     "- Do not send unreviewed content to an external AI account.",
   ].join("\n");
@@ -121,7 +122,7 @@ function buildOperatorNextActionsChecklist() {
   return [
     "# Prompt AI Studio Operator Next Actions",
     "",
-    "Gate: local-first automation, review-required external delivery, confirmed feedback save.",
+    "Gate: local-first automation, smoke evidence saved, review-required external delivery, confirmed feedback save.",
     "Scope: /integrations operator action package.",
     "",
     ...operatorNextActions.flatMap((item) => [
@@ -135,6 +136,7 @@ function buildOperatorNextActionsChecklist() {
       "",
     ]),
     "Final review:",
+    "- Save local smoke evidence before external AI delivery.",
     "- Do not paste into GPT, Claude, Codex, or Gemini before reviewing the handoff package.",
     "- Save feedback only when confirmSave is true.",
   ].join("\n");

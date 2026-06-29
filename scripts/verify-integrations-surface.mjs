@@ -472,12 +472,13 @@ for (const requiredText of [
   "첫 검증",
   "Chrome extension 또는 MCP client 중 하나만 먼저 연결",
   "전달 원칙",
-  "reviewRequired package 확인 후 GPT, Claude, Codex, Gemini에 전달",
+  "smoke evidence 저장 후 reviewRequired package만 전달",
   "학습 루프",
   "confirmSave true일 때만 Feedback inbox에 저장",
   "# Prompt AI Studio Operator Next Action:",
   "# Prompt AI Studio Operator Next Actions",
-  "Gate: local-first automation, review-required external delivery, confirmed feedback save.",
+  "Gate: local-first automation, smoke evidence saved, review-required external delivery, confirmed feedback save.",
+  "Save local smoke evidence before external AI delivery.",
   "Detail link: /integrations",
   "Final review:",
   "다음 조치 복사",
@@ -528,7 +529,7 @@ for (const requiredText of [
 
 assert.match(
   operatorNextActionsPanel,
-  /const operatorActionSummaryItems = \[[\s\S]*?label: "현재 순서"[\s\S]*?서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장[\s\S]*?label: "첫 검증"[\s\S]*?Chrome extension 또는 MCP client 중 하나만 먼저 연결[\s\S]*?label: "전달 원칙"[\s\S]*?reviewRequired package 확인 후 GPT, Claude, Codex, Gemini에 전달[\s\S]*?label: "학습 루프"[\s\S]*?confirmSave true일 때만 Feedback inbox에 저장/,
+  /const operatorActionSummaryItems = \[[\s\S]*?label: "현재 순서"[\s\S]*?서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장[\s\S]*?label: "첫 검증"[\s\S]*?Chrome extension 또는 MCP client 중 하나만 먼저 연결[\s\S]*?label: "전달 원칙"[\s\S]*?smoke evidence 저장 후 reviewRequired package만 전달[\s\S]*?label: "학습 루프"[\s\S]*?confirmSave true일 때만 Feedback inbox에 저장/,
   "Operator next actions panel should define a compact summary before the detailed action list",
 );
 assert.match(

@@ -35,11 +35,16 @@ Run `npm run smoke:integrations` to refresh all local smoke packets and
 
 ## Actual Evidence Fields
 
-Chrome loaded extension evidence should record: runtime, source, review gate,
-target AI, session, evidence result, and feedback record.
+Chrome loaded extension evidence should record: command, status, external
+service boundary, runtime, source, review gate, target AI, session, evidence
+result, and feedback record.
 
-MCP client evidence should record: client, target AI, tool sequence, review
-gate, evidence result, and feedback record.
+MCP bridge evidence should record: command, status, external service boundary,
+protocol version, tool list, review-required fallback, and confirmSave write gate.
+
+MCP client evidence should record: command, status, external service boundary,
+client, target AI, tool sequence, review gate, evidence result, and feedback
+record.
 
 Learning feedback evidence should record: command, status, external service
 boundary, low-confidence condition, Studio validation draft, Library validation

@@ -4,6 +4,10 @@
 - version: 0.1.0
 - protocolVersion: 2025-11-25
 - tools: get_context_profile, refine_prompt, create_handoff_package, save_execution_feedback
+- command: npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md
+- status: pass
+- external services: not contacted
+- operator gate: local packet only; connect a real MCP client only after review.
 
 ## Verified contract
 - initialize returns the expected MCP protocol version and tool capability.

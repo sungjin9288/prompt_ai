@@ -4,8 +4,11 @@
 - server: prompt-ai-studio
 - targetAI: codex
 - feedbackInbox: temporary local JSONL
+- command: npm run smoke:mcp-client -- --out output/smoke/mcp-client-smoke.md
+- status: pass
 - external services: not contacted
 - local API: deterministic fallback URL
+- operator gate: local packet only; external AI handoff still requires review-required output and confirmSave review.
 
 ## Verified contract
 - initialize returns protocol version and tool capability.

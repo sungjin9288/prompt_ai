@@ -175,9 +175,9 @@ const smokeEvidenceRows = [
 
 const smokeEvidenceRunOrder = [
   {
-    gate: "output/smoke evidence file",
+    gate: "npm run smoke:integrations",
     label: "01 로컬 packet",
-    task: "맞는 smoke 명령을 실행하고 생성된 Markdown packet을 보관합니다.",
+    task: "Chrome, MCP, Learning smoke packet을 한 번에 갱신합니다.",
   },
   {
     gate: "reviewRequired actual result",

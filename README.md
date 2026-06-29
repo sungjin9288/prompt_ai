@@ -25,7 +25,7 @@
 - Integrations 지원 환경 요약: Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고, 외부 AI 표면은 로컬 smoke evidence 저장 후 reviewRequired package만 전달하는 기준을 명시
 - Integrations 연결 계약 매트릭스: Chrome, ChatGPT/Claude/Gemini, Codex, MCP별 capture, package, review gate, feedback 산출물을 같은 카드 구조로 보여줘 각 환경이 같은 review-required/confirmSave 계약을 어떻게 지키는지 한눈에 확인하게 합니다.
 - Integrations 실행 증거 체크: 로컬 연결, 정제 결과, 증거 저장, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 합니다.
-- Integrations Smoke 증거 경로: local packet, actual evidence, reviewed feedback record 순서를 먼저 보여주고 MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 합니다.
+- Integrations Smoke 증거 경로: `npm run smoke:integrations` local packet, actual evidence, reviewed feedback record 순서를 먼저 보여주고 MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 합니다.
 - Integrations 검증 게이트 요약: 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 기준을 먼저 확인하고 게이트별 상세 이동 제공
 - Integrations 검증 게이트 요약은 모바일 2열과 데스크톱 4열로 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 짧게 훑게 합니다.
 - Integrations 운영자 다음 조치: 로컬 서버 유지, 연결 표면 1개 검증, 로컬 smoke evidence 저장, 외부 AI 전달 전 검토, 실행 결과 피드백 저장, release evidence와 release-candidate 확인 순서를 상단에서 확인하고 Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 보여줍니다. 각 단계의 내가 할 일, 완료 기준, evidence와 관련 상세 섹션 이동, 전체/단계별 다음 조치 Markdown 복사, `integrations-operations-checklist` Studio 초안 전송 제공. Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고, 저장 실패 시 이동하지 않고 수동 복사용 다음 조치 원문을 표시

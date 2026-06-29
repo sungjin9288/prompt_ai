@@ -191,6 +191,14 @@ const integrationOperationFlow = [
     phase: "Refine",
   },
   {
+    artifact: "Chrome, MCP, Learning smoke evidence",
+    detailHref: "#integrations-smoke-evidence-path",
+    detailLabel: "Smoke 증거 경로",
+    gate: "외부 AI 전달 전 로컬 증거 저장",
+    owner: "Operator",
+    phase: "Evidence",
+  },
+  {
     artifact: "copy-ready prompt or Codex implementation brief",
     detailHref: "#integrations-environment-guide",
     detailLabel: "환경별 실행 가이드",
@@ -230,7 +238,7 @@ function OperationStepNumber({ index }: { index: number }) {
 function OperationFlowCards() {
   return (
     <div
-      className="grid gap-3 px-5 pb-4 md:grid-cols-2 xl:grid-cols-4"
+      className="grid gap-3 px-5 pb-4 md:grid-cols-2 xl:grid-cols-5"
       data-testid="integrations-operation-flow-cards"
     >
       {integrationOperationFlow.map((step, index) => (
@@ -281,7 +289,7 @@ function OperationFlowCards() {
 function OperationFlowTable() {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1040px] border-collapse text-left text-sm">
+      <table className="w-full min-w-[1180px] border-collapse text-left text-sm">
         <thead className="border-b border-line text-xs uppercase tracking-[0.12em] text-muted">
           <tr>
             <th className="px-5 py-3 font-semibold">Phase</th>
@@ -981,7 +989,7 @@ export function IntegrationsView() {
         <div className="scroll-mt-24" id="integrations-operation-flow" />
         <PanelHeader
           title="운영 흐름"
-          description="입력 수집부터 정제, 외부 AI 전달, 실행 피드백 저장까지 한 줄의 책임 흐름으로 확인합니다."
+          description="입력 수집부터 정제, 증거 저장, 외부 AI 전달, 실행 피드백 저장까지 한 줄의 책임 흐름으로 확인합니다."
         />
         <OperationFlowCards />
         <OperationFlowTable />

@@ -223,6 +223,9 @@ for (const requiredText of [
   "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
   "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
   "Learning smoke evidence",
+  "Evidence",
+  "Chrome, MCP, Learning smoke evidence",
+  "외부 AI 전달 전 로컬 증거 저장",
   "ConnectionSurfacesPanel",
   "ConnectionSurfaceRow",
   "ConnectionSurfaceDetail",
@@ -379,12 +382,12 @@ assert.match(
 );
 assert.match(
   view,
-  /function OperationFlowCards\(\)[\s\S]*?data-testid="integrations-operation-flow-cards"[\s\S]*?integrationOperationFlow\.map[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
-  "Integrations operation flow should render readable cards before the detailed wide table",
+  /const integrationOperationFlow = \[[\s\S]*?phase: "Capture"[\s\S]*?phase: "Refine"[\s\S]*?artifact: "Chrome, MCP, Learning smoke evidence"[\s\S]*?detailHref: "#integrations-smoke-evidence-path"[\s\S]*?gate: "외부 AI 전달 전 로컬 증거 저장"[\s\S]*?phase: "Evidence"[\s\S]*?phase: "Deliver"[\s\S]*?phase: "Feedback"[\s\S]*?function OperationFlowCards\(\)[\s\S]*?className="grid gap-3 px-5 pb-4 md:grid-cols-2 xl:grid-cols-5"[\s\S]*?data-testid="integrations-operation-flow-cards"[\s\S]*?integrationOperationFlow\.map[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
+  "Integrations operation flow should render readable cards for capture, refine, evidence, delivery, and feedback before the detailed wide table",
 );
 assert.match(
   view,
-  /function OperationFlowTable\(\)[\s\S]*?<div className="overflow-x-auto">[\s\S]*?min-w-\[1040px\][\s\S]*?integrationOperationFlow\.map[\s\S]*?OperationStepNumber[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
+  /function OperationFlowTable\(\)[\s\S]*?<div className="overflow-x-auto">[\s\S]*?min-w-\[1180px\][\s\S]*?integrationOperationFlow\.map[\s\S]*?OperationStepNumber[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
   "Integrations operation flow table should keep the detailed wide comparison view",
 );
 assert.match(
@@ -2456,12 +2459,12 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Capture, Refine, Deliver, Feedback",
+  "Capture, Refine, Evidence, Deliver, Feedback",
   "README should document the integrations operation flow phases",
 );
 assertIncludes(
   readme,
-  "Capture, Refine, Deliver, Feedback 단계별 owner, artifact, gate를 카드로 먼저 보여준 뒤 상세 표를 유지합니다.",
+  "Capture, Refine, Evidence, Deliver, Feedback 단계별 owner, artifact, gate를 카드로 먼저 보여준 뒤 상세 표를 유지합니다.",
   "README should document responsive integrations operation flow cards",
 );
 assertIncludes(
@@ -2781,6 +2784,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "Integrations 운영 흐름은 Capture, Refine, Evidence, Deliver, Feedback 단계별 owner, artifact, gate를 카드로 먼저 보여준 뒤 상세 표를 유지해야 한다.",
+  "PRD should document the evidence step in the integrations operation flow",
+);
+assertIncludes(
+  prd,
   "Integrations 검증 게이트 요약은 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 모바일 2열과 데스크톱 4열로 먼저 보여줘야 한다.",
   "PRD should document integrations gate summary evidence stage",
 );
@@ -2916,12 +2924,12 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Capture, Refine, Deliver, Feedback",
+  "Capture, Refine, Evidence, Deliver, Feedback",
   "Development brief should document the integrations operation flow phases",
 );
 assertIncludes(
   developmentBrief,
-  "Capture, Refine, Deliver, Feedback 단계별 owner, artifact, gate를 카드로 먼저 보여준 뒤 상세 표를 유지한다",
+  "Capture, Refine, Evidence, Deliver, Feedback 단계별 owner, artifact, gate를 카드로 먼저 보여준 뒤 상세 표를 유지한다",
   "Development brief should document responsive integrations operation flow cards",
 );
 assertIncludes(

@@ -407,7 +407,7 @@ const promptStudioSourceRegistry = {
     dashboardNextAction: "문서 맥락이 프롬프트에 반영됐는지 확인",
     libraryFilterLabel: "Data 문서/RAG 초안",
     librarySourceLabel: "Data 문서/RAG chunk 초안",
-    sourceActionLabel: "Data 문서/RAG 보기",
+    sourceActionLabel: "Data 문서/RAG로 돌아가기",
     studioLabel: "Data 문서/RAG chunk 초안",
     studioNextAction:
       "문서 chunk의 근거와 인용 범위를 반영해 외부 AI에 전달할 프롬프트를 작성하세요.",

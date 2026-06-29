@@ -293,6 +293,11 @@ assertFileIncludes(
   "Data 문서/RAG chunk 초안",
   "Prompt Studio source registry should label Data document RAG drafts",
 );
+assertFileIncludes(
+  sourceRegistrySource,
+  "Data 문서/RAG로 돌아가기",
+  "Prompt Studio source registry should label Data document RAG source actions as returning to Data",
+);
 
 assertDataMatches(
   /function buildRestoreReportManualCopyText\(\{[\s\S]*?backup[\s\S]*?currentBackupFingerprint[\s\S]*?importFingerprint[\s\S]*?importSource[\s\S]*?impactItems[\s\S]*?reportText[\s\S]*?riskItems[\s\S]*?RestoreReportParams &[\s\S]*?reportText: string[\s\S]*?changedItems = impactItems\.filter[\s\S]*?formatChange\(item\.current, item\.incoming\) !== "동일"[\s\S]*?fingerprintComparison = currentBackupFingerprint[\s\S]*?currentBackupFingerprint === importFingerprint[\s\S]*?# Prompt AI Studio 복원 리포트[\s\S]*?## 복원 리포트 식별[\s\S]*?백업 생성: \$\{formatBackupDate\(backup\.exportedAt\)\}[\s\S]*?가져온 방식: \$\{importSource\}[\s\S]*?가져온 백업 지문: \$\{importFingerprint\}[\s\S]*?최근 백업 기준 지문: \$\{currentBackupFingerprint \|\| "없음"\}[\s\S]*?지문 비교: \$\{fingerprintComparison\}[\s\S]*?리포트 길이: \$\{formatJsonLength\(reportText\)\}[\s\S]*?## 복원 영향 요약[\s\S]*?변경 항목: \$\{changedItems\.length\}개[\s\S]*?리스크 항목: \$\{riskItems\.length\}개[\s\S]*?프롬프트: \$\{backup\.counts\.prompts\}개[\s\S]*?삭제 보관함: \$\{backup\.counts\.deletedPrompts \?\? 0\}개[\s\S]*?## 실행 전 gate 요약[\s\S]*?original backup JSON file[\s\S]*?changed count and profile fields[\s\S]*?fingerprints differ[\s\S]*?validated backup[\s\S]*?## Restore report[\s\S]*?reportText/,
@@ -1398,6 +1403,11 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
+  "Studio 복귀 액션 라벨은 `Data 문서/RAG로 돌아가기`로 표시하고 원본 경로는 `/data`로 돌아갑니다.",
+  "README should document the Data document RAG Studio source return action label",
+);
+assertFileIncludes(
+  readme,
   "전송 준비 요약에서 프롬프트 언어 자동 판단",
   "README should document the Data document RAG Studio handoff readiness summary",
 );
@@ -1408,12 +1418,12 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prd,
-  "문서/RAG chunk 맥락을 `data-document-rag` Studio 초안으로 보낼 때 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시해야 한다.",
+  "문서/RAG chunk 맥락을 `data-document-rag` Studio 초안으로 보낼 때 Studio 복귀 액션 라벨은 `Data 문서/RAG로 돌아가기`로 표시하고 원본 경로는 `/data`로 돌아가야 하며, 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시해야 한다.",
   "PRD should document the Data document RAG Studio draft storage fallback",
 );
 assertFileIncludes(
   developmentBrief,
-  "Data 문서/RAG Studio 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시한다",
+  "Data 문서/RAG Studio 초안은 복귀 액션 라벨을 `Data 문서/RAG로 돌아가기`로 표시하고 원본 경로를 `/data`로 저장하며, 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시한다",
   "Development brief should document the Data document RAG Studio draft storage fallback",
 );
 assertFileIncludes(

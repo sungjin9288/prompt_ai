@@ -586,9 +586,12 @@ for (const requiredText of [
   "McpDefaultExample",
   "ExternalAiOperatorSummary",
   "TargetAiDeliveryRule",
+  "ExternalAiEvidenceCheck",
   "targetAiDeliveryRules",
+  "externalAiEvidenceChecks",
   "TargetAiDeliveryRuleCard",
   "TargetAiDeliveryRules",
+  "ExternalAiEvidenceChecklist",
   "ExternalAiOperatorStepItem",
   "ExternalAiOperatorStepList",
   "ExternalAiOperatorGate",
@@ -612,6 +615,15 @@ for (const requiredText of [
   "긴 맥락과 판단 기준을 함께 전달합니다.",
   "파일 범위, 검증 명령, 완료 기준을 포함합니다.",
   "자료 비교, 멀티모달 힌트, 출처 맥락을 분리합니다.",
+  "실행 증거 체크",
+  "localhost:3000과 POST /api/integrations/refine 응답을 확인합니다.",
+  "reviewRequired true와 target handoff package를 확인합니다.",
+  "Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.",
+  "copy-ready prompt와 missing context review를 확인한 뒤 붙여넣습니다.",
+  "rating, result summary, inbox record를 confirmSave true 후 확인합니다.",
+  "Execution evidence checklist",
+  "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
+  "Keep local-smoke-evidence before target-ai-handoff.",
   "mcpDefaultExamples",
   "buildExternalAiOperatorGuidePackage",
   "# Prompt AI Studio External AI Operator Guide",
@@ -682,8 +694,23 @@ assert.match(
 );
 assert.match(
   externalAiOperatorGuidePanel,
-  /"## Target AI delivery rules"[\s\S]*?targetAiDeliveryRules\.flatMap[\s\S]*?`### \$\{rule\.target\}`[\s\S]*?`- Mode: \$\{rule\.mode\}`[\s\S]*?`- Guard: \$\{rule\.guard\}`[\s\S]*?"## 내가 할 일"/,
+  /"## Target AI delivery rules"[\s\S]*?targetAiDeliveryRules\.flatMap[\s\S]*?`### \$\{rule\.target\}`[\s\S]*?`- Mode: \$\{rule\.mode\}`[\s\S]*?`- Guard: \$\{rule\.guard\}`[\s\S]*?"## Execution evidence checklist"/,
   "External AI operator guide package should include target AI delivery rules before the operator steps",
+);
+assert.match(
+  externalAiOperatorGuidePanel,
+  /const externalAiEvidenceChecks = \[[\s\S]*?action: "localhost:3000과 POST \/api\/integrations\/refine 응답[\s\S]*?label: "01 로컬 연결"[\s\S]*?action: "reviewRequired true와 target handoff package[\s\S]*?label: "02 정제 결과"[\s\S]*?action: "Chrome, MCP, Learning smoke evidence file[\s\S]*?label: "03 증거 저장"[\s\S]*?action: "copy-ready prompt와 missing context review[\s\S]*?label: "04 전달 승인"[\s\S]*?action: "rating, result summary, inbox record[\s\S]*?label: "05 피드백 증거"[\s\S]*?\] satisfies ExternalAiEvidenceCheck\[\]/,
+  "External AI operator guide should define execution evidence checks for local, refine, smoke evidence, delivery, and feedback proof",
+);
+assert.match(
+  externalAiOperatorGuidePanel,
+  /"## Execution evidence checklist"[\s\S]*?externalAiEvidenceChecks\.flatMap[\s\S]*?`### \$\{check\.label\}`[\s\S]*?`- Action: \$\{check\.action\}`[\s\S]*?`- Evidence: \$\{check\.evidence\}`[\s\S]*?Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff\.[\s\S]*?Keep local-smoke-evidence before target-ai-handoff\.[\s\S]*?"## 내가 할 일"/,
+  "External AI operator guide package should include execution evidence checks and audit source order before operator steps",
+);
+assert.match(
+  externalAiOperatorGuidePanel,
+  /function ExternalAiEvidenceChecklist\(\)[\s\S]*?실행 증거 체크[\s\S]*?local-smoke-evidence가 target-ai-handoff보다[\s\S]*?externalAiEvidenceChecks\.map[\s\S]*?check\.label[\s\S]*?check\.action[\s\S]*?check\.evidence[\s\S]*?<ExternalAiEvidenceChecklist \/>/,
+  "External AI operator guide should render execution evidence checks before the operator step list",
 );
 assert.match(
   externalAiOperatorGuidePanel,
@@ -717,8 +744,8 @@ assert.match(
 );
 assert.match(
   externalAiOperatorGuidePanel,
-  /<ExternalAiOperatorSummary \/>[\s\S]*?<TargetAiDeliveryRules \/>[\s\S]*?<ExternalAiOperatorStepList \/>[\s\S]*?<ExternalAiOperatorGate \/>[\s\S]*?<McpDefaultExamples \/>[\s\S]*?<ExternalAiOperatorCopyNotice/,
-  "External AI operator guide should keep summary, target AI rules, steps, gate, MCP defaults, and copy notice in reading order",
+  /<ExternalAiOperatorSummary \/>[\s\S]*?<TargetAiDeliveryRules \/>[\s\S]*?<ExternalAiEvidenceChecklist \/>[\s\S]*?<ExternalAiOperatorStepList \/>[\s\S]*?<ExternalAiOperatorGate \/>[\s\S]*?<McpDefaultExamples \/>[\s\S]*?<ExternalAiOperatorCopyNotice/,
+  "External AI operator guide should keep summary, target AI rules, evidence checks, steps, gate, MCP defaults, and copy notice in reading order",
 );
 
 for (const requiredText of [

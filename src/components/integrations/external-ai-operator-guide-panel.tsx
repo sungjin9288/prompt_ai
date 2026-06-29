@@ -24,6 +24,12 @@ type TargetAiDeliveryRule = {
   target: string;
 };
 
+type ExternalAiEvidenceCheck = {
+  action: string;
+  evidence: string;
+  label: string;
+};
+
 type McpDefaultExample = {
   env: string;
   surface: string;
@@ -66,6 +72,34 @@ const externalAiOperatorSteps = [
     detail: "의미 있는 결과만 rating, summary, notes와 함께 feedback inbox에 저장합니다.",
   },
 ] satisfies ExternalAiOperatorStep[];
+
+const externalAiEvidenceChecks = [
+  {
+    action: "localhost:3000과 POST /api/integrations/refine 응답을 확인합니다.",
+    evidence: "local app, refine API response",
+    label: "01 로컬 연결",
+  },
+  {
+    action: "reviewRequired true와 target handoff package를 확인합니다.",
+    evidence: "reviewRequired, target handoff package",
+    label: "02 정제 결과",
+  },
+  {
+    action: "Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.",
+    evidence: "chrome smoke, mcp smoke, learning feedback smoke",
+    label: "03 증거 저장",
+  },
+  {
+    action: "copy-ready prompt와 missing context review를 확인한 뒤 붙여넣습니다.",
+    evidence: "copy-ready prompt, missing context review",
+    label: "04 전달 승인",
+  },
+  {
+    action: "rating, result summary, inbox record를 confirmSave true 후 확인합니다.",
+    evidence: "rating, result summary, inbox record",
+    label: "05 피드백 증거",
+  },
+] satisfies ExternalAiEvidenceCheck[];
 
 const targetAiDeliveryRules = [
   {
@@ -147,6 +181,18 @@ function buildExternalAiOperatorGuidePackage() {
       `- Guard: ${rule.guard}`,
       "",
     ]),
+    "## Execution evidence checklist",
+    "",
+    ...externalAiEvidenceChecks.flatMap((check) => [
+      `### ${check.label}`,
+      "",
+      `- Action: ${check.action}`,
+      `- Evidence: ${check.evidence}`,
+      "",
+    ]),
+    "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
+    "Keep local-smoke-evidence before target-ai-handoff.",
+    "",
     "## 내가 할 일",
     "",
     ...externalAiOperatorSteps.flatMap((step, index) => [
@@ -216,6 +262,40 @@ function TargetAiDeliveryRules() {
       {targetAiDeliveryRules.map((rule) => (
         <TargetAiDeliveryRuleCard key={rule.target} rule={rule} />
       ))}
+    </div>
+  );
+}
+
+function ExternalAiEvidenceChecklist() {
+  return (
+    <div className="border-b border-line px-5 py-4">
+      <div className="mb-3">
+        <p className="text-sm font-semibold text-foreground">
+          실행 증거 체크
+        </p>
+        <p className="mt-1 text-sm leading-6 text-muted">
+          외부 AI로 넘기기 전 local-smoke-evidence가 target-ai-handoff보다
+          먼저 남았는지 확인합니다.
+        </p>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        {externalAiEvidenceChecks.map((check) => (
+          <div
+            className="min-w-0 rounded-md border border-line bg-surface p-4"
+            key={check.label}
+          >
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-accent">
+              {check.label}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-soft">
+              {check.action}
+            </p>
+            <p className="mt-3 break-words font-mono text-xs text-muted">
+              {check.evidence}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -425,6 +505,7 @@ export function ExternalAiOperatorGuidePanel() {
 
       <ExternalAiOperatorSummary />
       <TargetAiDeliveryRules />
+      <ExternalAiEvidenceChecklist />
 
       <div className="grid gap-5 px-5 py-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)]">
         <ExternalAiOperatorStepList />

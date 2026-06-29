@@ -177,15 +177,19 @@ for (const requiredText of [
   "GateSummaryPanel",
   "integrationGateSummary",
   "Local-first automation",
+  "Evidence saved before delivery",
   "Review-required delivery",
   "Confirmed feedback save",
   "PROMPT_AI_STUDIO_URL and local refine API",
+  "Chrome, MCP, and Learning smoke evidence files",
+  "The operator saves local smoke evidence before any prompt package leaves the Studio workflow.",
   "reviewRequired handoff package",
   "confirmSave true",
   "Refine API 확인",
+  "Smoke 증거 확인",
   "전달 책임 확인",
   "Feedback inbox 확인",
-  "로컬 정제, 검토 후 전달, 명시적 피드백 저장",
+  "로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장",
   "OperatorNextActionsPanel",
   "ExternalAiOperatorGuidePanel",
   "ConnectionSurfaceSummaryPanel",
@@ -360,8 +364,8 @@ assert.match(
 );
 assert.match(
   view,
-  /function GateSummaryPanel\(\)[\s\S]*?className="grid grid-cols-2 gap-3 px-5 pb-5 md:grid-cols-3"[\s\S]*?data-testid="integrations-gate-summary-metrics"[\s\S]*?integrationGateSummary\.map[\s\S]*?gate\.label[\s\S]*?gate\.detail[\s\S]*?gate\.check[\s\S]*?gate\.href[\s\S]*?gate\.linkLabel[\s\S]*?<GateSummaryPanel \/>/,
-  "Integrations gate summary should keep a compact two-column mobile grid and three-column desktop grid",
+  /function GateSummaryPanel\(\)[\s\S]*?className="grid grid-cols-2 gap-3 px-5 pb-5 md:grid-cols-4"[\s\S]*?data-testid="integrations-gate-summary-metrics"[\s\S]*?integrationGateSummary\.map[\s\S]*?gate\.label[\s\S]*?gate\.detail[\s\S]*?gate\.check[\s\S]*?gate\.href[\s\S]*?gate\.linkLabel[\s\S]*?<GateSummaryPanel \/>/,
+  "Integrations gate summary should keep a compact two-column mobile grid and four-column desktop grid",
 );
 assert.match(
   view,
@@ -2477,7 +2481,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "로컬 정제, 검토 후 전달, 명시적 피드백 저장",
+  "로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장",
   "README should document integrations gate summary stages",
 );
 assertIncludes(
@@ -2487,7 +2491,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Integrations 검증 게이트 요약은 모바일 2열과 데스크톱 3열로 로컬 정제, 검토 후 전달, 명시적 피드백 저장 상태를 짧게 훑게 합니다.",
+  "Integrations 검증 게이트 요약은 모바일 2열과 데스크톱 4열로 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 짧게 훑게 합니다.",
   "README should document responsive integrations gate summary metrics",
 );
 assertIncludes(
@@ -2772,6 +2776,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "Integrations 검증 게이트 요약은 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 모바일 2열과 데스크톱 4열로 먼저 보여줘야 한다.",
+  "PRD should document integrations gate summary evidence stage",
+);
+assertIncludes(
+  prd,
   "Chrome popup 실행 순서는 `01 선택 수집`, `02 Studio 정제`, `03 검토 전달` 단계로 선택 텍스트, local refine API, review-required handoff 복사 흐름을 먼저 보여줘야 한다.",
   "PRD should document the Chrome popup workflow order",
 );
@@ -2922,12 +2931,12 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "로컬 정제, 검토 후 전달, 명시적 피드백 저장",
+  "로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장",
   "Development brief should document integrations gate summary stages",
 );
 assertIncludes(
   developmentBrief,
-  "Integrations 검증 게이트 요약은 모바일 2열과 데스크톱 3열로 로컬 정제, 검토 후 전달, 명시적 피드백 저장 상태를 짧게 훑게 한다",
+  "Integrations 검증 게이트 요약은 모바일 2열과 데스크톱 4열로 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 짧게 훑게 한다",
   "Development brief should document responsive integrations gate summary metrics",
 );
 assertIncludes(

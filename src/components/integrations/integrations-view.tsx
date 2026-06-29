@@ -407,6 +407,14 @@ const integrationGateSummary = [
     linkLabel: "Refine API 확인",
   },
   {
+    check: "Chrome, MCP, and Learning smoke evidence files",
+    detail:
+      "The operator saves local smoke evidence before any prompt package leaves the Studio workflow.",
+    href: "#integrations-smoke-evidence-path",
+    label: "Evidence saved before delivery",
+    linkLabel: "Smoke 증거 확인",
+  },
+  {
     check: "reviewRequired handoff package",
     detail:
       "GPT, Claude, Codex, and Gemini receive copy-ready packages only after operator review.",
@@ -623,10 +631,10 @@ function GateSummaryPanel() {
     <Panel>
       <PanelHeader
         title="검증 게이트 요약"
-        description="외부 AI 연결은 로컬 정제, 검토 후 전달, 명시적 피드백 저장이라는 세 가지 게이트를 통과합니다."
+        description="외부 AI 연결은 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 게이트를 통과합니다."
       />
       <div
-        className="grid grid-cols-2 gap-3 px-5 pb-5 md:grid-cols-3"
+        className="grid grid-cols-2 gap-3 px-5 pb-5 md:grid-cols-4"
         data-testid="integrations-gate-summary-metrics"
       >
         {integrationGateSummary.map((gate) => (

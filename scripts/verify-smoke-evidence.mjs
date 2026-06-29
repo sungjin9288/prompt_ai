@@ -54,6 +54,17 @@ const smokeReadmePatterns = [
   /Chrome extension file contract/,
   /MCP bridge self-test contract/,
   /Learning feedback-improvement queue contract/,
+  /## Operator Run Order/,
+  /review-required handoff package/,
+  /confirmSave: false/,
+  /feedback inbox by UI, API, or curl/,
+  /## Actual Evidence Fields/,
+  /Chrome loaded extension evidence should record: runtime, source, review gate,\s+target AI, session, evidence result, and feedback record/,
+  /MCP client evidence should record: client, target AI, tool sequence, review\s+gate, evidence result, and feedback record/,
+  /Learning feedback evidence should record: low-confidence condition, Studio\s+validation draft, Library validation filter, release evidence command, release\s+candidate command, and feedback memory action/,
+  /## Storage Rules/,
+  /Do not commit ad hoc\s+actual AI outputs, tokens, customer text, or one-off operator notes here/,
+  /private operator evidence outside the repo/,
   /docs\/evidence/,
 ];
 

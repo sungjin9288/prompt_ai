@@ -3758,19 +3758,7 @@ export function LibraryView({
       : "current";
   const selectedDetailReturnHref =
     selected && activeVersion
-      ? buildLibraryFilterHref({
-          search: query,
-          sort: sortMode,
-          language: languageFilter,
-          output: outputLanguageFilter,
-          model: targetModelFilter,
-          engine: generationEngineFilter,
-          learning: learningScopeFilter,
-          improvement: improvementFilter,
-          sourceReason: sourceReasonFilter,
-          studioPersistence: studioPersistenceFilter,
-          studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+      ? buildCurrentLibraryHref({
           promptId: selected.id,
           version: activeVersion.targetModel,
           detailMode: activePromptDetailMode,

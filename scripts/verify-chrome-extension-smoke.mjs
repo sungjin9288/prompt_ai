@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import {
+  buildGitProvenance,
+  buildGitProvenanceLines,
+} from "./lib/git-provenance.mjs";
 
 function getOutputPath(args) {
   const outIndex = args.indexOf("--out");
@@ -37,6 +41,8 @@ function assertIncludes(source, text, message) {
 }
 
 function buildChromeSmokeEvidenceText() {
+  const gitProvenance = buildGitProvenance();
+
   return [
     "# Chrome Extension Smoke Evidence",
     "",
@@ -49,6 +55,7 @@ function buildChromeSmokeEvidenceText() {
     "- status: pass",
     "- external services: not contacted",
     "- operator gate: local packet only; load unpacked Chrome review is still a separate manual check.",
+    ...buildGitProvenanceLines(gitProvenance),
     "",
     "## Verified contract",
     "- MV3 popup and service worker are present.",

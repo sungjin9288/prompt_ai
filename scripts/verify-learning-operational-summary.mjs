@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import {
+  buildGitProvenance,
+  buildGitProvenanceLines,
+} from "./lib/git-provenance.mjs";
 
 function getOutputPath(args) {
   const outIndex = args.indexOf("--out");
@@ -22,6 +26,8 @@ function getOutputPath(args) {
 }
 
 function buildLearningFeedbackEvidenceText() {
+  const gitProvenance = buildGitProvenance();
+
   return [
     "# Learning Feedback Smoke Evidence",
     "",
@@ -33,6 +39,7 @@ function buildLearningFeedbackEvidenceText() {
     "- status: pass",
     "- external services: not contacted",
     "- operator gate: local packet only; external AI handoff still requires review-required output and confirmSave review.",
+    ...buildGitProvenanceLines(gitProvenance),
     "",
     "## Verified contract",
     "- Learning renders readiness, low-confidence review, manual memory, and Studio handoff steps in order.",

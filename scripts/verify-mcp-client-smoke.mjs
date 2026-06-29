@@ -3,6 +3,10 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
+import {
+  buildGitProvenance,
+  buildGitProvenanceLines,
+} from "./lib/git-provenance.mjs";
 
 function getOutputPath(args) {
   const outIndex = args.indexOf("--out");
@@ -107,6 +111,8 @@ function buildClientInput() {
 }
 
 function buildEvidenceText() {
+  const gitProvenance = buildGitProvenance();
+
   return [
     "# MCP Client Smoke Evidence",
     "",
@@ -119,6 +125,7 @@ function buildEvidenceText() {
     "- external services: not contacted",
     "- local API: deterministic fallback URL",
     "- operator gate: local packet only; external AI handoff still requires review-required output and confirmSave review.",
+    ...buildGitProvenanceLines(gitProvenance),
     "",
     "## Verified contract",
     "- initialize returns protocol version and tool capability.",

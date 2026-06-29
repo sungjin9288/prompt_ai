@@ -9,6 +9,10 @@
 - external services: not contacted
 - local API: deterministic fallback URL
 - operator gate: local packet only; external AI handoff still requires review-required output and confirmSave review.
+- branch: main
+- commit: b1001ba
+- workingTree: dirty
+- changedFiles: 8
 
 ## Verified contract
 - initialize returns protocol version and tool capability.

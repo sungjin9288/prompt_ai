@@ -4,6 +4,12 @@ import { join } from "node:path";
 
 const smokeDir = "output/smoke";
 const smokeReadmeName = "README.md";
+const gitProvenancePatterns = [
+  /branch: .+/,
+  /commit: [a-f0-9]+/,
+  /workingTree: (clean|dirty|unavailable)/,
+  /changedFiles: \d+/,
+];
 const expectedSmokeFiles = [
   {
     name: "integrations-smoke-summary.md",
@@ -12,10 +18,7 @@ const expectedSmokeFiles = [
       /command: npm run smoke:integrations/,
       /local packets pass before external AI delivery/,
       /external services: not contacted/,
-      /branch: .+/,
-      /commit: [a-f0-9]+/,
-      /workingTree: (clean|dirty|unavailable)/,
-      /changedFiles: \d+/,
+      ...gitProvenancePatterns,
       /Chrome extension: output\/smoke\/chrome-extension-smoke\.md/,
       /MCP bridge: output\/smoke\/mcp-bridge-smoke\.md/,
       /MCP client: output\/smoke\/mcp-client-smoke\.md/,
@@ -32,6 +35,7 @@ const expectedSmokeFiles = [
       /status: pass/,
       /external services: not contacted/,
       /operator gate: local packet only; load unpacked Chrome review is still a separate manual check/,
+      ...gitProvenancePatterns,
       /Host permissions stay local-only/,
       /does not load Chrome or contact external AI services/,
     ],
@@ -44,6 +48,7 @@ const expectedSmokeFiles = [
       /status: pass/,
       /external services: not contacted/,
       /operator gate: local packet only; external AI handoff still requires review-required output and confirmSave review/,
+      ...gitProvenancePatterns,
       /sourceVariant: learning-low-confidence-validation/,
       /Queue record actions include release evidence and release-candidate command copy/,
       /Queue reports include condition links, validation Library links, metrics, release gate commands/,
@@ -59,6 +64,7 @@ const expectedSmokeFiles = [
       /status: pass/,
       /external services: not contacted/,
       /operator gate: local packet only; connect a real MCP client only after review/,
+      ...gitProvenancePatterns,
       /tools: get_context_profile, refine_prompt, create_handoff_package, save_execution_feedback/,
       /does not contact GPT, Claude, Codex, Gemini, OpenAI, or Supabase/,
     ],
@@ -72,6 +78,7 @@ const expectedSmokeFiles = [
       /status: pass/,
       /external services: not contacted/,
       /operator gate: local packet only; external AI handoff still requires review-required output and confirmSave review/,
+      ...gitProvenancePatterns,
       /refine_prompt returns a review-required handoff package through the MCP client call path/,
       /save_execution_feedback with confirmSave true writes a temporary feedback inbox record/,
       /Feedback record preserves targetAI codex, positive rating, and the smoke result summary/,
@@ -98,6 +105,7 @@ const smokeReadmePatterns = [
   /# Local Smoke Evidence/,
   /checked without external AI access/,
   /integrated preflight summary for the local packets/,
+  /Every local smoke packet should record git branch, commit, working tree\s+state,\s+and changed file count/,
   /Integrated summary should record: command, gate, external service boundary,\s+git branch, commit, working tree state, and changed file count/,
   /Chrome extension file contract/,
   /MCP bridge self-test contract/,

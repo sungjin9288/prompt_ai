@@ -5,6 +5,10 @@ import { appendFile, mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
+import {
+  buildGitProvenance,
+  buildGitProvenanceLines,
+} from "../scripts/lib/git-provenance.mjs";
 
 const PROTOCOL_VERSION = "2025-11-25";
 const SERVER_NAME = "prompt-ai-studio";
@@ -483,6 +487,8 @@ function getOutputPath(args) {
 }
 
 function buildMcpSelfTestEvidenceText() {
+  const gitProvenance = buildGitProvenance();
+
   return [
     "# MCP Bridge Smoke Evidence",
     "",
@@ -494,6 +500,7 @@ function buildMcpSelfTestEvidenceText() {
     "- status: pass",
     "- external services: not contacted",
     "- operator gate: local packet only; connect a real MCP client only after review.",
+    ...buildGitProvenanceLines(gitProvenance),
     "",
     "## Verified contract",
     "- initialize returns the expected MCP protocol version and tool capability.",

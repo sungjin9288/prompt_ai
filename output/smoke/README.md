@@ -35,6 +35,9 @@ Run `npm run smoke:integrations` to refresh all local smoke packets and
 
 ## Actual Evidence Fields
 
+Every local smoke packet should record git branch, commit, working tree state,
+and changed file count.
+
 Integrated summary should record: command, gate, external service boundary,
 git branch, commit, working tree state, and changed file count.
 

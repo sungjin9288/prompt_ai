@@ -1516,6 +1516,11 @@ assertFileIncludes(
 );
 assertFileIncludes(
   storageArchitecture,
+  "the generated execution plan has no validation blockers",
+  "Storage architecture should document the Supabase import execution validation gate",
+);
+assertFileIncludes(
+  storageArchitecture,
   "The `/data` screen now exposes document/RAG readiness before upload execution\nexists.",
   "Storage architecture should document the document RAG readiness boundary",
 );
@@ -1556,13 +1561,18 @@ assertFileIncludes(
 );
 assert.match(
   supabaseImportRouteSource,
-  /if \(execute\) \{[\s\S]*?if \(!environmentStatus\.executionEnabled\) \{[\s\S]*?status: "execution-disabled"[\s\S]*?\{ status: 403 \}[\s\S]*?if \(body\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?status: "confirmation-required"[\s\S]*?\{ status: 400 \}[\s\S]*?if \([\s\S]*?!environmentStatus\.supabaseUrlConfigured[\s\S]*?!environmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?status: "environment-incomplete"[\s\S]*?\{ status: 503 \}[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
-  "Supabase import route should check execution enabled, confirmation, and env readiness before constructing the write adapter",
+  /if \(execute\) \{[\s\S]*?if \(!environmentStatus\.executionEnabled\) \{[\s\S]*?status: "execution-disabled"[\s\S]*?\{ status: 403 \}[\s\S]*?if \(body\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?status: "confirmation-required"[\s\S]*?\{ status: 400 \}[\s\S]*?if \([\s\S]*?!environmentStatus\.supabaseUrlConfigured[\s\S]*?!environmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?status: "environment-incomplete"[\s\S]*?\{ status: 503 \}[\s\S]*?if \(!validation\.ok\) \{[\s\S]*?status: "validation-blocked"[\s\S]*?\{ status: 422 \}[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
+  "Supabase import route should check execution enabled, confirmation, env readiness, and validation before constructing the write adapter",
 );
 assert.match(
   supabaseImportRouteSource,
   /status: "environment-incomplete"[\s\S]*?requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION[\s\S]*?validation/,
   "Supabase import route should return the required confirmation string with environment-incomplete execute responses",
+);
+assert.match(
+  supabaseImportRouteSource,
+  /status: "validation-blocked"[\s\S]*?requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION[\s\S]*?validation/,
+  "Supabase import route should return the required confirmation string with validation-blocked execute responses",
 );
 assert.match(
   supabaseImportRouteSource,

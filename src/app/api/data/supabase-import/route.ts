@@ -348,6 +348,34 @@ export async function POST(request: Request) {
         );
       }
 
+      if (!validation.ok) {
+        const error =
+          "Supabase import execution plan has validation blockers.";
+
+        return NextResponse.json(
+          {
+            adapterContractText,
+            auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
+              checkedAt,
+              environment: environmentStatus,
+              error,
+              execute,
+              insertOrder: summarizedInsertOrderWithoutPayload,
+              requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
+              status: "validation-blocked",
+              validation,
+            }),
+            environment: environmentStatus,
+            error,
+            insertOrder: summarizedInsertOrderWithoutPayload,
+            requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
+            status: "validation-blocked",
+            validation,
+          },
+          { status: 422 },
+        );
+      }
+
       const adapter = createSupabaseRestImportAdapter({
         serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
         supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || "",

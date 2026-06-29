@@ -168,6 +168,7 @@ src/lib/data/supabase-rest-import-adapter.ts
 - `NEXT_PUBLIC_SUPABASE_URL` is configured
 - `SUPABASE_SERVICE_ROLE_KEY` is configured server-side
 - request body includes `confirmation: "RUN_SUPABASE_IMPORT"`
+- the generated execution plan has no validation blockers
 
 If any gate fails, the route returns a non-2xx response before attempting a
 write. Keep `SUPABASE_IMPORT_EXECUTION_ENABLED=false` outside a controlled

@@ -1,194 +1,194 @@
 # Prompt AI Studio Verification Evidence
 
-- startedAt: 2026-06-29T21:42:56.539Z
-- finishedAt: 2026-06-29T21:43:18.856Z
+- startedAt: 2026-06-29T21:46:22.471Z
+- finishedAt: 2026-06-29T21:46:42.566Z
 - status: pass
-- outputPath: /Users/sungjin/dev/personal/prompt-ai-studio/docs/evidence/prompt-ai-studio-verification-evidence-20260629T214256Z.md
+- outputPath: /Users/sungjin/dev/personal/prompt-ai-studio/docs/evidence/prompt-ai-studio-verification-evidence-20260629T214622Z.md
 
 ## Git Provenance
 - branch: main
-- commit: 710fa99
+- commit: bfdc055
 - workingTree: dirty
-- changedFiles: 5
+- changedFiles: 6
 
 ## Checks
 ### Verification manifest contract
 - status: pass
 - script: verify:manifest
 - command: `npm run verify:manifest`
-- startedAt: 2026-06-29T21:42:56.539Z
-- finishedAt: 2026-06-29T21:42:56.719Z
+- startedAt: 2026-06-29T21:46:22.471Z
+- finishedAt: 2026-06-29T21:46:22.622Z
 ### README scripts documentation
 - status: pass
 - script: verify:docs
 - command: `npm run verify:docs`
-- startedAt: 2026-06-29T21:42:56.719Z
-- finishedAt: 2026-06-29T21:42:56.881Z
+- startedAt: 2026-06-29T21:46:22.622Z
+- finishedAt: 2026-06-29T21:46:22.768Z
 ### Repository boundary
 - status: pass
 - script: verify:repo-boundary
 - command: `npm run verify:repo-boundary`
-- startedAt: 2026-06-29T21:42:56.881Z
-- finishedAt: 2026-06-29T21:42:57.039Z
+- startedAt: 2026-06-29T21:46:22.768Z
+- finishedAt: 2026-06-29T21:46:22.912Z
 ### App shell navigation context
 - status: pass
 - script: verify:app-shell
 - command: `npm run verify:app-shell`
-- startedAt: 2026-06-29T21:42:57.039Z
-- finishedAt: 2026-06-29T21:42:57.196Z
+- startedAt: 2026-06-29T21:46:22.912Z
+- finishedAt: 2026-06-29T21:46:23.055Z
 ### Navigation href safety contract
 - status: pass
 - script: verify:navigation-href
 - command: `npm run verify:navigation-href`
-- startedAt: 2026-06-29T21:42:57.196Z
-- finishedAt: 2026-06-29T21:42:57.366Z
+- startedAt: 2026-06-29T21:46:23.055Z
+- finishedAt: 2026-06-29T21:46:23.198Z
 ### Build stability guard
 - status: pass
 - script: verify:build-stability
 - command: `npm run verify:build-stability`
-- startedAt: 2026-06-29T21:42:57.366Z
-- finishedAt: 2026-06-29T21:42:57.568Z
+- startedAt: 2026-06-29T21:46:23.198Z
+- finishedAt: 2026-06-29T21:46:23.362Z
 ### Dashboard Studio source operations
 - status: pass
 - script: verify:dashboard-source
 - command: `npm run verify:dashboard-source`
-- startedAt: 2026-06-29T21:42:57.568Z
-- finishedAt: 2026-06-29T21:42:57.721Z
+- startedAt: 2026-06-29T21:46:23.362Z
+- finishedAt: 2026-06-29T21:46:23.513Z
 ### Data management operations
 - status: pass
 - script: verify:data-management
 - command: `npm run verify:data-management`
-- startedAt: 2026-06-29T21:42:57.721Z
-- finishedAt: 2026-06-29T21:42:58.098Z
+- startedAt: 2026-06-29T21:46:23.513Z
+- finishedAt: 2026-06-29T21:46:23.899Z
 ### External AI integrations surface
 - status: pass
 - script: verify:integrations
 - command: `npm run verify:integrations`
-- startedAt: 2026-06-29T21:42:58.098Z
-- finishedAt: 2026-06-29T21:42:58.929Z
+- startedAt: 2026-06-29T21:46:23.899Z
+- finishedAt: 2026-06-29T21:46:24.638Z
 ### Supabase preflight scope guard
 - status: pass
 - script: verify:scope
 - command: `npm run verify:scope`
-- startedAt: 2026-06-29T21:42:58.929Z
-- finishedAt: 2026-06-29T21:42:59.247Z
+- startedAt: 2026-06-29T21:46:24.638Z
+- finishedAt: 2026-06-29T21:46:24.955Z
 ### Runtime readiness scenarios
 - status: pass
 - script: verify:runtime
 - command: `npm run verify:runtime`
-- startedAt: 2026-06-29T21:42:59.247Z
-- finishedAt: 2026-06-29T21:42:59.586Z
+- startedAt: 2026-06-29T21:46:24.955Z
+- finishedAt: 2026-06-29T21:46:25.285Z
 ### OpenAI local fallback contract
 - status: pass
 - script: verify:openai-fallback
 - command: `npm run verify:openai-fallback`
-- startedAt: 2026-06-29T21:42:59.586Z
-- finishedAt: 2026-06-29T21:42:59.938Z
+- startedAt: 2026-06-29T21:46:25.285Z
+- finishedAt: 2026-06-29T21:46:25.621Z
 ### OpenAI comparison smoke gate
 - status: pass
 - script: verify:openai-comparison
 - command: `npm run verify:openai-comparison`
-- startedAt: 2026-06-29T21:42:59.938Z
-- finishedAt: 2026-06-29T21:43:00.356Z
+- startedAt: 2026-06-29T21:46:25.621Z
+- finishedAt: 2026-06-29T21:46:25.978Z
 ### Target AI handoff package
 - status: pass
 - script: verify:prompt-package
 - command: `npm run verify:prompt-package`
-- startedAt: 2026-06-29T21:43:00.356Z
-- finishedAt: 2026-06-29T21:43:00.708Z
+- startedAt: 2026-06-29T21:46:25.978Z
+- finishedAt: 2026-06-29T21:46:26.324Z
 ### Profile and Company context flow
 - status: pass
 - script: verify:profile-company
 - command: `npm run verify:profile-company`
-- startedAt: 2026-06-29T21:43:00.708Z
-- finishedAt: 2026-06-29T21:43:00.888Z
+- startedAt: 2026-06-29T21:46:26.324Z
+- finishedAt: 2026-06-29T21:46:26.488Z
 ### Library operational summary
 - status: pass
 - script: verify:library-summary
 - command: `npm run verify:library-summary`
-- startedAt: 2026-06-29T21:43:00.888Z
-- finishedAt: 2026-06-29T21:43:01.074Z
+- startedAt: 2026-06-29T21:46:26.488Z
+- finishedAt: 2026-06-29T21:46:26.634Z
 ### Learning operational summary
 - status: pass
 - script: verify:learning-summary
 - command: `npm run verify:learning-summary`
-- startedAt: 2026-06-29T21:43:01.074Z
-- finishedAt: 2026-06-29T21:43:01.493Z
+- startedAt: 2026-06-29T21:46:26.634Z
+- finishedAt: 2026-06-29T21:46:26.792Z
 ### Studio draft operational summary
 - status: pass
 - script: verify:studio-draft-summary
 - command: `npm run verify:studio-draft-summary`
-- startedAt: 2026-06-29T21:43:01.494Z
-- finishedAt: 2026-06-29T21:43:01.886Z
+- startedAt: 2026-06-29T21:46:26.792Z
+- finishedAt: 2026-06-29T21:46:27.129Z
 ### Studio draft fallback guards
 - status: pass
 - script: verify:studio-draft-fallbacks
 - command: `npm run verify:studio-draft-fallbacks`
-- startedAt: 2026-06-29T21:43:01.886Z
-- finishedAt: 2026-06-29T21:43:02.276Z
+- startedAt: 2026-06-29T21:46:27.129Z
+- finishedAt: 2026-06-29T21:46:27.533Z
 ### Studio result handoff summary
 - status: pass
 - script: verify:studio-result-summary
 - command: `npm run verify:studio-result-summary`
-- startedAt: 2026-06-29T21:43:02.276Z
-- finishedAt: 2026-06-29T21:43:02.426Z
+- startedAt: 2026-06-29T21:46:27.533Z
+- finishedAt: 2026-06-29T21:46:27.692Z
 ### Skills operational summary
 - status: pass
 - script: verify:skills-summary
 - command: `npm run verify:skills-summary`
-- startedAt: 2026-06-29T21:43:02.426Z
-- finishedAt: 2026-06-29T21:43:02.784Z
+- startedAt: 2026-06-29T21:46:27.692Z
+- finishedAt: 2026-06-29T21:46:28.066Z
 ### Studio stale handoff guard
 - status: pass
 - script: verify:studio-safety
 - command: `npm run verify:studio-safety`
-- startedAt: 2026-06-29T21:43:02.784Z
-- finishedAt: 2026-06-29T21:43:02.927Z
+- startedAt: 2026-06-29T21:46:28.066Z
+- finishedAt: 2026-06-29T21:46:28.206Z
 ### Terminology consistency
 - status: pass
 - script: verify:terminology
 - command: `npm run verify:terminology`
-- startedAt: 2026-06-29T21:43:02.927Z
-- finishedAt: 2026-06-29T21:43:03.088Z
+- startedAt: 2026-06-29T21:46:28.206Z
+- finishedAt: 2026-06-29T21:46:28.372Z
 ### Verification evidence CLI behavior
 - status: pass
 - script: verify:evidence-cli
 - command: `npm run verify:evidence-cli`
-- startedAt: 2026-06-29T21:43:03.088Z
-- finishedAt: 2026-06-29T21:43:04.452Z
+- startedAt: 2026-06-29T21:46:28.372Z
+- finishedAt: 2026-06-29T21:46:29.668Z
 ### Verification evidence hygiene
 - status: pass
 - script: verify:evidence-hygiene
 - command: `npm run verify:evidence-hygiene`
-- startedAt: 2026-06-29T21:43:04.452Z
-- finishedAt: 2026-06-29T21:43:04.661Z
+- startedAt: 2026-06-29T21:46:29.668Z
+- finishedAt: 2026-06-29T21:46:29.811Z
 ### Secret safety scan
 - status: pass
 - script: verify:secrets
 - command: `npm run verify:secrets`
-- startedAt: 2026-06-29T21:43:04.661Z
-- finishedAt: 2026-06-29T21:43:04.852Z
+- startedAt: 2026-06-29T21:46:29.811Z
+- finishedAt: 2026-06-29T21:46:29.967Z
 ### Local smoke evidence packets
 - status: pass
 - script: verify:smoke-evidence
 - command: `npm run verify:smoke-evidence`
-- startedAt: 2026-06-29T21:43:04.852Z
-- finishedAt: 2026-06-29T21:43:05.011Z
+- startedAt: 2026-06-29T21:46:29.967Z
+- finishedAt: 2026-06-29T21:46:30.103Z
 ### ESLint
 - status: pass
 - script: lint
 - command: `npm run lint`
-- startedAt: 2026-06-29T21:43:05.011Z
-- finishedAt: 2026-06-29T21:43:12.846Z
+- startedAt: 2026-06-29T21:46:30.103Z
+- finishedAt: 2026-06-29T21:46:36.890Z
 ### Next.js production build
 - status: pass
 - script: build
 - command: `npm run build`
-- startedAt: 2026-06-29T21:43:12.847Z
-- finishedAt: 2026-06-29T21:43:18.856Z
+- startedAt: 2026-06-29T21:46:36.890Z
+- finishedAt: 2026-06-29T21:46:42.566Z
 
 ## Runtime Readiness
-- checkedAt: 2026-06-29T21:42:56.539Z
+- checkedAt: 2026-06-29T21:46:22.471Z
 - releaseGate: local-ready (17/100)
 - generationMode: local
 - generationModel: local fallback

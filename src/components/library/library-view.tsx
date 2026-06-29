@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Field,
   PageHeader,
@@ -1925,6 +1925,8 @@ function buildLibraryFilterHref({
   return normalizeInternalHref(href) ?? "/library";
 }
 
+type LibraryFilterHrefOptions = Parameters<typeof buildLibraryFilterHref>[0];
+
 export function LibraryView({
   initialQuery,
   initialSortMode,
@@ -2386,6 +2388,44 @@ export function LibraryView({
     targetModelFilter,
   ]);
   const hasActiveFilters = activeFilterItems.length > 0;
+  const buildCurrentLibraryHref = useCallback(
+    (overrides: Partial<LibraryFilterHrefOptions> = {}) =>
+      buildLibraryFilterHref({
+        search: query,
+        sort: sortMode,
+        language: languageFilter,
+        output: outputLanguageFilter,
+        model: targetModelFilter,
+        engine: generationEngineFilter,
+        learning: learningScopeFilter,
+        improvement: improvementFilter,
+        sourceReason: sourceReasonFilter,
+        studioPersistence: studioPersistenceFilter,
+        studioSource: studioSourceFilter,
+        studioVariant: studioSourceVariantFilter,
+        promptId: selectedId,
+        version: activeModel,
+        detailMode: promptDetailMode,
+        ...overrides,
+      }),
+    [
+      activeModel,
+      generationEngineFilter,
+      improvementFilter,
+      languageFilter,
+      learningScopeFilter,
+      outputLanguageFilter,
+      promptDetailMode,
+      query,
+      selectedId,
+      sortMode,
+      sourceReasonFilter,
+      studioPersistenceFilter,
+      studioSourceFilter,
+      studioSourceVariantFilter,
+      targetModelFilter,
+    ],
+  );
 
   function syncFilterUrl({
     search = query,
@@ -3056,19 +3096,7 @@ export function LibraryView({
           : "원본 없음";
       const sourcePrompt = activeSource ?? deletedSource?.prompt;
       const sourceVersion = getSourceVersion(prompt, sourcePrompt);
-      const detailHref = buildLibraryFilterHref({
-        search: query,
-        sort: sortMode,
-        language: languageFilter,
-        output: outputLanguageFilter,
-        model: targetModelFilter,
-        engine: generationEngineFilter,
-        learning: learningScopeFilter,
-        improvement: improvementFilter,
-        sourceReason: sourceReasonFilter,
-        studioPersistence: studioPersistenceFilter,
-        studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+      const detailHref = buildCurrentLibraryHref({
         promptId: prompt.id,
         version: prompt.versions[0]?.targetModel,
         detailMode: "current",
@@ -3092,21 +3120,11 @@ export function LibraryView({
       };
     });
   }, [
+    buildCurrentLibraryHref,
     deletedPrompts,
     filtered,
-    generationEngineFilter,
-    improvementFilter,
-    languageFilter,
-    learningScopeFilter,
-    outputLanguageFilter,
     prompts,
-    query,
-    sortMode,
     sourceReasonFilter,
-    studioPersistenceFilter,
-    studioSourceFilter,
-    studioSourceVariantFilter,
-    targetModelFilter,
   ]);
   const studioPersistenceActionCandidates = useMemo(() => {
     if (studioPersistenceFilter === "all") {
@@ -3125,19 +3143,7 @@ export function LibraryView({
       const sourceVariantLabel = getPromptStudioSourceVariantLabel(
         prompt.studioSource,
       );
-      const detailHref = buildLibraryFilterHref({
-        search: query,
-        sort: sortMode,
-        language: languageFilter,
-        output: outputLanguageFilter,
-        model: targetModelFilter,
-        engine: generationEngineFilter,
-        learning: learningScopeFilter,
-        improvement: improvementFilter,
-        sourceReason: sourceReasonFilter,
-        studioPersistence: studioPersistenceFilter,
-        studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+      const detailHref = buildCurrentLibraryHref({
         promptId: prompt.id,
         version: prompt.versions[0]?.targetModel,
         detailMode: "current",
@@ -3164,19 +3170,9 @@ export function LibraryView({
       };
     });
   }, [
+    buildCurrentLibraryHref,
     filtered,
-    generationEngineFilter,
-    improvementFilter,
-    languageFilter,
-    learningScopeFilter,
-    outputLanguageFilter,
-    query,
-    sortMode,
-    sourceReasonFilter,
     studioPersistenceFilter,
-    studioSourceFilter,
-    studioSourceVariantFilter,
-    targetModelFilter,
   ]);
   const studioSourceActionCandidates = useMemo(() => {
     if (studioSourceFilter === "all") {
@@ -3191,19 +3187,7 @@ export function LibraryView({
       const sourceVariantLabel = getPromptStudioSourceVariantLabel(
         prompt.studioSource,
       );
-      const detailHref = buildLibraryFilterHref({
-        search: query,
-        sort: sortMode,
-        language: languageFilter,
-        output: outputLanguageFilter,
-        model: targetModelFilter,
-        engine: generationEngineFilter,
-        learning: learningScopeFilter,
-        improvement: improvementFilter,
-        sourceReason: sourceReasonFilter,
-        studioPersistence: studioPersistenceFilter,
-        studioSource: studioSourceFilter,
-      studioVariant: studioSourceVariantFilter,
+      const detailHref = buildCurrentLibraryHref({
         promptId: prompt.id,
         version: prompt.versions[0]?.targetModel,
         detailMode: "current",
@@ -3228,19 +3212,9 @@ export function LibraryView({
       };
     });
   }, [
+    buildCurrentLibraryHref,
     filtered,
-    generationEngineFilter,
-    improvementFilter,
-    languageFilter,
-    learningScopeFilter,
-    outputLanguageFilter,
-    query,
-    sortMode,
-    sourceReasonFilter,
-    studioPersistenceFilter,
     studioSourceFilter,
-    studioSourceVariantFilter,
-    targetModelFilter,
   ]);
   const studioSourceVariantSummaryLinks = useMemo(
     () =>
@@ -3248,18 +3222,7 @@ export function LibraryView({
         ? []
         : summarizePromptStudioSourceVariantItems(filtered).map((item) => ({
             ...item,
-            href: buildLibraryFilterHref({
-              search: query,
-              sort: sortMode,
-              language: languageFilter,
-              output: outputLanguageFilter,
-              model: targetModelFilter,
-              engine: generationEngineFilter,
-              learning: learningScopeFilter,
-              improvement: improvementFilter,
-              sourceReason: sourceReasonFilter,
-              studioPersistence: studioPersistenceFilter,
-              studioSource: studioSourceFilter,
+            href: buildCurrentLibraryHref({
               studioVariant: item.sourceVariant,
               promptId: "",
               version: undefined,
@@ -3267,18 +3230,9 @@ export function LibraryView({
             }),
           })),
     [
+      buildCurrentLibraryHref,
       filtered,
-      generationEngineFilter,
-      improvementFilter,
-      languageFilter,
-      learningScopeFilter,
-      outputLanguageFilter,
-      query,
-      sortMode,
-      sourceReasonFilter,
-      studioPersistenceFilter,
       studioSourceFilter,
-      targetModelFilter,
     ],
   );
   const studioPersistenceVariantSummaryLinks = useMemo(
@@ -3287,18 +3241,7 @@ export function LibraryView({
         ? []
         : summarizePromptStudioSourceVariantItems(filtered).map((item) => ({
             ...item,
-            href: buildLibraryFilterHref({
-              search: query,
-              sort: sortMode,
-              language: languageFilter,
-              output: outputLanguageFilter,
-              model: targetModelFilter,
-              engine: generationEngineFilter,
-              learning: learningScopeFilter,
-              improvement: improvementFilter,
-              sourceReason: sourceReasonFilter,
-              studioPersistence: studioPersistenceFilter,
-              studioSource: studioSourceFilter,
+            href: buildCurrentLibraryHref({
               studioVariant: item.sourceVariant,
               promptId: "",
               version: undefined,
@@ -3306,18 +3249,9 @@ export function LibraryView({
             }),
           })),
     [
+      buildCurrentLibraryHref,
       filtered,
-      generationEngineFilter,
-      improvementFilter,
-      languageFilter,
-      learningScopeFilter,
-      outputLanguageFilter,
-      query,
-      sortMode,
-      sourceReasonFilter,
       studioPersistenceFilter,
-      studioSourceFilter,
-      targetModelFilter,
     ],
   );
 

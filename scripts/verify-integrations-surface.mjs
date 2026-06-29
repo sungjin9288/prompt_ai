@@ -281,9 +281,10 @@ for (const requiredText of [
   "reviewRequired package만 외부 AI에 붙여넣습니다.",
   "파일 범위, 검증 명령, 완료 기준을 포함합니다.",
   "refine, context, handoff, feedback 도구를 연결합니다.",
-  "Refine automatically, deliver with review.",
+  "Refine automatically, save evidence, deliver with review.",
   "English or Korean-English hybrid",
   "chrome-selection, mcp-refine, local-smoke-evidence, target-ai-handoff",
+  "로컬 smoke evidence,",
   "refine_prompt",
   "get_context_profile",
   "create_handoff_package",
@@ -403,7 +404,7 @@ assert.match(
 );
 assert.match(
   view,
-  /const automationPrincipleRows = \[[\s\S]*?label: "Refine API"[\s\S]*?POST \/api\/integrations\/refine[\s\S]*?label: "Chrome extension"[\s\S]*?extensions\/chrome[\s\S]*?label: "Context priority"[\s\S]*?company → user → learning → skill[\s\S]*?label: "Language strategy"[\s\S]*?English or Korean-English hybrid[\s\S]*?label: "Audit source"[\s\S]*?chrome-selection, mcp-refine, local-smoke-evidence, target-ai-handoff[\s\S]*?function AutomationPrincipleRow[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?\{label\}[\s\S]*?\{value\}[\s\S]*?function AutomationPrinciplesPanel\(\)[\s\S]*?Refine automatically, deliver with review\.[\s\S]*?automationPrincipleRows\.map[\s\S]*?<AutomationPrincipleRow[\s\S]*?label=\{row\.label\}[\s\S]*?value=\{row\.value\}[\s\S]*?<AutomationPrinciplesPanel \/>/,
+  /const automationPrincipleRows = \[[\s\S]*?label: "Refine API"[\s\S]*?POST \/api\/integrations\/refine[\s\S]*?label: "Chrome extension"[\s\S]*?extensions\/chrome[\s\S]*?label: "Context priority"[\s\S]*?company → user → learning → skill[\s\S]*?label: "Language strategy"[\s\S]*?English or Korean-English hybrid[\s\S]*?label: "Audit source"[\s\S]*?chrome-selection, mcp-refine, local-smoke-evidence, target-ai-handoff[\s\S]*?function AutomationPrincipleRow[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?\{label\}[\s\S]*?\{value\}[\s\S]*?function AutomationPrinciplesPanel\(\)[\s\S]*?Refine automatically, save evidence, deliver with review\.[\s\S]*?로컬 smoke evidence[\s\S]*?automationPrincipleRows\.map[\s\S]*?<AutomationPrincipleRow[\s\S]*?label=\{row\.label\}[\s\S]*?value=\{row\.value\}[\s\S]*?<AutomationPrinciplesPanel \/>/,
   "Integrations view should render automation principles through a dedicated data list and row component",
 );
 assert.match(
@@ -2470,7 +2471,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Integrations 자동화 원칙과 출시 순서는 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따르게 합니다.",
+  "Integrations 자동화 원칙과 출시 순서는 기본 모드를 `Refine automatically, save evidence, deliver with review.`로 표시하고 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따르게 합니다.",
   "README should document local smoke evidence in automation principles and rollout order",
 );
 assertIncludes(
@@ -2795,7 +2796,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 자동화 원칙과 출시 순서는 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따라야 한다.",
+  "Integrations 자동화 원칙과 출시 순서는 기본 모드를 `Refine automatically, save evidence, deliver with review.`로 표시하고 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따라야 한다.",
   "PRD should document local smoke evidence in automation principles and rollout order",
 );
 assertIncludes(
@@ -2945,7 +2946,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations 자동화 원칙과 출시 순서는 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따르게 한다",
+  "Integrations 자동화 원칙과 출시 순서는 기본 모드를 `Refine automatically, save evidence, deliver with review.`로 표시하고 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따르게 한다",
   "Development brief should document local smoke evidence in automation principles and rollout order",
 );
 assertIncludes(

@@ -818,12 +818,12 @@ function AutomationPrinciplesPanel() {
             Default Mode
           </p>
           <p className="mt-2 text-sm font-semibold text-foreground">
-            Refine automatically, deliver with review.
+            Refine automatically, save evidence, deliver with review.
           </p>
           <p className="mt-2 text-sm leading-6 text-muted">
             Chrome이나 MCP에서 들어온 원문은 즉시 정제하되, ChatGPT,
-            Claude, Codex, Gemini로 보내기 전에는 prompt package와 누락
-            맥락을 확인합니다.
+            Claude, Codex, Gemini로 보내기 전에는 로컬 smoke evidence,
+            prompt package, 누락 맥락을 확인합니다.
           </p>
         </div>
         <div className="grid gap-2 text-sm text-soft">

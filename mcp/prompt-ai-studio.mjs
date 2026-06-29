@@ -553,7 +553,9 @@ function isUnavailableRefineApiError(error) {
   return (
     error.message === "fetch failed" ||
     error.message.includes("ECONNREFUSED") ||
-    error.message.includes("ECONNRESET")
+    error.message.includes("ECONNRESET") ||
+    error.message.includes("returned non-JSON response (404)") ||
+    error.message.includes("failed: HTTP 404")
   );
 }
 

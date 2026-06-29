@@ -2588,6 +2588,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "운영 가이드 복사/`integrations-operations-checklist` Studio 초안에는 실행 증거 체크와 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
+  "README should document external AI operator guide copied package evidence checklist and audit source order",
+);
+assertIncludes(
+  readme,
   "운영 가이드 복사",
   "README should document external AI operator guide copy",
 );
@@ -2933,8 +2938,13 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 외부 AI 운영 가이드는 운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여주고, 외부 AI 전달 전 로컬 smoke evidence 저장 단계를 포함해야 한다.",
-  "PRD should document external AI operator guide summary metrics",
+  "Integrations 외부 AI 운영 가이드는 운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여주고, 외부 AI 전달 전 로컬 smoke evidence 저장 단계와 실행 증거 체크를 포함해야 한다.",
+  "PRD should document external AI operator guide summary metrics and evidence checklist",
+);
+assertIncludes(
+  prd,
+  "운영 가이드 복사와 `integrations-operations-checklist` Studio 초안은 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함해야 한다.",
+  "PRD should document external AI operator guide copied package audit source order",
 );
 assertIncludes(
   prd,
@@ -3080,6 +3090,11 @@ assertIncludes(
   developmentBrief,
   "로컬 smoke evidence 저장, 외부 AI 수동 전달, confirmSave 피드백 저장 판단 순서",
   "Development brief should document external AI operator guide smoke evidence step",
+);
+assertIncludes(
+  developmentBrief,
+  "운영 가이드 복사/`integrations-operations-checklist` Studio 초안에는 실행 증거 체크와 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
+  "Development brief should document external AI operator guide copied package evidence checklist and audit source order",
 );
 assertIncludes(
   developmentBrief,

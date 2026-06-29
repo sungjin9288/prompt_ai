@@ -173,6 +173,28 @@ const smokeEvidenceRows = [
   result: string;
 }>;
 
+const smokeEvidenceRunOrder = [
+  {
+    gate: "output/smoke evidence file",
+    label: "01 로컬 packet",
+    task: "맞는 smoke 명령을 실행하고 생성된 Markdown packet을 보관합니다.",
+  },
+  {
+    gate: "reviewRequired actual result",
+    label: "02 실제 증빙",
+    task: "외부 전달 전에 실제 Chrome, MCP, Learning 증빙 필드를 기록합니다.",
+  },
+  {
+    gate: "confirmSave reviewed feedback",
+    label: "03 피드백 기록",
+    task: "외부 AI 결과를 검토한 뒤 학습 가치가 있을 때만 피드백을 저장합니다.",
+  },
+] satisfies Array<{
+  gate: string;
+  label: string;
+  task: string;
+}>;
+
 const integrationOperationFlow = [
   {
     artifact: "raw input, source app, target AI hint",
@@ -621,7 +643,28 @@ function SmokeEvidencePath() {
         description="MCP self-test, Chrome popup smoke, feedback 저장이 어떤 증거로 이어지는지 한 줄로 대조합니다."
       />
       <div
-        className="grid gap-3 px-5 pb-5 lg:grid-cols-3"
+        className="grid gap-3 border-b border-line px-5 pb-4 md:grid-cols-3"
+        data-testid="integrations-smoke-evidence-run-order"
+      >
+        {smokeEvidenceRunOrder.map((step) => (
+          <div
+            className="min-w-0 rounded-md border border-line bg-surface p-4"
+            key={step.label}
+          >
+            <p className="break-words text-sm font-semibold text-foreground">
+              {step.label}
+            </p>
+            <p className="mt-2 break-words text-sm leading-6 text-soft">
+              {step.task}
+            </p>
+            <p className="mt-3 break-words font-mono text-xs leading-5 text-muted">
+              {step.gate}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div
+        className="grid gap-3 px-5 py-5 lg:grid-cols-3"
         data-testid="integrations-smoke-evidence-path"
       >
         {smokeEvidenceRows.map((row) => (

@@ -375,7 +375,12 @@ assert.match(
 );
 assert.match(
   view,
-  /function SmokeEvidencePath\(\)[\s\S]*?Smoke 증거 경로[\s\S]*?data-testid="integrations-smoke-evidence-path"[\s\S]*?smokeEvidenceRows\.map[\s\S]*?href=\{row\.href\}[\s\S]*?row\.label[\s\S]*?row\.command[\s\S]*?row\.evidence[\s\S]*?row\.result/,
+  /const smokeEvidenceRunOrder = \[[\s\S]*?output\/smoke evidence file[\s\S]*?label: "01 로컬 packet"[\s\S]*?맞는 smoke 명령을 실행하고 생성된 Markdown packet을 보관합니다\.[\s\S]*?reviewRequired actual result[\s\S]*?label: "02 실제 증빙"[\s\S]*?외부 전달 전에 실제 Chrome, MCP, Learning 증빙 필드를 기록합니다\.[\s\S]*?confirmSave reviewed feedback[\s\S]*?label: "03 피드백 기록"[\s\S]*?외부 AI 결과를 검토한 뒤 학습 가치가 있을 때만 피드백을 저장합니다\./,
+  "Integrations smoke evidence path should define the operator run order from local packet to reviewed feedback",
+);
+assert.match(
+  view,
+  /function SmokeEvidencePath\(\)[\s\S]*?Smoke 증거 경로[\s\S]*?data-testid="integrations-smoke-evidence-run-order"[\s\S]*?smokeEvidenceRunOrder\.map[\s\S]*?step\.label[\s\S]*?step\.task[\s\S]*?step\.gate[\s\S]*?data-testid="integrations-smoke-evidence-path"[\s\S]*?smokeEvidenceRows\.map[\s\S]*?href=\{row\.href\}[\s\S]*?row\.label[\s\S]*?row\.command[\s\S]*?row\.evidence[\s\S]*?row\.result/,
   "Integrations smoke evidence path should render command, evidence, result, and detail link for each smoke route",
 );
 assert.match(
@@ -2665,7 +2670,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Integrations Smoke 증거 경로: MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 상단에서 대조하고 상세 섹션으로 이동하게 합니다.",
+  "Integrations Smoke 증거 경로: local packet, actual evidence, reviewed feedback record 순서를 먼저 보여주고 MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 합니다.",
   "README should document the integrations smoke evidence path",
 );
 assertIncludes(
@@ -3080,7 +3085,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations Smoke 증거 경로는 MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 상단에서 대조하고 상세 섹션으로 이동하게 해야 한다.",
+  "Integrations Smoke 증거 경로는 local packet, actual evidence, reviewed feedback record 순서를 먼저 보여주고 MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 해야 한다.",
   "PRD should document the integrations smoke evidence path",
 );
 assertIncludes(
@@ -3275,7 +3280,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations Smoke 증거 경로에서 MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 상단에서 대조하고 상세 섹션으로 이동하게 한다",
+  "Integrations Smoke 증거 경로에서 local packet, actual evidence, reviewed feedback record 순서를 먼저 보여주고 MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 한다",
   "Development brief should document the integrations smoke evidence path",
 );
 assertIncludes(

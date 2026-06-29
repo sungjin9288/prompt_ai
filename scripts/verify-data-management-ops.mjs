@@ -1418,7 +1418,7 @@ assertFileIncludes(
 assertFileIncludes(
   readme,
   "저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시",
-  "README should document the Data document RAG Studio draft storage fallback",
+  "README should document the Data document RAG Studio draft return action and fallback",
 );
 assertFileNotIncludes(
   readme,
@@ -1428,12 +1428,22 @@ assertFileNotIncludes(
 assertFileIncludes(
   prd,
   "문서/RAG chunk 맥락을 `data-document-rag` Studio 초안으로 보낼 때 Studio 복귀 액션 라벨은 `Data 문서/RAG로 돌아가기`로 표시하고 원본 경로는 `/data`로 돌아가야 하며, 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시해야 한다.",
-  "PRD should document the Data document RAG Studio draft storage fallback",
+  "PRD should document the Data document RAG Studio draft return action and fallback",
+);
+assertFileNotIncludes(
+  prd,
+  "문서/RAG chunk 맥락을 `data-document-rag` Studio 초안으로 보낼 때 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시해야 한다.",
+  "PRD should not keep the Data document RAG fallback-only Studio draft wording",
 );
 assertFileIncludes(
   developmentBrief,
   "Data 문서/RAG Studio 초안은 복귀 액션 라벨을 `Data 문서/RAG로 돌아가기`로 표시하고 원본 경로를 `/data`로 저장하며, 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시한다",
-  "Development brief should document the Data document RAG Studio draft storage fallback",
+  "Development brief should document the Data document RAG Studio draft return action and fallback",
+);
+assertFileNotIncludes(
+  developmentBrief,
+  "Data 문서/RAG Studio 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시한다",
+  "Development brief should not keep the Data document RAG fallback-only Studio draft wording",
 );
 assertFileIncludes(
   storageArchitecture,
@@ -1478,7 +1488,7 @@ assertFileIncludes(
 assertFileIncludes(
   storageArchitecture,
   "If draft storage is blocked, the panel stays\non `/data` and shows the document/RAG Studio prompt in the existing manual copy\ntextarea.",
-  "Storage architecture should document the Data document RAG Studio draft storage fallback",
+  "Storage architecture should document the Data document RAG Studio draft fallback boundary",
 );
 assertFileIncludes(
   readme,

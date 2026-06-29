@@ -175,7 +175,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /verify:studio-draft-fallbacks` checks that every Studio draft write\s+stores the result in `wroteDraft` and keeps a matching manual fallback guard/,
+  /verify:studio-draft-fallbacks` checks that every Studio draft write\s+stores the result in `wroteDraft` and immediately returns from its manual\s+fallback guard/,
   "README should document the Studio draft fallback guard verification scope",
 );
 assert.match(

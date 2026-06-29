@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import ts from "typescript";
 
 const sourceRoots = ["src/app", "src/components"];
 
@@ -18,44 +19,180 @@ function listSourceFiles(directory) {
 }
 
 const sourceFiles = sourceRoots.flatMap(listSourceFiles);
-const draftCalls = [];
-const unguardedCalls = [];
-let failureGuardCount = 0;
+const guardFailures = [];
 
-for (const filePath of sourceFiles) {
-  const lines = readFileSync(filePath, "utf8").split("\n");
+function getScriptKind(filePath) {
+  if (filePath.endsWith(".tsx")) {
+    return ts.ScriptKind.TSX;
+  }
 
-  lines.forEach((line, index) => {
-    if (line.includes("writeStudioDraft(")) {
-      const call = `${filePath}:${index + 1}`;
+  if (filePath.endsWith(".jsx")) {
+    return ts.ScriptKind.JSX;
+  }
 
-      draftCalls.push(call);
+  if (filePath.endsWith(".js")) {
+    return ts.ScriptKind.JS;
+  }
 
-      if (!line.includes("const wroteDraft = writeStudioDraft(")) {
-        unguardedCalls.push(call);
-      }
-    }
-
-    if (line.includes("if (!wroteDraft)")) {
-      failureGuardCount += 1;
-    }
-  });
+  return ts.ScriptKind.TS;
 }
 
-assert.ok(draftCalls.length > 0, "Expected at least one Studio draft write call");
+function getLocation(sourceFile, node) {
+  const position = sourceFile.getLineAndCharacterOfPosition(
+    node.getStart(sourceFile),
+  );
+
+  return `${sourceFile.fileName}:${position.line + 1}:${position.character + 1}`;
+}
+
+function findAncestor(node, predicate) {
+  let current = node.parent;
+
+  while (current) {
+    if (predicate(current)) {
+      return current;
+    }
+
+    current = current.parent;
+  }
+
+  return undefined;
+}
+
+function isConstDeclaration(statement) {
+  return (
+    ts.isVariableStatement(statement) &&
+    (statement.declarationList.flags & ts.NodeFlags.Const) !== 0
+  );
+}
+
+function isNegatedWroteDraft(expression) {
+  if (ts.isParenthesizedExpression(expression)) {
+    return isNegatedWroteDraft(expression.expression);
+  }
+
+  return (
+    ts.isPrefixUnaryExpression(expression) &&
+    expression.operator === ts.SyntaxKind.ExclamationToken &&
+    ts.isIdentifier(expression.operand) &&
+    expression.operand.text === "wroteDraft"
+  );
+}
+
+function containsReturnStatement(node) {
+  let hasReturn = false;
+
+  function visit(child) {
+    if (ts.isReturnStatement(child)) {
+      hasReturn = true;
+      return;
+    }
+
+    ts.forEachChild(child, visit);
+  }
+
+  visit(node);
+
+  return hasReturn;
+}
+
+function verifyWriteStudioDraftCall(sourceFile, callExpression) {
+  const callLocation = getLocation(sourceFile, callExpression);
+  const variableDeclaration = findAncestor(callExpression, ts.isVariableDeclaration);
+  const variableStatement = findAncestor(callExpression, ts.isVariableStatement);
+
+  if (
+    !variableDeclaration ||
+    variableDeclaration.initializer !== callExpression ||
+    !ts.isIdentifier(variableDeclaration.name) ||
+    variableDeclaration.name.text !== "wroteDraft" ||
+    !variableStatement ||
+    !isConstDeclaration(variableStatement)
+  ) {
+    guardFailures.push(
+      `${callLocation} should assign writeStudioDraft to const wroteDraft`,
+    );
+    return;
+  }
+
+  const parentBlock = variableStatement.parent;
+
+  if (!ts.isBlock(parentBlock)) {
+    guardFailures.push(
+      `${callLocation} should live inside a block with a matching fallback guard`,
+    );
+    return;
+  }
+
+  const statementIndex = parentBlock.statements.findIndex(
+    (statement) => statement === variableStatement,
+  );
+  const fallbackGuard = parentBlock.statements[statementIndex + 1];
+
+  if (
+    !fallbackGuard ||
+    !ts.isIfStatement(fallbackGuard) ||
+    !isNegatedWroteDraft(fallbackGuard.expression)
+  ) {
+    guardFailures.push(
+      `${callLocation} should be followed immediately by if (!wroteDraft)`,
+    );
+    return;
+  }
+
+  if (!containsReturnStatement(fallbackGuard.thenStatement)) {
+    guardFailures.push(
+      `${getLocation(
+        sourceFile,
+        fallbackGuard,
+      )} should return from the manual fallback branch before navigation`,
+    );
+  }
+}
+
+function verifySourceFile(filePath) {
+  const source = readFileSync(filePath, "utf8");
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    getScriptKind(filePath),
+  );
+  let callCount = 0;
+
+  function visit(node) {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === "writeStudioDraft"
+    ) {
+      callCount += 1;
+      verifyWriteStudioDraftCall(sourceFile, node);
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+
+  return callCount;
+}
+
+const draftCallCount = sourceFiles.reduce(
+  (count, filePath) => count + verifySourceFile(filePath),
+  0,
+);
+
+assert.ok(draftCallCount > 0, "Expected at least one Studio draft write call");
 assert.deepEqual(
-  unguardedCalls,
+  guardFailures,
   [],
-  `Every writeStudioDraft call should assign const wroteDraft first:\n${unguardedCalls.join(
+  `Every writeStudioDraft call should save to const wroteDraft and immediately return from its fallback guard:\n${guardFailures.join(
     "\n",
   )}`,
 );
-assert.equal(
-  failureGuardCount,
-  draftCalls.length,
-  "Every writeStudioDraft call should have a matching if (!wroteDraft) fallback guard",
-);
 
 console.log(
-  `Studio draft fallback guard verification passed for ${draftCalls.length} draft writes.`,
+  `Studio draft fallback guard verification passed for ${draftCallCount} draft writes.`,
 );

@@ -515,7 +515,8 @@ handoff artifact.
 `npm run verify:secrets` scans source, scripts, and docs for OpenAI/Supabase
 secret-like values while allowing documented placeholders.
 `npm run verify:studio-draft-fallbacks` checks that every Studio draft write
-stores the result in `wroteDraft` and keeps a matching manual fallback guard.
+stores the result in `wroteDraft` and immediately returns from its manual
+fallback guard.
 `npm run verify:studio-draft-summary` checks that Studio loaded drafts keep the
 operation summary, persistence, saved source, and save expectation visible.
 `npm run verify:studio-result-summary` checks that Studio generated results keep

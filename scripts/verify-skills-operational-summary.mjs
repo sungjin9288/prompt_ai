@@ -19,6 +19,10 @@ function assertFileIncludes(fileSource, text, message) {
   assert.ok(fileSource.includes(text), message);
 }
 
+function assertFileNotIncludes(fileSource, text, message) {
+  assert.ok(!fileSource.includes(text), message);
+}
+
 assertMatches(
   /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
   "Skills should reuse the shared context operating flow component",
@@ -198,7 +202,7 @@ assertFileIncludes(
 assertFileIncludes(
   readme,
   "Skills 운영 요약과 개선 계획의 Studio 초안은 각각 `Skills로 돌아가기`, `Skills 스킬로 돌아가기` 복귀 액션 라벨로 원래 화면을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시합니다.",
-  "README should document Skills Studio draft fallback",
+  "README should document Skills Studio draft return actions and fallback",
 );
 assertFileIncludes(
   readme,
@@ -258,7 +262,7 @@ assertFileIncludes(
 assertFileIncludes(
   prd,
   "Skills 운영 요약과 개선 계획의 Studio 초안은 각각 `Skills로 돌아가기`, `Skills 스킬로 돌아가기` 복귀 액션 라벨로 원래 화면을 복원해야 하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
-  "PRD should document Skills Studio draft fallback",
+  "PRD should document Skills Studio draft return actions and fallback",
 );
 assertFileIncludes(
   developmentBrief,
@@ -273,7 +277,18 @@ assertFileIncludes(
 assertFileIncludes(
   developmentBrief,
   "Skills 운영 요약과 개선 계획의 Studio 초안은 각각 `Skills로 돌아가기`, `Skills 스킬로 돌아가기` 복귀 액션 라벨로 원래 화면을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시한다.",
-  "Development brief should document Skills Studio draft fallback",
+  "Development brief should document Skills Studio draft return actions and fallback",
 );
+for (const [sourceName, fileSource] of [
+  ["README", readme],
+  ["PRD", prd],
+  ["Development brief", developmentBrief],
+]) {
+  assertFileNotIncludes(
+    fileSource,
+    "Skills 운영 요약과 개선 계획의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시",
+    `${sourceName} should not keep the Skills draft fallback wording without return action labels`,
+  );
+}
 
 console.log("Skills operational summary verification passed.");

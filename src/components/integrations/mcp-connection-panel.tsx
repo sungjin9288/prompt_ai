@@ -1140,7 +1140,7 @@ export function McpConnectionPanel() {
       targetModels: ["claude", "codex", "gpt"],
       outputLanguage: "korean",
       sourceTitle: "Integrations MCP end-to-end smoke runbook",
-      sourceHref: "/integrations",
+      sourceHref: "/integrations#integrations-mcp-connection",
       createdAt: new Date().toISOString(),
     });
 

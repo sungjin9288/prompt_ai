@@ -1151,6 +1151,7 @@ for (const requiredText of [
   'setCopyState("draftError")',
   "setManualCopyText(rawInput)",
   'source: "integrations-operations-checklist"',
+  'sourceHref: "/integrations#integrations-mcp-connection"',
   'router.push("/studio?draft=integrations-operations-checklist")',
   "MCP end-to-end smoke 운영 개선 계획",
   "External AI integrations · MCP smoke runbook",
@@ -1211,6 +1212,11 @@ assert.match(
   mcpConnectionPanel,
   /function buildMcpEndToEndSmokeRunbook\(\)[\s\S]*?Gate: local-first automation, smoke evidence saved, review-required external delivery, and confirmSave only after operator review\.[\s\S]*?\.\.\.mcpEvidenceTrace[\s\S]*?Steps:/,
   "MCP end-to-end smoke runbook should include the shared evidence trace before runbook steps",
+);
+assert.match(
+  mcpConnectionPanel,
+  /function openRunbookInStudio\(\)[\s\S]*?writeStudioDraft\(\{[\s\S]*?source: "integrations-operations-checklist"[\s\S]*?sourceTitle: "Integrations MCP end-to-end smoke runbook"[\s\S]*?sourceHref: "\/integrations#integrations-mcp-connection"[\s\S]*?router\.push\("\/studio\?draft=integrations-operations-checklist"\)/,
+  "MCP runbook Studio draft should return to the MCP connection anchor",
 );
 assert.match(
   mcpConnectionPanel,
@@ -2718,6 +2724,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "Studio 초안 원본 경로는 `#integrations-mcp-connection`으로 돌아오게 합니다.",
+  "README should document MCP runbook Studio source anchor",
+);
+assertIncludes(
+  readme,
   "Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 connection mode, trigger, Studio action, output, operator check",
   "README should document the environment playbook fields",
 );
@@ -3013,6 +3024,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "Integrations MCP runbook Studio 초안의 원본 경로는 `/integrations#integrations-mcp-connection`으로 저장해 Studio에서 원본으로 돌아갈 때 MCP 연결 섹션을 복원해야 한다.",
+  "PRD should document MCP runbook Studio source anchor",
+);
+assertIncludes(
+  prd,
   "Integrations MCP client examples는 Claude/Codex/GPT-compatible client별 config scope, target AI, use case, operator gate를 카드로 먼저 구분해 보여줘야 한다.",
   "PRD should document MCP client setup cards",
 );
@@ -3240,6 +3256,11 @@ assertIncludes(
   developmentBrief,
   "runbook 버튼 전 화면 요약과 복사/Studio 초안 원문에 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
   "Development brief should document MCP runbook visible and copied audit source order",
+);
+assertIncludes(
+  developmentBrief,
+  "Studio 초안 원본 경로는 `#integrations-mcp-connection`으로 돌아오게 한다.",
+  "Development brief should document MCP runbook Studio source anchor",
 );
 assertIncludes(
   developmentBrief,

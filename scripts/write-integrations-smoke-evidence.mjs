@@ -1,5 +1,9 @@
-import { execFileSync, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
+import {
+  buildGitProvenance,
+  buildGitProvenanceLines,
+} from "./lib/git-provenance.mjs";
 
 const smokeCommands = [
   {
@@ -48,37 +52,6 @@ const smokeCommands = [
   },
 ];
 
-function readGitValue(args) {
-  try {
-    return execFileSync("git", args, {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    }).trim();
-  } catch {
-    return "unavailable";
-  }
-}
-
-function buildGitProvenance() {
-  const status = readGitValue(["status", "--short"]);
-
-  return {
-    branch: readGitValue(["branch", "--show-current"]) || "detached",
-    changedFiles:
-      status === "unavailable" || !status ? 0 : status.split("\n").length,
-    commit: readGitValue(["rev-parse", "--short", "HEAD"]),
-    status,
-  };
-}
-
-function formatWorkingTreeStatus(status) {
-  if (status === "unavailable") {
-    return "unavailable";
-  }
-
-  return status ? "dirty" : "clean";
-}
-
 for (const smoke of smokeCommands) {
   const result = spawnSync("npm", smoke.args, {
     cwd: process.cwd(),
@@ -107,10 +80,7 @@ writeFileSync(
     "- command: npm run smoke:integrations",
     "- gate: local packets pass before external AI delivery",
     "- external services: not contacted",
-    `- branch: ${gitProvenance.branch}`,
-    `- commit: ${gitProvenance.commit}`,
-    `- workingTree: ${formatWorkingTreeStatus(gitProvenance.status)}`,
-    `- changedFiles: ${gitProvenance.changedFiles}`,
+    ...buildGitProvenanceLines(gitProvenance),
     "",
     "## Packets",
     ...smokeCommands.map((smoke) => `- ${smoke.label}: ${smoke.out}`),

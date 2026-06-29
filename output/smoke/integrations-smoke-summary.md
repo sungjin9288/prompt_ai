@@ -4,9 +4,9 @@
 - gate: local packets pass before external AI delivery
 - external services: not contacted
 - branch: main
-- commit: 1b5903a
+- commit: 12c368e
 - workingTree: dirty
-- changedFiles: 5
+- changedFiles: 3
 
 ## Packets
 - Chrome extension: output/smoke/chrome-extension-smoke.md

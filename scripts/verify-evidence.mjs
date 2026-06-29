@@ -1,6 +1,10 @@
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import {
+  buildGitProvenance,
+  buildGitProvenanceLines,
+} from "./lib/git-provenance.mjs";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
 import {
   formatVerificationCommand,
@@ -66,45 +70,8 @@ function getFailureDetails(error) {
   };
 }
 
-function readGitValue(args) {
-  try {
-    return execFileSync("git", args, {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    }).trim();
-  } catch {
-    return "unavailable";
-  }
-}
-
-function buildGitProvenance() {
-  const status = readGitValue(["status", "--short"]);
-
-  return {
-    branch: readGitValue(["branch", "--show-current"]) || "detached",
-    changedFiles:
-      status === "unavailable" || !status ? 0 : status.split("\n").length,
-    commit: readGitValue(["rev-parse", "--short", "HEAD"]),
-    status,
-  };
-}
-
 function buildGitProvenanceEvidence(gitProvenance) {
-  let status = "clean";
-
-  if (gitProvenance.status === "unavailable") {
-    status = "unavailable";
-  } else if (gitProvenance.status) {
-    status = "dirty";
-  }
-
-  return [
-    "## Git Provenance",
-    `- branch: ${gitProvenance.branch}`,
-    `- commit: ${gitProvenance.commit}`,
-    `- workingTree: ${status}`,
-    `- changedFiles: ${gitProvenance.changedFiles}`,
-  ];
+  return ["## Git Provenance", ...buildGitProvenanceLines(gitProvenance)];
 }
 
 function getUsageText() {

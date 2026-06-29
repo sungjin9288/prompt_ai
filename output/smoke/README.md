@@ -5,9 +5,10 @@ checked without external AI access.
 
 Expected packets:
 
-- `integrations-smoke-summary.md`: integrated preflight summary for the three local packets.
+- `integrations-smoke-summary.md`: integrated preflight summary for the local packets.
 - `chrome-extension-smoke.md`: unpacked Chrome extension file contract.
 - `mcp-bridge-smoke.md`: stdio MCP bridge self-test contract.
+- `mcp-client-smoke.md`: stdio JSON-RPC MCP client call sequence and feedback inbox contract.
 - `learning-feedback-smoke.md`: Learning feedback-improvement queue contract.
 
 ## Operator Run Order
@@ -15,12 +16,13 @@ Expected packets:
 Use these files as the preflight record before sending any refined prompt to an
 external AI surface.
 
-Run `npm run smoke:integrations` to refresh all three local smoke packets and
+Run `npm run smoke:integrations` to refresh all local smoke packets and
 `integrations-smoke-summary.md` in one pass.
 
 1. Run the matching local smoke command and keep the generated packet:
    `npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md`,
-   `npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md`, or
+   `npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md`,
+   `npm run smoke:mcp-client -- --out output/smoke/mcp-client-smoke.md`, or
    `npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md`.
 2. Open the Studio Integrations page and copy the matching actual evidence
    packet only after the real Chrome popup or MCP client returned a

@@ -25,7 +25,7 @@
 - Integrations 지원 환경 요약: Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고, 외부 AI 표면은 로컬 smoke evidence 저장 후 reviewRequired package만 전달하는 기준을 명시
 - Integrations 연결 계약 매트릭스: Chrome, ChatGPT/Claude/Gemini, Codex, MCP별 capture, package, review gate, feedback 산출물을 같은 카드 구조로 보여줘 각 환경이 같은 review-required/confirmSave 계약을 어떻게 지키는지 한눈에 확인하게 합니다.
 - Integrations 실행 증거 체크: 로컬 연결, 정제 결과, 증거 저장, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 합니다.
-- Integrations Smoke 증거 경로: `npm run smoke:integrations` local packet summary, actual evidence, reviewed feedback record 순서를 먼저 보여주고 Integrated preflight, MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 합니다.
+- Integrations Smoke 증거 경로: `npm run smoke:integrations` local packet summary, actual evidence, reviewed feedback record 순서를 먼저 보여주고 Integrated preflight, MCP bridge, MCP client, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 합니다.
 - Integrations 검증 게이트 요약: 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 기준을 먼저 확인하고 게이트별 상세 이동 제공
 - Integrations 검증 게이트 요약은 모바일 2열과 데스크톱 4열로 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 짧게 훑게 합니다.
 - Integrations 운영자 다음 조치: 로컬 서버 유지, 연결 표면 1개 검증, `npm run smoke:integrations` 로컬 smoke evidence 저장, 외부 AI 전달 전 검토, 실행 결과 피드백 저장, release evidence와 release-candidate 확인 순서를 상단에서 확인하고 Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 보여줍니다. 각 단계의 내가 할 일, 완료 기준, evidence와 관련 상세 섹션 이동, 전체/단계별 다음 조치 Markdown 복사, `integrations-operations-checklist` Studio 초안 전송 제공. Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고, 저장 실패 시 이동하지 않고 수동 복사용 다음 조치 원문을 표시
@@ -36,7 +36,7 @@
 - `POST /api/integrations/refine` 외부 정제 API: Chrome/MCP/외부 Gen AI 클라이언트가 원문을 보내면 review-required target AI handoff package 반환
 - Integrations refine tester에서 Chrome/MCP payload를 직접 실행하고 target AI handoff package를 복사
 - Integrations refine tester는 수집 경로, 대상 AI, 검토 gate, 전달 패키지 상태를 실행 버튼 앞에서 확인하게 하고, 요청 source/target/domain/goal과 reviewRequired/target package/quality/language 요약을 모바일 2열로 먼저 보여주며, 복사 전 체크리스트에서 로컬 smoke evidence 저장을 먼저 확인하게 하고, raw payload와 handoff package 원문은 별도 preview로 유지합니다.
-- Integrations MCP 연결 설정은 대상 클라이언트 수, 공유 mcpServers config, --self-test 첫 검증, confirmSave 피드백 gate를 모바일 2열 요약으로 먼저 보여주고 `01 로컬 준비`, `02 클라이언트 연결`, `03 검증과 학습` 단계 카드로 dev server/self-test, shared mcpServers config, reviewRequired package, `npm run smoke:integrations`, confirmSave feedback 순서를 구분합니다. Claude/Codex/GPT-compatible client별 config scope, target AI, use case, operator gate를 카드로 먼저 구분하고 공통 MCP client config, self-test 명령, 통합 smoke 명령, dev server 명령, runbook 버튼 전 화면 요약과 복사/Studio 초안 원문에 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함하며 Studio 초안 원본 경로는 `#integrations-mcp-connection`으로 돌아오고, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시합니다. `refine_prompt` 운영 체크리스트와 Claude/Codex/GPT-compatible MCP client별 설정 예시, smoke prompt, smoke feedback payload, feedback inbox API 확인, curl smoke check 복사, client별 feedback inbox 필터 링크 이동과 UI/API/curl 검증 경로를 카드로 먼저 보여준 뒤 상세 검증 매트릭스 제공. 실제 MCP client에서 확인한 client/tool sequence/review gate/target AI/evidence result/integrated smoke result/feedback record를 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사하게 합니다. Codex와 GPT-compatible client는 같은 MCP server config를 공유하되 Codex는 repo-aware 구현 브리프와 별도 operator gate로 분리. Studio 초안 저장 실패 시 이동하지 않고 수동 복사용 runbook 원문을 표시
+- Integrations MCP 연결 설정은 대상 클라이언트 수, 공유 mcpServers config, --self-test 첫 검증, confirmSave 피드백 gate를 모바일 2열 요약으로 먼저 보여주고 `01 로컬 준비`, `02 클라이언트 연결`, `03 검증과 학습` 단계 카드로 dev server/self-test, shared mcpServers config, reviewRequired package, `npm run smoke:mcp-client`, `npm run smoke:integrations`, confirmSave feedback 순서를 구분합니다. Claude/Codex/GPT-compatible client별 config scope, target AI, use case, operator gate를 카드로 먼저 구분하고 공통 MCP client config, self-test 명령, client smoke 명령, 통합 smoke 명령, dev server 명령, runbook 버튼 전 화면 요약과 복사/Studio 초안 원문에 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함하며 Studio 초안 원본 경로는 `#integrations-mcp-connection`으로 돌아오고, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시합니다. `refine_prompt` 운영 체크리스트와 Claude/Codex/GPT-compatible MCP client별 설정 예시, smoke prompt, smoke feedback payload, feedback inbox API 확인, curl smoke check 복사, client별 feedback inbox 필터 링크 이동과 UI/API/curl 검증 경로를 카드로 먼저 보여준 뒤 상세 검증 매트릭스 제공. 실제 MCP client에서 확인한 client/tool sequence/review gate/target AI/evidence result/integrated smoke result/feedback record를 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사하게 합니다. Codex와 GPT-compatible client는 같은 MCP server config를 공유하되 Codex는 repo-aware 구현 브리프와 별도 operator gate로 분리. Studio 초안 저장 실패 시 이동하지 않고 수동 복사용 runbook 원문을 표시
 - Integrations 연결 준비도 점검에서 연결 표면, 첫 실행 표면, `npm run smoke:integrations`를 포함한 smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여주고, Chrome loaded smoke 체크리스트와 증빙 패킷으로 runtime, capture, result, session restore, evidence fallback 증거를 같은 순서로 확인하고 복사하게 하며, 실제 Chrome popup에서 확인한 runtime/source/review gate/target AI/session/evidence result 값을 operator evidence packet, confirmSave false 기본의 `save_execution_feedback` payload, confirmSave true 저장 후 Feedback inbox UI/API/curl 확인 명령으로 복사하게 하고, Chrome extension, MCP client, ChatGPT/Claude/Gemini, Codex별 status gate, install step, smoke test, operator action, operator evidence를 확인하며 준비도 체크리스트와 smoke test 명령 복사
 - `extensions/chrome` unpacked Chrome extension scaffold: 선택 텍스트 또는 우클릭 `Refine with Prompt AI Studio` context menu 선택을 저장된 local-only Studio URL과 Target AI/Domain/Goal 설정 기준으로 refine API에 보내고 review-required handoff package 표시/복사, 브라우저 세션 내 target/source/time 메타가 포함된 마지막 handoff package 복원. Chrome popup 실행 순서는 `01 선택 수집`, `02 Studio 정제`, `03 검토 전달` 단계로 선택 텍스트, local refine API, review-required handoff 복사 흐름을 먼저 보여주고, Smoke evidence 패널은 runtime/capture/refine/deliver/evidence packet 증거를 같은 popup에서 대조하게 합니다. Handoff result summary는 review gate, target AI, source, session 저장 상태를 handoff 원문 위에서 먼저 보여주며, Evidence 버튼은 같은 결과 기준의 Chrome handoff evidence packet을 복사하고 실패 시 수동 복사용 evidence textarea를 엽니다. 정적 preview에서는 Chrome extension runtime unavailable 상태를 표시하고 page selection/session restore를 건너뛰어 layout smoke를 안정적으로 수행합니다.
 - `mcp/prompt-ai-studio.mjs` stdio MCP bridge: MCP 클라이언트에서 `get_context_profile`로 read-only 컨텍스트 정책과 operation defaults를 확인하고 `refine_prompt`/`create_handoff_package`로 local refine API를 호출해 review-required handoff package 반환, `PROMPT_AI_STUDIO_TARGET_AI`/`DOMAIN`/`GOAL`/`SOURCE_URL` 환경 기본값 지원, `save_execution_feedback`은 `confirmSave: true`일 때만 로컬 feedback inbox에 저장
@@ -390,6 +390,7 @@ npm run smoke:chrome-extension
 npm run smoke:integrations
 npm run smoke:learning-feedback
 npm run smoke:mcp
+npm run smoke:mcp-client
 npm run verify
 npm run verify:app-shell
 npm run verify:build-stability
@@ -436,6 +437,11 @@ key/token redaction.
 Claude, Codex, Gemini, OpenAI, or Supabase. Use it before connecting a real MCP
 client. Add `-- --out path/to/mcp-smoke.md` to save the local MCP smoke
 evidence packet.
+`npm run smoke:mcp-client` runs a local stdio JSON-RPC client sequence against
+the MCP bridge, confirms a review-required handoff, and writes confirmed
+feedback to a temporary JSONL inbox without contacting external AI. Add
+`-- --out path/to/mcp-client-smoke.md` to save the local MCP client smoke
+evidence packet.
 `npm run smoke:chrome-extension` checks the unpacked Chrome extension manifest,
 background service worker, popup workflow, local-only URL guard, session restore,
 and evidence fallback before loading it in Chrome. Add
@@ -445,9 +451,9 @@ queue, low-confidence Studio validation draft, Library validation filter, queue
 report links, and manual copy fallback contract. Add
 `-- --out path/to/learning-feedback-smoke.md` to save the local Learning smoke
 evidence packet.
-`npm run smoke:integrations` writes the Chrome, MCP, Learning smoke evidence
-packets and `integrations-smoke-summary.md` to `output/smoke` in one preflight
-pass before any actual external AI handoff.
+`npm run smoke:integrations` writes the Chrome, MCP bridge, MCP client, and
+Learning smoke evidence packets plus `integrations-smoke-summary.md` to
+`output/smoke` in one preflight pass before any actual external AI handoff.
 `npm run verify` and `npm run verify:evidence` use the same verification check
 manifest so the executed gate and the handoff evidence stay aligned. Evidence
 records include both the npm script name and the resolved command.
@@ -527,9 +533,9 @@ handoff artifact.
 `npm run verify:secrets` scans source, scripts, and docs for OpenAI/Supabase
 secret-like values while allowing documented placeholders.
 `npm run verify:smoke-evidence` checks that `output/smoke` contains its local
-README plus exactly the integrated summary, Chrome, MCP, and Learning smoke
-evidence packets and that each packet keeps its local-only or review-required
-contract text.
+README plus exactly the integrated summary, Chrome, MCP bridge, MCP client, and
+Learning smoke evidence packets and that each packet keeps its local-only or
+review-required contract text.
 `npm run verify:studio-draft-fallbacks` checks that every Studio draft write
 stores the result in `wroteDraft` and immediately returns from its manual
 fallback guard.
@@ -575,8 +581,9 @@ terms from returning.
 
 - Integrations 실제 사용 smoke: Chrome extension 또는 MCP client 중 하나를
   선택해 review-required handoff package와 feedback inbox 저장 흐름을 확인합니다.
-  실제 연결 전에 `npm run smoke:integrations`로 Chrome, MCP, Learning local
-  smoke packet과 `integrations-smoke-summary.md`를 한 번에 갱신합니다.
+  실제 연결 전에 `npm run smoke:integrations`로 Chrome, MCP bridge, MCP
+  client, Learning local smoke packet과 `integrations-smoke-summary.md`를 한
+  번에 갱신합니다.
   Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked
   extension 파일 계약을 먼저 확인합니다. 증빙 파일이 필요하면
   `npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md`를
@@ -584,6 +591,8 @@ terms from returning.
   MCP부터 시작할 때는 `npm run smoke:mcp`로 로컬 bridge 계약을 먼저 확인합니다.
   증빙 파일이 필요하면
   `npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md`를 붙입니다.
+  실제 client 호출 흐름까지 확인하려면
+  `npm run smoke:mcp-client -- --out output/smoke/mcp-client-smoke.md`를 붙입니다.
 - Learning feedback 개선 큐 정리: `npm run smoke:learning-feedback`로 낮은
   신뢰도 Studio 검증 초안, 큐 리포트, Library 검증 저장본 필터 계약을 먼저
   확인합니다. 증빙 파일이 필요하면

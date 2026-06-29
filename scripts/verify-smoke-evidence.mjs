@@ -14,7 +14,9 @@ const expectedSmokeFiles = [
       /external services: not contacted/,
       /Chrome extension: output\/smoke\/chrome-extension-smoke\.md/,
       /MCP bridge: output\/smoke\/mcp-bridge-smoke\.md/,
+      /MCP client: output\/smoke\/mcp-client-smoke\.md/,
       /Learning feedback: output\/smoke\/learning-feedback-smoke\.md/,
+      /MCP client stdio JSON-RPC smoke passed/,
       /confirmSave stays false until the external AI result is reviewed/,
     ],
   },
@@ -44,6 +46,16 @@ const expectedSmokeFiles = [
       /does not contact GPT, Claude, Codex, Gemini, OpenAI, or Supabase/,
     ],
   },
+  {
+    name: "mcp-client-smoke.md",
+    patterns: [
+      /# MCP Client Smoke Evidence/,
+      /client: stdio JSON-RPC/,
+      /refine_prompt returns a review-required handoff package through the MCP client call path/,
+      /save_execution_feedback with confirmSave true writes a temporary feedback inbox record/,
+      /Feedback record preserves targetAI codex, positive rating, and the smoke result summary/,
+    ],
+  },
 ];
 
 const expectedFileNames = [
@@ -64,12 +76,14 @@ const smokeReadme = readFileSync(join(smokeDir, smokeReadmeName), "utf8");
 const smokeReadmePatterns = [
   /# Local Smoke Evidence/,
   /checked without external AI access/,
-  /integrated preflight summary for the three local packets/,
+  /integrated preflight summary for the local packets/,
   /Chrome extension file contract/,
   /MCP bridge self-test contract/,
+  /MCP client call sequence and feedback inbox contract/,
   /Learning feedback-improvement queue contract/,
   /npm run smoke:integrations/,
   /integrations-smoke-summary\.md/,
+  /mcp-client-smoke\.md/,
   /## Operator Run Order/,
   /review-required handoff package/,
   /confirmSave: false/,

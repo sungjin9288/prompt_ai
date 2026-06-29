@@ -31,6 +31,9 @@ const mcpConfigJson = `{
 const mcpSelfTestCommand =
   "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md";
 
+const mcpClientSmokeCommand =
+  "npm run smoke:mcp-client -- --out output/smoke/mcp-client-smoke.md";
+
 const mcpIntegratedSmokeCommand = "npm run smoke:integrations";
 
 const mcpDevCommand = "npm run dev";
@@ -162,7 +165,7 @@ const mcpSmokeRunbookSteps = [
   "Start the Prompt AI Studio local server with npm run dev.",
   "Run the MCP bridge self-test before editing any client config.",
   "Install the shared prompt-ai-studio mcpServers config in the target client.",
-  "Run the matching client smoke prompt and inspect the review-required handoff package.",
+  "Run the MCP client smoke command or the matching client smoke prompt and inspect the review-required handoff package.",
   "Run npm run smoke:integrations before external delivery.",
   "After operator review, change the matching feedback payload confirmSave value to true and call save_execution_feedback.",
   "Verify the saved record in the MCP feedback inbox API or the Integrations feedback inbox panel.",
@@ -324,7 +327,7 @@ const mcpSetupWorkflowSteps = [
     label: "02 클라이언트 연결",
   },
   {
-    action: "client smoke prompt를 확인하고 npm run smoke:integrations 실행 뒤 confirmSave true 피드백만 inbox에 저장합니다.",
+    action: "MCP client smoke 명령 또는 client smoke prompt를 확인하고 npm run smoke:integrations 실행 뒤 confirmSave true 피드백만 inbox에 저장합니다.",
     gate: "reviewRequired package + npm run smoke:integrations + confirmed feedback",
     label: "03 검증과 학습",
   },
@@ -338,6 +341,7 @@ type CopyState =
   | "idle"
   | "config"
   | "self-test"
+  | "client-smoke"
   | "integrated-smoke"
   | "dev"
   | "client"
@@ -375,6 +379,7 @@ function buildClientSetupNote(
     "Smoke test:",
     `- ${mcpDevCommand}`,
     `- ${mcpSelfTestCommand}`,
+    `- ${mcpClientSmokeCommand}`,
     `- ${mcpIntegratedSmokeCommand}`,
     "- Call get_context_profile before refine_prompt.",
     "- Confirm the returned handoff package is reviewRequired before using it.",
@@ -432,6 +437,7 @@ function buildMcpEndToEndSmokeRunbook() {
     "Shared commands:",
     `- ${mcpDevCommand}`,
     `- ${mcpSelfTestCommand}`,
+    `- ${mcpClientSmokeCommand}`,
     `- ${mcpIntegratedSmokeCommand}`,
     "",
     "Feedback inbox API checks:",
@@ -616,6 +622,13 @@ function McpSetupCommandBar({ onCopy }: { onCopy: CopyValue }) {
         type="button"
       >
         Self-test 명령 복사
+      </button>
+      <button
+        className={secondaryButtonClass}
+        onClick={() => onCopy(mcpClientSmokeCommand, "client-smoke")}
+        type="button"
+      >
+        Client smoke 명령 복사
       </button>
       <button
         className={secondaryButtonClass}

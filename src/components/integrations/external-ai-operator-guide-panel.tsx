@@ -57,15 +57,16 @@ const externalAiOperatorSteps = [
   },
   {
     action: "로컬 smoke evidence 저장",
-    check: "세 evidence file이 갱신된다.",
+    check: "local evidence file이 갱신된다.",
     commands: [
       "npm run smoke:integrations",
       "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
       "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
+      "npm run smoke:mcp-client -- --out output/smoke/mcp-client-smoke.md",
       "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
     ],
     detail:
-      "외부 AI로 넘기기 전에 통합 preflight로 Chrome, MCP, Learning feedback 증거 파일을 남깁니다.",
+      "외부 AI로 넘기기 전에 통합 preflight로 Chrome, MCP bridge, MCP client, Learning feedback 증거 파일을 남깁니다.",
   },
   {
     action: "외부 AI에 수동 전달",
@@ -94,8 +95,8 @@ const externalAiEvidenceChecks = [
   },
   {
     action:
-      "npm run smoke:integrations로 Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.",
-    evidence: "chrome smoke, mcp smoke, learning feedback smoke",
+      "npm run smoke:integrations로 Chrome, MCP bridge, MCP client, Learning smoke evidence file을 먼저 남깁니다.",
+    evidence: "chrome smoke, mcp bridge smoke, mcp client smoke, learning feedback smoke",
     label: "03 증거 저장",
   },
   {

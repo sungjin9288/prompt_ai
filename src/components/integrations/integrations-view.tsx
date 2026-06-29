@@ -114,8 +114,8 @@ const executionEvidenceRows = [
   },
   {
     label: "03 증거 저장",
-    action: "외부 AI 전달 전에 Chrome, MCP, Learning smoke evidence를 파일로 남깁니다.",
-    evidence: "Chrome, MCP, Learning smoke evidence file",
+    action: "외부 AI 전달 전에 Chrome, MCP bridge, MCP client, Learning smoke evidence를 파일로 남깁니다.",
+    evidence: "Chrome, MCP bridge, MCP client, Learning smoke evidence file",
     href: "#integrations-smoke-evidence-path",
     linkLabel: "Smoke 증거 확인",
   },
@@ -145,7 +145,8 @@ const smokeEvidenceRows = [
   {
     label: "Integrated preflight",
     command: "npm run smoke:integrations",
-    evidence: "Chrome, MCP, Learning packets and integrations-smoke-summary.md",
+    evidence:
+      "Chrome, MCP bridge, MCP client, Learning packets and integrations-smoke-summary.md",
     href: "#integrations-smoke-evidence-path",
     result: "Integrated smoke summary",
   },
@@ -155,6 +156,14 @@ const smokeEvidenceRows = [
     evidence: "tools/list, refine_prompt, create_handoff_package, local evidence file",
     href: "#integrations-mcp-connection",
     result: "MCP smoke evidence",
+  },
+  {
+    label: "MCP client",
+    command:
+      "npm run smoke:mcp-client -- --out output/smoke/mcp-client-smoke.md",
+    evidence: "initialize, tools/list, refine_prompt, confirmSave feedback",
+    href: "#integrations-mcp-connection",
+    result: "MCP client smoke evidence",
   },
   {
     label: "Chrome popup",
@@ -185,12 +194,12 @@ const smokeEvidenceRunOrder = [
     gate: "npm run smoke:integrations",
     label: "01 로컬 packet",
     task:
-      "Chrome, MCP, Learning smoke packet과 통합 summary를 한 번에 갱신합니다.",
+      "Chrome, MCP bridge, MCP client, Learning smoke packet과 통합 summary를 한 번에 갱신합니다.",
   },
   {
     gate: "reviewRequired actual result",
     label: "02 실제 증빙",
-    task: "외부 전달 전에 실제 Chrome, MCP, Learning 증빙 필드를 기록합니다.",
+    task: "외부 전달 전에 실제 Chrome, MCP bridge, MCP client, Learning 증빙 필드를 기록합니다.",
   },
   {
     gate: "confirmSave reviewed feedback",
@@ -221,7 +230,7 @@ const integrationOperationFlow = [
     phase: "Refine",
   },
   {
-    artifact: "Chrome, MCP, Learning smoke evidence",
+    artifact: "Chrome, MCP bridge, MCP client, Learning smoke evidence",
     detailHref: "#integrations-smoke-evidence-path",
     detailLabel: "Smoke 증거 경로",
     gate: "외부 AI 전달 전 로컬 증거 저장",
@@ -426,7 +435,7 @@ const integrationExecutionStrip: ContextOperatingFlowItem[] = [
   },
   {
     actionLabel: "Smoke 증거 확인",
-    detail: "외부 AI 전달 전에 Chrome, MCP, Learning smoke evidence를 남깁니다.",
+    detail: "외부 AI 전달 전에 Chrome, MCP bridge, MCP client, Learning smoke evidence를 남깁니다.",
     href: "#integrations-smoke-evidence-path",
     label: "증거 저장",
     step: "03",
@@ -460,7 +469,8 @@ const integrationGateSummary = [
     linkLabel: "Refine API 확인",
   },
   {
-    check: "Integrated summary and Chrome, MCP, Learning smoke evidence files",
+    check:
+      "Integrated summary and Chrome, MCP bridge, MCP client, Learning smoke evidence files",
     detail:
       "The operator saves local smoke evidence before any prompt package leaves the Studio workflow.",
     href: "#integrations-smoke-evidence-path",
@@ -672,7 +682,7 @@ function SmokeEvidencePath() {
         ))}
       </div>
       <div
-        className="grid gap-3 px-5 py-5 md:grid-cols-2 xl:grid-cols-4"
+        className="grid gap-3 px-5 py-5 md:grid-cols-2 xl:grid-cols-5"
         data-testid="integrations-smoke-evidence-path"
       >
         {smokeEvidenceRows.map((row) => (

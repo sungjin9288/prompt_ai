@@ -11,6 +11,7 @@
     "smoke:integrations": "node scripts/write-integrations-smoke-evidence.mjs",
     "smoke:learning-feedback": "node scripts/verify-learning-operational-summary.mjs",
     "smoke:mcp": "node mcp/prompt-ai-studio.mjs --self-test",
+    "smoke:mcp-client": "node scripts/verify-mcp-client-smoke.mjs",
     "verify": "node scripts/verify-all.mjs",
     "verify:app-shell": "node scripts/verify-app-shell-navigation.mjs",
     "verify:build-stability": "node scripts/verify-build-stability.mjs",

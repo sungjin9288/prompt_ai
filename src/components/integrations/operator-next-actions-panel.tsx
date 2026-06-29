@@ -36,12 +36,12 @@ const operatorNextActions = [
   {
     action: "Save the local smoke evidence before any external AI delivery.",
     completionGate:
-      "Chrome, MCP, Learning feedback smoke evidence 파일이 모두 생성됩니다.",
+      "Chrome, MCP bridge, MCP client, Learning feedback smoke evidence 파일이 모두 생성됩니다.",
     evidence: "npm run smoke:integrations",
     href: "#integrations-smoke-evidence-path",
     label: "3. 로컬 smoke evidence 저장",
     operatorTask:
-      "외부 AI에 붙여넣기 전에 통합 smoke preflight로 세 evidence packet을 갱신합니다.",
+      "외부 AI에 붙여넣기 전에 통합 smoke preflight로 local evidence packet을 갱신합니다.",
   },
   {
     action: "Paste only the reviewed handoff package into GPT, Claude, Codex, or Gemini.",

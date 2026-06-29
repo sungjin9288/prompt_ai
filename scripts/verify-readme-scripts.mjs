@@ -55,6 +55,16 @@ assert.match(
 );
 assert.match(
   readme,
+  /smoke:mcp-client` runs a local stdio JSON-RPC client sequence against\s+the MCP bridge, confirms a review-required handoff, and writes confirmed\s+feedback to a temporary JSONL inbox without contacting external AI/,
+  "README should document the local MCP client smoke command",
+);
+assert.match(
+  readme,
+  /-- --out path\/to\/mcp-client-smoke\.md/,
+  "README should document the MCP client smoke evidence output path",
+);
+assert.match(
+  readme,
   /smoke:chrome-extension` checks the unpacked Chrome extension manifest,\s+background service worker, popup workflow, local-only URL guard, session restore,\s+and evidence fallback before loading it in Chrome/,
   "README should document the local Chrome extension smoke command",
 );
@@ -75,7 +85,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /smoke:integrations` writes the Chrome, MCP, Learning smoke evidence\s+packets and `integrations-smoke-summary\.md` to `output\/smoke` in one preflight\s+pass before any actual external AI handoff/,
+  /smoke:integrations` writes the Chrome, MCP bridge, MCP client, and\s+Learning smoke evidence packets plus `integrations-smoke-summary\.md` to\s+`output\/smoke` in one preflight pass before any actual external AI handoff/,
   "README should document the integrated local integrations smoke evidence command",
 );
 assert.match(
@@ -145,7 +155,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /verify:smoke-evidence` checks that `output\/smoke` contains its local\s+README plus exactly the integrated summary, Chrome, MCP, and Learning smoke\s+evidence packets and that each packet keeps its local-only or review-required\s+contract text/,
+  /verify:smoke-evidence` checks that `output\/smoke` contains its local\s+README plus exactly the integrated summary, Chrome, MCP bridge, MCP client, and\s+Learning smoke evidence packets and that each packet keeps its local-only or\s+review-required contract text/,
   "README should document the smoke evidence verification scope",
 );
 assert.match(
@@ -225,12 +235,17 @@ assert.match(
 );
 assert.match(
   readme,
+  /실제 client 호출 흐름까지 확인하려면[\s\S]*?npm run smoke:mcp-client -- --out output\/smoke\/mcp-client-smoke\.md/,
+  "README should route MCP next-step client smoke through npm run smoke:mcp-client",
+);
+assert.match(
+  readme,
   /Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked\s+extension 파일 계약을 먼저 확인[\s\S]*?npm run smoke:chrome-extension -- --out output\/smoke\/chrome-extension-smoke\.md/,
   "README should route Chrome next-step smoke through npm run smoke:chrome-extension",
 );
 assert.match(
   readme,
-  /실제 연결 전에 `npm run smoke:integrations`로 Chrome, MCP, Learning local\s+smoke packet과 `integrations-smoke-summary\.md`를 한 번에 갱신합니다/,
+  /실제 연결 전에 `npm run smoke:integrations`로 Chrome, MCP bridge, MCP\s+client, Learning local smoke packet과 `integrations-smoke-summary\.md`를 한\s+번에 갱신합니다/,
   "README should route integrations next-step preflight through npm run smoke:integrations",
 );
 assert.match(

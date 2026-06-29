@@ -27,6 +27,17 @@ const smokeCommands = [
   {
     args: [
       "run",
+      "smoke:mcp-client",
+      "--",
+      "--out",
+      "output/smoke/mcp-client-smoke.md",
+    ],
+    label: "MCP client",
+    out: "output/smoke/mcp-client-smoke.md",
+  },
+  {
+    args: [
+      "run",
       "smoke:learning-feedback",
       "--",
       "--out",
@@ -57,7 +68,7 @@ for (const smoke of smokeCommands) {
 
 writeFileSync(
   "output/smoke/integrations-smoke-summary.md",
-  [
+  `${[
     "# Integrations Smoke Summary",
     "",
     "- command: npm run smoke:integrations",
@@ -70,10 +81,11 @@ writeFileSync(
     "## Pass condition",
     "- Chrome extension file contract passed.",
     "- MCP bridge self-test contract passed.",
+    "- MCP client stdio JSON-RPC smoke passed.",
     "- Learning feedback queue contract passed.",
     "- Review-required delivery still happens after local packet review.",
     "- confirmSave stays false until the external AI result is reviewed.",
-  ].join("\n"),
+  ].join("\n")}\n`,
 );
 
 console.log("Integrations smoke evidence packets written to output/smoke.");

@@ -176,6 +176,7 @@ Response:
 
 ```bash
 npm run smoke:mcp
+npm run smoke:mcp-client
 npm run verify:integrations
 ```
 
@@ -192,6 +193,15 @@ saved as a local operator artifact:
 
 ```bash
 npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md
+```
+
+`npm run smoke:mcp-client` runs the stdio bridge through a local JSON-RPC client
+sequence. It checks initialize, tools/list, get_context_profile, refine_prompt,
+and save_execution_feedback with `confirmSave: true`, writing only to a
+temporary JSONL inbox.
+
+```bash
+npm run smoke:mcp-client -- --out docs/evidence/mcp-client-smoke.md
 ```
 
 `npm run verify:integrations` also runs a temp feedback inbox check: it calls

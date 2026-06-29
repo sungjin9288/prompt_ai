@@ -32,6 +32,7 @@
     "verify:repo-boundary": "node scripts/verify-repo-boundary.mjs",
     "verify:runtime": "node scripts/verify-environment-readiness.mjs",
     "verify:secrets": "node scripts/verify-secret-safety.mjs",
+    "verify:smoke-evidence": "node scripts/verify-smoke-evidence.mjs",
     "verify:skills-summary": "node scripts/verify-skills-operational-summary.mjs",
     "verify:scope": "node scripts/verify-supabase-preflight-scope.mjs",
     "verify:studio-draft-fallbacks": "node scripts/verify-studio-draft-fallback-guards.mjs",

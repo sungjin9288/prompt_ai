@@ -156,6 +156,12 @@ export const verificationChecks = [
     scriptName: "verify:secrets",
   },
   {
+    args: ["run", "verify:smoke-evidence"],
+    command: "npm",
+    label: "Local smoke evidence packets",
+    scriptName: "verify:smoke-evidence",
+  },
+  {
     args: ["run", "lint"],
     command: "npm",
     label: "ESLint",

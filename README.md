@@ -412,6 +412,7 @@ npm run verify:release-candidate
 npm run verify:repo-boundary
 npm run verify:runtime
 npm run verify:secrets
+npm run verify:smoke-evidence
 npm run verify:scope
 npm run verify:studio-draft-fallbacks
 npm run verify:studio-draft-summary
@@ -518,6 +519,9 @@ fingerprint, workspace_id, and owner_user_id changes. Add
 handoff artifact.
 `npm run verify:secrets` scans source, scripts, and docs for OpenAI/Supabase
 secret-like values while allowing documented placeholders.
+`npm run verify:smoke-evidence` checks that `output/smoke` contains exactly the
+Chrome, MCP, and Learning smoke evidence packets and that each packet keeps its
+local-only or review-required contract text.
 `npm run verify:studio-draft-fallbacks` checks that every Studio draft write
 stores the result in `wroteDraft` and immediately returns from its manual
 fallback guard.

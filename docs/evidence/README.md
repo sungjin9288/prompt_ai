@@ -15,7 +15,7 @@ Each record should show:
 
 - `status: pass`
 - every script from the shared verification manifest, including `verify:manifest`,
-  `verify:docs`, `verify:secrets`, `lint`, and `build`
+  `verify:docs`, `verify:secrets`, `verify:smoke-evidence`, `lint`, and `build`
 - runtime readiness for the intended local, OpenAI, or Supabase mode
 - runtime variable rows written as `variable KEY; configured yes/no`, not as
   environment assignments

@@ -140,6 +140,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /verify:smoke-evidence` checks that `output\/smoke` contains exactly the\s+Chrome, MCP, and Learning smoke evidence packets and that each packet keeps its\s+local-only or review-required contract text/,
+  "README should document the smoke evidence verification scope",
+);
+assert.match(
+  readme,
   /Supabase import execution gate/,
   "README should mention the Supabase import execution gate",
 );
@@ -246,7 +251,7 @@ assert.match(
 );
 assert.match(
   evidenceReadme,
-  /every script from the shared verification manifest, including `verify:manifest`,\s+`verify:docs`, `verify:secrets`, `lint`, and `build`/,
+  /every script from the shared verification manifest, including `verify:manifest`,\s+`verify:docs`, `verify:secrets`, `verify:smoke-evidence`, `lint`, and `build`/,
   "docs/evidence README should require every shared manifest check in evidence",
 );
 assert.match(

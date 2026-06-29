@@ -100,7 +100,7 @@ const clientSmokeTests = [
     prompt:
       "Use Prompt AI Studio MCP. First call get_context_profile with allowedScopes user, company, learning. Then call create_handoff_package for targetAI gpt with deliveryMode copy-ready using a draft about improving a user onboarding checklist. Return the final GPT-ready prompt and operator notes.",
     acceptance:
-      "The result is copy-ready, does not assume repo access, and keeps external delivery review-required.",
+      "The result is copy-ready, does not assume repo access, keeps external delivery review-required, and names the local smoke evidence to save before delivery.",
   },
 ] satisfies Array<{
   acceptance: string;
@@ -135,7 +135,7 @@ const smokeFeedbackTemplates = [
       "GPT-compatible smoke test returned a copy-ready prompt and operator notes without assuming repo access.",
     rating: "positive",
     notes:
-      "Confirm the package stayed review-required before external delivery.",
+      "Confirm the package stayed review-required and local smoke evidence was saved before external delivery.",
   },
 ] satisfies Array<{
   client: string;
@@ -149,7 +149,7 @@ const mcpSmokeRunbookSteps = [
   "Start the Prompt AI Studio local server with npm run dev.",
   "Run the MCP bridge self-test before editing any client config.",
   "Install the shared prompt-ai-studio mcpServers config in the target client.",
-  "Run the matching client smoke prompt and inspect the review-required handoff package.",
+  "Run the matching client smoke prompt, inspect the review-required handoff package, and save the local smoke evidence.",
   "After operator review, change the matching feedback payload confirmSave value to true and call save_execution_feedback.",
   "Verify the saved record in the MCP feedback inbox API or the Integrations feedback inbox panel.",
 ];
@@ -252,8 +252,8 @@ const mcpSetupWorkflowSteps = [
     label: "02 클라이언트 연결",
   },
   {
-    action: "client smoke prompt를 실행한 뒤 confirmSave true 피드백만 inbox에 저장합니다.",
-    gate: "reviewRequired output + confirmed feedback",
+    action: "client smoke prompt를 실행해 smoke evidence를 저장한 뒤 confirmSave true 피드백만 inbox에 저장합니다.",
+    gate: "reviewRequired smoke evidence + confirmed feedback",
     label: "03 검증과 학습",
   },
 ] satisfies Array<{
@@ -301,6 +301,7 @@ function buildClientSetupNote(
     `- ${mcpSelfTestCommand}`,
     "- Call get_context_profile before refine_prompt.",
     "- Confirm the returned handoff package is reviewRequired before using it.",
+    "- Save local smoke evidence before external delivery.",
   ].join("\n");
 }
 
@@ -317,7 +318,7 @@ function buildClientSmokeTestPrompt(
     "",
     `Acceptance check: ${smokeTest.acceptance}`,
     "",
-    "Gate: inspect the review-required package before using it in an external AI environment.",
+    "Gate: save local smoke evidence and inspect the review-required package before using it in an external AI environment.",
   ].join("\n");
 }
 
@@ -345,7 +346,7 @@ function buildMcpEndToEndSmokeRunbook() {
     "# Prompt AI Studio MCP End-to-End Smoke Runbook",
     "",
     "Scope: Claude, Codex, and GPT-compatible MCP clients.",
-    "Gate: local-first automation, review-required external delivery, and confirmSave only after operator review.",
+    "Gate: local-first automation, smoke evidence saved, review-required external delivery, and confirmSave only after operator review.",
     "",
     "Steps:",
     ...mcpSmokeRunbookSteps.map((step, index) => `${index + 1}. ${step}`),

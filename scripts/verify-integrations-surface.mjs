@@ -992,7 +992,7 @@ for (const requiredText of [
   "03 검증과 학습",
   "local server + MCP bridge self-test",
   "shared config, target AI별 handoff contract",
-  "reviewRequired output + confirmed feedback",
+  "reviewRequired smoke evidence + confirmed feedback",
   "McpSetupCommandBar",
   "McpClientConfigPanel",
   "McpSetupManualCopyTextarea",
@@ -1150,7 +1150,7 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
-  /const mcpSetupWorkflowSteps = \[[\s\S]*?local server \+ MCP bridge self-test[\s\S]*?label: "01 로컬 준비"[\s\S]*?shared config, target AI별 handoff contract[\s\S]*?label: "02 클라이언트 연결"[\s\S]*?reviewRequired output \+ confirmed feedback[\s\S]*?label: "03 검증과 학습"/,
+  /const mcpSetupWorkflowSteps = \[[\s\S]*?local server \+ MCP bridge self-test[\s\S]*?label: "01 로컬 준비"[\s\S]*?shared config, target AI별 handoff contract[\s\S]*?label: "02 클라이언트 연결"[\s\S]*?reviewRequired smoke evidence \+ confirmed feedback[\s\S]*?label: "03 검증과 학습"/,
   "MCP connection panel should define a visible setup workflow for local setup, client config, and feedback verification",
 );
 assert.match(

@@ -64,7 +64,7 @@
 - Library, Learning, Skills, 재개선 후보로 이동하는 운영 KPI
 - 작성, 저장, 학습, 스킬화, 연결, 백업 6단계 핵심 workflow와 Integrations 이동 액션
 - Dashboard 다음 실행 큐는 `01 첫 실행`, `02 실행 계획`, `03 완료 확인` 단계 카드로 우선 항목 처리, 큐 실행 계획, 완료 증거 확인 순서를 먼저 보여줌
-- Dashboard 개인화, 다음 실행 큐, Learning 운영 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시함
+- Dashboard 개인화, 다음 실행 큐, Learning 운영 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 원래 Dashboard 맥락을 복원하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시함
 - Dashboard 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 Dashboard 맥락을 복원하고, 개선 출처 후보 초안은 `Library 후보로 돌아가기` 복귀 액션 라벨로 대표 후보를 복원하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시함
 - 워크스페이스 데이터 준비도 요약과 Data 관리 이동 액션
 

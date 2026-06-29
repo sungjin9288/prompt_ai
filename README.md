@@ -92,7 +92,7 @@
 - Dashboard 다음 실행 큐는 `01 첫 실행`, `02 실행 계획`, `03 완료 확인` 단계 카드로 우선 항목 처리, 큐 실행 계획, 완료 증거 확인 순서를 먼저 보여줍니다.
 - Dashboard 개인화 기준 리포트 복사와 Studio 초안 전송으로 개인/회사 프로필, 학습 scope, 다음 보강 액션을 개선 계획으로 전환
 - Dashboard Learning 운영 점검 큐에서 낮은 신뢰도, 수동 메모리, 최근 업데이트 필터 이동, 권장 조치 큐, 조치별 복사/Studio 초안, 학습 운영 리포트 복사와 Studio 초안 연결
-- Dashboard 개인화, 다음 실행 큐, Learning 운영 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시합니다.
+- Dashboard 개인화, 다음 실행 큐, Learning 운영 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 원래 Dashboard 맥락을 복원하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시합니다.
 - Dashboard Learning 운영 리포트/조치 복사의 clipboard fallback
 - 언어 전략별 품질/피드백 성과 요약
 - 답변 언어별 품질/피드백 성과 요약

@@ -639,8 +639,8 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Dashboard 개인화, 다음 실행 큐, Learning 운영 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시합니다.",
-  "README should document Dashboard top operations Studio draft storage fallback",
+  "Dashboard 개인화, 다음 실행 큐, Learning 운영 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 원래 Dashboard 맥락을 복원하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시합니다.",
+  "README should document Dashboard top operations Studio draft return action and fallback",
 );
 assertFileIncludes(
   readme,
@@ -661,6 +661,11 @@ assertFileIncludes(
   sourceRegistrySource,
   'dashboardLabel: "Dashboard 다음 실행 큐"',
   "Source registry should expose Dashboard next-action queue drafts",
+);
+assertFileIncludes(
+  sourceRegistrySource,
+  'sourceActionLabel: "Dashboard로 돌아가기"',
+  "Source registry should expose Dashboard return action labels for top operations drafts",
 );
 assertFileIncludes(
   sourceRegistrySource,
@@ -769,8 +774,8 @@ assertFileIncludes(
 );
 assertFileIncludes(
   developmentBrief,
-  "Dashboard 개인화, 다음 실행 큐, Learning 운영 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시함",
-  "Development brief should document Dashboard top operations Studio draft storage fallback",
+  "Dashboard 개인화, 다음 실행 큐, Learning 운영 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 원래 Dashboard 맥락을 복원하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시함",
+  "Development brief should document Dashboard top operations Studio draft return action and fallback",
 );
 assertFileIncludes(
   developmentBrief,
@@ -780,6 +785,8 @@ assertFileIncludes(
 
 const staleDashboardImprovementDraftFallback =
   "Dashboard 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시";
+const staleDashboardTopOperationsDraftFallback =
+  "Dashboard 개인화, 다음 실행 큐, Learning 운영 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시";
 
 assertFileNotIncludes(
   readme,
@@ -795,6 +802,31 @@ assertFileNotIncludes(
   developmentBrief,
   `${staleDashboardImprovementDraftFallback}함`,
   "Development brief should not keep the Dashboard improvement/source fallback-only Studio draft contract",
+);
+assertFileNotIncludes(
+  readme,
+  `${staleDashboardTopOperationsDraftFallback}합니다.`,
+  "README should not keep the Dashboard top operations fallback-only Studio draft contract",
+);
+assertFileNotIncludes(
+  developmentBrief,
+  `${staleDashboardTopOperationsDraftFallback}함`,
+  "Development brief should not keep the Dashboard top operations fallback-only Studio draft contract",
+);
+assertFileNotIncludes(
+  prdSource,
+  "다음 실행 큐 Studio 초안 저장이 실패해도 이동하지 않고 같은 큐 패널 하단에 원문 textarea를 표시해야 한다.",
+  "PRD should not keep the Dashboard next-action fallback-only Studio draft contract",
+);
+assertFileNotIncludes(
+  prdSource,
+  "Dashboard의 `개인화 기준 리포트 복사`는 개인 프로필, 회사 프로필, 학습 scope coverage, 다음 보강 액션을 절대 URL 링크가 포함된 Markdown으로 내보내 외부 AI 도구나 운영 리뷰에 전달할 수 있게 한다. `리포트 Studio로 보내기`는 같은 리포트를 개인화 기준 개선 계획 초안으로 열어 프로필 보강, 메모리 후보, 측정 체크를 바로 설계할 수 있게 한다. 복사 실패나 Studio 초안 저장 실패 시 수동 복사용 textarea를 표시하고 이동하지 않는다.",
+  "PRD should not keep the Dashboard personalization fallback-only Studio draft contract",
+);
+assertFileNotIncludes(
+  prdSource,
+  "Learning 운영 Studio 초안 저장이 실패하면 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
+  "PRD should not keep the Dashboard Learning operations fallback-only Studio draft contract",
 );
 assertFileIncludes(
   prdSource,
@@ -843,18 +875,18 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prdSource,
-  "다음 실행 큐 Studio 초안 저장이 실패해도 이동하지 않고 같은 큐 패널 하단에 원문 textarea를 표시해야 한다.",
-  "PRD should document Dashboard next-action queue Studio draft storage fallback",
+  "다음 실행 큐 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 Dashboard 큐 맥락을 복원해야 하며, 저장이 실패해도 이동하지 않고 같은 큐 패널 하단에 원문 textarea를 표시해야 한다.",
+  "PRD should document Dashboard next-action queue Studio draft return action and fallback",
 );
 assertFileIncludes(
   prdSource,
-  "복사 실패나 Studio 초안 저장 실패 시 수동 복사용 textarea를 표시하고 이동하지 않는다.",
-  "PRD should document Dashboard personalization Studio draft storage fallback",
+  "Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 개인화 보강 맥락을 복원해야 하며, 복사 실패나 Studio 초안 저장 실패 시 수동 복사용 textarea를 표시하고 이동하지 않는다.",
+  "PRD should document Dashboard personalization Studio draft return action and fallback",
 );
 assertFileIncludes(
   prdSource,
-  "Learning 운영 Studio 초안 저장이 실패하면 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
-  "PRD should document Dashboard Learning operations Studio draft storage fallback",
+  "Learning 운영 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 Dashboard 학습 운영 맥락을 복원해야 하며, 저장이 실패하면 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
+  "PRD should document Dashboard Learning operations Studio draft return action and fallback",
 );
 assertFileIncludes(
   prdSource,

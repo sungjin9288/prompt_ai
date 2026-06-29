@@ -1237,14 +1237,7 @@ function buildSourceReasonFilterReport({
     );
     const sourcePrompt = activeSource ?? deletedSource?.prompt;
     const sourceVersion = getSourceVersion(prompt, sourcePrompt);
-    const detailHref = buildLibraryFilterHref({
-      search: "",
-      sort: "recent",
-      language: "all",
-      output: "all",
-      model: "all",
-      engine: "all",
-      learning: "all",
+    const detailHref = buildLibraryDefaultFilterHref({
       improvement: reason === "archived-source" ? "archived-source" : "unmeasured",
       sourceReason: reason,
       promptId: prompt.id,
@@ -1363,16 +1356,7 @@ function buildStudioPersistenceFilterReport({
     const sourceVariantLabel = getPromptStudioSourceVariantLabel(
       prompt.studioSource,
     );
-    const detailHref = buildLibraryFilterHref({
-      search: "",
-      sort: "recent",
-      language: "all",
-      output: "all",
-      model: "all",
-      engine: "all",
-      learning: "all",
-      improvement: "all",
-      sourceReason: "all",
+    const detailHref = buildLibraryDefaultFilterHref({
       studioPersistence: filter,
       promptId: prompt.id,
       version: prompt.versions[0]?.targetModel,
@@ -1492,16 +1476,7 @@ function buildStudioOperationalGroupReport({
     const sourceVariantLabel = getPromptStudioSourceVariantLabel(
       prompt.studioSource,
     );
-    const detailHref = buildLibraryFilterHref({
-      search: "",
-      sort: "recent",
-      language: "all",
-      output: "all",
-      model: "all",
-      engine: "all",
-      learning: "all",
-      improvement: "all",
-      sourceReason: "all",
+    const detailHref = buildLibraryDefaultFilterHref({
       studioPersistence: persistenceFilter,
       studioSource: sourceFilter,
       promptId: prompt.id,
@@ -1573,16 +1548,7 @@ function buildStudioSourceFilterReport({
     const sourceVariantLabel = getPromptStudioSourceVariantLabel(
       prompt.studioSource,
     );
-    const detailHref = buildLibraryFilterHref({
-      search: "",
-      sort: "recent",
-      language: "all",
-      output: "all",
-      model: "all",
-      engine: "all",
-      learning: "all",
-      improvement: "all",
-      sourceReason: "all",
+    const detailHref = buildLibraryDefaultFilterHref({
       studioSource: filter,
       promptId: prompt.id,
       version: prompt.versions[0]?.targetModel,
@@ -1926,6 +1892,22 @@ function buildLibraryFilterHref({
 }
 
 type LibraryFilterHrefOptions = Parameters<typeof buildLibraryFilterHref>[0];
+
+function buildLibraryDefaultFilterHref(
+  overrides: Partial<LibraryFilterHrefOptions> = {},
+) {
+  return buildLibraryFilterHref({
+    search: "",
+    sort: "recent",
+    language: "all",
+    output: "all",
+    model: "all",
+    engine: "all",
+    learning: "all",
+    improvement: "all",
+    ...overrides,
+  });
+}
 
 export function LibraryView({
   initialQuery,
@@ -3348,50 +3330,21 @@ export function LibraryView({
   const selectedStudioSourceHref =
     getPromptStudioSourceHref(selectedStudioSource);
   const selectedStudioSourceFilterHref = selectedStudioSource
-    ? buildLibraryFilterHref({
-        search: "",
-        sort: "recent",
-        language: "all",
-        output: "all",
-        model: "all",
-        engine: "all",
-        learning: "all",
-        improvement: "all",
-        sourceReason: "all",
-        studioPersistence: "all",
+    ? buildLibraryDefaultFilterHref({
         studioSource: selectedStudioSource.source,
         studioVariant: selectedStudioSource.sourceVariant ?? "all",
         detailMode: "current",
       })
     : undefined;
   const selectedStudioPersistenceFilterHref = selected
-    ? buildLibraryFilterHref({
-        search: "",
-        sort: "recent",
-        language: "all",
-        output: "all",
-        model: "all",
-        engine: "all",
-        learning: "all",
-        improvement: "all",
-        sourceReason: "all",
+    ? buildLibraryDefaultFilterHref({
         studioPersistence: selectedStudioPersistenceFilter,
-        studioSource: "all",
         detailMode: "current",
       })
     : undefined;
   const selectedStudioOperationalGroupHref =
     selectedStudioSource && selectedStudioPersistenceFilter
-      ? buildLibraryFilterHref({
-          search: "",
-          sort: "recent",
-          language: "all",
-          output: "all",
-          model: "all",
-          engine: "all",
-          learning: "all",
-          improvement: "all",
-          sourceReason: "all",
+      ? buildLibraryDefaultFilterHref({
           studioPersistence: selectedStudioPersistenceFilter,
           studioSource: selectedStudioSource.source,
           studioVariant: selectedStudioSource.sourceVariant ?? "all",
@@ -4083,15 +4036,7 @@ export function LibraryView({
         ? preferredVersion
         : prompt.versions[0]?.targetModel;
 
-    const href = buildLibraryFilterHref({
-      search: "",
-      sort: "recent",
-      language: "all",
-      output: "all",
-      model: "all",
-      engine: "all",
-      learning: "all",
-      improvement: "all",
+    const href = buildLibraryDefaultFilterHref({
       promptId: prompt.id,
       version: nextVersion,
       detailMode: "current",
@@ -4116,15 +4061,7 @@ export function LibraryView({
       prompt.versions.some((version) => version.targetModel === preferredVersion)
         ? preferredVersion
         : prompt.versions[0]?.targetModel;
-    const href = buildLibraryFilterHref({
-      search: "",
-      sort: "recent",
-      language: "all",
-      output: "all",
-      model: "all",
-      engine: "all",
-      learning: "all",
-      improvement: "all",
+    const href = buildLibraryDefaultFilterHref({
       promptId: prompt.id,
       version: nextVersion,
       detailMode: "current",
@@ -6804,17 +6741,7 @@ export function LibraryView({
               const listStudioPersistenceLabel =
                 studioPersistenceFilterLabels[listStudioPersistenceFilter];
               const listStudioSourceFilterHref = prompt.studioSource
-                ? buildLibraryFilterHref({
-                    search: "",
-                    sort: "recent",
-                    language: "all",
-                    output: "all",
-                    model: "all",
-                    engine: "all",
-                    learning: "all",
-                    improvement: "all",
-                    sourceReason: "all",
-                    studioPersistence: "all",
+                ? buildLibraryDefaultFilterHref({
                     studioSource: prompt.studioSource.source,
                     studioVariant: prompt.studioSource.sourceVariant ?? "all",
                     detailMode: "current",
@@ -6859,31 +6786,13 @@ export function LibraryView({
                 listStudioSourceHasVariant
                   ? "목록 같은 세부 유형 운영 묶음 조건 링크"
                   : "목록 같은 운영 묶음 조건 링크";
-              const listStudioPersistenceFilterHref = buildLibraryFilterHref({
-                search: "",
-                sort: "recent",
-                language: "all",
-                output: "all",
-                model: "all",
-                engine: "all",
-                learning: "all",
-                improvement: "all",
-                sourceReason: "all",
-                studioPersistence: listStudioPersistenceFilter,
-                studioSource: "all",
-                detailMode: "current",
-              });
+              const listStudioPersistenceFilterHref =
+                buildLibraryDefaultFilterHref({
+                  studioPersistence: listStudioPersistenceFilter,
+                  detailMode: "current",
+                });
               const listStudioOperationalGroupHref = prompt.studioSource
-                ? buildLibraryFilterHref({
-                    search: "",
-                    sort: "recent",
-                    language: "all",
-                    output: "all",
-                    model: "all",
-                    engine: "all",
-                    learning: "all",
-                    improvement: "all",
-                    sourceReason: "all",
+                ? buildLibraryDefaultFilterHref({
                     studioPersistence: listStudioPersistenceFilter,
                     studioSource: prompt.studioSource.source,
                     studioVariant: prompt.studioSource.sourceVariant ?? "all",

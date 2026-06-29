@@ -159,6 +159,17 @@ const mcpEvidenceTrace = [
   "Keep local-smoke-evidence before target-ai-handoff.",
 ] satisfies string[];
 
+const mcpEvidenceTraceSummaryItems = [
+  {
+    label: "감사 출처",
+    value: "chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff",
+  },
+  {
+    label: "증거 gate",
+    value: "local-smoke-evidence before target-ai-handoff",
+  },
+] satisfies Array<{ label: string; value: string }>;
+
 const mcpFeedbackInboxApiChecks = [
   "/api/integrations/mcp-feedback?targetAI=claude&rating=positive",
   "/api/integrations/mcp-feedback?targetAI=codex&rating=positive",
@@ -957,6 +968,24 @@ function McpEndToEndRunbookSection({
             config 설치부터 client smoke prompt, confirmSave feedback 저장,
             feedback inbox 확인까지 한 번에 점검합니다.
           </p>
+          <div
+            className="mt-3 grid gap-2 sm:grid-cols-2"
+            data-testid="mcp-runbook-evidence-trace-summary"
+          >
+            {mcpEvidenceTraceSummaryItems.map((item) => (
+              <div
+                className="min-w-0 rounded-md border border-line bg-surface px-3 py-2"
+                key={item.label}
+              >
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-muted">
+                  {item.label}
+                </p>
+                <p className="mt-1 break-words text-xs font-semibold text-soft">
+                  {item.value}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <button

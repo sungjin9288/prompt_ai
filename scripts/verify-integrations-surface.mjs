@@ -1123,6 +1123,7 @@ for (const requiredText of [
   "reviewGate",
   "mcpSmokeRunbookSteps",
   "mcpEvidenceTrace",
+  "mcpEvidenceTraceSummaryItems",
   "mcpFeedbackInboxApiChecks",
   "mcpFeedbackInboxCurlChecks",
   "mcpFeedbackInboxFilterLinks",
@@ -1160,6 +1161,9 @@ for (const requiredText of [
   "Prompt AI Studio MCP End-to-End Smoke Runbook",
   "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
   "Keep local-smoke-evidence before target-ai-handoff.",
+  "data-testid=\"mcp-runbook-evidence-trace-summary\"",
+  "감사 출처",
+  "증거 gate",
   "/api/integrations/mcp-feedback?targetAI=codex&rating=positive",
   'curl -sS "http://localhost:3000/api/integrations/mcp-feedback?limit=5&rating=positive&targetAI=codex"',
   "/integrations?mcpTargetAI=codex&mcpRating=positive",
@@ -1207,6 +1211,16 @@ assert.match(
   mcpConnectionPanel,
   /function buildMcpEndToEndSmokeRunbook\(\)[\s\S]*?Gate: local-first automation, smoke evidence saved, review-required external delivery, and confirmSave only after operator review\.[\s\S]*?\.\.\.mcpEvidenceTrace[\s\S]*?Steps:/,
   "MCP end-to-end smoke runbook should include the shared evidence trace before runbook steps",
+);
+assert.match(
+  mcpConnectionPanel,
+  /const mcpEvidenceTraceSummaryItems = \[[\s\S]*?label: "감사 출처"[\s\S]*?chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff[\s\S]*?label: "증거 gate"[\s\S]*?local-smoke-evidence before target-ai-handoff[\s\S]*?\] satisfies Array<\{ label: string; value: string \}>/,
+  "MCP connection panel should define a visible evidence trace summary for the runbook section",
+);
+assert.match(
+  mcpConnectionPanel,
+  /function McpEndToEndRunbookSection[\s\S]*?data-testid="mcp-runbook-evidence-trace-summary"[\s\S]*?mcpEvidenceTraceSummaryItems\.map[\s\S]*?item\.label[\s\S]*?item\.value[\s\S]*?onCopy\(buildMcpEndToEndSmokeRunbook\(\), "runbook"\)/,
+  "MCP runbook section should show the evidence trace summary before copy and Studio actions",
 );
 assert.match(
   mcpConnectionPanel,
@@ -2699,8 +2713,8 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "`chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함한 end-to-end smoke runbook",
-  "README should document MCP runbook audit source order",
+  "runbook 버튼 전 화면 요약과 복사/Studio 초안 원문에 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
+  "README should document MCP runbook visible and copied audit source order",
 );
 assertIncludes(
   readme,
@@ -2989,6 +3003,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "Integrations MCP runbook 섹션은 복사와 Studio 초안 버튼 전에 감사 출처와 evidence gate 요약을 먼저 보여줘야 한다.",
+  "PRD should document MCP runbook visible evidence trace summary",
+);
+assertIncludes(
+  prd,
   "Integrations MCP end-to-end smoke runbook 복사와 `integrations-operations-checklist` Studio 초안은 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함해야 한다.",
   "PRD should document MCP runbook audit source order",
 );
@@ -3219,8 +3238,8 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "`chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함한 end-to-end smoke runbook",
-  "Development brief should document MCP runbook audit source order",
+  "runbook 버튼 전 화면 요약과 복사/Studio 초안 원문에 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
+  "Development brief should document MCP runbook visible and copied audit source order",
 );
 assertIncludes(
   developmentBrief,

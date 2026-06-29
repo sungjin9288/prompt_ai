@@ -14,6 +14,7 @@ import { copyTextToClipboard } from "@/lib/browser/clipboard";
 type ConnectionReadinessCheck = {
   installStep: string;
   operatorAction: string;
+  operatorEvidence: string;
   smokeTest: string;
   statusGate: string;
   surface: string;
@@ -45,6 +46,8 @@ const readinessChecks = [
       "Select text on any page, choose Refine with Prompt AI Studio, then confirm a review-required handoff package appears.",
     operatorAction:
       "Check sensitive page text and target AI before copying the package.",
+    operatorEvidence:
+      "reviewRequired, selected text, target AI, Chrome evidence packet",
   },
   {
     surface: "MCP client",
@@ -55,6 +58,8 @@ const readinessChecks = [
       "Run the MCP bridge self-test, then call tools/list and refine_prompt from the client.",
     operatorAction:
       "Confirm save_execution_feedback uses confirmSave: true only after result review.",
+    operatorEvidence:
+      "self-test output, tool result, reviewRequired, feedback inbox record",
   },
   {
     surface: "ChatGPT / Claude / Gemini",
@@ -65,6 +70,8 @@ const readinessChecks = [
       "Paste the package into the target AI and confirm it follows the requested language strategy and output format.",
     operatorAction:
       "Review assumptions, missing context, and final answer language before execution.",
+    operatorEvidence:
+      "smoke evidence, final prompt, answer language, reviewed result",
   },
   {
     surface: "Codex",
@@ -75,6 +82,8 @@ const readinessChecks = [
       "Confirm Codex reports changed files, verification evidence, and any remaining risk.",
     operatorAction:
       "Approve destructive commands, schema changes, external writes, and dependency additions separately.",
+    operatorEvidence:
+      "changed files, verification commands, risk notes, approval log",
   },
 ] satisfies ConnectionReadinessCheck[];
 
@@ -215,6 +224,7 @@ function buildConnectionReadinessChecklist() {
       `- Install step: ${check.installStep}`,
       `- Smoke test: ${check.smokeTest}`,
       `- Operator action: ${check.operatorAction}`,
+      `- Operator evidence: ${check.operatorEvidence}`,
       "",
     ]),
     "Smoke test commands:",
@@ -569,6 +579,10 @@ function ConnectionReadinessCard({
           label="Operator action"
           value={check.operatorAction}
         />
+        <ConnectionReadinessCardDetail
+          label="Operator evidence"
+          value={check.operatorEvidence}
+        />
       </dl>
     </div>
   );
@@ -609,6 +623,9 @@ function ConnectionReadinessRow({
       <td className="px-5 py-4 align-top leading-6 text-muted">
         {check.operatorAction}
       </td>
+      <td className="px-5 py-4 align-top leading-6 text-soft">
+        {check.operatorEvidence}
+      </td>
     </tr>
   );
 }
@@ -616,7 +633,7 @@ function ConnectionReadinessRow({
 function ConnectionReadinessTable() {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[980px] border-collapse text-left text-sm">
+      <table className="w-full min-w-[1160px] border-collapse text-left text-sm">
         <thead className="border-b border-line text-xs uppercase tracking-[0.12em] text-muted">
           <tr>
             <th className="px-5 py-3 font-semibold">Surface</th>
@@ -624,6 +641,7 @@ function ConnectionReadinessTable() {
             <th className="px-5 py-3 font-semibold">Install step</th>
             <th className="px-5 py-3 font-semibold">Smoke test</th>
             <th className="px-5 py-3 font-semibold">Operator action</th>
+            <th className="px-5 py-3 font-semibold">Operator evidence</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-line">

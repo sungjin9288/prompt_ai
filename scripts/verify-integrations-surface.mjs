@@ -1519,6 +1519,8 @@ for (const requiredText of [
   "Install step",
   "Smoke test",
   "Operator action",
+  "Operator evidence",
+  "operatorEvidence",
   "준비도 체크리스트 복사",
   "Smoke test 명령 복사",
   "Chrome smoke 체크리스트 복사",
@@ -1573,6 +1575,10 @@ for (const requiredText of [
   "Load unpacked",
   "tools/list",
   "refine_prompt",
+  "reviewRequired, selected text, target AI, Chrome evidence packet",
+  "self-test output, tool result, reviewRequired, feedback inbox record",
+  "smoke evidence, final prompt, answer language, reviewed result",
+  "changed files, verification commands, risk notes, approval log",
   "npm run dev",
   "npm run smoke:integrations",
   "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
@@ -1598,6 +1604,11 @@ assert.match(
   connectionReadinessPanel,
   /const smokeTestCommands = \[[\s\S]*?npm run dev[\s\S]*?npm run smoke:integrations[\s\S]*?npm run smoke:chrome-extension -- --out output\/smoke\/chrome-extension-smoke\.md[\s\S]*?npm run smoke:mcp -- --out output\/smoke\/mcp-bridge-smoke\.md[\s\S]*?npm run smoke:learning-feedback -- --out output\/smoke\/learning-feedback-smoke\.md[\s\S]*?npm run verify:integrations/,
   "Connection readiness smoke command copy should include local smoke evidence output commands",
+);
+assert.match(
+  connectionReadinessPanel,
+  /function buildConnectionReadinessChecklist\(\)[\s\S]*?Prompt AI Studio Connection Readiness Checklist[\s\S]*?readinessChecks\.flatMap[\s\S]*?check\.statusGate[\s\S]*?check\.installStep[\s\S]*?check\.smokeTest[\s\S]*?check\.operatorAction[\s\S]*?check\.operatorEvidence[\s\S]*?Smoke test commands:/,
+  "Connection readiness checklist copy should include operator evidence for each surface",
 );
 assert.match(
   connectionReadinessPanel,
@@ -1656,8 +1667,8 @@ assert.match(
 );
 assert.match(
   connectionReadinessPanel,
-  /function ConnectionReadinessCardDetail[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?<dt[\s\S]*?\{label\}[\s\S]*?<dd[\s\S]*?\{value\}[\s\S]*?function ConnectionReadinessCard[\s\S]*?check: ConnectionReadinessCheck[\s\S]*?check\.surface[\s\S]*?check\.statusGate[\s\S]*?<ConnectionReadinessCardDetail[\s\S]*?label="Install"[\s\S]*?value=\{check\.installStep\}[\s\S]*?<ConnectionReadinessCardDetail[\s\S]*?label="Operator action"[\s\S]*?value=\{check\.operatorAction\}/,
-  "Connection readiness panel should render each surface through a compact card with install and operator action details",
+  /function ConnectionReadinessCardDetail[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?<dt[\s\S]*?\{label\}[\s\S]*?<dd[\s\S]*?\{value\}[\s\S]*?function ConnectionReadinessCard[\s\S]*?check: ConnectionReadinessCheck[\s\S]*?check\.surface[\s\S]*?check\.statusGate[\s\S]*?<ConnectionReadinessCardDetail[\s\S]*?label="Install"[\s\S]*?value=\{check\.installStep\}[\s\S]*?<ConnectionReadinessCardDetail[\s\S]*?label="Operator action"[\s\S]*?value=\{check\.operatorAction\}[\s\S]*?<ConnectionReadinessCardDetail[\s\S]*?label="Operator evidence"[\s\S]*?value=\{check\.operatorEvidence\}/,
+  "Connection readiness panel should render each surface through a compact card with install, operator action, and operator evidence details",
 );
 assert.match(
   connectionReadinessPanel,
@@ -1666,8 +1677,8 @@ assert.match(
 );
 assert.match(
   connectionReadinessPanel,
-  /function ConnectionReadinessRow[\s\S]*?check: ConnectionReadinessCheck[\s\S]*?check\.surface[\s\S]*?check\.statusGate[\s\S]*?check\.installStep[\s\S]*?check\.smokeTest[\s\S]*?check\.operatorAction[\s\S]*?function ConnectionReadinessTable\(\)[\s\S]*?min-w-\[980px\][\s\S]*?readinessChecks\.map[\s\S]*?<ConnectionReadinessRow key=\{check\.surface\} check=\{check\} \/>[\s\S]*?<ConnectionReadinessTable \/>/,
-  "Connection readiness panel should render detailed readiness rows through a dedicated table component",
+  /function ConnectionReadinessRow[\s\S]*?check: ConnectionReadinessCheck[\s\S]*?check\.surface[\s\S]*?check\.statusGate[\s\S]*?check\.installStep[\s\S]*?check\.smokeTest[\s\S]*?check\.operatorAction[\s\S]*?check\.operatorEvidence[\s\S]*?function ConnectionReadinessTable\(\)[\s\S]*?min-w-\[1160px\][\s\S]*?Operator action[\s\S]*?Operator evidence[\s\S]*?readinessChecks\.map[\s\S]*?<ConnectionReadinessRow key=\{check\.surface\} check=\{check\} \/>[\s\S]*?<ConnectionReadinessTable \/>/,
+  "Connection readiness panel should render detailed readiness rows with operator evidence through a dedicated table component",
 );
 assert.match(
   connectionReadinessPanel,
@@ -3094,6 +3105,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "Chrome extension, MCP client, ChatGPT/Claude/Gemini, Codex별 status gate, install step, smoke test, operator action, operator evidence를 확인하며",
+  "README should document connection readiness operator evidence by surface",
+);
+assertIncludes(
+  readme,
   "mcpTargetAI",
   "README should document MCP feedback URL target AI filter",
 );
@@ -3196,6 +3212,11 @@ assertIncludes(
   prd,
   "Integrations 연결 준비도는 실제 Chrome popup에서 확인한 runtime, source, review gate, target AI, session, evidence result 값을 operator evidence packet, confirmSave false 기본의 `save_execution_feedback` payload, confirmSave true 저장 후 Feedback inbox UI/API/curl 확인 명령으로 복사하게 해 자동화 도구가 extension 로드를 직접 수행하지 못해도 실행 증빙, 학습 후보, 저장 확인 경로를 제품 안에 남기게 해야 한다.",
   "PRD should document actual Chrome loaded operator evidence",
+);
+assertIncludes(
+  prd,
+  "Integrations 연결 준비도는 Chrome extension, MCP client, ChatGPT/Claude/Gemini, Codex별 operator action과 operator evidence를 나눠 보여줘 실행할 일과 실행 후 남겨야 할 증빙을 바로 판단하게 해야 한다.",
+  "PRD should document connection readiness operator action and evidence separation",
 );
 assertIncludes(
   prd,
@@ -3366,6 +3387,11 @@ assertIncludes(
   developmentBrief,
   "Integrations 연결 준비도 점검에서 연결 표면, 첫 실행 표면, `npm run smoke:integrations`를 포함한 smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여주고",
   "Development brief should document connection readiness summary metrics",
+);
+assertIncludes(
+  developmentBrief,
+  "Chrome extension, MCP client, ChatGPT/Claude/Gemini, Codex별 status gate, install step, smoke test, operator action, operator evidence를 표시하고",
+  "Development brief should document connection readiness operator evidence by surface",
 );
 assertIncludes(
   developmentBrief,

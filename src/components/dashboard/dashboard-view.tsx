@@ -223,6 +223,13 @@ function normalizeDashboardInternalHref(href: string, fallback: string) {
   return normalizeInternalHref(href) ?? fallback;
 }
 
+function buildDashboardLibraryHref(params = new URLSearchParams()) {
+  const query = params.toString();
+  const href = query ? `/library?${query}` : "/library";
+
+  return normalizeDashboardInternalHref(href, "/library");
+}
+
 function buildPromptLibraryHref(prompt: PromptAsset) {
   const params = new URLSearchParams({ prompt: prompt.id });
   const version = prompt.versions[0]?.targetModel;
@@ -231,10 +238,7 @@ function buildPromptLibraryHref(prompt: PromptAsset) {
     params.set("version", version);
   }
 
-  return normalizeDashboardInternalHref(
-    `/library?${params.toString()}`,
-    "/library",
-  );
+  return buildDashboardLibraryHref(params);
 }
 
 function buildSkillHref(skillId: string) {
@@ -244,9 +248,13 @@ function buildSkillHref(skillId: string) {
 }
 
 function targetModelLibraryHref(targetModel?: string) {
-  const href = targetModel ? `/library?model=${targetModel}` : "/library";
+  const params = new URLSearchParams();
 
-  return normalizeDashboardInternalHref(href, "/library");
+  if (targetModel) {
+    params.set("model", targetModel);
+  }
+
+  return buildDashboardLibraryHref(params);
 }
 
 function improvementLibraryHref({
@@ -291,34 +299,47 @@ function improvementLibraryHref({
     params.set("sourceReason", sourceReason);
   }
 
-  return normalizeDashboardInternalHref(
-    `/library?${params.toString()}`,
-    "/library",
-  );
+  return buildDashboardLibraryHref(params);
 }
 
 function languageStrategyLibraryHref(language?: string) {
-  const href = language ? `/library?language=${language}` : "/library";
+  const params = new URLSearchParams();
 
-  return normalizeDashboardInternalHref(href, "/library");
+  if (language) {
+    params.set("language", language);
+  }
+
+  return buildDashboardLibraryHref(params);
 }
 
 function outputLanguageLibraryHref(output?: string) {
-  const href = output ? `/library?output=${output}` : "/library";
+  const params = new URLSearchParams();
 
-  return normalizeDashboardInternalHref(href, "/library");
+  if (output) {
+    params.set("output", output);
+  }
+
+  return buildDashboardLibraryHref(params);
 }
 
 function generationEngineLibraryHref(engine?: string) {
-  const href = engine ? `/library?engine=${engine}` : "/library";
+  const params = new URLSearchParams();
 
-  return normalizeDashboardInternalHref(href, "/library");
+  if (engine) {
+    params.set("engine", engine);
+  }
+
+  return buildDashboardLibraryHref(params);
 }
 
 function studioPersistenceLibraryHref(mode?: StudioPersistenceMode) {
-  const href = mode ? `/library?studio=${mode}` : "/library";
+  const params = new URLSearchParams();
 
-  return normalizeDashboardInternalHref(href, "/library");
+  if (mode) {
+    params.set("studio", mode);
+  }
+
+  return buildDashboardLibraryHref(params);
 }
 
 function studioSourceLibraryHref({
@@ -338,16 +359,17 @@ function studioSourceLibraryHref({
     params.set("studioVariant", sourceVariant);
   }
 
-  const query = params.toString();
-  const href = query ? `/library?${query}` : "/library";
-
-  return normalizeDashboardInternalHref(href, "/library");
+  return buildDashboardLibraryHref(params);
 }
 
 function learningScopeLibraryHref(scope?: MemoryScope | "untracked") {
-  const href = scope ? `/library?learn=${scope}` : "/library";
+  const params = new URLSearchParams();
 
-  return normalizeDashboardInternalHref(href, "/library");
+  if (scope) {
+    params.set("learn", scope);
+  }
+
+  return buildDashboardLibraryHref(params);
 }
 
 function learningScopeLearningHref(scope?: MemoryScope | "untracked") {
@@ -388,10 +410,7 @@ function promptDetailLibraryHref(
     params.set("view", view);
   }
 
-  return normalizeDashboardInternalHref(
-    `/library?${params.toString()}`,
-    "/library",
-  );
+  return buildDashboardLibraryHref(params);
 }
 
 function promptFeedbackLibraryHref(
@@ -412,10 +431,7 @@ function promptFeedbackLibraryHref(
   params.set("focus", "feedback");
   params.set("feedback", feedbackId);
 
-  return normalizeDashboardInternalHref(
-    `/library?${params.toString()}`,
-    "/library",
-  );
+  return buildDashboardLibraryHref(params);
 }
 
 function feedbackImprovementMemoryConfidence(rating: number) {

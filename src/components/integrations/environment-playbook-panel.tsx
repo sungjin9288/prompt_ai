@@ -413,7 +413,7 @@ export function EnvironmentPlaybookPanel() {
       targetModels: ["gpt", "claude", "codex", "gemini"],
       outputLanguage: "korean",
       sourceTitle: "Integrations 전체 운영 체크리스트",
-      sourceHref: "/integrations",
+      sourceHref: "/integrations#integrations-environment-guide",
       createdAt: new Date().toISOString(),
     });
 
@@ -438,7 +438,7 @@ export function EnvironmentPlaybookPanel() {
       targetModels: playbook.targetModels,
       outputLanguage: "korean",
       sourceTitle: `Integrations ${playbook.environment} 체크리스트`,
-      sourceHref: "/integrations",
+      sourceHref: "/integrations#integrations-environment-guide",
       createdAt: new Date().toISOString(),
     });
 

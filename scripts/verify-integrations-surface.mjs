@@ -804,7 +804,7 @@ for (const requiredText of [
   "setManualCopyText(rawInput)",
   'source: "integrations-operations-checklist"',
   'router.push("/studio?draft=integrations-operations-checklist")',
-  'sourceHref: "/integrations"',
+  'sourceHref: "/integrations#integrations-environment-guide"',
   'targetModels: ["gpt", "claude", "codex", "gemini"]',
   'targetModels: ["codex"]',
   "- Connection mode:",
@@ -882,8 +882,18 @@ assert.match(
 );
 assert.match(
   environmentPlaybookPanel,
+  /function openAllPlaybookChecklistsInStudio\(\)[\s\S]*?writeStudioDraft\(\{[\s\S]*?sourceTitle: "Integrations 전체 운영 체크리스트"[\s\S]*?sourceHref: "\/integrations#integrations-environment-guide"/,
+  "Environment playbook full Studio draft should return to the environment guide anchor",
+);
+assert.match(
+  environmentPlaybookPanel,
   /function openPlaybookChecklistInStudio[\s\S]*?const rawInput = buildEnvironmentPlaybookChecklist\(playbook\)[\s\S]*?const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "integrations-operations-checklist"[\s\S]*?rawInput[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setCopyState\("draftError"\)[\s\S]*?setManualCopyText\(rawInput\)[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=integrations-operations-checklist"\)/,
   "Environment playbook panel should keep the single environment checklist in manual fallback when Studio draft storage fails",
+);
+assert.match(
+  environmentPlaybookPanel,
+  /function openPlaybookChecklistInStudio[\s\S]*?writeStudioDraft\(\{[\s\S]*?sourceTitle: `Integrations \$\{playbook\.environment\} 체크리스트`[\s\S]*?sourceHref: "\/integrations#integrations-environment-guide"/,
+  "Environment playbook single Studio draft should return to the environment guide anchor",
 );
 assert.match(
   environmentPlaybookPanel,
@@ -2664,8 +2674,13 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "전체 체크리스트 Studio 전송 패키지에는 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함합니다.",
+  "전체 체크리스트 Studio 전송 패키지에는 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함하고",
   "README should document environment checklist audit source order",
+);
+assertIncludes(
+  readme,
+  "Studio 초안 원본 경로는 `#integrations-environment-guide`로 돌아오게 합니다.",
+  "README should document environment checklist Studio source anchor",
 );
 assertIncludes(
   readme,
@@ -3053,6 +3068,11 @@ assertIncludes(
   "PRD should document environment checklist audit source order",
 );
 assertIncludes(
+  prd,
+  "Integrations 환경별 체크리스트 Studio 초안의 원본 경로는 `/integrations#integrations-environment-guide`로 저장해 Studio에서 원본으로 돌아갈 때 환경별 실행 가이드 섹션을 복원해야 한다.",
+  "PRD should document environment checklist Studio source anchor",
+);
+assertIncludes(
   developmentBrief,
   "### `/integrations`",
   "Development brief should document the Integrations route",
@@ -3206,6 +3226,11 @@ assertIncludes(
   developmentBrief,
   "`integrations-operations-checklist` 전체 체크리스트 Studio 전송 패키지는 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
   "Development brief should document environment checklist audit source order",
+);
+assertIncludes(
+  developmentBrief,
+  "Studio 초안 원본 경로는 `#integrations-environment-guide`로 돌아오게 한다.",
+  "Development brief should document environment checklist Studio source anchor",
 );
 assertIncludes(
   developmentBrief,

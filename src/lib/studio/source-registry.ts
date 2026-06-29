@@ -381,25 +381,25 @@ const promptStudioSourceRegistry = {
     dashboardLabel: "MCP feedback 개선",
     dashboardDescription: "Integrations MCP feedback inbox에서 저장됨",
     dashboardNextAction:
-      "learning candidate와 Studio 개선 초안 비교 결과가 다음 handoff에 반영됐는지 확인",
+      "confirmSave true evidence trace와 개선 초안 비교 결과가 다음 handoff에 반영됐는지 확인",
     libraryFilterLabel: "MCP feedback 개선",
     librarySourceLabel: "MCP feedback 개선 초안",
     sourceActionLabel: "Feedback inbox 보기",
     studioLabel: "MCP feedback 개선 초안",
     studioNextAction:
-      "learning candidate와 Studio 개선 초안을 비교한 뒤 다음 handoff package를 더 명확하게 재작성하세요.",
+      "confirmSave true evidence trace를 확인한 뒤 다음 handoff package를 더 명확하게 재작성하세요.",
   },
   "mcp-feedback-report": {
     dashboardLabel: "MCP feedback 리포트",
     dashboardDescription: "Integrations MCP feedback report에서 저장됨",
     dashboardNextAction:
-      "단건 evidence-ready 초안과 trace-ready 리포트 비교 결과가 저장본에 반영됐는지 확인",
+      "단건 evidence-ready 초안, trace-ready 리포트, confirmSave evidence trace가 저장본에 반영됐는지 확인",
     libraryFilterLabel: "MCP feedback 리포트",
     librarySourceLabel: "MCP feedback 운영 리포트",
     sourceActionLabel: "Feedback inbox 보기",
     studioLabel: "MCP feedback 운영 리포트",
     studioNextAction:
-      "단건 evidence-ready 초안과 trace-ready 리포트를 비교한 뒤 반복 개선 규칙과 다음 운영 액션을 정리하세요.",
+      "단건 evidence-ready 초안과 trace-ready 리포트의 confirmSave evidence trace를 비교한 뒤 반복 개선 규칙과 다음 운영 액션을 정리하세요.",
   },
   "data-document-rag": {
     dashboardLabel: "Data 문서/RAG 초안",

@@ -1791,13 +1791,13 @@ assertIncludes(
 );
 assertIncludes(
   sourceRegistry,
-  "learning candidate와 Studio 개선 초안을 비교한 뒤 다음 handoff package를 더 명확하게 재작성하세요.",
-  "Prompt Studio source registry should give MCP feedback improvement a learning candidate comparison next action",
+  "confirmSave true evidence trace를 확인한 뒤 다음 handoff package를 더 명확하게 재작성하세요.",
+  "Prompt Studio source registry should give MCP feedback improvement a confirmSave evidence trace next action",
 );
 assertIncludes(
   sourceRegistry,
-  "learning candidate와 Studio 개선 초안 비교 결과가 다음 handoff에 반영됐는지 확인",
-  "Prompt Studio source registry should keep MCP feedback improvement comparison after save",
+  "confirmSave true evidence trace와 개선 초안 비교 결과가 다음 handoff에 반영됐는지 확인",
+  "Prompt Studio source registry should keep MCP feedback improvement confirmSave evidence trace after save",
 );
 assertIncludes(
   sourceRegistry,
@@ -1806,13 +1806,13 @@ assertIncludes(
 );
 assertIncludes(
   sourceRegistry,
-  "단건 evidence-ready 초안과 trace-ready 리포트를 비교한 뒤 반복 개선 규칙과 다음 운영 액션을 정리하세요.",
-  "Prompt Studio source registry should give MCP feedback report a trace comparison next action",
+  "단건 evidence-ready 초안과 trace-ready 리포트의 confirmSave evidence trace를 비교한 뒤 반복 개선 규칙과 다음 운영 액션을 정리하세요.",
+  "Prompt Studio source registry should give MCP feedback report a confirmSave trace comparison next action",
 );
 assertIncludes(
   sourceRegistry,
-  "단건 evidence-ready 초안과 trace-ready 리포트 비교 결과가 저장본에 반영됐는지 확인",
-  "Prompt Studio source registry should keep MCP feedback report trace comparison after save",
+  "단건 evidence-ready 초안, trace-ready 리포트, confirmSave evidence trace가 저장본에 반영됐는지 확인",
+  "Prompt Studio source registry should keep MCP feedback report confirmSave trace comparison after save",
 );
 assertIncludes(
   sourceRegistry,
@@ -2732,6 +2732,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "저장 후 confirmSave evidence trace가 저장본에 반영됐는지 확인",
+  "README should document MCP feedback saved result confirmSave evidence trace check",
+);
+assertIncludes(
+  readme,
   "`evidence-ready` source title이 붙은 `mcp-feedback-improvement` 단건 Studio 초안",
   "README should document MCP feedback improvement evidence-ready Studio title",
 );
@@ -2877,7 +2882,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations MCP feedback inbox는 `save_execution_feedback`으로 confirmSave된 외부 AI 실행 피드백을 저장 상태, 현재 결과, 현재 필터, 검증 상태의 모바일 2열 요약으로 먼저 보여주고, 비어 있는 inbox에서는 `confirmSave: true` 저장 예시를 복사해 첫 feedback record를 만들 수 있게 하며, 저장된 각 record에서는 Feedback ID, confirmSave gate, 증빙 준비 상태를 확인한 뒤 다음 확인 액션을 포함한 Feedback 증빙 패킷, learning memory candidate, Studio 개선 초안을 복사하고 learning candidate와 Studio 개선 초안에는 confirmSave true와 evidence-ready trace를 포함해 재사용 전 audit 기준을 보존해야 한다. 단건 개선 초안의 `evidence-ready` source title과 feedback report의 `trace-ready` source title에는 같은 record trace와 다음 확인 액션을 포함해야 한다. Studio에서 단건 개선 초안을 불러오면 learning candidate와 Studio 개선 초안 비교를 먼저 안내하고, feedback report 초안을 불러오면 단건 evidence-ready 초안과 trace-ready report 비교를 먼저 안내해야 한다. 저장 후에도 각 비교 결과가 저장본에 반영됐는지 확인하게 하고 Feedback inbox 복귀 링크를 보존해야 하며, 복귀 클릭 후 같은 `mcpRating`/`mcpTargetAI` 필터와 `#integrations-feedback-inbox` 앵커를 복원해야 한다. Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
+  "Integrations MCP feedback inbox는 `save_execution_feedback`으로 confirmSave된 외부 AI 실행 피드백을 저장 상태, 현재 결과, 현재 필터, 검증 상태의 모바일 2열 요약으로 먼저 보여주고, 비어 있는 inbox에서는 `confirmSave: true` 저장 예시를 복사해 첫 feedback record를 만들 수 있게 하며, 저장된 각 record에서는 Feedback ID, confirmSave gate, 증빙 준비 상태를 확인한 뒤 다음 확인 액션을 포함한 Feedback 증빙 패킷, learning memory candidate, Studio 개선 초안을 복사하고 learning candidate와 Studio 개선 초안에는 confirmSave true와 evidence-ready trace를 포함해 재사용 전 audit 기준을 보존해야 한다. 단건 개선 초안의 `evidence-ready` source title과 feedback report의 `trace-ready` source title에는 같은 record trace와 다음 확인 액션을 포함해야 한다. Studio에서 단건 개선 초안을 불러오면 learning candidate와 Studio 개선 초안 비교를 먼저 안내하고, feedback report 초안을 불러오면 단건 evidence-ready 초안과 trace-ready report의 confirmSave evidence trace 비교를 먼저 안내해야 한다. 저장 후에도 confirmSave evidence trace와 각 비교 결과가 저장본에 반영됐는지 확인하게 하고 Feedback inbox 복귀 링크를 보존해야 하며, 복귀 클릭 후 같은 `mcpRating`/`mcpTargetAI` 필터와 `#integrations-feedback-inbox` 앵커를 복원해야 한다. Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
   "PRD should document MCP feedback review summary metrics",
 );
 assertIncludes(
@@ -3214,6 +3219,11 @@ assertIncludes(
   developmentBrief,
   "`trace-ready` source title이 붙은 `mcp-feedback-report` 운영 리포트 Studio 초안",
   "Development brief should document MCP feedback report trace-ready Studio title",
+);
+assertIncludes(
+  developmentBrief,
+  "저장 후 confirmSave evidence trace가 저장본에 반영됐는지 확인",
+  "Development brief should document MCP feedback saved result confirmSave evidence trace check",
 );
 assertIncludes(
   developmentBrief,

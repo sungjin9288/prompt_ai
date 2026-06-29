@@ -3,6 +3,7 @@ import { writeFileSync } from "node:fs";
 import {
   buildGitProvenance,
   buildGitProvenanceLines,
+  gitProvenanceEnvKey,
 } from "./lib/git-provenance.mjs";
 
 const smokeCommands = [
@@ -52,10 +53,17 @@ const smokeCommands = [
   },
 ];
 
+const gitProvenance = buildGitProvenance();
+const smokeEnv = {
+  ...process.env,
+  [gitProvenanceEnvKey]: JSON.stringify(gitProvenance),
+};
+
 for (const smoke of smokeCommands) {
   const result = spawnSync("npm", smoke.args, {
     cwd: process.cwd(),
     encoding: "utf8",
+    env: smokeEnv,
     stdio: "inherit",
   });
 
@@ -69,8 +77,6 @@ for (const smoke of smokeCommands) {
     process.exit(result.status || 1);
   }
 }
-
-const gitProvenance = buildGitProvenance();
 
 writeFileSync(
   "output/smoke/integrations-smoke-summary.md",

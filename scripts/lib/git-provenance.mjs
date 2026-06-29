@@ -1,5 +1,7 @@
 import { execFileSync } from "node:child_process";
 
+export const gitProvenanceEnvKey = "PROMPT_AI_STUDIO_GIT_PROVENANCE";
+
 function readGitValue(args) {
   try {
     return execFileSync("git", args, {
@@ -11,6 +13,29 @@ function readGitValue(args) {
   }
 }
 
+function parseGitProvenance(value) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+
+    if (
+      typeof parsed.branch === "string" &&
+      typeof parsed.changedFiles === "number" &&
+      typeof parsed.commit === "string" &&
+      typeof parsed.status === "string"
+    ) {
+      return parsed;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
 export function formatWorkingTreeStatus(status) {
   if (status === "unavailable") {
     return "unavailable";
@@ -20,6 +45,12 @@ export function formatWorkingTreeStatus(status) {
 }
 
 export function buildGitProvenance() {
+  const envProvenance = parseGitProvenance(process.env[gitProvenanceEnvKey]);
+
+  if (envProvenance) {
+    return envProvenance;
+  }
+
   const status = readGitValue(["status", "--short"]);
 
   return {

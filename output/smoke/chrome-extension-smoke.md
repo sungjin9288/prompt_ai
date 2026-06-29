@@ -10,9 +10,9 @@
 - external services: not contacted
 - operator gate: local packet only; load unpacked Chrome review is still a separate manual check.
 - branch: main
-- commit: b1001ba
+- commit: 0916706
 - workingTree: dirty
-- changedFiles: 6
+- changedFiles: 5
 
 ## Verified contract
 - MV3 popup and service worker are present.

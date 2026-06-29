@@ -94,6 +94,16 @@ const actualFileNames = readdirSync(smokeDir)
   .filter((name) => name.endsWith(".md"))
   .sort();
 
+function getGitProvenance(content, fileName) {
+  const match = content.match(
+    /- branch: (.+)\n- commit: ([a-f0-9]+)\n- workingTree: (clean|dirty|unavailable)\n- changedFiles: (\d+)/,
+  );
+
+  assert.ok(match, `${fileName} should include git provenance lines.`);
+
+  return match[0];
+}
+
 assert.deepEqual(
   actualFileNames,
   expectedFileNames,
@@ -113,6 +123,7 @@ const smokeReadmePatterns = [
   /Learning feedback-improvement queue contract/,
   /npm run smoke:integrations/,
   /integrations-smoke-summary\.md/,
+  /integrated run captures one\s+git provenance snapshot and writes the same snapshot to every packet/,
   /mcp-client-smoke\.md/,
   /## Operator Run Order/,
   /review-required handoff package/,
@@ -139,6 +150,24 @@ for (const file of expectedSmokeFiles) {
   for (const pattern of file.patterns) {
     assert.match(content, pattern, `${file.name} is missing ${pattern}`);
   }
+}
+
+const smokeProvenance = expectedSmokeFiles.map((file) => {
+  const content = readFileSync(join(smokeDir, file.name), "utf8");
+
+  return {
+    fileName: file.name,
+    provenance: getGitProvenance(content, file.name),
+  };
+});
+const firstProvenance = smokeProvenance[0].provenance;
+
+for (const item of smokeProvenance) {
+  assert.equal(
+    item.provenance,
+    firstProvenance,
+    `${item.fileName} should use the same integrated smoke git provenance snapshot.`,
+  );
 }
 
 console.log(

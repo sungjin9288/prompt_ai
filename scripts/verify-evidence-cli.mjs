@@ -4,8 +4,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import {
+  buildGitProvenance,
   buildGitProvenanceLines,
   formatWorkingTreeStatus,
+  gitProvenanceEnvKey,
 } from "./lib/git-provenance.mjs";
 
 const scriptPath = "scripts/verify-evidence.mjs";
@@ -39,6 +41,29 @@ assert.deepEqual(
   ],
   "git provenance helper should format the shared evidence lines",
 );
+
+const previousGitProvenanceEnv = process.env[gitProvenanceEnvKey];
+const snapshotProvenance = {
+  branch: "snapshot-branch",
+  changedFiles: 4,
+  commit: "def5678",
+  status: " M smoke.md",
+};
+process.env[gitProvenanceEnvKey] = JSON.stringify(snapshotProvenance);
+
+try {
+  assert.deepEqual(
+    buildGitProvenance(),
+    snapshotProvenance,
+    "git provenance helper should use an explicit smoke snapshot when provided",
+  );
+} finally {
+  if (previousGitProvenanceEnv === undefined) {
+    delete process.env[gitProvenanceEnvKey];
+  } else {
+    process.env[gitProvenanceEnvKey] = previousGitProvenanceEnv;
+  }
+}
 
 const helpResult = runEvidence(["--help"]);
 

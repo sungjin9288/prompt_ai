@@ -1329,7 +1329,7 @@ for (const requiredText of [
   "Prompt AI Studio Chrome Loaded Extension Smoke",
   "Prompt AI Studio Chrome Loaded Extension Evidence",
   "Prompt AI Studio Chrome Loaded Extension Operator Evidence",
-  "local-first automation, review-required external delivery",
+  "local-first automation, smoke evidence saved, review-required external delivery",
   "loaded Chrome extension, local refine API, review-required handoff, session restore",
   "Chrome loaded smoke",
   "session restore, evidence fallback 증거를 같은 순서로 확인합니다.",
@@ -1377,7 +1377,7 @@ for (const requiredText of [
 
 assert.match(
   connectionReadinessPanel,
-  /const readinessSummaryItems = \[[\s\S]*?label: "연결 표면"[\s\S]*?readinessChecks\.length[\s\S]*?label: "첫 실행"[\s\S]*?readinessChecks\[0\]\.surface[\s\S]*?label: "Smoke 명령"[\s\S]*?smokeTestCommands\.length[\s\S]*?label: "승인 gate"[\s\S]*?review-required/,
+  /const readinessSummaryItems = \[[\s\S]*?label: "연결 표면"[\s\S]*?readinessChecks\.length[\s\S]*?label: "첫 실행"[\s\S]*?readinessChecks\[0\]\.surface[\s\S]*?label: "Smoke 명령"[\s\S]*?smokeTestCommands\.length[\s\S]*?label: "승인 gate"[\s\S]*?evidence \+ review-required/,
   "Connection readiness panel should derive surface count, first run surface, smoke command count, and approval gate",
 );
 assert.match(
@@ -2865,7 +2865,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 연결 준비도는 연결 표면, 첫 실행 표면, smoke 명령, review-required 승인 gate를 모바일 2열 요약으로 먼저 보여줘야 한다.",
+  "Integrations 연결 준비도는 연결 표면, 첫 실행 표면, smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여줘야 한다.",
   "PRD should document connection readiness summary metrics",
 );
 assertIncludes(
@@ -2935,7 +2935,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations 연결 준비도 점검에서 연결 표면, 첫 실행 표면, smoke 명령, review-required 승인 gate를 모바일 2열 요약으로 먼저 보여주고",
+  "Integrations 연결 준비도 점검에서 연결 표면, 첫 실행 표면, smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여주고",
   "Development brief should document connection readiness summary metrics",
 );
 assertIncludes(

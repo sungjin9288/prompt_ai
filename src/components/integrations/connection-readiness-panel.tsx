@@ -186,7 +186,7 @@ const readinessSummaryItems = [
   { label: "연결 표면", value: `${readinessChecks.length}개` },
   { label: "첫 실행", value: readinessChecks[0].surface },
   { label: "Smoke 명령", value: `${smokeTestCommands.length}개` },
-  { label: "승인 gate", value: "review-required" },
+  { label: "승인 gate", value: "evidence + review-required" },
 ];
 
 type CopyState =
@@ -204,7 +204,7 @@ function buildConnectionReadinessChecklist() {
   return [
     "# Prompt AI Studio Connection Readiness Checklist",
     "",
-    "Gate: local-first automation, review-required external delivery.",
+    "Gate: local-first automation, smoke evidence saved, review-required external delivery.",
     "Scope: Chrome extension, MCP client, ChatGPT / Claude / Gemini, Codex.",
     "",
     ...readinessChecks.flatMap((check, index) => [

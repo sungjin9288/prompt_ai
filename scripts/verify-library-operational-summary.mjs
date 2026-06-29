@@ -32,6 +32,10 @@ function assertFileIncludes(fileSource, text, message) {
   assert.ok(fileSource.includes(text), message);
 }
 
+function assertFileNotIncludes(fileSource, text, message) {
+  assert.ok(!fileSource.includes(text), message);
+}
+
 assertIncludes(
   "ContextOperatingFlow",
   "Library should reuse the shared context operating flow component",
@@ -113,13 +117,13 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Library 선택 운영 요약 리포트와 AI 전달 보강 브리프의 Studio 초안 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시합니다.",
-  "README should document Library selected Studio draft storage fallback",
+  "Library 선택 운영 요약 리포트와 AI 전달 보강 브리프의 Studio 초안은 `Library 운영 요약으로 돌아가기`, `Library 원본으로 돌아가기` 복귀 액션 라벨로 선택 상세를 복원하며, 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시합니다.",
+  "README should document Library selected Studio draft return actions and storage fallback",
 );
 assertFileIncludes(
   readme,
-  "Library Studio 저장 방식, 저장 출처, 운영 묶음 리포트와 각 대표 후보의 Studio 초안 저장이 실패하면 이동하지 않고 해당 조치 패널의 수동 복사용 원문 textarea를 표시합니다.",
-  "README should document Library filter operation Studio draft storage fallback",
+  "Library Studio 저장 방식, 저장 출처, 운영 묶음 리포트와 각 대표 후보의 Studio 초안은 `Library 필터로 돌아가기`, `Library 후보로 돌아가기`, `Library 운영 묶음으로 돌아가기` 복귀 액션 라벨로 해당 조건이나 후보를 복원하며, 저장이 실패하면 이동하지 않고 해당 조치 패널의 수동 복사용 원문 textarea를 표시합니다.",
+  "README should document Library filter operation Studio draft return actions and storage fallback",
 );
 assertFileIncludes(
   prd,
@@ -138,13 +142,13 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prd,
-  "Library 선택 운영 요약 리포트와 AI 전달 보강 브리프의 Studio 초안 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시해야 한다.",
-  "PRD should document Library selected Studio draft storage fallback",
+  "Library 선택 운영 요약 리포트와 AI 전달 보강 브리프의 Studio 초안은 `Library 운영 요약으로 돌아가기`, `Library 원본으로 돌아가기` 복귀 액션 라벨로 선택 상세를 복원해야 하며, 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시해야 한다.",
+  "PRD should document Library selected Studio draft return actions and storage fallback",
 );
 assertFileIncludes(
   prd,
-  "Library Studio 저장 방식, 저장 출처, 운영 묶음 리포트와 각 대표 후보의 Studio 초안 저장이 실패하면 이동하지 않고 해당 조치 패널의 수동 복사용 원문 textarea를 표시해야 한다.",
-  "PRD should document Library filter operation Studio draft storage fallback",
+  "Library Studio 저장 방식, 저장 출처, 운영 묶음 리포트와 각 대표 후보의 Studio 초안은 `Library 필터로 돌아가기`, `Library 후보로 돌아가기`, `Library 운영 묶음으로 돌아가기` 복귀 액션 라벨로 해당 조건이나 후보를 복원해야 하며, 저장이 실패하면 이동하지 않고 해당 조치 패널의 수동 복사용 원문 textarea를 표시해야 한다.",
+  "PRD should document Library filter operation Studio draft return actions and storage fallback",
 );
 assertFileIncludes(
   promptTypesSource,
@@ -220,44 +224,66 @@ assertFileIncludes(
 );
 assertFileIncludes(
   developmentBrief,
-  "선택 운영 요약 리포트와 AI 전달 보강 브리프의 Studio 초안 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시함",
-  "Development brief should document Library selected Studio draft storage fallback",
+  "선택 운영 요약 리포트와 AI 전달 보강 브리프의 Studio 초안은 `Library 운영 요약으로 돌아가기`, `Library 원본으로 돌아가기` 복귀 액션 라벨로 선택 상세를 복원하며, 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시함",
+  "Development brief should document Library selected Studio draft return actions and storage fallback",
 );
 assertFileIncludes(
   developmentBrief,
-  "Library Studio 저장 방식, 저장 출처, 운영 묶음 리포트와 각 대표 후보의 Studio 초안 저장이 실패하면 이동하지 않고 해당 조치 패널의 수동 복사용 원문 textarea를 표시함",
-  "Development brief should document Library filter operation Studio draft storage fallback",
+  "Library Studio 저장 방식, 저장 출처, 운영 묶음 리포트와 각 대표 후보의 Studio 초안은 `Library 필터로 돌아가기`, `Library 후보로 돌아가기`, `Library 운영 묶음으로 돌아가기` 복귀 액션 라벨로 해당 조건이나 후보를 복원하며, 저장이 실패하면 이동하지 않고 해당 조치 패널의 수동 복사용 원문 textarea를 표시함",
+  "Development brief should document Library filter operation Studio draft return actions and storage fallback",
 );
 assertFileIncludes(
   readme,
-  "Library 상세의 학습 컨텍스트, 저장 출처 없음 메모, 개선/피드백/비교 개선 초안 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시합니다.",
-  "README should document Library detail Studio draft fallback",
+  "Library 상세의 학습 컨텍스트, 저장 출처 없음 메모, 개선/피드백/비교 개선 초안은 `Library 학습 증거로 돌아가기`, `원본 저장본으로 돌아가기`, `Library 원본으로 돌아가기`, `Library 피드백으로 돌아가기` 복귀 액션 라벨로 선택 상세를 복원하며, 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시합니다.",
+  "README should document Library detail Studio draft return actions and fallback",
 );
 assertFileIncludes(
   prd,
-  "Library 상세의 학습 컨텍스트, 저장 출처 없음 메모, 개선/피드백/비교 개선 초안 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시해야 한다.",
-  "PRD should document Library detail Studio draft fallback",
+  "Library 상세의 학습 컨텍스트, 저장 출처 없음 메모, 개선/피드백/비교 개선 초안은 `Library 학습 증거로 돌아가기`, `원본 저장본으로 돌아가기`, `Library 원본으로 돌아가기`, `Library 피드백으로 돌아가기` 복귀 액션 라벨로 선택 상세를 복원해야 하며, 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시해야 한다.",
+  "PRD should document Library detail Studio draft return actions and fallback",
 );
 assertFileIncludes(
   developmentBrief,
-  "Library 상세의 학습 컨텍스트, 저장 출처 없음 메모, 개선/피드백/비교 개선 초안 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시함",
-  "Development brief should document Library detail Studio draft fallback",
+  "Library 상세의 학습 컨텍스트, 저장 출처 없음 메모, 개선/피드백/비교 개선 초안은 `Library 학습 증거로 돌아가기`, `원본 저장본으로 돌아가기`, `Library 원본으로 돌아가기`, `Library 피드백으로 돌아가기` 복귀 액션 라벨로 선택 상세를 복원하며, 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시함",
+  "Development brief should document Library detail Studio draft return actions and fallback",
 );
 assertFileIncludes(
   readme,
-  "Library 출처 사유 조치 리포트와 대표 후보 메모의 Studio 초안 저장이 실패하면 이동하지 않고 출처 사유 조치 패널의 수동 복사용 원문 textarea를 표시합니다.",
-  "README should document Library source-health Studio draft fallback",
+  "Library 출처 사유 조치 리포트와 대표 후보 메모의 Studio 초안은 `Library 필터로 돌아가기`, `Library 후보로 돌아가기` 복귀 액션 라벨로 출처 사유 조건이나 대표 후보를 복원하며, 저장이 실패하면 이동하지 않고 출처 사유 조치 패널의 수동 복사용 원문 textarea를 표시합니다.",
+  "README should document Library source-health Studio draft return actions and fallback",
 );
 assertFileIncludes(
   prd,
-  "Library 출처 사유 조치 리포트와 대표 후보 메모의 Studio 초안 저장이 실패하면 이동하지 않고 출처 사유 조치 패널의 수동 복사용 원문 textarea를 표시해야 한다.",
-  "PRD should document Library source-health Studio draft fallback",
+  "Library 출처 사유 조치 리포트와 대표 후보 메모의 Studio 초안은 `Library 필터로 돌아가기`, `Library 후보로 돌아가기` 복귀 액션 라벨로 출처 사유 조건이나 대표 후보를 복원해야 하며, 저장이 실패하면 이동하지 않고 출처 사유 조치 패널의 수동 복사용 원문 textarea를 표시해야 한다.",
+  "PRD should document Library source-health Studio draft return actions and fallback",
 );
 assertFileIncludes(
   developmentBrief,
-  "Library 출처 사유 조치 리포트와 대표 후보 메모의 Studio 초안 저장이 실패하면 이동하지 않고 출처 사유 조치 패널의 수동 복사용 원문 textarea를 표시함",
-  "Development brief should document Library source-health Studio draft fallback",
+  "Library 출처 사유 조치 리포트와 대표 후보 메모의 Studio 초안은 `Library 필터로 돌아가기`, `Library 후보로 돌아가기` 복귀 액션 라벨로 출처 사유 조건이나 대표 후보를 복원하며, 저장이 실패하면 이동하지 않고 출처 사유 조치 패널의 수동 복사용 원문 textarea를 표시함",
+  "Development brief should document Library source-health Studio draft return actions and fallback",
 );
+for (const staleFallbackOnlyContract of [
+  "Library 선택 운영 요약 리포트와 AI 전달 보강 브리프의 Studio 초안 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시",
+  "Library Studio 저장 방식, 저장 출처, 운영 묶음 리포트와 각 대표 후보의 Studio 초안 저장이 실패하면 이동하지 않고 해당 조치 패널의 수동 복사용 원문 textarea를 표시",
+  "Library 상세의 학습 컨텍스트, 저장 출처 없음 메모, 개선/피드백/비교 개선 초안 저장이 실패하면 이동하지 않고 선택 상세의 수동 복사용 원문 textarea를 표시",
+  "Library 출처 사유 조치 리포트와 대표 후보 메모의 Studio 초안 저장이 실패하면 이동하지 않고 출처 사유 조치 패널의 수동 복사용 원문 textarea를 표시",
+]) {
+  assertFileNotIncludes(
+    readme,
+    staleFallbackOnlyContract,
+    `README should not keep fallback-only Library draft contract: ${staleFallbackOnlyContract}`,
+  );
+  assertFileNotIncludes(
+    prd,
+    staleFallbackOnlyContract,
+    `PRD should not keep fallback-only Library draft contract: ${staleFallbackOnlyContract}`,
+  );
+  assertFileNotIncludes(
+    developmentBrief,
+    staleFallbackOnlyContract,
+    `Development brief should not keep fallback-only Library draft contract: ${staleFallbackOnlyContract}`,
+  );
+}
 assertFileIncludes(
   readme,
   "Library 계열 Studio 초안은 `Library 원본으로 돌아가기`, `Library 피드백으로 돌아가기`, `Library 운영 요약으로 돌아가기`, `Library 필터로 돌아가기`, `Library 후보로 돌아가기`, `Library 운영 묶음으로 돌아가기`, `Library 큐로 돌아가기`, `원본 저장본으로 돌아가기`, `Library 학습 증거로 돌아가기` 복귀 액션 라벨로 원래 Library 조건이나 상세를 복원합니다.",

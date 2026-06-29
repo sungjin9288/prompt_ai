@@ -14,6 +14,7 @@ import { writeStudioDraft } from "@/lib/studio/draft";
 
 type ExternalAiOperatorStep = {
   action: string;
+  check: string;
   commands: string[];
   detail: string;
 };
@@ -38,21 +39,25 @@ type McpDefaultExample = {
 const externalAiOperatorSteps = [
   {
     action: "로컬 앱 실행",
+    check: "/integrations가 열린다.",
     commands: ["npm run dev"],
     detail: "http://localhost:3000/integrations에서 연결 화면을 엽니다.",
   },
   {
     action: "연결 표면 1개 선택",
+    check: "Chrome 또는 MCP 하나만 먼저 연결한다.",
     commands: ["Chrome extension 또는 MCP client"],
     detail: "처음에는 Chrome이나 Codex MCP 중 하나만 연결해 smoke test를 줄입니다.",
   },
   {
     action: "review-required 결과 확인",
+    check: "target AI, 가정, 누락 맥락을 확인한다.",
     commands: ["refine_prompt 또는 Refine selected text"],
     detail: "handoff package를 읽고 target AI, 가정, 누락 맥락을 확인합니다.",
   },
   {
     action: "로컬 smoke evidence 저장",
+    check: "세 evidence file이 갱신된다.",
     commands: [
       "npm run smoke:integrations",
       "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
@@ -64,11 +69,13 @@ const externalAiOperatorSteps = [
   },
   {
     action: "외부 AI에 수동 전달",
+    check: "검토한 package만 붙여넣는다.",
     commands: ["Copy 후 GPT/Claude/Codex/Gemini에 붙여넣기"],
     detail: "자동 전송은 하지 않고 사람이 확인한 package만 전달합니다.",
   },
   {
     action: "실행 결과 저장 판단",
+    check: "confirmSave true 저장 기록을 확인한다.",
     commands: ["save_execution_feedback confirmSave: true"],
     detail: "의미 있는 결과만 rating, summary, notes와 함께 feedback inbox에 저장합니다.",
   },
@@ -201,6 +208,7 @@ function buildExternalAiOperatorGuidePackage() {
       `### ${index + 1}. ${step.action}`,
       "",
       ...step.commands.map((command) => `- Command: ${command}`),
+      `- Check: ${step.check}`,
       `- Detail: ${step.detail}`,
       "",
     ]),
@@ -330,6 +338,9 @@ function ExternalAiOperatorStepItem({
         </span>
         <span className="mt-2 block text-sm leading-6 text-muted">
           {step.detail}
+        </span>
+        <span className="mt-2 block break-words text-xs font-semibold text-soft">
+          확인: {step.check}
         </span>
       </span>
     </li>

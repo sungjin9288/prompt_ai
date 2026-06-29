@@ -125,6 +125,16 @@ assert.match(
 );
 assert.match(
   readme,
+  /verify:scope` checks Supabase preflight scope drift for backup\s+fingerprint, workspace_id, and owner_user_id changes/,
+  "README should document the Supabase preflight scope verification scope",
+);
+assert.match(
+  readme,
+  /-- --out path\/to\/supabase-scope-guard\.md/,
+  "README should document the Supabase scope guard evidence output path",
+);
+assert.match(
+  readme,
   /verify:data-management` checks that Data management exposes the\s+Supabase import execution packet manifest, waiting summary, copy gate, and\s+next-action note as copy-ready operational artifacts/,
   "README should document the data-management verification scope",
 );
@@ -190,7 +200,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /### operator gate 이후 진행[\s\S]*?OpenAI API 기반 프롬프트 분석 고도화[\s\S]*?npm run verify:openai-fallback[\s\S]*?OPENAI_COMPARISON_LIVE=1 npm run verify:openai-comparison[\s\S]*?-- --out docs\/evidence\/openai-comparison-live\.md[\s\S]*?Supabase Postgres 저장소와 백업 JSON importer 구현[\s\S]*?팀\/회사 워크스페이스/,
+  /### operator gate 이후 진행[\s\S]*?OpenAI API 기반 프롬프트 분석 고도화[\s\S]*?npm run verify:openai-fallback[\s\S]*?OPENAI_COMPARISON_LIVE=1 npm run verify:openai-comparison[\s\S]*?-- --out docs\/evidence\/openai-comparison-live\.md[\s\S]*?Supabase Postgres 저장소와 백업 JSON importer 구현[\s\S]*?npm run verify:scope -- --out docs\/evidence\/supabase-scope-guard\.md[\s\S]*?팀\/회사 워크스페이스/,
   "README should separate operator-gated next development candidates",
 );
 assert.match(

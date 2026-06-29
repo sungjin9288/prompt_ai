@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
 
 const {
@@ -16,6 +18,32 @@ const current = {
   ownerUserId: "00000000-0000-4000-8000-000000000001",
   workspaceId: "00000000-0000-4000-8000-000000000002",
 };
+const stalePreflight = {
+  backupFingerprint: "backup:changed",
+  ownerUserId: "00000000-0000-4000-8000-000000000099",
+  workspaceId: "00000000-0000-4000-8000-000000000098",
+};
+
+function getOutputPath(args) {
+  const outIndex = args.indexOf("--out");
+
+  if (outIndex === -1) {
+    return null;
+  }
+
+  const outputPath = args[outIndex + 1];
+
+  assert.ok(outputPath, "--out requires a file path");
+  assert.equal(
+    args.length,
+    outIndex + 2,
+    "verify:scope only accepts --out <file>",
+  );
+
+  return outputPath;
+}
+
+const outputPath = getOutputPath(process.argv.slice(2));
 
 function normalizeArray(items) {
   return Array.from(items);
@@ -23,6 +51,50 @@ function normalizeArray(items) {
 
 function normalizePlain(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function buildScopeGuardHandoffText() {
+  const currentStatus = getSupabaseImportPreflightScopeStatus({
+    current,
+    preflight: current,
+  });
+  const missingStatus = getSupabaseImportPreflightScopeStatus({ current });
+  const staleStatus = getSupabaseImportPreflightScopeStatus({
+    current,
+    preflight: stalePreflight,
+  });
+  const staleDetails = formatSupabaseImportPreflightScopeChangeDetails(
+    getSupabaseImportPreflightScopeChangeDetails({
+      current,
+      preflight: stalePreflight,
+    }),
+  );
+
+  return [
+    "# Supabase Preflight Scope Guard",
+    "",
+    `- currentStatus: ${currentStatus}`,
+    `- missingStatus: ${missingStatus}`,
+    `- staleStatus: ${staleStatus}`,
+    `- backupFingerprint: ${current.backupFingerprint}`,
+    `- workspaceId: ${current.workspaceId}`,
+    `- ownerUserId: ${current.ownerUserId}`,
+    `- staleDetail: ${staleDetails}`,
+    "",
+    "## Operator next action",
+    "- Run API preflight again when backup fingerprint, workspace_id, or owner_user_id changes.",
+    "- Copy the controlled execution packet only after the preflight scope is current.",
+    "- This artifact is a no-write scope guard and does not connect to Supabase.",
+  ].join("\n");
+}
+
+function writeScopeGuardHandoff(outputPath, handoffText) {
+  if (!outputPath) {
+    return;
+  }
+
+  mkdirSync(dirname(outputPath), { recursive: true });
+  writeFileSync(outputPath, `${handoffText}\n`, "utf8");
 }
 
 const normalizedCurrent = normalizeSupabaseImportCurrentScope({
@@ -121,11 +193,7 @@ assert.deepEqual(
   normalizeArray(
     getSupabaseImportPreflightScopeChanges({
       current,
-      preflight: {
-        backupFingerprint: "backup:changed",
-        ownerUserId: "00000000-0000-4000-8000-000000000099",
-        workspaceId: "00000000-0000-4000-8000-000000000098",
-      },
+      preflight: stalePreflight,
     }),
   ),
   ["backupFingerprint", "workspace_id", "owner_user_id"],
@@ -215,5 +283,29 @@ assert.equal(
   "",
   "current status should not block copy actions",
 );
+
+const scopeGuardHandoffText = buildScopeGuardHandoffText();
+
+assert.match(
+  scopeGuardHandoffText,
+  /staleStatus: stale/,
+  "scope guard handoff should include stale status",
+);
+assert.match(
+  scopeGuardHandoffText,
+  /backup fingerprint.*workspace_id.*owner_user_id/,
+  "scope guard handoff should include changed scope details",
+);
+assert.match(
+  scopeGuardHandoffText,
+  /does not connect to Supabase/,
+  "scope guard handoff should state that it does not connect to Supabase",
+);
+
+writeScopeGuardHandoff(outputPath, scopeGuardHandoffText);
+
+if (outputPath) {
+  console.log(`Supabase preflight scope handoff written to ${outputPath}.`);
+}
 
 console.log("Supabase preflight scope verification passed.");

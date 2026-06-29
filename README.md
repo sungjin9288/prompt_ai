@@ -502,6 +502,10 @@ top-level instead of a loose folder inside the parent `/Users/sungjin/dev` repo.
 `npm run verify:runtime` checks key runtime readiness scenarios so the Data UI,
 system readiness API, and verification evidence keep the same release gate
 rules.
+`npm run verify:scope` checks Supabase preflight scope drift for backup
+fingerprint, workspace_id, and owner_user_id changes. Add
+`-- --out path/to/supabase-scope-guard.md` to save the no-write operator
+handoff artifact.
 `npm run verify:secrets` scans source, scripts, and docs for OpenAI/Supabase
 secret-like values while allowing documented placeholders.
 `npm run verify:studio-draft-fallbacks` checks that every Studio draft write
@@ -572,6 +576,10 @@ terms from returning.
   packet을 저장합니다.
 - Supabase Postgres 저장소와 백업 JSON importer 구현: Supabase project,
   service-role server 환경, RLS smoke 기준이 준비된 뒤 write path를 엽니다.
+  operator가 실제 Supabase 정보를 넣기 전에는
+  `npm run verify:scope -- --out docs/evidence/supabase-scope-guard.md`로
+  backup fingerprint, workspace_id, owner_user_id scope guard 증빙을 먼저
+  남깁니다.
 - 문서 업로드 저장, server-side embedding, pgvector 검색 실행 경로 구현:
   Supabase schema와 embedding provider가 정해진 뒤 진행합니다.
 - 팀/회사 워크스페이스: 인증, 멤버 역할, workspace ownership 정책을 먼저

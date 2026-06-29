@@ -137,25 +137,26 @@ const executionEvidenceRows = [
 const smokeEvidenceRows = [
   {
     label: "MCP bridge",
-    command:
-      "node /Users/sungjin/dev/personal/prompt-ai-studio/mcp/prompt-ai-studio.mjs --self-test",
-    evidence: "tools/list, refine_prompt, create_handoff_package",
+    command: "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
+    evidence: "tools/list, refine_prompt, create_handoff_package, local evidence file",
     href: "#integrations-mcp-connection",
-    result: "reviewRequired output",
+    result: "MCP smoke evidence",
   },
   {
     label: "Chrome popup",
-    command: "Load unpacked extensions/chrome, then refine selected text",
-    evidence: "selected text, source URL, restored session package",
+    command:
+      "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
+    evidence: "manifest, local-only permissions, popup evidence fallback",
     href: "#integrations-readiness",
-    result: "copy-ready handoff",
+    result: "Chrome smoke evidence",
   },
   {
-    label: "Feedback inbox",
-    command: "save_execution_feedback with confirmSave true",
-    evidence: "targetAI, rating, result summary",
-    href: "#integrations-feedback-inbox",
-    result: "local JSONL record",
+    label: "Learning feedback",
+    command:
+      "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+    evidence: "low-confidence validation draft, Library filter, queue fallback",
+    href: "/learning?review=low-confidence&q=feedback-improvement#learning-feedback-improvement-queue",
+    result: "Learning smoke evidence",
   },
 ] satisfies Array<{
   label: string;

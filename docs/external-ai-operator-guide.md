@@ -35,7 +35,7 @@ npm run verify:integrations
 1. 확장 파일 계약을 먼저 확인합니다.
 
 ```bash
-npm run smoke:chrome-extension
+npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md
 ```
 
 2. 앱을 `http://localhost:3000`에서 실행합니다.
@@ -89,13 +89,13 @@ Codex와 GPT-compatible MCP client는 같은 server config를 씁니다. Codex�
 설정 후 self-test:
 
 ```bash
-npm run smoke:mcp
+npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md
 ```
 
 클라이언트 설정에서 절대 경로가 필요하면 같은 self-test를 직접 실행합니다.
 
 ```bash
-node /Users/sungjin/dev/personal/prompt-ai-studio/mcp/prompt-ai-studio.mjs --self-test
+node /Users/sungjin/dev/personal/prompt-ai-studio/mcp/prompt-ai-studio.mjs --self-test --out docs/evidence/mcp-bridge-smoke.md
 ```
 
 Codex에서 smoke prompt:
@@ -200,13 +200,13 @@ npm run dev
 MCP self-test:
 
 ```bash
-npm run smoke:mcp
+npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md
 ```
 
 직접 실행:
 
 ```bash
-node /Users/sungjin/dev/personal/prompt-ai-studio/mcp/prompt-ai-studio.mjs --self-test
+node /Users/sungjin/dev/personal/prompt-ai-studio/mcp/prompt-ai-studio.mjs --self-test --out docs/evidence/mcp-bridge-smoke.md
 ```
 
 통합 검증:

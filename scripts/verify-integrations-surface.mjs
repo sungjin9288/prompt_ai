@@ -210,10 +210,10 @@ for (const requiredText of [
   "SmokeEvidencePath",
   "Smoke 증거 경로",
   'data-testid="integrations-smoke-evidence-path"',
-  "tools/list, refine_prompt, create_handoff_package",
-  "Load unpacked extensions/chrome, then refine selected text",
-  "save_execution_feedback with confirmSave true",
-  "local JSONL record",
+  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
+  "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
+  "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+  "Learning smoke evidence",
   "ConnectionSurfacesPanel",
   "ConnectionSurfaceRow",
   "ConnectionSurfaceDetail",
@@ -350,8 +350,8 @@ assert.match(
 );
 assert.match(
   view,
-  /const smokeEvidenceRows = \[[\s\S]*?label: "MCP bridge"[\s\S]*?--self-test[\s\S]*?tools\/list, refine_prompt, create_handoff_package[\s\S]*?result: "reviewRequired output"[\s\S]*?label: "Chrome popup"[\s\S]*?Load unpacked extensions\/chrome, then refine selected text[\s\S]*?selected text, source URL, restored session package[\s\S]*?label: "Feedback inbox"[\s\S]*?save_execution_feedback with confirmSave true[\s\S]*?local JSONL record/,
-  "Integrations smoke evidence path should define MCP, Chrome, and feedback evidence outputs",
+  /const smokeEvidenceRows = \[[\s\S]*?label: "MCP bridge"[\s\S]*?npm run smoke:mcp -- --out docs\/evidence\/mcp-bridge-smoke\.md[\s\S]*?tools\/list, refine_prompt, create_handoff_package, local evidence file[\s\S]*?result: "MCP smoke evidence"[\s\S]*?label: "Chrome popup"[\s\S]*?npm run smoke:chrome-extension -- --out docs\/evidence\/chrome-extension-smoke\.md[\s\S]*?manifest, local-only permissions, popup evidence fallback[\s\S]*?result: "Chrome smoke evidence"[\s\S]*?label: "Learning feedback"[\s\S]*?npm run smoke:learning-feedback -- --out docs\/evidence\/learning-feedback-smoke\.md[\s\S]*?low-confidence validation draft, Library filter, queue fallback[\s\S]*?\/learning\?review=low-confidence&q=feedback-improvement#learning-feedback-improvement-queue[\s\S]*?result: "Learning smoke evidence"/,
+  "Integrations smoke evidence path should define MCP, Chrome, and Learning evidence output commands",
 );
 assert.match(
   view,
@@ -1125,6 +1125,11 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
+  /const mcpSelfTestCommand =[\s\S]*?"npm run smoke:mcp -- --out docs\/evidence\/mcp-bridge-smoke\.md";/,
+  "MCP connection self-test command should save a local evidence packet",
+);
+assert.match(
+  mcpConnectionPanel,
   /function McpSetupCommandBar[\s\S]*?data-testid="mcp-setup-command-bar"[\s\S]*?onCopy\(mcpConfigJson, "config"\)[\s\S]*?MCP config 복사[\s\S]*?onCopy\(mcpSelfTestCommand, "self-test"\)[\s\S]*?Self-test 명령 복사[\s\S]*?onCopy\(mcpDevCommand, "dev"\)[\s\S]*?Dev server 명령 복사[\s\S]*?<McpSetupCommandBar onCopy=\{copyValue\} \/>/,
   "MCP connection panel should render setup copy commands through a dedicated command bar",
 );
@@ -1321,7 +1326,7 @@ for (const requiredText of [
   "tools/list",
   "refine_prompt",
   "npm run dev",
-  "mcp/prompt-ai-studio.mjs --self-test",
+  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
   "npm run verify:integrations",
   "review-required handoff package",
   "copyTextToClipboard",
@@ -1339,6 +1344,11 @@ assert.match(
   connectionReadinessPanel,
   /const readinessSummaryItems = \[[\s\S]*?label: "연결 표면"[\s\S]*?readinessChecks\.length[\s\S]*?label: "첫 실행"[\s\S]*?readinessChecks\[0\]\.surface[\s\S]*?label: "Smoke 명령"[\s\S]*?smokeTestCommands\.length[\s\S]*?label: "승인 gate"[\s\S]*?review-required/,
   "Connection readiness panel should derive surface count, first run surface, smoke command count, and approval gate",
+);
+assert.match(
+  connectionReadinessPanel,
+  /const smokeTestCommands = \[[\s\S]*?npm run dev[\s\S]*?npm run smoke:chrome-extension -- --out docs\/evidence\/chrome-extension-smoke\.md[\s\S]*?npm run smoke:mcp -- --out docs\/evidence\/mcp-bridge-smoke\.md[\s\S]*?npm run smoke:learning-feedback -- --out docs\/evidence\/learning-feedback-smoke\.md[\s\S]*?npm run verify:integrations/,
+  "Connection readiness smoke command copy should include local smoke evidence output commands",
 );
 assert.match(
   connectionReadinessPanel,
@@ -2238,10 +2248,13 @@ for (const requiredText of [
   "npm run verify:integrations",
   "Chrome으로 테스트",
   "npm run smoke:chrome-extension",
+  "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
   "Refine with Prompt AI Studio",
   "Studio URL: http://localhost:3000",
   "Codex MCP 설정",
   "npm run smoke:mcp",
+  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
+  "mcp/prompt-ai-studio.mjs --self-test --out docs/evidence/mcp-bridge-smoke.md",
   "PROMPT_AI_STUDIO_TARGET_AI",
   "PROMPT_AI_STUDIO_SOURCE_URL",
   "Use prompt-ai-studio get_context_profile, then refine_prompt.",
@@ -2413,7 +2426,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Integrations Smoke 증거 경로: MCP bridge self-test, Chrome popup smoke, Feedback inbox 저장이 각각 command, evidence, result로 어떻게 이어지는지 상단에서 대조하고 상세 섹션으로 이동하게 합니다.",
+  "Integrations Smoke 증거 경로: MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 상단에서 대조하고 상세 섹션으로 이동하게 합니다.",
   "README should document the integrations smoke evidence path",
 );
 assertIncludes(
@@ -2733,7 +2746,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations Smoke 증거 경로는 MCP bridge self-test, Chrome popup smoke, Feedback inbox 저장이 각각 command, evidence, result로 어떻게 이어지는지 상단에서 대조하고 상세 섹션으로 이동하게 해야 한다.",
+  "Integrations Smoke 증거 경로는 MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 상단에서 대조하고 상세 섹션으로 이동하게 해야 한다.",
   "PRD should document the integrations smoke evidence path",
 );
 assertIncludes(
@@ -2843,7 +2856,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations Smoke 증거 경로에서 MCP bridge self-test, Chrome popup smoke, Feedback inbox 저장이 각각 command, evidence, result로 어떻게 이어지는지 상단에서 대조하고 상세 섹션으로 이동하게 한다",
+  "Integrations Smoke 증거 경로에서 MCP bridge, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 상단에서 대조하고 상세 섹션으로 이동하게 한다",
   "Development brief should document the integrations smoke evidence path",
 );
 assertIncludes(

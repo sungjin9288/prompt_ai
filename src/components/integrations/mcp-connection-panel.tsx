@@ -28,7 +28,7 @@ const mcpConfigJson = `{
 }`;
 
 const mcpSelfTestCommand =
-  "node /Users/sungjin/dev/personal/prompt-ai-studio/mcp/prompt-ai-studio.mjs --self-test";
+  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md";
 
 const mcpDevCommand = "npm run dev";
 

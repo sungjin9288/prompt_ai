@@ -80,7 +80,9 @@ const readinessChecks = [
 
 const smokeTestCommands = [
   "npm run dev",
-  "node /Users/sungjin/dev/personal/prompt-ai-studio/mcp/prompt-ai-studio.mjs --self-test",
+  "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
+  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
+  "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
   "npm run verify:integrations",
 ];
 

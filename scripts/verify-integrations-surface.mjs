@@ -827,10 +827,16 @@ for (const requiredText of [
   "MCP client",
   "Connection mode",
   "connectionMode",
+  "First action",
+  "firstAction",
   "Local API capture → review-required handoff",
   "Copy-ready handoff, not direct account automation",
   "Scoped implementation brief with operator approval gates",
   "Direct local tool calls through the stdio MCP bridge",
+  "Select text, open the popup, copy the reviewed package.",
+  "Paste after smoke evidence and handoff review.",
+  "Use the brief, then approve risky actions separately.",
+  "Call get_context_profile before refining or packaging.",
   "Run npm run smoke:integrations, then confirm sensitive text, missing context, and reviewRequired before copy.",
   "Check npm run smoke:integrations evidence, final prompt, answer language, assumptions, and reviewRequired before paste.",
   "Run npm run smoke:integrations, then review files, checks, destructive commands, migrations, and external writes.",
@@ -862,6 +868,7 @@ for (const requiredText of [
   'targetModels: ["gpt", "claude", "codex", "gemini"]',
   'targetModels: ["codex"]',
   "- Connection mode:",
+  "- First action:",
   "- Target AI:",
   "formatTargetModels(playbook.targetModels)",
   "playbook.targetModels",
@@ -896,8 +903,8 @@ assert.match(
 );
 assert.match(
   environmentPlaybookPanel,
-  /function buildEnvironmentPlaybookChecklist[\s\S]*?Gate: refine automatically, run npm run smoke:integrations, deliver with review\.[\s\S]*?\.\.\.environmentEvidenceTrace[\s\S]*?function buildAllEnvironmentPlaybookChecklist[\s\S]*?Gate: refine automatically, run npm run smoke:integrations, deliver with review\.[\s\S]*?Scope: Chrome extension, ChatGPT \/ Claude \/ Gemini, Codex, MCP client\.[\s\S]*?\.\.\.environmentEvidenceTrace/,
-  "Environment playbook copied checklists should include the shared evidence trace after the delivery gate",
+  /function buildEnvironmentPlaybookChecklist[\s\S]*?- First action: \$\{playbook\.firstAction\}[\s\S]*?Gate: refine automatically, run npm run smoke:integrations, deliver with review\.[\s\S]*?\.\.\.environmentEvidenceTrace[\s\S]*?function buildAllEnvironmentPlaybookChecklist[\s\S]*?Gate: refine automatically, run npm run smoke:integrations, deliver with review\.[\s\S]*?Scope: Chrome extension, ChatGPT \/ Claude \/ Gemini, Codex, MCP client\.[\s\S]*?\.\.\.environmentEvidenceTrace[\s\S]*?- First action: \$\{playbook\.firstAction\}/,
+  "Environment playbook copied checklists should include first action and the shared evidence trace after the delivery gate",
 );
 assert.match(
   environmentPlaybookPanel,
@@ -906,8 +913,8 @@ assert.match(
 );
 assert.match(
   environmentPlaybookPanel,
-  /function EnvironmentPlaybookCardDetail[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?<dt[\s\S]*?\{label\}[\s\S]*?<dd[\s\S]*?\{value\}[\s\S]*?function EnvironmentPlaybookCard[\s\S]*?playbook: EnvironmentPlaybook[\s\S]*?playbook\.environment[\s\S]*?playbook\.connectionMode[\s\S]*?formatTargetModels\(playbook\.targetModels\)[\s\S]*?<EnvironmentPlaybookCardDetail[\s\S]*?label="Trigger"[\s\S]*?value=\{playbook\.trigger\}[\s\S]*?<EnvironmentPlaybookCardDetail[\s\S]*?label="Operator check"[\s\S]*?value=\{playbook\.operatorCheck\}[\s\S]*?onCopy\(playbook\)[\s\S]*?onOpenInStudio\(playbook\)/,
-  "Environment playbook panel should render each environment through a compact card with trigger, operator check, target AI, and actions",
+  /function EnvironmentPlaybookCardDetail[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?<dt[\s\S]*?\{label\}[\s\S]*?<dd[\s\S]*?\{value\}[\s\S]*?function EnvironmentPlaybookCard[\s\S]*?playbook: EnvironmentPlaybook[\s\S]*?playbook\.environment[\s\S]*?playbook\.connectionMode[\s\S]*?formatTargetModels\(playbook\.targetModels\)[\s\S]*?<EnvironmentPlaybookCardDetail[\s\S]*?label="Trigger"[\s\S]*?value=\{playbook\.trigger\}[\s\S]*?<EnvironmentPlaybookCardDetail[\s\S]*?label="First action"[\s\S]*?value=\{playbook\.firstAction\}[\s\S]*?<EnvironmentPlaybookCardDetail[\s\S]*?label="Operator check"[\s\S]*?value=\{playbook\.operatorCheck\}[\s\S]*?onCopy\(playbook\)[\s\S]*?onOpenInStudio\(playbook\)/,
+  "Environment playbook panel should render each environment through a compact card with trigger, first action, operator check, target AI, and actions",
 );
 assert.match(
   environmentPlaybookPanel,
@@ -916,7 +923,7 @@ assert.match(
 );
 assert.match(
   environmentPlaybookPanel,
-  /function EnvironmentPlaybookRow[\s\S]*?playbook: EnvironmentPlaybook[\s\S]*?playbook\.environment[\s\S]*?playbook\.connectionMode[\s\S]*?playbook\.trigger[\s\S]*?playbook\.action[\s\S]*?playbook\.output[\s\S]*?playbook\.operatorCheck[\s\S]*?formatTargetModels\(playbook\.targetModels\)[\s\S]*?onCopy\(playbook\)[\s\S]*?onOpenInStudio\(playbook\)[\s\S]*?function EnvironmentPlaybookTable[\s\S]*?min-w-\[1080px\][\s\S]*?environmentPlaybooks\.map[\s\S]*?<EnvironmentPlaybookRow[\s\S]*?onCopy=\{onCopy\}[\s\S]*?onOpenInStudio=\{onOpenInStudio\}[\s\S]*?playbook=\{playbook\}[\s\S]*?<EnvironmentPlaybookTable[\s\S]*?onCopy=\{copyPlaybookChecklist\}[\s\S]*?onOpenInStudio=\{openPlaybookChecklistInStudio\}/,
+  /function EnvironmentPlaybookRow[\s\S]*?playbook: EnvironmentPlaybook[\s\S]*?playbook\.environment[\s\S]*?playbook\.connectionMode[\s\S]*?playbook\.trigger[\s\S]*?playbook\.firstAction[\s\S]*?playbook\.action[\s\S]*?playbook\.output[\s\S]*?playbook\.operatorCheck[\s\S]*?formatTargetModels\(playbook\.targetModels\)[\s\S]*?onCopy\(playbook\)[\s\S]*?onOpenInStudio\(playbook\)[\s\S]*?function EnvironmentPlaybookTable[\s\S]*?min-w-\[1160px\][\s\S]*?First action[\s\S]*?environmentPlaybooks\.map[\s\S]*?<EnvironmentPlaybookRow[\s\S]*?onCopy=\{onCopy\}[\s\S]*?onOpenInStudio=\{onOpenInStudio\}[\s\S]*?playbook=\{playbook\}[\s\S]*?<EnvironmentPlaybookTable[\s\S]*?onCopy=\{copyPlaybookChecklist\}[\s\S]*?onOpenInStudio=\{openPlaybookChecklistInStudio\}/,
   "Environment playbook panel should render detailed environment rows through a dedicated table component",
 );
 assert.match(
@@ -2794,6 +2801,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 connection mode, trigger, first action, Studio action, output, operator check, target AI",
+  "README should document environment first action visibility",
+);
+assertIncludes(
+  readme,
   "전체 체크리스트 Studio 전송 패키지에는 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함하고",
   "README should document environment checklist audit source order",
 );
@@ -2904,7 +2916,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 connection mode, trigger, Studio action, output, operator check",
+  "Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 connection mode, trigger, first action, Studio action, output, operator check",
   "README should document the environment playbook fields",
 );
 assertIncludes(
@@ -3274,6 +3286,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "Integrations 환경별 실행 가이드는 Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 first action을 trigger와 operator check 사이에 보여줘 사용자가 각 환경의 첫 조작을 바로 알 수 있어야 한다.",
+  "PRD should document environment first action visibility",
+);
+assertIncludes(
+  prd,
   "Integrations 환경별 실행 가이드는 Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 operator check에서 `npm run smoke:integrations` 실행을 외부 전달과 confirmSave 저장보다 먼저 확인하게 해야 한다.",
   "PRD should document environment operator checks as evidence-first",
 );
@@ -3439,6 +3456,11 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
+  "Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 connection mode, trigger, first action, Studio action, output, operator check, target AI",
+  "Development brief should document environment first action visibility",
+);
+assertIncludes(
+  developmentBrief,
   "`integrations-operations-checklist` 전체 체크리스트 Studio 전송 패키지는 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
   "Development brief should document environment checklist audit source order",
 );
@@ -3529,7 +3551,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 connection mode, trigger, Studio action, output, operator check",
+  "Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 connection mode, trigger, first action, Studio action, output, operator check",
   "Development brief should document the environment playbook fields",
 );
 assertIncludes(

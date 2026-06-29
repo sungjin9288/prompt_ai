@@ -18,6 +18,7 @@ const environmentPlaybooks = [
     environment: "Chrome extension",
     connectionMode: "Local API capture → review-required handoff",
     trigger: "Select text or use the context menu on a webpage.",
+    firstAction: "Select text, open the popup, copy the reviewed package.",
     action: "Call local refine API with page context and target AI hint.",
     output:
       "Review-required handoff package for ChatGPT, Claude, Codex, or Gemini.",
@@ -29,6 +30,7 @@ const environmentPlaybooks = [
     environment: "ChatGPT / Claude / Gemini",
     connectionMode: "Copy-ready handoff, not direct account automation",
     trigger: "Paste a handoff package from Studio, Chrome, or MCP.",
+    firstAction: "Paste after smoke evidence and handoff review.",
     action: "Run the copy-ready English or Korean-English hybrid prompt.",
     output:
       "External AI result that can be summarized back as execution feedback.",
@@ -40,6 +42,7 @@ const environmentPlaybooks = [
     environment: "Codex",
     connectionMode: "Scoped implementation brief with operator approval gates",
     trigger: "Send a development task package with files, checks, and guardrails.",
+    firstAction: "Use the brief, then approve risky actions separately.",
     action: "Use the prompt as an implementation brief, not an auto-run command.",
     output: "Patch, verification evidence, and feedback summary.",
     operatorCheck:
@@ -50,6 +53,7 @@ const environmentPlaybooks = [
     environment: "MCP client",
     connectionMode: "Direct local tool calls through the stdio MCP bridge",
     trigger: "Call get_context_profile, refine_prompt, or create_handoff_package.",
+    firstAction: "Call get_context_profile before refining or packaging.",
     action: "Use Prompt AI Studio as a local prompt refinement tool.",
     output: "Structured content plus copy-ready review-required text.",
     operatorCheck:
@@ -60,6 +64,7 @@ const environmentPlaybooks = [
   action: string;
   connectionMode: string;
   environment: string;
+  firstAction: string;
   operatorCheck: string;
   output: string;
   targetModels: TargetModel[];
@@ -93,6 +98,7 @@ function buildEnvironmentPlaybookChecklist(
     "",
     `- Connection mode: ${playbook.connectionMode}`,
     `- Trigger: ${playbook.trigger}`,
+    `- First action: ${playbook.firstAction}`,
     `- Studio action: ${playbook.action}`,
     `- Output: ${playbook.output}`,
     `- Operator check: ${playbook.operatorCheck}`,
@@ -116,6 +122,7 @@ function buildAllEnvironmentPlaybookChecklist() {
       "",
       `- Connection mode: ${playbook.connectionMode}`,
       `- Trigger: ${playbook.trigger}`,
+      `- First action: ${playbook.firstAction}`,
       `- Studio action: ${playbook.action}`,
       `- Output: ${playbook.output}`,
       `- Operator check: ${playbook.operatorCheck}`,
@@ -200,6 +207,10 @@ function EnvironmentPlaybookCard({
           value={playbook.trigger}
         />
         <EnvironmentPlaybookCardDetail
+          label="First action"
+          value={playbook.firstAction}
+        />
+        <EnvironmentPlaybookCardDetail
           label="Operator check"
           value={playbook.operatorCheck}
         />
@@ -269,6 +280,9 @@ function EnvironmentPlaybookRow({
         {playbook.trigger}
       </td>
       <td className="px-5 py-4 align-top leading-6 text-soft">
+        {playbook.firstAction}
+      </td>
+      <td className="px-5 py-4 align-top leading-6 text-soft">
         {playbook.action}
       </td>
       <td className="px-5 py-4 align-top leading-6 text-soft">
@@ -311,12 +325,13 @@ function EnvironmentPlaybookTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1080px] border-collapse text-left text-sm">
+      <table className="w-full min-w-[1160px] border-collapse text-left text-sm">
         <thead className="border-b border-line text-xs uppercase tracking-[0.12em] text-muted">
           <tr>
             <th className="px-5 py-3 font-semibold">Environment</th>
             <th className="px-5 py-3 font-semibold">Connection mode</th>
             <th className="px-5 py-3 font-semibold">Trigger</th>
+            <th className="px-5 py-3 font-semibold">First action</th>
             <th className="px-5 py-3 font-semibold">Studio action</th>
             <th className="px-5 py-3 font-semibold">Output</th>
             <th className="px-5 py-3 font-semibold">Operator check</th>

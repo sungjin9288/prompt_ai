@@ -143,6 +143,13 @@ const executionEvidenceRows = [
 
 const smokeEvidenceRows = [
   {
+    label: "Integrated preflight",
+    command: "npm run smoke:integrations",
+    evidence: "Chrome, MCP, Learning packets and integrations-smoke-summary.md",
+    href: "#integrations-smoke-evidence-path",
+    result: "Integrated smoke summary",
+  },
+  {
     label: "MCP bridge",
     command: "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
     evidence: "tools/list, refine_prompt, create_handoff_package, local evidence file",
@@ -177,7 +184,8 @@ const smokeEvidenceRunOrder = [
   {
     gate: "npm run smoke:integrations",
     label: "01 로컬 packet",
-    task: "Chrome, MCP, Learning smoke packet을 한 번에 갱신합니다.",
+    task:
+      "Chrome, MCP, Learning smoke packet과 통합 summary를 한 번에 갱신합니다.",
   },
   {
     gate: "reviewRequired actual result",
@@ -452,7 +460,7 @@ const integrationGateSummary = [
     linkLabel: "Refine API 확인",
   },
   {
-    check: "Chrome, MCP, and Learning smoke evidence files",
+    check: "Integrated summary and Chrome, MCP, Learning smoke evidence files",
     detail:
       "The operator saves local smoke evidence before any prompt package leaves the Studio workflow.",
     href: "#integrations-smoke-evidence-path",
@@ -664,7 +672,7 @@ function SmokeEvidencePath() {
         ))}
       </div>
       <div
-        className="grid gap-3 px-5 py-5 lg:grid-cols-3"
+        className="grid gap-3 px-5 py-5 md:grid-cols-2 xl:grid-cols-4"
         data-testid="integrations-smoke-evidence-path"
       >
         {smokeEvidenceRows.map((row) => (

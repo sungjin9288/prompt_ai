@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
 
 const smokeCommands = [
   {
@@ -10,6 +11,7 @@ const smokeCommands = [
       "output/smoke/chrome-extension-smoke.md",
     ],
     label: "Chrome extension",
+    out: "output/smoke/chrome-extension-smoke.md",
   },
   {
     args: [
@@ -20,6 +22,7 @@ const smokeCommands = [
       "output/smoke/mcp-bridge-smoke.md",
     ],
     label: "MCP bridge",
+    out: "output/smoke/mcp-bridge-smoke.md",
   },
   {
     args: [
@@ -30,6 +33,7 @@ const smokeCommands = [
       "output/smoke/learning-feedback-smoke.md",
     ],
     label: "Learning feedback",
+    out: "output/smoke/learning-feedback-smoke.md",
   },
 ];
 
@@ -50,5 +54,26 @@ for (const smoke of smokeCommands) {
     process.exit(result.status || 1);
   }
 }
+
+writeFileSync(
+  "output/smoke/integrations-smoke-summary.md",
+  [
+    "# Integrations Smoke Summary",
+    "",
+    "- command: npm run smoke:integrations",
+    "- gate: local packets pass before external AI delivery",
+    "- external services: not contacted",
+    "",
+    "## Packets",
+    ...smokeCommands.map((smoke) => `- ${smoke.label}: ${smoke.out}`),
+    "",
+    "## Pass condition",
+    "- Chrome extension file contract passed.",
+    "- MCP bridge self-test contract passed.",
+    "- Learning feedback queue contract passed.",
+    "- Review-required delivery still happens after local packet review.",
+    "- confirmSave stays false until the external AI result is reviewed.",
+  ].join("\n"),
+);
 
 console.log("Integrations smoke evidence packets written to output/smoke.");

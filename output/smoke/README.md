@@ -5,6 +5,7 @@ checked without external AI access.
 
 Expected packets:
 
+- `integrations-smoke-summary.md`: integrated preflight summary for the three local packets.
 - `chrome-extension-smoke.md`: unpacked Chrome extension file contract.
 - `mcp-bridge-smoke.md`: stdio MCP bridge self-test contract.
 - `learning-feedback-smoke.md`: Learning feedback-improvement queue contract.
@@ -14,8 +15,8 @@ Expected packets:
 Use these files as the preflight record before sending any refined prompt to an
 external AI surface.
 
-Run `npm run smoke:integrations` to refresh all three local smoke packets in one
-pass.
+Run `npm run smoke:integrations` to refresh all three local smoke packets and
+`integrations-smoke-summary.md` in one pass.
 
 1. Run the matching local smoke command and keep the generated packet:
    `npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md`,

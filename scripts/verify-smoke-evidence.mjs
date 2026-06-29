@@ -6,6 +6,19 @@ const smokeDir = "output/smoke";
 const smokeReadmeName = "README.md";
 const expectedSmokeFiles = [
   {
+    name: "integrations-smoke-summary.md",
+    patterns: [
+      /# Integrations Smoke Summary/,
+      /command: npm run smoke:integrations/,
+      /local packets pass before external AI delivery/,
+      /external services: not contacted/,
+      /Chrome extension: output\/smoke\/chrome-extension-smoke\.md/,
+      /MCP bridge: output\/smoke\/mcp-bridge-smoke\.md/,
+      /Learning feedback: output\/smoke\/learning-feedback-smoke\.md/,
+      /confirmSave stays false until the external AI result is reviewed/,
+    ],
+  },
+  {
     name: "chrome-extension-smoke.md",
     patterns: [
       /# Chrome Extension Smoke Evidence/,
@@ -51,10 +64,12 @@ const smokeReadme = readFileSync(join(smokeDir, smokeReadmeName), "utf8");
 const smokeReadmePatterns = [
   /# Local Smoke Evidence/,
   /checked without external AI access/,
+  /integrated preflight summary for the three local packets/,
   /Chrome extension file contract/,
   /MCP bridge self-test contract/,
   /Learning feedback-improvement queue contract/,
   /npm run smoke:integrations/,
+  /integrations-smoke-summary\.md/,
   /## Operator Run Order/,
   /review-required handoff package/,
   /confirmSave: false/,

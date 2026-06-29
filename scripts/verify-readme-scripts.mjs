@@ -75,7 +75,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /smoke:integrations` writes the Chrome, MCP, and Learning smoke evidence\s+packets to `output\/smoke` in one preflight pass before any actual external AI\s+handoff/,
+  /smoke:integrations` writes the Chrome, MCP, Learning smoke evidence\s+packets and `integrations-smoke-summary\.md` to `output\/smoke` in one preflight\s+pass before any actual external AI handoff/,
   "README should document the integrated local integrations smoke evidence command",
 );
 assert.match(
@@ -145,7 +145,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /verify:smoke-evidence` checks that `output\/smoke` contains its local\s+README plus exactly the Chrome, MCP, and Learning smoke evidence packets and\s+that each packet keeps its local-only or review-required contract text/,
+  /verify:smoke-evidence` checks that `output\/smoke` contains its local\s+README plus exactly the integrated summary, Chrome, MCP, and Learning smoke\s+evidence packets and that each packet keeps its local-only or review-required\s+contract text/,
   "README should document the smoke evidence verification scope",
 );
 assert.match(
@@ -230,7 +230,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /실제 연결 전에 `npm run smoke:integrations`로 Chrome, MCP, Learning local\s+smoke packet을 한 번에 갱신합니다/,
+  /실제 연결 전에 `npm run smoke:integrations`로 Chrome, MCP, Learning local\s+smoke packet과 `integrations-smoke-summary\.md`를 한 번에 갱신합니다/,
   "README should route integrations next-step preflight through npm run smoke:integrations",
 );
 assert.match(

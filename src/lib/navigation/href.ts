@@ -1,13 +1,16 @@
+const internalHrefOrigin = "http://prompt-ai-studio.local";
+
 export function normalizeInternalHref(value: unknown) {
-  if (typeof value !== "string" || !value.trim()) {
+  const rawHref = typeof value === "string" ? value.trim() : "";
+
+  if (!rawHref) {
     return undefined;
   }
 
   try {
-    const base = "http://prompt-ai-studio.local";
-    const url = new URL(value, base);
+    const url = new URL(rawHref, internalHrefOrigin);
 
-    if (url.origin !== base || !url.pathname.startsWith("/")) {
+    if (url.origin !== internalHrefOrigin || !url.pathname.startsWith("/")) {
       return undefined;
     }
 

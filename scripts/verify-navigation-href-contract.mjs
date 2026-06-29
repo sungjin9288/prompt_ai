@@ -7,19 +7,25 @@ const brief = readFileSync("docs/codex-development-brief.md", "utf8");
 
 assert.match(
   source,
-  /export function normalizeInternalHref\(value: unknown\)[\s\S]*?typeof value !== "string" \|\| !value\.trim\(\)/,
+  /const internalHrefOrigin = "http:\/\/prompt-ai-studio\.local"/,
+  "normalizeInternalHref should keep the local origin contract named at module scope",
+);
+
+assert.match(
+  source,
+  /export function normalizeInternalHref\(value: unknown\)[\s\S]*?const rawHref = typeof value === "string" \? value\.trim\(\) : ""[\s\S]*?if \(!rawHref\)/,
   "normalizeInternalHref should reject non-string and blank values",
 );
 
 assert.match(
   source,
-  /const base = "http:\/\/prompt-ai-studio\.local"[\s\S]*?const url = new URL\(value, base\)/,
+  /const url = new URL\(rawHref, internalHrefOrigin\)/,
   "normalizeInternalHref should parse candidate values against a fixed local origin",
 );
 
 assert.match(
   source,
-  /url\.origin !== base \|\| !url\.pathname\.startsWith\("\/"\)/,
+  /url\.origin !== internalHrefOrigin \|\| !url\.pathname\.startsWith\("\/"\)/,
   "normalizeInternalHref should reject external origins and non-internal paths",
 );
 

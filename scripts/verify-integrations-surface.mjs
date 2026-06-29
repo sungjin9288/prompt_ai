@@ -2660,6 +2660,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "Studio 초안 원본 경로는 `#integrations-operator-guide`로 돌아오며",
+  "README should document external AI operator guide Studio source anchor",
+);
+assertIncludes(
+  readme,
   "운영 가이드 복사",
   "README should document external AI operator guide copy",
 );
@@ -2735,7 +2740,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Studio 초안 저장 실패 시 이동하지 않고 수동 복사용 운영 가이드 원문을 표시",
+  "저장 실패 시 이동하지 않고 수동 복사용 운영 가이드 원문을 표시",
   "README should document external AI operator guide Studio draft fallback",
 );
 assertIncludes(
@@ -3030,6 +3035,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "Integrations 외부 AI 운영 가이드 Studio 초안의 원본 경로는 `/integrations#integrations-operator-guide`로 저장해 Studio에서 원본으로 돌아갈 때 외부 AI 운영 가이드 섹션을 복원해야 한다.",
+  "PRD should document external AI operator guide Studio source anchor",
+);
+assertIncludes(
+  prd,
   "Integrations 연결 준비도는 연결 표면, 첫 실행 표면, smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여줘야 한다.",
   "PRD should document connection readiness summary metrics",
 );
@@ -3290,8 +3300,13 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Studio 초안 저장 실패 시 이동하지 않고 수동 복사용 운영 가이드 원문 표시",
+  "저장 실패 시 이동하지 않고 수동 복사용 운영 가이드 원문 표시",
   "Development brief should document external AI operator guide Studio draft fallback",
+);
+assertIncludes(
+  developmentBrief,
+  "Studio 초안 원본 경로는 `#integrations-operator-guide`로 돌아오고",
+  "Development brief should document external AI operator guide Studio source anchor",
 );
 assertIncludes(
   developmentBrief,

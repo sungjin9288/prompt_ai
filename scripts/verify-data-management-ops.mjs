@@ -67,6 +67,10 @@ function assertFileIncludes(fileSource, text, message) {
   assert.ok(fileSource.includes(text), message);
 }
 
+function assertFileNotIncludes(fileSource, text, message) {
+  assert.ok(!fileSource.includes(text), message);
+}
+
 function normalizePlain(value) {
   return JSON.parse(JSON.stringify(value));
 }
@@ -1403,7 +1407,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Studio 복귀 액션 라벨은 `Data 문서/RAG로 돌아가기`로 표시하고 원본 경로는 `/data`로 돌아갑니다.",
+  "Studio 초안은 `Data 문서/RAG로 돌아가기` 복귀 액션 라벨로 `/data` 원본 경로를 복원합니다.",
   "README should document the Data document RAG Studio source return action label",
 );
 assertFileIncludes(
@@ -1413,8 +1417,13 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Studio 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시",
+  "저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시",
   "README should document the Data document RAG Studio draft storage fallback",
+);
+assertFileNotIncludes(
+  readme,
+  "Studio 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시",
+  "README should not keep the Data document RAG fallback-only Studio draft wording",
 );
 assertFileIncludes(
   prd,

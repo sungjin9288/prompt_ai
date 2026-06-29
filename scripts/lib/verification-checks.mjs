@@ -60,6 +60,12 @@ export const verificationChecks = [
     scriptName: "verify:runtime",
   },
   {
+    args: ["run", "verify:openai-fallback"],
+    command: "npm",
+    label: "OpenAI local fallback contract",
+    scriptName: "verify:openai-fallback",
+  },
+  {
     args: ["run", "verify:prompt-package"],
     command: "npm",
     label: "Target AI handoff package",

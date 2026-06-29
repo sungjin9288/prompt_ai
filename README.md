@@ -401,6 +401,7 @@ npm run verify:integrations
 npm run verify:library-summary
 npm run verify:learning-summary
 npm run verify:manifest
+npm run verify:openai-fallback
 npm run verify:prompt-package
 npm run verify:profile-company
 npm run verify:release-candidate
@@ -479,6 +480,9 @@ include the current filter condition as an absolute URL and keep filter-link
 copy fallback coverage.
 `npm run verify:manifest` checks that the shared verification manifest matches
 package scripts and runs first inside `npm run verify`.
+`npm run verify:openai-fallback` checks that prompt generation stays on the
+local builder when `OPENAI_API_KEY` is absent and that the status route reports
+local mode without exposing a model value.
 `npm run verify:prompt-package` checks that the Target AI handoff package keeps
 its copy-ready prompt, quality review, missing context, and operator notes.
 `npm run verify:profile-company` checks that Profile and Company keep the
@@ -553,7 +557,8 @@ terms from returning.
 ### operator gate 이후 진행
 
 - OpenAI API 기반 프롬프트 분석 고도화: `OPENAI_API_KEY`와 사용할 모델을
-  operator가 넣은 뒤 로컬 fallback과 OpenAI 보강 결과를 비교합니다.
+  operator가 넣기 전에는 `npm run verify:openai-fallback`으로 local fallback
+  계약을 확인하고, key를 넣은 뒤 로컬 fallback과 OpenAI 보강 결과를 비교합니다.
 - Supabase Postgres 저장소와 백업 JSON importer 구현: Supabase project,
   service-role server 환경, RLS smoke 기준이 준비된 뒤 write path를 엽니다.
 - 문서 업로드 저장, server-side embedding, pgvector 검색 실행 경로 구현:

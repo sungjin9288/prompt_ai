@@ -95,6 +95,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /verify:openai-fallback` checks that prompt generation stays on the\s+local builder when `OPENAI_API_KEY` is absent and that the status route reports\s+local mode without exposing a model value/,
+  "README should document the OpenAI fallback verification scope",
+);
+assert.match(
+  readme,
   /verify:secrets/,
   "README should require secret scanning in release evidence",
 );
@@ -170,7 +175,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /### operator gate 이후 진행[\s\S]*?OpenAI API 기반 프롬프트 분석 고도화[\s\S]*?Supabase Postgres 저장소와 백업 JSON importer 구현[\s\S]*?팀\/회사 워크스페이스/,
+  /### operator gate 이후 진행[\s\S]*?OpenAI API 기반 프롬프트 분석 고도화[\s\S]*?npm run verify:openai-fallback[\s\S]*?Supabase Postgres 저장소와 백업 JSON importer 구현[\s\S]*?팀\/회사 워크스페이스/,
   "README should separate operator-gated next development candidates",
 );
 assert.match(

@@ -52,6 +52,7 @@ function loadTypescriptModuleByPath(sourcePath) {
   const context = {
     exports: exportsObject,
     module: { exports: exportsObject },
+    process,
     require: (request) =>
       loadTypescriptModuleByPath(resolveTypescriptModule(request, sourcePath)),
   };

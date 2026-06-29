@@ -55,6 +55,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /-- --out path\/to\/chrome-smoke\.md/,
+  "README should document the Chrome extension smoke evidence output path",
+);
+assert.match(
+  readme,
   /smoke:learning-feedback` checks the Learning feedback-improvement\s+queue, low-confidence Studio validation draft, Library validation filter, queue\s+report links, and manual copy fallback contract/,
   "README should document the local Learning feedback smoke command",
 );
@@ -195,7 +200,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked\s+extension 파일 계약을 먼저 확인/,
+  /Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked\s+extension 파일 계약을 먼저 확인[\s\S]*?npm run smoke:chrome-extension -- --out docs\/evidence\/chrome-extension-smoke\.md/,
   "README should route Chrome next-step smoke through npm run smoke:chrome-extension",
 );
 assert.match(

@@ -432,7 +432,8 @@ Claude, Codex, Gemini, OpenAI, or Supabase. Use it before connecting a real MCP
 client.
 `npm run smoke:chrome-extension` checks the unpacked Chrome extension manifest,
 background service worker, popup workflow, local-only URL guard, session restore,
-and evidence fallback before loading it in Chrome.
+and evidence fallback before loading it in Chrome. Add
+`-- --out path/to/chrome-smoke.md` to save the local smoke evidence packet.
 `npm run smoke:learning-feedback` checks the Learning feedback-improvement
 queue, low-confidence Studio validation draft, Library validation filter, queue
 report links, and manual copy fallback contract.
@@ -553,7 +554,9 @@ terms from returning.
 - Integrations 실제 사용 smoke: Chrome extension 또는 MCP client 중 하나를
   선택해 review-required handoff package와 feedback inbox 저장 흐름을 확인합니다.
   Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked
-  extension 파일 계약을 먼저 확인합니다.
+  extension 파일 계약을 먼저 확인합니다. 증빙 파일이 필요하면
+  `npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md`를
+  붙입니다.
   MCP부터 시작할 때는 `npm run smoke:mcp`로 로컬 bridge 계약을 먼저 확인합니다.
 - Learning feedback 개선 큐 정리: `npm run smoke:learning-feedback`로 낮은
   신뢰도 Studio 검증 초안, 큐 리포트, Library 검증 저장본 필터 계약을 먼저

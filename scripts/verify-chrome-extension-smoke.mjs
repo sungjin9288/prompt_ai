@@ -1,5 +1,27 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
+
+function getOutputPath(args) {
+  const outIndex = args.indexOf("--out");
+
+  if (outIndex === -1) {
+    return null;
+  }
+
+  const outputPath = args[outIndex + 1];
+
+  assert.ok(outputPath, "--out requires a file path");
+  assert.equal(
+    args.length,
+    outIndex + 2,
+    "smoke:chrome-extension only accepts --out <file>",
+  );
+
+  return outputPath;
+}
+
+const outputPath = getOutputPath(process.argv.slice(2));
 
 const manifest = JSON.parse(
   readFileSync("extensions/chrome/manifest.json", "utf8"),
@@ -12,6 +34,33 @@ const chromeReadme = readFileSync("extensions/chrome/README.md", "utf8");
 
 function assertIncludes(source, text, message) {
   assert.ok(source.includes(text), message);
+}
+
+function buildChromeSmokeEvidenceText() {
+  return [
+    "# Chrome Extension Smoke Evidence",
+    "",
+    `- manifestVersion: ${manifest.manifest_version}`,
+    `- popup: ${manifest.action?.default_popup}`,
+    `- background: ${manifest.background?.service_worker}`,
+    `- hostPermissions: ${[...manifest.host_permissions].sort().join(", ")}`,
+    `- permissions: ${[...manifest.permissions].sort().join(", ")}`,
+    "",
+    "## Verified contract",
+    "- MV3 popup and service worker are present.",
+    "- Host permissions stay local-only.",
+    "- Selection capture, session restore, reviewRequired handoff, and evidence fallback strings are present.",
+    "- This smoke does not load Chrome or contact external AI services.",
+  ].join("\n");
+}
+
+function writeChromeSmokeEvidence(outputPath, evidenceText) {
+  if (!outputPath) {
+    return;
+  }
+
+  mkdirSync(dirname(outputPath), { recursive: true });
+  writeFileSync(outputPath, `${evidenceText}\n`, "utf8");
 }
 
 assert.equal(manifest.manifest_version, 3, "Chrome extension should use MV3.");
@@ -114,6 +163,7 @@ for (const requiredText of [
 
 for (const requiredText of [
   "npm run smoke:chrome-extension",
+  "--out",
   "Load unpacked",
   "review-required handoff",
   "Smoke evidence",
@@ -125,6 +175,25 @@ for (const requiredText of [
     requiredText,
     `Chrome extension README should include ${requiredText}.`,
   );
+}
+
+const chromeSmokeEvidenceText = buildChromeSmokeEvidenceText();
+
+assert.match(
+  chromeSmokeEvidenceText,
+  /Host permissions stay local-only/,
+  "Chrome smoke evidence should record local-only host permissions",
+);
+assert.match(
+  chromeSmokeEvidenceText,
+  /does not load Chrome or contact external AI services/,
+  "Chrome smoke evidence should state the local-only execution boundary",
+);
+
+writeChromeSmokeEvidence(outputPath, chromeSmokeEvidenceText);
+
+if (outputPath) {
+  console.log(`Chrome extension smoke evidence written to ${outputPath}.`);
 }
 
 console.log("Chrome extension smoke verification passed.");

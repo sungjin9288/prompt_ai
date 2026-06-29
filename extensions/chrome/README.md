@@ -19,6 +19,8 @@ npm run smoke:chrome-extension
 `npm run smoke:chrome-extension` checks the manifest, background selection
 capture, popup review-required workflow, local-only Studio URL guard, session
 restore, and manual evidence fallback. It does not load Chrome for you.
+Add `-- --out path/to/chrome-smoke.md` when the smoke evidence packet should be
+saved as a local operator artifact.
 
 ## Flow
 

@@ -401,6 +401,12 @@ export function IntegrationRefineTester() {
   ];
   const handoffReviewChecklistItems = [
     {
+      label: "smoke evidence",
+      value: selectedPackage
+        ? "로컬 smoke evidence 저장 후 복사"
+        : "실행 후 확인",
+    },
+    {
       label: "reviewRequired",
       value: result?.audit.reviewRequired
         ? "확인 후 외부 AI에 붙여넣기"

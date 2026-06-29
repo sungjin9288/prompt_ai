@@ -877,6 +877,8 @@ for (const requiredText of [
   "Quality",
   "Language",
   "Before copy",
+  "smoke evidence",
+  "로컬 smoke evidence 저장 후 복사",
   "target package",
   "language strategy",
   "missing context",
@@ -915,8 +917,8 @@ assert.match(
 );
 assert.match(
   refineTester,
-  /function HandoffReviewChecklist[\s\S]*?data-testid="integrations-handoff-review-checklist"[\s\S]*?Before copy[\s\S]*?items\.map[\s\S]*?item\.label[\s\S]*?item\.value[\s\S]*?const handoffReviewChecklistItems = \[[\s\S]*?label: "reviewRequired"[\s\S]*?확인 후 외부 AI에 붙여넣기[\s\S]*?label: "target package"[\s\S]*?selectedPackage\?\.modelLabel[\s\S]*?label: "language strategy"[\s\S]*?result\?\.promptPackage\.languageStrategy[\s\S]*?label: "missing context"[\s\S]*?handoff package 본문에서 누락 맥락을 확인/,
-  "Integrations refine tester should render a pre-copy review checklist for reviewRequired, target package, language strategy, and missing context",
+  /function HandoffReviewChecklist[\s\S]*?data-testid="integrations-handoff-review-checklist"[\s\S]*?Before copy[\s\S]*?items\.map[\s\S]*?item\.label[\s\S]*?item\.value[\s\S]*?const handoffReviewChecklistItems = \[[\s\S]*?label: "smoke evidence"[\s\S]*?로컬 smoke evidence 저장 후 복사[\s\S]*?label: "reviewRequired"[\s\S]*?확인 후 외부 AI에 붙여넣기[\s\S]*?label: "target package"[\s\S]*?selectedPackage\?\.modelLabel[\s\S]*?label: "language strategy"[\s\S]*?result\?\.promptPackage\.languageStrategy[\s\S]*?label: "missing context"[\s\S]*?handoff package 본문에서 누락 맥락을 확인/,
+  "Integrations refine tester should render a pre-copy review checklist for smoke evidence, reviewRequired, target package, language strategy, and missing context",
 );
 assert.match(
   refineTester,
@@ -2622,7 +2624,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Integrations refine tester는 수집 경로, 대상 AI, 검토 gate, 전달 패키지 상태를 실행 버튼 앞에서 확인하게 하고, 요청 source/target/domain/goal과 reviewRequired/target package/quality/language 요약을 모바일 2열로 먼저 보여주며, raw payload와 handoff package 원문은 별도 preview로 유지합니다.",
+  "Integrations refine tester는 수집 경로, 대상 AI, 검토 gate, 전달 패키지 상태를 실행 버튼 앞에서 확인하게 하고, 요청 source/target/domain/goal과 reviewRequired/target package/quality/language 요약을 모바일 2열로 먼저 보여주며, 복사 전 체크리스트에서 로컬 smoke evidence 저장을 먼저 확인하게 하고, raw payload와 handoff package 원문은 별도 preview로 유지합니다.",
   "README should document the refine tester handoff review metrics",
 );
 assertIncludes(
@@ -2842,7 +2844,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations refine tester는 수집 경로, 대상 AI, 검토 gate, 전달 패키지 상태를 실행 버튼 앞에서 확인하게 하고, 요청 source/target/domain/goal과 reviewRequired/target package/quality/language 요약을 모바일 2열로 먼저 보여주며, raw payload와 handoff package 원문은 별도 preview로 유지해야 한다.",
+  "Integrations refine tester는 수집 경로, 대상 AI, 검토 gate, 전달 패키지 상태를 실행 버튼 앞에서 확인하게 하고, 요청 source/target/domain/goal과 reviewRequired/target package/quality/language 요약을 모바일 2열로 먼저 보여주며, 복사 전 체크리스트에서 로컬 smoke evidence 저장을 먼저 확인하게 하고, raw payload와 handoff package 원문은 별도 preview로 유지해야 한다.",
   "PRD should document the refine tester handoff review metrics",
 );
 assertIncludes(
@@ -3087,7 +3089,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations refine tester는 수집 경로, 대상 AI, 검토 gate, 전달 패키지 상태를 실행 버튼 앞에서 확인하게 하고, 요청 source/target/domain/goal과 reviewRequired/target package/quality/language 요약을 모바일 2열로 먼저 보여주며, raw payload와 handoff package 원문은 별도 preview로 유지해야 한다",
+  "Integrations refine tester는 수집 경로, 대상 AI, 검토 gate, 전달 패키지 상태를 실행 버튼 앞에서 확인하게 하고, 요청 source/target/domain/goal과 reviewRequired/target package/quality/language 요약을 모바일 2열로 먼저 보여주며, 복사 전 체크리스트에서 로컬 smoke evidence 저장을 먼저 확인하게 하고, raw payload와 handoff package 원문은 별도 preview로 유지해야 한다",
   "Development brief should document the refine tester handoff review metrics",
 );
 assertIncludes(

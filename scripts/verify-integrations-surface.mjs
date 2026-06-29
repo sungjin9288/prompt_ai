@@ -1205,6 +1205,29 @@ for (const requiredText of [
   "runbook",
   "inbox-api",
   "inbox-curl",
+  "client-evidence",
+  "client-feedback-payload",
+  "client-feedback-check",
+  "McpClientEvidenceDraft",
+  "mcpClientEvidenceFields",
+  "Actual client evidence",
+  "실제 MCP client에서 확인한 결과를 그대로 적고",
+  "MCP client 증빙 복사",
+  "MCP feedback payload 복사",
+  "MCP inbox 확인 복사",
+  "MCP client smoke 증빙을 복사했습니다.",
+  "MCP save_execution_feedback payload를 복사했습니다.",
+  "MCP feedback inbox 확인 명령을 복사했습니다.",
+  "buildMcpClientEvidencePacket",
+  "buildMcpClientFeedbackPayload",
+  "buildMcpClientFeedbackInboxCheck",
+  "Prompt AI Studio MCP Client Smoke Evidence",
+  "Prompt AI Studio MCP Client Feedback Inbox Check",
+  "actual MCP client smoke, review-required package, local evidence before target handoff",
+  "Set confirmSave to true only after the operator reviews the actual MCP client result.",
+  'data-testid="mcp-actual-client-evidence"',
+  "review-required handoff checked and smoke evidence saved",
+  "confirmSave true record appears in Feedback inbox",
   "manualCopyText",
   "MCP setup manual copy",
   "아래 내용을 직접 선택해 복사하세요.",
@@ -1286,7 +1309,7 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
-  /function McpSetupManualCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?const isError = copyState === "error" \|\| copyState === "draftError"[\s\S]*?복사에 실패했습니다\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 runbook을 직접 선택해 복사하세요\.[\s\S]*?복사했습니다\.[\s\S]*?isError \? "text-danger" : "text-accent"[\s\S]*?<McpSetupManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<McpSetupManualCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
+  /function McpSetupManualCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?const isError = copyState === "error" \|\| copyState === "draftError"[\s\S]*?복사에 실패했습니다\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 runbook을 직접 선택해 복사하세요\.[\s\S]*?MCP client smoke 증빙을 복사했습니다\.[\s\S]*?MCP save_execution_feedback payload를 복사했습니다\.[\s\S]*?MCP feedback inbox 확인 명령을 복사했습니다\.[\s\S]*?복사했습니다\.[\s\S]*?isError \? "text-danger" : "text-accent"[\s\S]*?<McpSetupManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<McpSetupManualCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
   "MCP connection panel should render copy status, draft fallback, and fallback through a dedicated notice",
 );
 assert.match(
@@ -1326,13 +1349,33 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
+  /function buildMcpClientEvidencePacket\(draft: McpClientEvidenceDraft\)[\s\S]*?Prompt AI Studio MCP Client Smoke Evidence[\s\S]*?actual MCP client smoke, review-required package, local evidence before target handoff[\s\S]*?mcpClientEvidenceFields\.map[\s\S]*?draft\[field\.key\][\s\S]*?Copy only after the MCP client returned a review-required package[\s\S]*?Save execution feedback only after the external AI result is reviewed/,
+  "MCP connection panel should build a copyable actual MCP client smoke evidence packet",
+);
+assert.match(
+  mcpConnectionPanel,
+  /function buildMcpClientFeedbackPayload\(draft: McpClientEvidenceDraft\)[\s\S]*?promptId: `mcp-client-smoke-\$\{targetAI\.toLowerCase\(\)\}`[\s\S]*?Set confirmSave to true only after the operator reviews the actual MCP client result[\s\S]*?confirmSave: false[\s\S]*?reviewGate:[\s\S]*?Set confirmSave to true only after the operator reviews the actual MCP client result/,
+  "MCP connection panel should build a gated save_execution_feedback payload from actual MCP client evidence",
+);
+assert.match(
+  mcpConnectionPanel,
+  /function buildMcpClientFeedbackInboxCheck\(draft: McpClientEvidenceDraft\)[\s\S]*?Prompt AI Studio MCP Client Feedback Inbox Check[\s\S]*?save_execution_feedback confirmSave true[\s\S]*?mcpRating=positive&mcpTargetAI=\$\{encodedTargetAI\}#integrations-feedback-inbox[\s\S]*?\/api\/integrations\/mcp-feedback\?limit=5&rating=positive&targetAI=\$\{encodedTargetAI\}[\s\S]*?curl -sS/,
+  "MCP connection panel should build a feedback inbox UI/API/curl check from actual MCP client evidence",
+);
+assert.match(
+  mcpConnectionPanel,
+  /function McpActualClientEvidenceSection[\s\S]*?draft: McpClientEvidenceDraft[\s\S]*?onCopyFeedback[\s\S]*?onCopyFeedbackCheck[\s\S]*?data-testid="mcp-actual-client-evidence"[\s\S]*?Actual client evidence[\s\S]*?실제 MCP client에서 확인한 결과를 그대로 적고[\s\S]*?MCP client 증빙 복사[\s\S]*?onClick=\{onCopyFeedback\}[\s\S]*?MCP feedback payload 복사[\s\S]*?onClick=\{onCopyFeedbackCheck\}[\s\S]*?MCP inbox 확인 복사[\s\S]*?mcpClientEvidenceFields\.map[\s\S]*?className=\{inputClass\}[\s\S]*?onChange\(field\.key, event\.target\.value\)[\s\S]*?value=\{draft\[field\.key\]\}/,
+  "MCP connection panel should render actual MCP client evidence inputs with copy support",
+);
+assert.match(
+  mcpConnectionPanel,
   /function SmokeFeedbackPayloadSection[\s\S]*?data-testid="mcp-feedback-payload-section"[\s\S]*?Smoke feedback payloads[\s\S]*?save_execution_feedback payload[\s\S]*?confirmSave를 true로 바꿉니다[\s\S]*?<SmokeFeedbackPayloadTable onCopy=\{onCopy\} \/>[\s\S]*?<SmokeFeedbackPayloadSection onCopy=\{copyValue\} \/>/,
   "MCP connection panel should render feedback payload templates through a dedicated section",
 );
 assert.match(
   mcpConnectionPanel,
-  /<McpEndToEndRunbookSection[\s\S]*?<ClientExamplesSection onCopy=\{copyValue\} \/>[\s\S]*?<ClientSmokePromptsSection onCopy=\{copyValue\} \/>[\s\S]*?<SmokeFeedbackPayloadSection onCopy=\{copyValue\} \/>/,
-  "MCP connection panel should keep runbook, client examples, smoke prompts, and feedback payloads in reading order",
+  /<McpEndToEndRunbookSection[\s\S]*?<ClientExamplesSection onCopy=\{copyValue\} \/>[\s\S]*?<ClientSmokePromptsSection onCopy=\{copyValue\} \/>[\s\S]*?<McpActualClientEvidenceSection[\s\S]*?buildMcpClientEvidencePacket\(mcpClientEvidenceDraft\)[\s\S]*?buildMcpClientFeedbackPayload\(mcpClientEvidenceDraft\)[\s\S]*?buildMcpClientFeedbackInboxCheck\(mcpClientEvidenceDraft\)[\s\S]*?<SmokeFeedbackPayloadSection onCopy=\{copyValue\} \/>/,
+  "MCP connection panel should keep runbook, client examples, smoke prompts, actual client evidence, and feedback payloads in reading order",
 );
 assert.match(
   mcpConnectionPanel,
@@ -2875,6 +2918,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "실제 MCP client에서 확인한 client/tool sequence/review gate/target AI/evidence result/feedback record를 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사하게 합니다.",
+  "README should document actual MCP client smoke evidence copy flow",
+);
+assertIncludes(
+  readme,
   "GET /api/integrations/mcp-feedback",
   "README should document the MCP feedback inbox API",
 );
@@ -3127,6 +3175,11 @@ assertIncludes(
   prd,
   "Integrations MCP feedback verification은 client별 UI filter, API endpoint, curl check를 카드로 먼저 보여준 뒤 상세 검증 매트릭스를 유지해야 한다.",
   "PRD should document MCP feedback verification cards",
+);
+assertIncludes(
+  prd,
+  "Integrations MCP 실제 client smoke 증빙은 client, tool sequence, review gate, target AI, evidence result, feedback record를 입력해 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사할 수 있어야 한다.",
+  "PRD should document actual MCP client smoke evidence copy flow",
 );
 assertIncludes(
   prd,
@@ -3457,6 +3510,11 @@ assertIncludes(
   developmentBrief,
   "UI/API/curl 검증 경로를 카드로 먼저 보여준 뒤 상세 검증 매트릭스",
   "Development brief should document MCP feedback verification cards",
+);
+assertIncludes(
+  developmentBrief,
+  "실제 MCP client에서 확인한 client/tool sequence/review gate/target AI/evidence result/feedback record를 증빙 패킷, confirmSave false feedback payload, inbox 확인 명령으로 복사하게 함.",
+  "Development brief should document actual MCP client smoke evidence copy flow",
 );
 assertIncludes(
   developmentBrief,

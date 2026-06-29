@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import {
+  inputClass,
   Panel,
   PanelHeader,
   secondaryButtonClass,
@@ -31,6 +32,15 @@ const mcpSelfTestCommand =
   "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md";
 
 const mcpDevCommand = "npm run dev";
+
+type McpClientEvidenceDraft = {
+  client: string;
+  evidenceResult: string;
+  feedbackRecord: string;
+  reviewGate: string;
+  targetAI: string;
+  toolSequence: string;
+};
 
 const setupChecks = [
   "Prompt AI Studio local server is running at http://localhost:3000.",
@@ -234,6 +244,43 @@ const mcpFeedbackVerificationChecks = [
   uiHref: string;
 }>;
 
+const mcpClientEvidenceFields = [
+  {
+    key: "client",
+    label: "Client",
+    placeholder: "Codex",
+  },
+  {
+    key: "targetAI",
+    label: "Target AI",
+    placeholder: "codex",
+  },
+  {
+    key: "toolSequence",
+    label: "Tool sequence",
+    placeholder: "get_context_profile -> refine_prompt",
+  },
+  {
+    key: "reviewGate",
+    label: "Review gate",
+    placeholder: "reviewRequired",
+  },
+  {
+    key: "evidenceResult",
+    label: "Evidence result",
+    placeholder: "review-required handoff checked and smoke evidence saved",
+  },
+  {
+    key: "feedbackRecord",
+    label: "Feedback record",
+    placeholder: "confirmSave true record appears in Feedback inbox",
+  },
+] satisfies Array<{
+  key: keyof McpClientEvidenceDraft;
+  label: string;
+  placeholder: string;
+}>;
+
 const mcpConnectionSummaryItems = [
   {
     label: "대상 클라이언트",
@@ -285,6 +332,9 @@ type CopyState =
   | "dev"
   | "client"
   | "smoke-prompt"
+  | "client-evidence"
+  | "client-feedback-payload"
+  | "client-feedback-check"
   | "feedback-payload"
   | "runbook"
   | "inbox-api"
@@ -397,6 +447,88 @@ function buildMcpFeedbackInboxApiCheckList() {
 
 function buildMcpFeedbackInboxCurlCheckList() {
   return mcpFeedbackInboxCurlChecks.join("\n");
+}
+
+function formatMcpClientEvidenceValue(value: string, fallback: string) {
+  return value.trim() || fallback;
+}
+
+function buildMcpClientEvidencePacket(draft: McpClientEvidenceDraft) {
+  return [
+    "# Prompt AI Studio MCP Client Smoke Evidence",
+    "",
+    "Surface: MCP client",
+    "Gate: actual MCP client smoke, review-required package, local evidence before target handoff.",
+    "",
+    ...mcpClientEvidenceFields.map(
+      (field) =>
+        `- ${field.label}: ${formatMcpClientEvidenceValue(
+          draft[field.key],
+          field.placeholder,
+        )}`,
+    ),
+    "",
+    "Operator decision:",
+    "- Copy only after the MCP client returned a review-required package.",
+    "- Save execution feedback only after the external AI result is reviewed.",
+  ].join("\n");
+}
+
+function buildMcpClientFeedbackPayload(draft: McpClientEvidenceDraft) {
+  const client = formatMcpClientEvidenceValue(draft.client, "Codex");
+  const targetAI = formatMcpClientEvidenceValue(draft.targetAI, "codex");
+  const reviewGate = formatMcpClientEvidenceValue(
+    draft.reviewGate,
+    "reviewRequired",
+  );
+
+  return JSON.stringify(
+    {
+      promptId: `mcp-client-smoke-${targetAI.toLowerCase()}`,
+      targetAI,
+      resultSummary: `${client} MCP smoke returned ${reviewGate}.`,
+      rating: "positive",
+      notes: [
+        `Client: ${client}`,
+        `Tool sequence: ${formatMcpClientEvidenceValue(
+          draft.toolSequence,
+          "get_context_profile -> refine_prompt",
+        )}`,
+        `Evidence: ${formatMcpClientEvidenceValue(
+          draft.evidenceResult,
+          "review-required handoff checked and smoke evidence saved",
+        )}`,
+        `Feedback record: ${formatMcpClientEvidenceValue(
+          draft.feedbackRecord,
+          "confirmSave true record appears in Feedback inbox",
+        )}`,
+        "Set confirmSave to true only after the operator reviews the actual MCP client result.",
+      ].join("\n"),
+      confirmSave: false,
+      reviewGate:
+        "Set confirmSave to true only after the operator reviews the actual MCP client result.",
+    },
+    null,
+    2,
+  );
+}
+
+function buildMcpClientFeedbackInboxCheck(draft: McpClientEvidenceDraft) {
+  const targetAI = formatMcpClientEvidenceValue(
+    draft.targetAI,
+    "codex",
+  ).toLowerCase();
+  const encodedTargetAI = encodeURIComponent(targetAI);
+
+  return [
+    "# Prompt AI Studio MCP Client Feedback Inbox Check",
+    "",
+    "Gate: run this after save_execution_feedback confirmSave true.",
+    `Target AI: ${targetAI}`,
+    `UI: /integrations?mcpRating=positive&mcpTargetAI=${encodedTargetAI}#integrations-feedback-inbox`,
+    `API: /api/integrations/mcp-feedback?limit=5&rating=positive&targetAI=${encodedTargetAI}`,
+    `Curl: curl -sS "http://localhost:3000/api/integrations/mcp-feedback?limit=5&rating=positive&targetAI=${encodedTargetAI}"`,
+  ].join("\n");
 }
 
 function McpConnectionSummary() {
@@ -525,6 +657,12 @@ function McpSetupManualCopyNotice({
       ? "복사에 실패했습니다. 아래 내용을 직접 선택해 복사하세요."
       : copyState === "draftError"
         ? "Studio 초안을 저장하지 못했습니다. 아래 runbook을 직접 선택해 복사하세요."
+        : copyState === "client-evidence"
+          ? "MCP client smoke 증빙을 복사했습니다."
+          : copyState === "client-feedback-payload"
+            ? "MCP save_execution_feedback payload를 복사했습니다."
+            : copyState === "client-feedback-check"
+              ? "MCP feedback inbox 확인 명령을 복사했습니다."
         : "복사했습니다.";
 
   return (
@@ -1101,6 +1239,74 @@ function ClientSmokePromptsSection({ onCopy }: { onCopy: CopyValue }) {
   );
 }
 
+function McpActualClientEvidenceSection({
+  draft,
+  onChange,
+  onCopy,
+  onCopyFeedback,
+  onCopyFeedbackCheck,
+}: {
+  draft: McpClientEvidenceDraft;
+  onChange: (key: keyof McpClientEvidenceDraft, value: string) => void;
+  onCopy: () => void;
+  onCopyFeedback: () => void;
+  onCopyFeedbackCheck: () => void;
+}) {
+  return (
+    <div
+      className="border-t border-line px-5 py-4"
+      data-testid="mcp-actual-client-evidence"
+    >
+      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+            Actual client evidence
+          </p>
+          <p className="mt-2 text-sm leading-6 text-muted">
+            실제 MCP client에서 확인한 결과를 그대로 적고, review-required
+            smoke 증빙과 confirmSave 전 feedback payload를 같은 기준으로
+            복사합니다.
+          </p>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button className={secondaryButtonClass} onClick={onCopy} type="button">
+            MCP client 증빙 복사
+          </button>
+          <button
+            className={secondaryButtonClass}
+            onClick={onCopyFeedback}
+            type="button"
+          >
+            MCP feedback payload 복사
+          </button>
+          <button
+            className={secondaryButtonClass}
+            onClick={onCopyFeedbackCheck}
+            type="button"
+          >
+            MCP inbox 확인 복사
+          </button>
+        </div>
+      </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
+        {mcpClientEvidenceFields.map((field) => (
+          <label className="min-w-0" key={field.key}>
+            <span className="mb-2 block text-xs font-semibold text-soft">
+              {field.label}
+            </span>
+            <input
+              className={inputClass}
+              onChange={(event) => onChange(field.key, event.target.value)}
+              placeholder={field.placeholder}
+              value={draft[field.key]}
+            />
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function SmokeFeedbackPayloadSection({ onCopy }: { onCopy: CopyValue }) {
   return (
     <div className="border-t border-line" data-testid="mcp-feedback-payload-section">
@@ -1123,11 +1329,30 @@ export function McpConnectionPanel() {
   const router = useRouter();
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const [manualCopyText, setManualCopyText] = useState("");
+  const [mcpClientEvidenceDraft, setMcpClientEvidenceDraft] =
+    useState<McpClientEvidenceDraft>({
+      client: "",
+      evidenceResult: "",
+      feedbackRecord: "",
+      reviewGate: "",
+      targetAI: "",
+      toolSequence: "",
+    });
 
   async function copyValue(value: string, nextState: CopyState) {
     const copied = await copyTextToClipboard(value);
     setCopyState(copied ? nextState : "error");
     setManualCopyText(copied ? "" : value);
+  }
+
+  function updateMcpClientEvidenceDraft(
+    key: keyof McpClientEvidenceDraft,
+    value: string,
+  ) {
+    setMcpClientEvidenceDraft((current) => ({
+      ...current,
+      [key]: value,
+    }));
   }
 
   function openRunbookInStudio() {
@@ -1183,6 +1408,28 @@ export function McpConnectionPanel() {
       />
       <ClientExamplesSection onCopy={copyValue} />
       <ClientSmokePromptsSection onCopy={copyValue} />
+      <McpActualClientEvidenceSection
+        draft={mcpClientEvidenceDraft}
+        onChange={updateMcpClientEvidenceDraft}
+        onCopy={() =>
+          copyValue(
+            buildMcpClientEvidencePacket(mcpClientEvidenceDraft),
+            "client-evidence",
+          )
+        }
+        onCopyFeedback={() =>
+          copyValue(
+            buildMcpClientFeedbackPayload(mcpClientEvidenceDraft),
+            "client-feedback-payload",
+          )
+        }
+        onCopyFeedbackCheck={() =>
+          copyValue(
+            buildMcpClientFeedbackInboxCheck(mcpClientEvidenceDraft),
+            "client-feedback-check",
+          )
+        }
+      />
       <SmokeFeedbackPayloadSection onCopy={copyValue} />
     </Panel>
   );

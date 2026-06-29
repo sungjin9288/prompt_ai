@@ -54,6 +54,7 @@ const smokeReadmePatterns = [
   /Chrome extension file contract/,
   /MCP bridge self-test contract/,
   /Learning feedback-improvement queue contract/,
+  /npm run smoke:integrations/,
   /## Operator Run Order/,
   /review-required handoff package/,
   /confirmSave: false/,

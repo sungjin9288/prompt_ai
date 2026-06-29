@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "smoke:chrome-extension": "node scripts/verify-chrome-extension-smoke.mjs",
+    "smoke:integrations": "node scripts/write-integrations-smoke-evidence.mjs",
     "smoke:learning-feedback": "node scripts/verify-learning-operational-summary.mjs",
     "smoke:mcp": "node mcp/prompt-ai-studio.mjs --self-test",
     "verify": "node scripts/verify-all.mjs",

@@ -14,6 +14,9 @@ Expected packets:
 Use these files as the preflight record before sending any refined prompt to an
 external AI surface.
 
+Run `npm run smoke:integrations` to refresh all three local smoke packets in one
+pass.
+
 1. Run the matching local smoke command and keep the generated packet:
    `npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md`,
    `npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md`, or

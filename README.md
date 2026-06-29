@@ -387,6 +387,7 @@ Library의 저장된 프롬프트 상세에서도 부족한 정보가 남아 있
 npm run dev
 npm run start
 npm run smoke:chrome-extension
+npm run smoke:integrations
 npm run smoke:learning-feedback
 npm run smoke:mcp
 npm run verify
@@ -444,6 +445,9 @@ queue, low-confidence Studio validation draft, Library validation filter, queue
 report links, and manual copy fallback contract. Add
 `-- --out path/to/learning-feedback-smoke.md` to save the local Learning smoke
 evidence packet.
+`npm run smoke:integrations` writes the Chrome, MCP, and Learning smoke evidence
+packets to `output/smoke` in one preflight pass before any actual external AI
+handoff.
 `npm run verify` and `npm run verify:evidence` use the same verification check
 manifest so the executed gate and the handoff evidence stay aligned. Evidence
 records include both the npm script name and the resolved command.
@@ -570,6 +574,8 @@ terms from returning.
 
 - Integrations 실제 사용 smoke: Chrome extension 또는 MCP client 중 하나를
   선택해 review-required handoff package와 feedback inbox 저장 흐름을 확인합니다.
+  실제 연결 전에 `npm run smoke:integrations`로 Chrome, MCP, Learning local
+  smoke packet을 한 번에 갱신합니다.
   Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked
   extension 파일 계약을 먼저 확인합니다. 증빙 파일이 필요하면
   `npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md`를

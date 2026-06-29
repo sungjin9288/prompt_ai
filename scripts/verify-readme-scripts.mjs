@@ -75,6 +75,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /smoke:integrations` writes the Chrome, MCP, and Learning smoke evidence\s+packets to `output\/smoke` in one preflight pass before any actual external AI\s+handoff/,
+  "README should document the integrated local integrations smoke evidence command",
+);
+assert.match(
+  readme,
   /production build lock/,
   "README should mention the Next.js build lock limitation",
 );
@@ -222,6 +227,11 @@ assert.match(
   readme,
   /Chrome부터 시작할 때는 `npm run smoke:chrome-extension`으로 unpacked\s+extension 파일 계약을 먼저 확인[\s\S]*?npm run smoke:chrome-extension -- --out output\/smoke\/chrome-extension-smoke\.md/,
   "README should route Chrome next-step smoke through npm run smoke:chrome-extension",
+);
+assert.match(
+  readme,
+  /실제 연결 전에 `npm run smoke:integrations`로 Chrome, MCP, Learning local\s+smoke packet을 한 번에 갱신합니다/,
+  "README should route integrations next-step preflight through npm run smoke:integrations",
 );
 assert.match(
   readme,

@@ -712,6 +712,7 @@ const mcpToolContracts = [
 
 const rolloutSteps = [
   "Chrome selection capture and Studio draft handoff",
+  "Local smoke evidence before target AI handoff",
   "Target AI prompt package copy/export contract",
   "Local MCP server with read-only context tools",
   "MCP refine_prompt write path with review-required delivery",
@@ -731,7 +732,8 @@ const automationPrincipleRows = [
   },
   {
     label: "Audit source",
-    value: "chrome-selection, mcp-refine, target-ai-handoff",
+    value:
+      "chrome-selection, mcp-refine, local-smoke-evidence, target-ai-handoff",
   },
 ];
 

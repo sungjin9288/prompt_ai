@@ -283,7 +283,7 @@ for (const requiredText of [
   "refine, context, handoff, feedback 도구를 연결합니다.",
   "Refine automatically, deliver with review.",
   "English or Korean-English hybrid",
-  "chrome-selection, mcp-refine, target-ai-handoff",
+  "chrome-selection, mcp-refine, local-smoke-evidence, target-ai-handoff",
   "refine_prompt",
   "get_context_profile",
   "create_handoff_package",
@@ -300,6 +300,7 @@ for (const requiredText of [
   "McpToolContractCards",
   'data-testid="mcp-tool-contract-cards"',
   "rolloutSteps",
+  "Local smoke evidence before target AI handoff",
   "MCP 도구 계약",
   "출시 순서",
 ]) {
@@ -402,7 +403,7 @@ assert.match(
 );
 assert.match(
   view,
-  /const automationPrincipleRows = \[[\s\S]*?label: "Refine API"[\s\S]*?POST \/api\/integrations\/refine[\s\S]*?label: "Chrome extension"[\s\S]*?extensions\/chrome[\s\S]*?label: "Context priority"[\s\S]*?company → user → learning → skill[\s\S]*?label: "Language strategy"[\s\S]*?English or Korean-English hybrid[\s\S]*?label: "Audit source"[\s\S]*?chrome-selection, mcp-refine, target-ai-handoff[\s\S]*?function AutomationPrincipleRow[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?\{label\}[\s\S]*?\{value\}[\s\S]*?function AutomationPrinciplesPanel\(\)[\s\S]*?Refine automatically, deliver with review\.[\s\S]*?automationPrincipleRows\.map[\s\S]*?<AutomationPrincipleRow[\s\S]*?label=\{row\.label\}[\s\S]*?value=\{row\.value\}[\s\S]*?<AutomationPrinciplesPanel \/>/,
+  /const automationPrincipleRows = \[[\s\S]*?label: "Refine API"[\s\S]*?POST \/api\/integrations\/refine[\s\S]*?label: "Chrome extension"[\s\S]*?extensions\/chrome[\s\S]*?label: "Context priority"[\s\S]*?company → user → learning → skill[\s\S]*?label: "Language strategy"[\s\S]*?English or Korean-English hybrid[\s\S]*?label: "Audit source"[\s\S]*?chrome-selection, mcp-refine, local-smoke-evidence, target-ai-handoff[\s\S]*?function AutomationPrincipleRow[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?\{label\}[\s\S]*?\{value\}[\s\S]*?function AutomationPrinciplesPanel\(\)[\s\S]*?Refine automatically, deliver with review\.[\s\S]*?automationPrincipleRows\.map[\s\S]*?<AutomationPrincipleRow[\s\S]*?label=\{row\.label\}[\s\S]*?value=\{row\.value\}[\s\S]*?<AutomationPrinciplesPanel \/>/,
   "Integrations view should render automation principles through a dedicated data list and row component",
 );
 assert.match(
@@ -417,8 +418,8 @@ assert.match(
 );
 assert.match(
   view,
-  /function RolloutOrderPanel\(\)[\s\S]*?출시 순서[\s\S]*?rolloutSteps\.map[\s\S]*?String\(index \+ 1\)\.padStart\(2, "0"\)[\s\S]*?step[\s\S]*?<RolloutOrderPanel \/>/,
-  "Integrations view should render rollout order through a dedicated panel",
+  /const rolloutSteps = \[[\s\S]*?Chrome selection capture and Studio draft handoff[\s\S]*?Local smoke evidence before target AI handoff[\s\S]*?Target AI prompt package copy\/export contract[\s\S]*?function RolloutOrderPanel\(\)[\s\S]*?출시 순서[\s\S]*?rolloutSteps\.map[\s\S]*?String\(index \+ 1\)\.padStart\(2, "0"\)[\s\S]*?step[\s\S]*?<RolloutOrderPanel \/>/,
+  "Integrations view should render rollout order with local smoke evidence before target AI handoff",
 );
 assert.match(
   view,
@@ -2469,6 +2470,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "Integrations 자동화 원칙과 출시 순서는 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따르게 합니다.",
+  "README should document local smoke evidence in automation principles and rollout order",
+);
+assertIncludes(
+  readme,
   "상세 섹션 앵커 이동",
   "README should document operation flow detail anchors",
 );
@@ -2789,6 +2795,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "Integrations 자동화 원칙과 출시 순서는 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따라야 한다.",
+  "PRD should document local smoke evidence in automation principles and rollout order",
+);
+assertIncludes(
+  prd,
   "Integrations 검증 게이트 요약은 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 모바일 2열과 데스크톱 4열로 먼저 보여줘야 한다.",
   "PRD should document integrations gate summary evidence stage",
 );
@@ -2931,6 +2942,11 @@ assertIncludes(
   developmentBrief,
   "Capture, Refine, Evidence, Deliver, Feedback 단계별 owner, artifact, gate를 카드로 먼저 보여준 뒤 상세 표를 유지한다",
   "Development brief should document responsive integrations operation flow cards",
+);
+assertIncludes(
+  developmentBrief,
+  "Integrations 자동화 원칙과 출시 순서는 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따르게 한다",
+  "Development brief should document local smoke evidence in automation principles and rollout order",
 );
 assertIncludes(
   developmentBrief,

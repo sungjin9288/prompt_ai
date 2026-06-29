@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
 
 const source = readFileSync("src/components/skills/skills-view.tsx", "utf8");
 const readme = readFileSync("README.md", "utf8");
@@ -9,6 +10,12 @@ const sourceRegistry = readFileSync("src/lib/studio/source-registry.ts", "utf8")
 const developmentBrief = readFileSync(
   "docs/codex-development-brief.md",
   "utf8",
+);
+const { createSkillFromPrompt, getBestVersion } = loadTypescriptModule(
+  "src/lib/skills/skill-builder.ts",
+);
+const { buildSkillRunPrompt, createPromptFromSkillRun } = loadTypescriptModule(
+  "src/lib/skills/skill-runner.ts",
 );
 
 function assertMatches(pattern, message) {
@@ -22,6 +29,107 @@ function assertFileIncludes(fileSource, text, message) {
 function assertFileNotIncludes(fileSource, text, message) {
   assert.ok(!fileSource.includes(text), message);
 }
+
+const sourcePrompt = {
+  id: "prompt_language_contract",
+  title: "Codex billing report brief",
+  source: "local",
+  languageStrategy: "english",
+  languageDecision: {
+    strategy: "english",
+    label: "전체 영어 지시문",
+    reason: "개발 또는 Codex 중심 작업은 영어 실행 지시가 안정적입니다.",
+    confidence: "strong",
+    signals: ["개발/Codex 작업 신호", "실행 지시 안정성 우선"],
+  },
+  outputLanguage: "english",
+  rawInput: "Refactor the billing report component.",
+  goal: "Codex implementation brief",
+  domain: "개발",
+  targetModels: ["codex"],
+  versions: [
+    {
+      id: "version_language_contract",
+      targetModel: "codex",
+      modelLabel: "Codex",
+      content:
+        "Role:\nYou are a senior Codex engineer.\n\n품질 기준:\n- Inspect the repository before editing\n- Run lint and build",
+      qualityScore: 92,
+      scoreBreakdown: {
+        clarity: 18,
+        context: 18,
+        constraints: 18,
+        output: 18,
+        modelFit: 20,
+      },
+      assumptions: [],
+      missingContext: [],
+      createdAt: "2026-06-29T00:00:00.000Z",
+    },
+  ],
+  feedback: [],
+  createdAt: "2026-06-29T00:00:00.000Z",
+  updatedAt: "2026-06-29T00:00:00.000Z",
+};
+const sourceSkill = createSkillFromPrompt(
+  sourcePrompt,
+  getBestVersion(sourcePrompt),
+  [],
+);
+const sourceSkillRunPrompt = buildSkillRunPrompt(
+  sourceSkill,
+  "Update the payment table and include a release checklist.",
+);
+const sourceSkillRunAsset = createPromptFromSkillRun(
+  sourceSkill,
+  "Update the payment table and include a release checklist.",
+);
+
+assert.equal(
+  sourceSkill.languageStrategy,
+  "english",
+  "Skills created from prompts should preserve the automatic prompt language strategy",
+);
+assert.equal(
+  sourceSkill.languageDecision?.reason,
+  sourcePrompt.languageDecision.reason,
+  "Skills created from prompts should preserve the automatic prompt language decision reason",
+);
+assert.equal(
+  sourceSkill.outputLanguage,
+  "english",
+  "Skills created from prompts should preserve the desired answer language",
+);
+assert.equal(
+  sourceSkill.targetModel,
+  "codex",
+  "Skills created from prompts should preserve the source target AI",
+);
+assert.match(
+  sourceSkillRunPrompt,
+  /Write the final executable prompt primarily in English[\s\S]*?The target AI's final answer must be written in English/,
+  "Skill run prompt should apply the preserved English prompt and answer-language guidance",
+);
+assert.equal(
+  sourceSkillRunAsset.languageStrategy,
+  "english",
+  "Skill run assets should keep the skill language strategy",
+);
+assert.equal(
+  sourceSkillRunAsset.outputLanguage,
+  "english",
+  "Skill run assets should keep the skill answer language",
+);
+assert.equal(
+  sourceSkillRunAsset.languageDecision?.reason,
+  sourcePrompt.languageDecision.reason,
+  "Skill run assets should carry the original language decision reason",
+);
+assert.match(
+  sourceSkillRunAsset.versions[0].assumptions.join("\n"),
+  /언어 판단 이유: 개발 또는 Codex 중심 작업은 영어 실행 지시가 안정적입니다\.[\s\S]*?최종 답변 언어는 영어로 설정함/,
+  "Skill run assumptions should keep language-decision and answer-language evidence",
+);
 
 assertMatches(
   /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,

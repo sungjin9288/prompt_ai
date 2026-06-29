@@ -814,6 +814,13 @@ function formatLearningFilterSourceTitle({
   return parts.join(" · ");
 }
 
+function buildLearningHref(params: URLSearchParams) {
+  const queryString = params.toString();
+  const href = queryString ? `/learning?${queryString}` : "/learning";
+
+  return normalizeInternalHref(href) ?? "/learning";
+}
+
 function getLearningHref({
   query,
   reviewFilter,
@@ -844,10 +851,7 @@ function getLearningHref({
     params.set("q", trimmedQuery);
   }
 
-  const queryString = params.toString();
-  const href = queryString ? `/learning?${queryString}` : "/learning";
-
-  return normalizeInternalHref(href) ?? "/learning";
+  return buildLearningHref(params);
 }
 
 export function LearningView({

@@ -161,6 +161,11 @@ assertFileIncludes(
   "Studio source registry should preserve a Skills return action for Skills operational summary drafts",
 );
 assertFileIncludes(
+  sourceRegistry,
+  'sourceActionLabel: "Skills 스킬로 돌아가기"',
+  "Studio source registry should preserve a Skills skill return action for Skills improvement plan drafts",
+);
+assertFileIncludes(
   readme,
   "Skills 운영 요약과 실행 이력에서 최근 실행/개별 실행 Library 링크를 절대 URL로 복사",
   "README should document Skills operational Library link copy actions",
@@ -192,7 +197,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Skills 운영 요약과 개선 계획의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시합니다.",
+  "Skills 운영 요약과 개선 계획의 Studio 초안은 각각 `Skills로 돌아가기`, `Skills 스킬로 돌아가기` 복귀 액션 라벨로 원래 화면을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시합니다.",
   "README should document Skills Studio draft fallback",
 );
 assertFileIncludes(
@@ -252,7 +257,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prd,
-  "Skills 운영 요약과 개선 계획의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
+  "Skills 운영 요약과 개선 계획의 Studio 초안은 각각 `Skills로 돌아가기`, `Skills 스킬로 돌아가기` 복귀 액션 라벨로 원래 화면을 복원해야 하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
   "PRD should document Skills Studio draft fallback",
 );
 assertFileIncludes(
@@ -267,7 +272,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   developmentBrief,
-  "Skills 운영 요약과 개선 계획의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시한다.",
+  "Skills 운영 요약과 개선 계획의 Studio 초안은 각각 `Skills로 돌아가기`, `Skills 스킬로 돌아가기` 복귀 액션 라벨로 원래 화면을 복원하며, 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시한다.",
   "Development brief should document Skills Studio draft fallback",
 );
 

@@ -453,7 +453,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   sourceRegistrySource,
-  'sourceActionLabel: "Skills 스킬 보기"',
+  'sourceActionLabel: "Skills 스킬로 돌아가기"',
   "Source registry should preserve a Skills return action for Skills improvement plan drafts",
 );
 assertFileIncludes(

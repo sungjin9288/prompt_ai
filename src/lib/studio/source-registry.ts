@@ -177,7 +177,7 @@ const promptStudioSourceRegistry = {
     dashboardNextAction: "스킬 템플릿 개선 계획이 저장 결과에 반영됐는지 확인",
     libraryFilterLabel: "Skills 개선 계획",
     librarySourceLabel: "Skills 스킬 개선 계획",
-    sourceActionLabel: "Skills 스킬 보기",
+    sourceActionLabel: "Skills 스킬로 돌아가기",
     studioLabel: "Skills 스킬 개선 계획",
     studioNextAction:
       "선택한 스킬의 피드백 지표, 추천 항목, 반영 예정 변경을 기준으로 템플릿 보강 계획을 만드세요.",

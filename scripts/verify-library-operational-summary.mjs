@@ -675,7 +675,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   sourceRegistrySource,
-  'sourceActionLabel: "Skills 스킬 보기"',
+  'sourceActionLabel: "Skills 스킬로 돌아가기"',
   "Prompt Studio source registry should expose a Skills source action label for Library saved-source actions",
 );
 assertFileIncludes(

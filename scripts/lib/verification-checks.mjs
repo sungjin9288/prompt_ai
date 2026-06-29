@@ -66,6 +66,12 @@ export const verificationChecks = [
     scriptName: "verify:openai-fallback",
   },
   {
+    args: ["run", "verify:openai-comparison"],
+    command: "npm",
+    label: "OpenAI comparison smoke gate",
+    scriptName: "verify:openai-comparison",
+  },
+  {
     args: ["run", "verify:prompt-package"],
     command: "npm",
     label: "Target AI handoff package",

@@ -51,6 +51,8 @@ function loadTypescriptModuleByPath(sourcePath) {
   const exportsObject = {};
   const context = {
     exports: exportsObject,
+    fetch,
+    Headers,
     module: { exports: exportsObject },
     process,
     require: (request) =>

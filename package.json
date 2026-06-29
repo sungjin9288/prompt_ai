@@ -21,6 +21,7 @@
     "verify:docs": "node scripts/verify-readme-scripts.mjs",
     "verify:integrations": "node scripts/verify-integrations-surface.mjs",
     "verify:manifest": "node scripts/verify-verification-manifest.mjs",
+    "verify:openai-comparison": "node scripts/verify-openai-comparison.mjs",
     "verify:openai-fallback": "node scripts/verify-openai-fallback.mjs",
     "verify:library-summary": "node scripts/verify-library-operational-summary.mjs",
     "verify:learning-summary": "node scripts/verify-learning-operational-summary.mjs",

@@ -93,7 +93,7 @@ try {
   );
   assert.match(
     readme,
-    /OpenAI API 기반 프롬프트 분석 고도화:[\s\S]*?npm run verify:openai-fallback[\s\S]*?key를 넣은 뒤 로컬 fallback과 OpenAI 보강 결과를 비교합니다\./,
+    /OpenAI API 기반 프롬프트 분석 고도화:[\s\S]*?npm run verify:openai-fallback[\s\S]*?OPENAI_COMPARISON_LIVE=1 npm run verify:openai-comparison[\s\S]*?로컬 fallback과 OpenAI 보강 결과를 비교합니다\./,
   );
 
   console.log("OpenAI fallback and operator readiness verification passed.");

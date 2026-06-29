@@ -79,21 +79,16 @@ function isNegatedWroteDraft(expression) {
   );
 }
 
-function containsReturnStatement(node) {
-  let hasReturn = false;
-
-  function visit(child) {
-    if (ts.isReturnStatement(child)) {
-      hasReturn = true;
-      return;
-    }
-
-    ts.forEachChild(child, visit);
+function branchReturnsDirectly(statement) {
+  if (ts.isReturnStatement(statement)) {
+    return true;
   }
 
-  visit(node);
+  if (!ts.isBlock(statement)) {
+    return false;
+  }
 
-  return hasReturn;
+  return statement.statements.some(ts.isReturnStatement);
 }
 
 function verifyWriteStudioDraftCall(sourceFile, callExpression) {
@@ -140,12 +135,12 @@ function verifyWriteStudioDraftCall(sourceFile, callExpression) {
     return;
   }
 
-  if (!containsReturnStatement(fallbackGuard.thenStatement)) {
+  if (!branchReturnsDirectly(fallbackGuard.thenStatement)) {
     guardFailures.push(
       `${getLocation(
         sourceFile,
         fallbackGuard,
-      )} should return from the manual fallback branch before navigation`,
+      )} should directly return from the manual fallback branch before navigation`,
     );
   }
 }
@@ -188,7 +183,7 @@ assert.ok(draftCallCount > 0, "Expected at least one Studio draft write call");
 assert.deepEqual(
   guardFailures,
   [],
-  `Every writeStudioDraft call should save to const wroteDraft and immediately return from its fallback guard:\n${guardFailures.join(
+  `Every writeStudioDraft call should save to const wroteDraft and directly return from its fallback guard:\n${guardFailures.join(
     "\n",
   )}`,
 );

@@ -3060,12 +3060,12 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 운영자 다음 조치 Studio 초안의 원본 경로는 `/integrations#integrations-next-actions`로 저장해 Studio에서 원본으로 돌아갈 때 운영자 다음 조치 섹션을 복원해야 한다.",
+  "Integrations 운영자 다음 조치 Studio 초안의 원본 경로는 `/integrations#integrations-next-actions`로 저장하고 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해 Studio에서 원본으로 돌아갈 때 운영자 다음 조치 섹션을 복원해야 한다.",
   "PRD should document operator next actions Studio source anchor",
 );
 assertIncludes(
   prd,
-  "Integrations 외부 AI 운영 가이드 Studio 초안의 원본 경로는 `/integrations#integrations-operator-guide`로 저장해 Studio에서 원본으로 돌아갈 때 외부 AI 운영 가이드 섹션을 복원해야 한다.",
+  "Integrations 외부 AI 운영 가이드 Studio 초안의 원본 경로는 `/integrations#integrations-operator-guide`로 저장하고 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해 Studio에서 원본으로 돌아갈 때 외부 AI 운영 가이드 섹션을 복원해야 한다.",
   "PRD should document external AI operator guide Studio source anchor",
 );
 assertIncludes(
@@ -3100,7 +3100,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations MCP runbook Studio 초안의 원본 경로는 `/integrations#integrations-mcp-connection`으로 저장해 Studio에서 원본으로 돌아갈 때 MCP 연결 섹션을 복원해야 한다.",
+  "Integrations MCP runbook Studio 초안의 원본 경로는 `/integrations#integrations-mcp-connection`으로 저장하고 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해 Studio에서 원본으로 돌아갈 때 MCP 연결 섹션을 복원해야 한다.",
   "PRD should document MCP runbook Studio source anchor",
 );
 assertIncludes(
@@ -3130,7 +3130,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 환경별 체크리스트 Studio 초안의 원본 경로는 `/integrations#integrations-environment-guide`로 저장해 Studio에서 원본으로 돌아갈 때 환경별 실행 가이드 섹션을 복원해야 한다.",
+  "Integrations 환경별 체크리스트 Studio 초안의 원본 경로는 `/integrations#integrations-environment-guide`로 저장하고 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해 Studio에서 원본으로 돌아갈 때 환경별 실행 가이드 섹션을 복원해야 한다.",
   "PRD should document environment checklist Studio source anchor",
 );
 assertIncludes(

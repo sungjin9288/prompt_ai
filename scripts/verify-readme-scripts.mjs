@@ -190,7 +190,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /verify:release-candidate` checks active evidence hygiene, secret scan,\s+and root temporary directory cleanup before a grouped commit or handoff/,
+  /verify:release-candidate` checks active evidence hygiene, local smoke\s+evidence packets, secret scan, and root temporary directory cleanup before a\s+grouped commit or handoff/,
   "README should document the release-candidate verification scope",
 );
 assert.match(

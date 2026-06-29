@@ -506,8 +506,9 @@ its copy-ready prompt, quality review, missing context, and operator notes.
 `npm run verify:profile-company` checks that Profile and Company keep the
 context operating flow, question copy, learning-memory save, and return action
 visible before the detailed forms.
-`npm run verify:release-candidate` checks active evidence hygiene, secret scan,
-and root temporary directory cleanup before a grouped commit or handoff.
+`npm run verify:release-candidate` checks active evidence hygiene, local smoke
+evidence packets, secret scan, and root temporary directory cleanup before a
+grouped commit or handoff.
 `npm run verify:repo-boundary` checks that this project is the active git
 top-level instead of a loose folder inside the parent `/Users/sungjin/dev` repo.
 `npm run verify:runtime` checks key runtime readiness scenarios so the Data UI,
@@ -582,9 +583,9 @@ terms from returning.
   Library에서 추적합니다.
 - Release candidate 정리: 관련 변경을 묶기 전 `npm run verify:evidence`로
   최신 증빙을 만들고 `npm run verify:release-candidate`로 active evidence,
-  secret scan, 루트 임시 산출물 정리를 확인합니다. 첫 grouped commit 전에는
-  `npm run verify:repo-boundary`로 `/Users/sungjin/dev/personal/prompt-ai-studio`
-  독립 repo 경계를 확인합니다.
+  local smoke evidence, secret scan, 루트 임시 산출물 정리를 확인합니다. 첫
+  grouped commit 전에는 `npm run verify:repo-boundary`로
+  `/Users/sungjin/dev/personal/prompt-ai-studio` 독립 repo 경계를 확인합니다.
 
 ### operator gate 이후 진행
 

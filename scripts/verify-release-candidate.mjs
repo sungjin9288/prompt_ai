@@ -14,6 +14,11 @@ const checks = [
     label: "Evidence hygiene",
   },
   {
+    args: ["run", "verify:smoke-evidence"],
+    command: "npm",
+    label: "Local smoke evidence",
+  },
+  {
     args: ["run", "verify:secrets"],
     command: "npm",
     label: "Secret safety",

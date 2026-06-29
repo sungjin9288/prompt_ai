@@ -53,6 +53,11 @@ for (const fileName of evidenceFiles) {
   const evidence = readFileSync(filePath, "utf8");
 
   assert.match(evidence, /- status: pass/, `${fileName} should have pass status.`);
+  assert.match(
+    evidence,
+    /## Git Provenance[\s\S]*- branch: .+[\s\S]*- commit: [a-f0-9]+[\s\S]*- workingTree: (clean|dirty|unavailable)[\s\S]*- changedFiles: \d+/,
+    `${fileName} should include git provenance and working tree state.`,
+  );
 
   for (const scriptName of requiredScripts) {
     assert.match(

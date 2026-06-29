@@ -16,6 +16,7 @@ Each record should show:
 - `status: pass`
 - every script from the shared verification manifest, including `verify:manifest`,
   `verify:docs`, `verify:secrets`, `verify:smoke-evidence`, `lint`, and `build`
+- git provenance with branch, commit, working tree state, and changed file count
 - runtime readiness for the intended local, OpenAI, or Supabase mode
 - runtime variable rows written as `variable KEY; configured yes/no`, not as
   environment assignments

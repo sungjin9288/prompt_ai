@@ -94,6 +94,16 @@ try {
   assert.match(failureEvidence, /spawnSync npm ENOENT/);
   assert.match(
     failureEvidence,
+    /## Git Provenance[\s\S]*- commit: [a-f0-9]+/,
+    "failure evidence should keep the git commit provenance",
+  );
+  assert.match(
+    failureEvidence,
+    /- workingTree: (clean|dirty|unavailable)/,
+    "failure evidence should record whether the working tree was clean",
+  );
+  assert.match(
+    failureEvidence,
     /This evidence contains command status, runtime readiness booleans, and bounded failure excerpts/,
   );
   assert.match(

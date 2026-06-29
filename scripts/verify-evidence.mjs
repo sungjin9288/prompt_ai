@@ -66,6 +66,47 @@ function getFailureDetails(error) {
   };
 }
 
+function readGitValue(args) {
+  try {
+    return execFileSync("git", args, {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return "unavailable";
+  }
+}
+
+function buildGitProvenance() {
+  const status = readGitValue(["status", "--short"]);
+
+  return {
+    branch: readGitValue(["branch", "--show-current"]) || "detached",
+    changedFiles:
+      status === "unavailable" || !status ? 0 : status.split("\n").length,
+    commit: readGitValue(["rev-parse", "--short", "HEAD"]),
+    status,
+  };
+}
+
+function buildGitProvenanceEvidence(gitProvenance) {
+  let status = "clean";
+
+  if (gitProvenance.status === "unavailable") {
+    status = "unavailable";
+  } else if (gitProvenance.status) {
+    status = "dirty";
+  }
+
+  return [
+    "## Git Provenance",
+    `- branch: ${gitProvenance.branch}`,
+    `- commit: ${gitProvenance.commit}`,
+    `- workingTree: ${status}`,
+    `- changedFiles: ${gitProvenance.changedFiles}`,
+  ];
+}
+
 function getUsageText() {
   return [
     "Usage:",
@@ -224,6 +265,7 @@ if (cli.help) {
 }
 
 const outputPath = cli.outputPath;
+const gitProvenance = buildGitProvenance();
 const runtimeStatus = buildRuntimeStatus();
 
 const startedAt = new Date().toISOString();
@@ -264,6 +306,8 @@ const markdown = [
   `- finishedAt: ${new Date().toISOString()}`,
   `- status: ${failed ? "fail" : "pass"}`,
   `- outputPath: ${outputPath || "stdout"}`,
+  "",
+  ...buildGitProvenanceEvidence(gitProvenance),
   "",
   "## Checks",
   ...results.map((result) => {

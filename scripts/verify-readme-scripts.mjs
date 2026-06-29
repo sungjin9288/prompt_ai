@@ -105,18 +105,28 @@ assert.match(
 );
 assert.match(
   readme,
-  /Runtime\s+variable rows use `variable KEY; configured yes\/no` wording instead of\s+environment assignment syntax/,
+  /includes git branch\/commit provenance, working tree state, command results,\s+runtime readiness booleans/,
+  "README should document git provenance in verification evidence",
+);
+assert.match(
+  readme,
+  /Runtime variable rows use\s+`variable KEY; configured yes\/no` wording instead of environment assignment\s+syntax/,
   "README should document secret-scan-safe runtime variable evidence formatting",
 );
 assert.match(
   readme,
-  /runtime variable evidence format so missing keys do not look like secret\s+assignments/,
-  "README should document the evidence CLI runtime variable formatting guard",
+  /redaction, git provenance, and\s+failure evidence writing/,
+  "README should document the evidence CLI git provenance guard",
 );
 assert.match(
   readme,
-  /verify:evidence-hygiene` checks that `docs\/evidence` has its README,\s+keeps at most one active timestamped evidence record, and rejects runtime\s+variable rows that look like secret assignments/,
+  /verify:evidence-hygiene` checks that `docs\/evidence` has its README,\s+keeps at most one active timestamped evidence record, requires git provenance,\s+and rejects runtime variable rows that look like secret assignments/,
   "README should document the evidence hygiene verification scope",
+);
+assert.match(
+  readme,
+  /Confirm the evidence includes git branch, commit, working tree state, and\s+changed file count for the grouped change set/,
+  "README release checklist should require evidence git provenance",
 );
 assert.match(
   readme,
@@ -278,6 +288,11 @@ assert.match(
   evidenceReadme,
   /every script from the shared verification manifest, including `verify:manifest`,\s+`verify:docs`, `verify:secrets`, `verify:smoke-evidence`, `lint`, and `build`/,
   "docs/evidence README should require every shared manifest check in evidence",
+);
+assert.match(
+  evidenceReadme,
+  /git provenance with branch, commit, working tree state, and changed file count/,
+  "docs/evidence README should require git provenance fields",
 );
 assert.match(
   evidenceReadme,

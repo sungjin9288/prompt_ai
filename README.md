@@ -427,12 +427,12 @@ npm run build
 ```
 
 `npm run verify:evidence` prints a Markdown verification record to stdout. It
-includes command results, runtime readiness booleans, release gate status, and
-the Supabase import execution gate state without printing secret values. Runtime
-variable rows use `variable KEY; configured yes/no` wording instead of
-environment assignment syntax, so evidence can be scanned without looking like a
-secret value. Failed checks include bounded stdout/stderr excerpts with basic
-key/token redaction.
+includes git branch/commit provenance, working tree state, command results,
+runtime readiness booleans, release gate status, and the Supabase import
+execution gate state without printing secret values. Runtime variable rows use
+`variable KEY; configured yes/no` wording instead of environment assignment
+syntax, so evidence can be scanned without looking like a secret value. Failed
+checks include bounded stdout/stderr excerpts with basic key/token redaction.
 `npm run smoke:mcp` runs the local MCP bridge self-test without contacting GPT,
 Claude, Codex, Gemini, OpenAI, or Supabase. Use it before connecting a real MCP
 client. Add `-- --out path/to/mcp-smoke.md` to save the local MCP smoke
@@ -467,13 +467,13 @@ exclusive.
 Run `npm run verify`, `npm run verify:evidence`, and `npm run build` one at a
 time because Next.js uses a production build lock.
 `npm run verify:evidence-cli` checks the fast CLI paths for help output,
-invalid option handling, output option conflicts, redaction, and failure
-evidence writing without running a full production build. It also guards the
-runtime variable evidence format so missing keys do not look like secret
+invalid option handling, output option conflicts, redaction, git provenance, and
+failure evidence writing without running a full production build. It also guards
+the runtime variable evidence format so missing keys do not look like secret
 assignments.
 `npm run verify:evidence-hygiene` checks that `docs/evidence` has its README,
-keeps at most one active timestamped evidence record, and rejects runtime
-variable rows that look like secret assignments.
+keeps at most one active timestamped evidence record, requires git provenance,
+and rejects runtime variable rows that look like secret assignments.
 `npm run verify:docs` checks that the README Scripts block documents package
 scripts and core verification notes.
 `npm run verify:app-shell` checks that the global navigation keeps each primary
@@ -564,6 +564,8 @@ terms from returning.
 - [ ] Confirm the evidence status is `pass` and includes every shared manifest
       check, including `verify:manifest`, `verify:docs`, `verify:secrets`,
       `lint`, and `build`.
+- [ ] Confirm the evidence includes git branch, commit, working tree state, and
+      changed file count for the grouped change set.
 - [ ] Before the first grouped commit, run `npm run verify:repo-boundary` and
       confirm this project is the git top-level at
       `/Users/sungjin/dev/personal/prompt-ai-studio`, not a loose untracked

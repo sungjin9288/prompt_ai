@@ -671,7 +671,7 @@ for (const requiredText of [
   "실행 증거 체크",
   "localhost:3000과 POST /api/integrations/refine 응답을 확인합니다.",
   "reviewRequired true와 target handoff package를 확인합니다.",
-  "Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.",
+  "npm run smoke:integrations로 Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.",
   "copy-ready prompt와 missing context review를 확인한 뒤 붙여넣습니다.",
   "rating, result summary, inbox record를 confirmSave true 후 확인합니다.",
   "Execution evidence checklist",
@@ -684,10 +684,11 @@ for (const requiredText of [
   "연결 표면 1개 선택",
   "review-required 결과 확인",
   "로컬 smoke evidence 저장",
+  "npm run smoke:integrations",
   "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
   "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
   "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
-  "외부 AI로 넘기기 전에 Chrome, MCP, Learning feedback 증거 파일을 남깁니다.",
+  "외부 AI로 넘기기 전에 통합 preflight로 Chrome, MCP, Learning feedback 증거 파일을 남깁니다.",
   "외부 AI에 수동 전달",
   "실행 결과 저장 판단",
   "Gate: local-first automation, smoke evidence saved, review-required external delivery, confirmed feedback save.",
@@ -752,7 +753,7 @@ assert.match(
 );
 assert.match(
   externalAiOperatorGuidePanel,
-  /const externalAiEvidenceChecks = \[[\s\S]*?action: "localhost:3000과 POST \/api\/integrations\/refine 응답[\s\S]*?label: "01 로컬 연결"[\s\S]*?action: "reviewRequired true와 target handoff package[\s\S]*?label: "02 정제 결과"[\s\S]*?action: "Chrome, MCP, Learning smoke evidence file[\s\S]*?label: "03 증거 저장"[\s\S]*?action: "copy-ready prompt와 missing context review[\s\S]*?label: "04 전달 승인"[\s\S]*?action: "rating, result summary, inbox record[\s\S]*?label: "05 피드백 증거"[\s\S]*?\] satisfies ExternalAiEvidenceCheck\[\]/,
+  /const externalAiEvidenceChecks = \[[\s\S]*?action: "localhost:3000과 POST \/api\/integrations\/refine 응답[\s\S]*?label: "01 로컬 연결"[\s\S]*?action: "reviewRequired true와 target handoff package[\s\S]*?label: "02 정제 결과"[\s\S]*?action:[\s\S]*?"npm run smoke:integrations로 Chrome, MCP, Learning smoke evidence file[\s\S]*?label: "03 증거 저장"[\s\S]*?action: "copy-ready prompt와 missing context review[\s\S]*?label: "04 전달 승인"[\s\S]*?action: "rating, result summary, inbox record[\s\S]*?label: "05 피드백 증거"[\s\S]*?\] satisfies ExternalAiEvidenceCheck\[\]/,
   "External AI operator guide should define execution evidence checks for local, refine, smoke evidence, delivery, and feedback proof",
 );
 assert.match(
@@ -2478,11 +2479,12 @@ for (const requiredText of [
   "http://localhost:3000/integrations",
   "npm run verify:integrations",
   "로컬 smoke evidence 저장",
+  "npm run smoke:integrations",
   "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
   "실행 증거 체크",
   "로컬 연결: `localhost:3000`과 `POST /api/integrations/refine` 응답을 확인합니다.",
   "정제 결과: `reviewRequired true`와 target handoff package를 확인합니다.",
-  "증거 저장: Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.",
+  "증거 저장: `npm run smoke:integrations`로 Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.",
   "전달 승인: copy-ready prompt와 missing context review를 확인한 뒤 붙여넣습니다.",
   "피드백 증거: rating, result summary, inbox record를 `confirmSave: true` 후 확인합니다.",
   "Refine automatically, save evidence, deliver with review.",
@@ -2740,7 +2742,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "로컬 smoke evidence 저장, 외부 AI 수동 전달, confirmSave 피드백 저장 판단 순서",
+  "`npm run smoke:integrations` 로컬 smoke evidence 저장, 외부 AI 수동 전달, confirmSave 피드백 저장 판단 순서",
   "README should document external AI operator guide smoke evidence step",
 );
 assertIncludes(
@@ -3190,7 +3192,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 외부 AI 운영 가이드는 운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여주고, 외부 AI 전달 전 로컬 smoke evidence 저장 단계와 실행 증거 체크를 포함해야 한다.",
+  "Integrations 외부 AI 운영 가이드는 운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여주고, 외부 AI 전달 전 `npm run smoke:integrations` 로컬 smoke evidence 저장 단계와 실행 증거 체크를 포함해야 한다.",
   "PRD should document external AI operator guide summary metrics and evidence checklist",
 );
 assertIncludes(
@@ -3370,7 +3372,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "로컬 smoke evidence 저장, 외부 AI 수동 전달, confirmSave 피드백 저장 판단 순서",
+  "`npm run smoke:integrations` 로컬 smoke evidence 저장, 외부 AI 수동 전달, confirmSave 피드백 저장 판단 순서",
   "Development brief should document external AI operator guide smoke evidence step",
 );
 assertIncludes(

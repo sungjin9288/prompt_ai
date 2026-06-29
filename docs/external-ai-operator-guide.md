@@ -26,6 +26,7 @@ npm run verify:integrations
 4. 로컬 smoke evidence 저장
 
 ```bash
+npm run smoke:integrations
 npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md
 npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md
 npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md
@@ -44,7 +45,7 @@ npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md
 
 1. 로컬 연결: `localhost:3000`과 `POST /api/integrations/refine` 응답을 확인합니다.
 2. 정제 결과: `reviewRequired true`와 target handoff package를 확인합니다.
-3. 증거 저장: Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.
+3. 증거 저장: `npm run smoke:integrations`로 Chrome, MCP, Learning smoke evidence file을 먼저 남깁니다.
 4. 전달 승인: copy-ready prompt와 missing context review를 확인한 뒤 붙여넣습니다.
 5. 피드백 증거: rating, result summary, inbox record를 `confirmSave: true` 후 확인합니다.
 

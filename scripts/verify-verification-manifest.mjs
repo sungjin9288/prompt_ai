@@ -3,7 +3,17 @@ import { readFileSync } from "node:fs";
 import { verificationChecks } from "./lib/verification-checks.mjs";
 
 const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
+const releaseCandidateScript = readFileSync(
+  "scripts/verify-release-candidate.mjs",
+  "utf8",
+);
 const scripts = packageJson.scripts || {};
+const releaseCandidateScripts = [
+  "verify:repo-boundary",
+  "verify:evidence-hygiene",
+  "verify:smoke-evidence",
+  "verify:secrets",
+];
 
 assert.equal(
   scripts.verify,
@@ -45,6 +55,14 @@ assert.equal(
   "verify:manifest",
   "verify:manifest should run first so manifest drift fails early",
 );
+
+for (const scriptName of releaseCandidateScripts) {
+  assert.match(
+    releaseCandidateScript,
+    new RegExp(`args: \\["run", "${scriptName.replace(":", "\\:")}"\\]`),
+    `verify:release-candidate should include ${scriptName}`,
+  );
+}
 
 console.log(
   `Verification manifest verification passed for ${verificationChecks.length} checks.`,

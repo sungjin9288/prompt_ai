@@ -488,7 +488,9 @@ chain labels visible.
 include the current filter condition as an absolute URL and keep filter-link
 copy fallback coverage.
 `npm run verify:manifest` checks that the shared verification manifest matches
-package scripts and runs first inside `npm run verify`.
+package scripts, runs first inside `npm run verify`, and keeps the
+release-candidate gate tied to repo boundary, evidence hygiene, local smoke
+evidence, and secret safety checks.
 `npm run verify:navigation-href` checks that shared internal route helpers reject
 external or protocol-relative URLs, preserve path/query/hash, and format copy
 links through normalized internal hrefs.

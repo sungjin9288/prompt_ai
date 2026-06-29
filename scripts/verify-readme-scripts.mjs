@@ -105,8 +105,8 @@ assert.match(
 );
 assert.match(
   readme,
-  /verify:manifest/,
-  "README should require manifest verification in release evidence",
+  /verify:manifest` checks that the shared verification manifest matches\s+package scripts, runs first inside `npm run verify`, and keeps the\s+release-candidate gate tied to repo boundary, evidence hygiene, local smoke\s+evidence, and secret safety checks/,
+  "README should document the verification manifest scope",
 );
 assert.match(
   readme,

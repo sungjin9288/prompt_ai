@@ -93,6 +93,8 @@ const feedbackImprovementValidationLibraryHref =
   normalizeInternalHref(
     "/library?studioSource=learning-feedback-improvement&studioVariant=learning-low-confidence-validation",
   ) ?? "/library";
+const feedbackImprovementReleaseGateCommand =
+  "npm run verify:evidence -- --out-dir docs/evidence\nnpm run verify:release-candidate";
 const sortModes: LearningSortMode[] = [
   "confidence-desc",
   "confidence-asc",
@@ -540,6 +542,10 @@ function buildFeedbackImprovementQueueReportText({
     "- 높은 신뢰도 규칙은 Studio 템플릿과 외부 AI handoff 체크리스트에 반영합니다.",
     "- 낮은 신뢰도 규칙은 Library 피드백을 추가 수집한 뒤 재저장합니다.",
     "- 충돌하는 규칙은 scope와 적용 업무를 좁혀 별도 Learning memory로 분리합니다.",
+    "- 큐 반영 후 release evidence를 새로 만들고 release-candidate gate를 확인합니다.",
+    "",
+    "## 검증 명령",
+    feedbackImprovementReleaseGateCommand,
     "",
     "## 메모리",
     filteredMemories.length
@@ -889,6 +895,8 @@ export function LearningView({
   const [filteredReportCopied, setFilteredReportCopied] = useState(false);
   const [filteredReportCopyFailed, setFilteredReportCopyFailed] =
     useState(false);
+  const [releaseGateCopied, setReleaseGateCopied] = useState(false);
+  const [releaseGateCopyFailed, setReleaseGateCopyFailed] = useState(false);
   const [copiedMemoryId, setCopiedMemoryId] = useState("");
   const [failedMemoryCopyId, setFailedMemoryCopyId] = useState("");
   const [learningManualCopy, setLearningManualCopy] =
@@ -1215,6 +1223,8 @@ export function LearningView({
 
     setFilteredReportCopied(copied);
     setFilteredReportCopyFailed(!copied);
+    setReleaseGateCopied(false);
+    setReleaseGateCopyFailed(false);
     setCopiedMemoryId("");
     setFailedMemoryCopyId("");
     setLearningManualCopy(
@@ -1236,6 +1246,8 @@ export function LearningView({
 
     setFilteredReportCopied(false);
     setFilteredReportCopyFailed(false);
+    setReleaseGateCopied(false);
+    setReleaseGateCopyFailed(false);
     setCopiedMemoryId(copied ? memory.id : "");
     setFailedMemoryCopyId(copied ? "" : memory.id);
     setLearningManualCopy(
@@ -1245,6 +1257,30 @@ export function LearningView({
             id: `memory:${memory.id}`,
             title: memory.title,
             body: reportText,
+          },
+    );
+  }
+
+  async function copyFeedbackImprovementReleaseGate() {
+    const copied = await copyTextToClipboard(
+      feedbackImprovementReleaseGateCommand,
+    );
+
+    setReleaseGateCopied(copied);
+    setReleaseGateCopyFailed(!copied);
+    setFilterLinkCopied(false);
+    setFilterLinkCopyFailed(false);
+    setFeedbackImprovementLowConfidenceLinkCopied(false);
+    setFeedbackImprovementLowConfidenceLinkCopyFailed(false);
+    setFilteredReportCopied(false);
+    setFilteredReportCopyFailed(false);
+    setLearningManualCopy(
+      copied
+        ? null
+        : {
+            id: "feedback-improvement-release-gate",
+            title: "피드백 개선 큐 release gate",
+            body: feedbackImprovementReleaseGateCommand,
           },
     );
   }
@@ -1262,6 +1298,8 @@ export function LearningView({
     setFilterLinkCopyFailed(!copied);
     setFeedbackImprovementLowConfidenceLinkCopied(false);
     setFeedbackImprovementLowConfidenceLinkCopyFailed(false);
+    setReleaseGateCopied(false);
+    setReleaseGateCopyFailed(false);
     setLearningManualCopy(
       copied
         ? null
@@ -1285,6 +1323,8 @@ export function LearningView({
     setFeedbackImprovementLowConfidenceLinkCopyFailed(!copied);
     setFilterLinkCopied(false);
     setFilterLinkCopyFailed(false);
+    setReleaseGateCopied(false);
+    setReleaseGateCopyFailed(false);
     setLearningManualCopy(
       copied
         ? null
@@ -1313,6 +1353,8 @@ export function LearningView({
     setFeedbackImprovementLowConfidenceLinkCopyFailed(false);
     setFilteredReportCopied(false);
     setFilteredReportCopyFailed(false);
+    setReleaseGateCopied(false);
+    setReleaseGateCopyFailed(false);
     setCopiedMemoryId("");
     setFailedMemoryCopyId("");
     setLearningManualCopy(null);
@@ -2080,6 +2122,17 @@ export function LearningView({
                   >
                     검증 저장본 보기
                   </Link>
+                  <button
+                    type="button"
+                    className={`${secondaryButtonClass} w-full`}
+                    onClick={copyFeedbackImprovementReleaseGate}
+                  >
+                    {releaseGateCopied
+                      ? "Release gate 복사됨"
+                      : releaseGateCopyFailed
+                        ? "Release gate 복사 실패"
+                        : "Release gate 복사"}
+                  </button>
                   <Link href="/" className={`${secondaryButtonClass} w-full`}>
                     Dashboard로 돌아가기
                   </Link>
@@ -2091,6 +2144,8 @@ export function LearningView({
           learningManualCopy?.id === "filtered-report" ||
           learningManualCopy?.id ===
             "feedback-improvement-low-confidence-link" ||
+          learningManualCopy?.id ===
+            "feedback-improvement-release-gate" ||
           learningManualCopy?.id ===
             "feedback-improvement-low-confidence-studio" ? (
             <div

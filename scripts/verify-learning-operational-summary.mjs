@@ -34,8 +34,9 @@ function buildLearningFeedbackEvidenceText() {
     "- Learning renders readiness, low-confidence review, manual memory, and Studio handoff steps in order.",
     "- Feedback-improvement queue metrics stay compact on mobile and desktop.",
     "- Queue actions are grouped into review, Studio, and record steps.",
+    "- Queue record actions include release evidence and release-candidate command copy.",
     "- Low-confidence feedback rules use a separate Studio validation draft and Library filter.",
-    "- Queue reports include condition links, validation Library links, metrics, actions, and memory details.",
+    "- Queue reports include condition links, validation Library links, metrics, release gate commands, actions, and memory details.",
     "- Clipboard and Studio draft failures keep manual copy fallbacks in the current panel.",
   ].join("\n");
 }
@@ -139,8 +140,8 @@ assertMatches(
   "Learning filtered memory report copy should pass the current origin for absolute filter links",
 );
 assertMatches(
-  /const feedbackImprovementValidationLibraryHref =[\s\S]*?studioSource=learning-feedback-improvement&studioVariant=learning-low-confidence-validation[\s\S]*?function buildFeedbackImprovementQueueReportText\(\{[\s\S]*?baseUrl[\s\S]*?filteredMemories[\s\S]*?query[\s\S]*?reviewFilter[\s\S]*?scope[\s\S]*?sortMode[\s\S]*?totalMemories[\s\S]*?formatAbsoluteInternalHref\(filterHref, baseUrl\)[\s\S]*?const lowConfidenceHref = getLearningHref\(\{[\s\S]*?query: "feedback-improvement"[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?sortMode: "confidence-asc"[\s\S]*?formatAbsoluteInternalHref\(lowConfidenceHref, baseUrl\)[\s\S]*?formatAbsoluteInternalHref\([\s\S]*?feedbackImprovementValidationLibraryHref[\s\S]*?baseUrl[\s\S]*?# 피드백 개선 메모리 큐 리포트[\s\S]*?## 큐 조건[\s\S]*?조건 링크: \$\{absoluteFilterHref\}[\s\S]*?낮은 신뢰도 큐: \$\{absoluteLowConfidenceHref\}[\s\S]*?저신뢰도 검증 저장본: \$\{absoluteValidationLibraryHref\}[\s\S]*?## 큐 지표[\s\S]*?낮은 신뢰도: \$\{lowConfidenceCount\}개[\s\S]*?포함 scope:[\s\S]*?## 운영 액션[\s\S]*?Studio 템플릿과 외부 AI handoff 체크리스트[\s\S]*?Library 피드백을 추가 수집[\s\S]*?## 메모리/,
-  "Learning feedback-improvement queue report should include queue condition, low-confidence queue link, validation Library link, metrics, operating actions, and memories",
+  /const feedbackImprovementValidationLibraryHref =[\s\S]*?studioSource=learning-feedback-improvement&studioVariant=learning-low-confidence-validation[\s\S]*?const feedbackImprovementReleaseGateCommand =[\s\S]*?npm run verify:evidence -- --out-dir docs\/evidence\\nnpm run verify:release-candidate[\s\S]*?function buildFeedbackImprovementQueueReportText\(\{[\s\S]*?baseUrl[\s\S]*?filteredMemories[\s\S]*?query[\s\S]*?reviewFilter[\s\S]*?scope[\s\S]*?sortMode[\s\S]*?totalMemories[\s\S]*?formatAbsoluteInternalHref\(filterHref, baseUrl\)[\s\S]*?const lowConfidenceHref = getLearningHref\(\{[\s\S]*?query: "feedback-improvement"[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?sortMode: "confidence-asc"[\s\S]*?formatAbsoluteInternalHref\(lowConfidenceHref, baseUrl\)[\s\S]*?formatAbsoluteInternalHref\([\s\S]*?feedbackImprovementValidationLibraryHref[\s\S]*?baseUrl[\s\S]*?# 피드백 개선 메모리 큐 리포트[\s\S]*?## 큐 조건[\s\S]*?조건 링크: \$\{absoluteFilterHref\}[\s\S]*?낮은 신뢰도 큐: \$\{absoluteLowConfidenceHref\}[\s\S]*?저신뢰도 검증 저장본: \$\{absoluteValidationLibraryHref\}[\s\S]*?## 큐 지표[\s\S]*?낮은 신뢰도: \$\{lowConfidenceCount\}개[\s\S]*?포함 scope:[\s\S]*?## 운영 액션[\s\S]*?Studio 템플릿과 외부 AI handoff 체크리스트[\s\S]*?Library 피드백을 추가 수집[\s\S]*?release evidence를 새로 만들고 release-candidate gate[\s\S]*?## 검증 명령[\s\S]*?feedbackImprovementReleaseGateCommand[\s\S]*?## 메모리/,
+  "Learning feedback-improvement queue report should include queue condition, low-confidence queue link, validation Library link, metrics, operating actions, release gate commands, and memories",
 );
 assertMatches(
   /async function copyFilteredMemoryReport\(\)[\s\S]*?const reportPayload = \{[\s\S]*?baseUrl: typeof window === "undefined" \? undefined : window\.location\.origin[\s\S]*?filteredMemories: filtered[\s\S]*?totalMemories: memories\.length[\s\S]*?const reportText = feedbackImprovementFilterActive[\s\S]*?buildFeedbackImprovementQueueReportText\(reportPayload\)[\s\S]*?buildFilteredMemoryReportText\(reportPayload\)[\s\S]*?title: feedbackImprovementFilterActive[\s\S]*?피드백 개선 메모리 큐[\s\S]*?필터 결과/,
@@ -151,7 +152,11 @@ assertMatches(
   "Learning filter link copy should keep using absolute internal links",
 );
 assertMatches(
-  /const feedbackImprovementFilterActive =[\s\S]*?query\.trim\(\)\.toLowerCase\(\) === "feedback-improvement"[\s\S]*?const feedbackImprovementLowConfidenceHref = getLearningHref\(\{[\s\S]*?query: "feedback-improvement"[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?sortMode: "confidence-asc"[\s\S]*?const feedbackImprovementLowConfidenceMemories = filtered\.filter[\s\S]*?const feedbackImprovementQueueLowConfidenceCount =[\s\S]*?feedbackImprovementLowConfidenceMemories\.length[\s\S]*?const feedbackImprovementQueueScopeCount = trackedScopes\.filter[\s\S]*?async function copyFeedbackImprovementLowConfidenceLink\(\)[\s\S]*?feedbackImprovementLowConfidenceHref[\s\S]*?id: "feedback-improvement-low-confidence-link"[\s\S]*?낮은 신뢰도 큐 링크[\s\S]*?data-testid="learning-feedback-improvement-queue"[\s\S]*?피드백 개선 메모리 큐[\s\S]*?현재 큐[\s\S]*?낮은 신뢰도[\s\S]*?포함 scope[\s\S]*?검토[\s\S]*?href=\{feedbackImprovementLowConfidenceHref\}[\s\S]*?낮은 신뢰도만 보기[\s\S]*?onClick=\{copyFeedbackImprovementLowConfidenceLink\}[\s\S]*?낮은 신뢰도 링크 복사됨[\s\S]*?낮은 신뢰도 링크 복사 실패[\s\S]*?낮은 신뢰도 링크 복사[\s\S]*?onClick=\{copyFilterLink\}[\s\S]*?큐 조건 링크 복사됨[\s\S]*?큐 조건 링크 복사 실패[\s\S]*?큐 조건 링크 복사[\s\S]*?Studio[\s\S]*?onClick=\{openFeedbackImprovementLowConfidenceInStudio\}[\s\S]*?disabled=\{feedbackImprovementQueueLowConfidenceCount === 0\}[\s\S]*?낮은 신뢰도 Studio로[\s\S]*?큐 Studio로 보내기[\s\S]*?기록[\s\S]*?큐 리포트 복사[\s\S]*?href=\{feedbackImprovementValidationLibraryHref\}[\s\S]*?검증 저장본 보기[\s\S]*?Dashboard로 돌아가기/,
+  /async function copyFeedbackImprovementReleaseGate\(\)[\s\S]*?copyTextToClipboard\([\s\S]*?feedbackImprovementReleaseGateCommand[\s\S]*?setReleaseGateCopied\(copied\)[\s\S]*?setReleaseGateCopyFailed\(!copied\)[\s\S]*?setFeedbackImprovementLowConfidenceLinkCopied\(false\)[\s\S]*?setFilteredReportCopied\(false\)[\s\S]*?id: "feedback-improvement-release-gate"[\s\S]*?피드백 개선 큐 release gate[\s\S]*?body: feedbackImprovementReleaseGateCommand/,
+  "Learning feedback-improvement queue should copy release evidence and release-candidate commands with manual fallback",
+);
+assertMatches(
+  /const feedbackImprovementFilterActive =[\s\S]*?query\.trim\(\)\.toLowerCase\(\) === "feedback-improvement"[\s\S]*?const feedbackImprovementLowConfidenceHref = getLearningHref\(\{[\s\S]*?query: "feedback-improvement"[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?sortMode: "confidence-asc"[\s\S]*?const feedbackImprovementLowConfidenceMemories = filtered\.filter[\s\S]*?const feedbackImprovementQueueLowConfidenceCount =[\s\S]*?feedbackImprovementLowConfidenceMemories\.length[\s\S]*?const feedbackImprovementQueueScopeCount = trackedScopes\.filter[\s\S]*?async function copyFeedbackImprovementLowConfidenceLink\(\)[\s\S]*?feedbackImprovementLowConfidenceHref[\s\S]*?id: "feedback-improvement-low-confidence-link"[\s\S]*?낮은 신뢰도 큐 링크[\s\S]*?data-testid="learning-feedback-improvement-queue"[\s\S]*?피드백 개선 메모리 큐[\s\S]*?현재 큐[\s\S]*?낮은 신뢰도[\s\S]*?포함 scope[\s\S]*?검토[\s\S]*?href=\{feedbackImprovementLowConfidenceHref\}[\s\S]*?낮은 신뢰도만 보기[\s\S]*?onClick=\{copyFeedbackImprovementLowConfidenceLink\}[\s\S]*?낮은 신뢰도 링크 복사됨[\s\S]*?낮은 신뢰도 링크 복사 실패[\s\S]*?낮은 신뢰도 링크 복사[\s\S]*?onClick=\{copyFilterLink\}[\s\S]*?큐 조건 링크 복사됨[\s\S]*?큐 조건 링크 복사 실패[\s\S]*?큐 조건 링크 복사[\s\S]*?Studio[\s\S]*?onClick=\{openFeedbackImprovementLowConfidenceInStudio\}[\s\S]*?disabled=\{feedbackImprovementQueueLowConfidenceCount === 0\}[\s\S]*?낮은 신뢰도 Studio로[\s\S]*?큐 Studio로 보내기[\s\S]*?기록[\s\S]*?큐 리포트 복사[\s\S]*?href=\{feedbackImprovementValidationLibraryHref\}[\s\S]*?검증 저장본 보기[\s\S]*?onClick=\{copyFeedbackImprovementReleaseGate\}[\s\S]*?Release gate 복사됨[\s\S]*?Release gate 복사 실패[\s\S]*?Release gate 복사[\s\S]*?Dashboard로 돌아가기/,
   "Learning should expose a feedback-improvement queue panel grouped into review, Studio, and record actions",
 );
 assertMatches(
@@ -175,7 +180,7 @@ assertMatches(
   "Learning manual memory panel should render numbered workflow cards before the input form",
 );
 assertMatches(
-  /data-testid="learning-feedback-improvement-queue"[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-low-confidence-link"[\s\S]*?data-testid="learning-feedback-improvement-queue-manual-copy"[\s\S]*?LearningManualCopyPanel[\s\S]*?!feedbackImprovementFilterActive &&[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?LearningManualCopyPanel/,
+  /data-testid="learning-feedback-improvement-queue"[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-low-confidence-link"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-release-gate"[\s\S]*?data-testid="learning-feedback-improvement-queue-manual-copy"[\s\S]*?LearningManualCopyPanel[\s\S]*?!feedbackImprovementFilterActive &&[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?LearningManualCopyPanel/,
   "Learning feedback-improvement queue should show copy fallback inside the queue and avoid duplicate filter-panel fallback",
 );
 assertMatches(
@@ -230,7 +235,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Learning 피드백 개선 큐는 `01 검토`, `02 Studio`, `03 기록` 단계 카드를 함께 보여줘 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록 순서를 바로 읽게 합니다.",
+  "Learning 피드백 개선 큐는 `01 검토`, `02 Studio`, `03 기록` 단계 카드를 함께 보여줘 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록과 release gate 확인 순서를 바로 읽게 합니다.",
   "README should document the numbered Learning feedback queue workflow cards",
 );
 assertFileIncludes(
@@ -257,6 +262,21 @@ assertFileIncludes(
   readme,
   "피드백 개선 메모리 큐 리포트",
   "README should document Learning feedback improvement queue report",
+);
+assertFileIncludes(
+  readme,
+  "`Release gate 복사`",
+  "README should document Learning feedback improvement release gate copy",
+);
+assertFileIncludes(
+  readme,
+  "release evidence와 release-candidate 명령",
+  "README should document Learning feedback improvement release gate commands",
+);
+assertFileIncludes(
+  readme,
+  "release gate 명령 복사가 실패하면",
+  "README should document Learning feedback improvement release gate copy fallback",
 );
 assertFileIncludes(
   readme,
@@ -350,7 +370,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prd,
-  "`01 검토`, `02 Studio`, `03 기록` 단계 카드로 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록 순서를 먼저 보여준 뒤",
+  "`01 검토`, `02 Studio`, `03 기록` 단계 카드로 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록과 release gate 확인 순서를 먼저 보여준 뒤",
   "PRD should document the numbered Learning feedback queue workflow cards",
 );
 assertFileIncludes(
@@ -377,6 +397,21 @@ assertFileIncludes(
   prd,
   "피드백 개선 메모리 큐 리포트",
   "PRD should document Learning feedback improvement queue report",
+);
+assertFileIncludes(
+  prd,
+  "`Release gate 복사`",
+  "PRD should document Learning feedback improvement release gate copy",
+);
+assertFileIncludes(
+  prd,
+  "release evidence와 release-candidate 명령",
+  "PRD should document Learning feedback improvement release gate commands",
+);
+assertFileIncludes(
+  prd,
+  "release gate 명령 복사가 실패하면",
+  "PRD should document Learning feedback improvement release gate copy fallback",
 );
 assertFileIncludes(
   prd,
@@ -538,7 +573,7 @@ for (const sourceActionLabel of [
 }
 assertFileIncludes(
   devBrief,
-  "Learning 피드백 개선 큐는 `01 검토`, `02 Studio`, `03 기록` 단계 카드를 함께 보여줘 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록 순서를 바로 읽게 함",
+  "Learning 피드백 개선 큐는 `01 검토`, `02 Studio`, `03 기록` 단계 카드를 함께 보여줘 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록과 release gate 확인 순서를 바로 읽게 함",
   "Development brief should document the numbered Learning feedback queue workflow cards",
 );
 assertFileIncludes(

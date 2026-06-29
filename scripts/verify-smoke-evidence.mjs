@@ -18,6 +18,8 @@ const expectedSmokeFiles = [
     patterns: [
       /# Learning Feedback Smoke Evidence/,
       /sourceVariant: learning-low-confidence-validation/,
+      /Queue record actions include release evidence and release-candidate command copy/,
+      /Queue reports include condition links, validation Library links, metrics, release gate commands/,
       /Clipboard and Studio draft failures keep manual copy fallbacks/,
     ],
   },

@@ -658,8 +658,8 @@ assertDataMatches(
 );
 
 assertDataMatches(
-  /function buildSupabaseImportExecutionRequestTemplateManualCopyText\(\{[\s\S]*?templateText: string[\s\S]*?# Prompt AI Studio Supabase Import 실행 요청 템플릿[\s\S]*?## 요청 템플릿 식별[\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?템플릿 길이: \$\{formatJsonLength\(templateText\)\}[\s\S]*?## 실행 gate 요약[\s\S]*?execute: true[\s\S]*?confirmation: RUN_SUPABASE_IMPORT[\s\S]*?includePayload: false[\s\S]*?server gate: SUPABASE_IMPORT_EXECUTION_ENABLED=true[\s\S]*?trusted server-side\/operator execution window only[\s\S]*?## Execute request template[\s\S]*?templateText/,
-  "Data execution request template manual fallback should prepend backup/workspace identity, execute gate, confirmation, payload mode, server gate, and template length",
+  /function buildSupabaseImportExecutionRequestTemplateManualCopyText\(\{[\s\S]*?templateText: string[\s\S]*?# Prompt AI Studio Supabase Import 실행 요청 템플릿[\s\S]*?## 요청 템플릿 식별[\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?템플릿 길이: \$\{formatJsonLength\(templateText\)\}[\s\S]*?## 실행 gate 요약[\s\S]*?execute: true[\s\S]*?confirmation: RUN_SUPABASE_IMPORT[\s\S]*?includePayload: false[\s\S]*?server gate: SUPABASE_IMPORT_EXECUTION_ENABLED=true[\s\S]*?validation gate: API preflight validation must be ok[\s\S]*?trusted server-side\/operator execution window only[\s\S]*?## Execute request template[\s\S]*?templateText/,
+  "Data execution request template manual fallback should prepend backup/workspace identity, execute gate, confirmation, payload mode, server gate, validation gate, and template length",
 );
 
 assertDataMatches(

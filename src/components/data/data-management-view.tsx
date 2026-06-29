@@ -3175,6 +3175,7 @@ function buildSupabaseImportExecutionRequestTemplateManualCopyText({
     "- confirmation: RUN_SUPABASE_IMPORT",
     "- includePayload: false",
     "- server gate: SUPABASE_IMPORT_EXECUTION_ENABLED=true",
+    "- validation gate: API preflight validation must be ok",
     "- context: trusted server-side/operator execution window only",
     "",
     "## Execute request template",

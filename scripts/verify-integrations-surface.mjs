@@ -3290,7 +3290,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Studio 초안 원본 경로는 `#integrations-environment-guide`로 돌아오게 한다.",
+  "Studio 초안 원본 경로는 `#integrations-environment-guide`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시한다.",
   "Development brief should document environment checklist Studio source anchor",
 );
 assertIncludes(
@@ -3325,7 +3325,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며",
+  "Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
   "Development brief should document operator next actions Studio source anchor",
 );
 assertIncludes(
@@ -3340,7 +3340,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Studio 초안 원본 경로는 `#integrations-operator-guide`로 돌아오고",
+  "Studio 초안 원본 경로는 `#integrations-operator-guide`로 돌아오고, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하며",
   "Development brief should document external AI operator guide Studio source anchor",
 );
 assertIncludes(
@@ -3360,7 +3360,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Studio 초안 원본 경로는 `#integrations-mcp-connection`으로 돌아오게 한다.",
+  "Studio 초안 원본 경로는 `#integrations-mcp-connection`으로 돌아오고, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시한다.",
   "Development brief should document MCP runbook Studio source anchor",
 );
 assertIncludes(

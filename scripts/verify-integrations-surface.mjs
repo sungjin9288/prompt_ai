@@ -458,9 +458,9 @@ for (const requiredText of [
   "브라우저에서 /integrations가 열리고 refine API tester가 응답합니다.",
   "Chrome extension 또는 MCP client 중 하나를 먼저 연결하고 smoke test를 실행합니다.",
   "Chrome handoff 또는 MCP refine_prompt 결과에 reviewRequired가 포함됩니다.",
-  "외부 AI에 붙여넣기 전에 Chrome, MCP, Learning feedback smoke evidence 명령을 실행합니다.",
+  "외부 AI에 붙여넣기 전에 통합 smoke preflight로 세 evidence packet을 갱신합니다.",
   "Chrome, MCP, Learning feedback smoke evidence 파일이 모두 생성됩니다.",
-  "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md; npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md; npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
+  "npm run smoke:integrations",
   "정제 결과를 그대로 자동 전송하지 않고, 복사 전에 최종 prompt package를 검토합니다.",
   "대상 AI, 언어 전략, 가정, 누락 맥락을 확인한 handoff package만 전달합니다.",
   "외부 AI 실행 결과를 요약하고, 저장 동의가 있을 때만 feedback inbox에 남깁니다.",
@@ -2830,6 +2830,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "`npm run smoke:integrations` 로컬 smoke evidence 저장",
+  "README should document operator next actions integrated smoke command",
+);
+assertIncludes(
+  readme,
   "Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 보여줍니다.",
   "README should document operator next actions actual evidence fields",
 );
@@ -3155,6 +3160,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "`npm run smoke:integrations` 로컬 smoke evidence 저장",
+  "PRD should document operator next actions integrated smoke command",
+);
+assertIncludes(
+  prd,
   "Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 확인하게 해야 한다.",
   "PRD should document operator next actions actual evidence fields",
 );
@@ -3437,6 +3447,11 @@ assertIncludes(
   developmentBrief,
   "Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
   "Development brief should document operator next actions Studio source anchor",
+);
+assertIncludes(
+  developmentBrief,
+  "`npm run smoke:integrations` 로컬 smoke evidence 저장",
+  "Development brief should document operator next actions integrated smoke command",
 );
 assertIncludes(
   developmentBrief,

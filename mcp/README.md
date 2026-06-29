@@ -187,6 +187,13 @@ equivalent when a client setup needs the absolute path:
 node /Users/sungjin/dev/personal/prompt-ai-studio/mcp/prompt-ai-studio.mjs --self-test
 ```
 
+Add `-- --out path/to/mcp-smoke.md` when the smoke evidence packet should be
+saved as a local operator artifact:
+
+```bash
+npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md
+```
+
 `npm run verify:integrations` also runs a temp feedback inbox check: it calls
 `save_execution_feedback` with `confirmSave: true`, reads the JSONL record back,
 and verifies the same parser used by the Integrations feedback inbox can find

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { randomUUID } from "node:crypto";
-import { appendFile, mkdir } from "node:fs/promises";
+import { appendFile, mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
@@ -464,6 +464,53 @@ function restoreEnvValue(name, value) {
   }
 
   process.env[name] = value;
+}
+
+function getOutputPath(args) {
+  const outIndex = args.indexOf("--out");
+
+  if (outIndex === -1) {
+    return undefined;
+  }
+
+  const outputPath = args[outIndex + 1];
+
+  if (!outputPath || outputPath.startsWith("--")) {
+    throw new Error("Use --out with a file path.");
+  }
+
+  return outputPath;
+}
+
+function buildMcpSelfTestEvidenceText() {
+  return [
+    "# MCP Bridge Smoke Evidence",
+    "",
+    `- server: ${SERVER_NAME}`,
+    `- version: ${SERVER_VERSION}`,
+    `- protocolVersion: ${PROTOCOL_VERSION}`,
+    `- tools: ${defaultContextProfile.tools.join(", ")}`,
+    "",
+    "## Verified contract",
+    "- initialize returns the expected MCP protocol version and tool capability.",
+    "- tools/list exposes context, refine, handoff, and feedback tools.",
+    "- get_context_profile stays read-only and review-required.",
+    "- refine_prompt and create_handoff_package return review-required handoff packages.",
+    "- MCP operation defaults are applied when tool arguments omit target, domain, goal, or source URL.",
+    "- Local API unavailability falls back to a review-required MCP package instead of an empty handoff.",
+    "- save_execution_feedback does not write unless confirmSave is true.",
+    "- This smoke does not contact GPT, Claude, Codex, Gemini, OpenAI, or Supabase.",
+  ].join("\n");
+}
+
+async function writeMcpSelfTestEvidence(outputPath) {
+  if (!outputPath) {
+    return;
+  }
+
+  await mkdir(dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, `${buildMcpSelfTestEvidenceText()}\n`, "utf8");
+  process.stdout.write(`MCP bridge smoke evidence written to ${outputPath}\n`);
 }
 
 async function callRefineApi(payload, baseUrl = getBaseUrl()) {
@@ -931,7 +978,7 @@ async function runStdioServer() {
   }
 }
 
-async function runSelfTest() {
+async function runSelfTest(outputPath) {
   const mockRefineClient = async (payload) => ({
     audit: {
       reviewRequired: true,
@@ -1195,21 +1242,22 @@ async function runSelfTest() {
     throw new Error("invalid tools/call self-test failed");
   }
 
+  await writeMcpSelfTestEvidence(outputPath);
   process.stdout.write("Prompt AI Studio MCP bridge self-test passed.\n");
 }
 
-if (process.argv.includes("--self-test")) {
-  runSelfTest().catch((error) => {
-    process.stderr.write(
-      `${error instanceof Error ? error.message : "MCP bridge self-test failed."}\n`,
-    );
-    process.exitCode = 1;
-  });
-} else {
-  runStdioServer().catch((error) => {
-    process.stderr.write(
-      `${error instanceof Error ? error.message : "MCP bridge crashed."}\n`,
-    );
-    process.exitCode = 1;
-  });
+async function main() {
+  if (process.argv.includes("--self-test")) {
+    await runSelfTest(getOutputPath(process.argv.slice(2)));
+    return;
+  }
+
+  await runStdioServer();
 }
+
+main().catch((error) => {
+  process.stderr.write(
+    `${error instanceof Error ? error.message : "Prompt AI Studio MCP bridge failed."}\n`,
+  );
+  process.exitCode = 1;
+});

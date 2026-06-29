@@ -50,6 +50,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /-- --out path\/to\/mcp-smoke\.md/,
+  "README should document the MCP smoke evidence output path",
+);
+assert.match(
+  readme,
   /smoke:chrome-extension` checks the unpacked Chrome extension manifest,\s+background service worker, popup workflow, local-only URL guard, session restore,\s+and evidence fallback before loading it in Chrome/,
   "README should document the local Chrome extension smoke command",
 );
@@ -195,8 +200,8 @@ assert.match(
 );
 assert.match(
   readme,
-  /MCP부터 시작할 때는 `npm run smoke:mcp`로 로컬 bridge 계약을 먼저 확인/,
-  "README should route MCP next-step smoke through npm run smoke:mcp",
+  /MCP부터 시작할 때는 `npm run smoke:mcp`로 로컬 bridge 계약을 먼저 확인[\s\S]*?npm run smoke:mcp -- --out docs\/evidence\/mcp-bridge-smoke\.md/,
+  "README should route MCP next-step smoke through npm run smoke:mcp with evidence output",
 );
 assert.match(
   readme,

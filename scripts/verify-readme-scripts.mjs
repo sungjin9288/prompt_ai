@@ -130,8 +130,8 @@ assert.match(
 );
 assert.match(
   readme,
-  /Confirm the evidence includes git branch, commit, working tree state, and\s+changed file count for the grouped change set/,
-  "README release checklist should require evidence git provenance",
+  /Confirm the evidence includes git branch, commit, working tree state, and\s+changed file count captured before the grouped commit is created/,
+  "README release checklist should require pre-commit evidence git provenance",
 );
 assert.match(
   readme,
@@ -296,8 +296,8 @@ assert.match(
 );
 assert.match(
   evidenceReadme,
-  /git provenance with branch, commit, working tree state, and changed file count/,
-  "docs/evidence README should require git provenance fields",
+  /git provenance with branch, commit, working tree state, and changed file count\s+captured before the grouped commit is created/,
+  "docs/evidence README should require pre-commit git provenance fields",
 );
 assert.match(
   evidenceReadme,

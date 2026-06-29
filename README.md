@@ -567,7 +567,7 @@ terms from returning.
       check, including `verify:manifest`, `verify:docs`, `verify:secrets`,
       `lint`, and `build`.
 - [ ] Confirm the evidence includes git branch, commit, working tree state, and
-      changed file count for the grouped change set.
+      changed file count captured before the grouped commit is created.
 - [ ] Before the first grouped commit, run `npm run verify:repo-boundary` and
       confirm this project is the git top-level at
       `/Users/sungjin/dev/personal/prompt-ai-studio`, not a loose untracked

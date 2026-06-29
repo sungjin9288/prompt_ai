@@ -20,6 +20,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /git provenance with branch, commit, working tree state, and changed file count\s+captured before the grouped commit is created/,
+  "docs/evidence README should document pre-commit git provenance.",
+);
+assert.match(
+  readme,
   /Never paste raw OpenAI keys, Supabase keys, service-role values, or tokens/,
   "docs/evidence README should document secret handling.",
 );

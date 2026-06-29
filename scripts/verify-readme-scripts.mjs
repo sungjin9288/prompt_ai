@@ -115,6 +115,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /verify:navigation-href` checks that shared internal route helpers reject\s+external or protocol-relative URLs, preserve path\/query\/hash, and format copy\s+links through normalized internal hrefs/,
+  "README should document the navigation href verification scope",
+);
+assert.match(
+  readme,
   /It also checks that `\.env\.example`,\s+runtime readiness, and the operator-gated OpenAI next step stay aligned/,
   "README should document the OpenAI operator readiness verification scope",
 );

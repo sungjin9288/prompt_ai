@@ -24,6 +24,12 @@ export const verificationChecks = [
     scriptName: "verify:app-shell",
   },
   {
+    args: ["run", "verify:navigation-href"],
+    command: "npm",
+    label: "Navigation href safety contract",
+    scriptName: "verify:navigation-href",
+  },
+  {
     args: ["run", "verify:build-stability"],
     command: "npm",
     label: "Build stability guard",

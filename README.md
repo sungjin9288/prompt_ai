@@ -403,6 +403,7 @@ npm run verify:integrations
 npm run verify:library-summary
 npm run verify:learning-summary
 npm run verify:manifest
+npm run verify:navigation-href
 npm run verify:openai-comparison
 npm run verify:openai-fallback
 npm run verify:prompt-package
@@ -487,6 +488,9 @@ include the current filter condition as an absolute URL and keep filter-link
 copy fallback coverage.
 `npm run verify:manifest` checks that the shared verification manifest matches
 package scripts and runs first inside `npm run verify`.
+`npm run verify:navigation-href` checks that shared internal route helpers reject
+external or protocol-relative URLs, preserve path/query/hash, and format copy
+links through normalized internal hrefs.
 `npm run verify:openai-fallback` checks that prompt generation stays on the
 local builder when `OPENAI_API_KEY` is absent and that the status route reports
 local mode without exposing a model value. It also checks that `.env.example`,

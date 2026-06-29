@@ -1,12 +1,9 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { releaseCandidateChecks } from "./lib/release-candidate-checks.mjs";
 import { verificationChecks } from "./lib/verification-checks.mjs";
 
 const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
-const releaseCandidateScript = readFileSync(
-  "scripts/verify-release-candidate.mjs",
-  "utf8",
-);
 const scripts = packageJson.scripts || {};
 const releaseCandidateScripts = [
   "verify:repo-boundary",
@@ -56,11 +53,22 @@ assert.equal(
   "verify:manifest should run first so manifest drift fails early",
 );
 
-for (const scriptName of releaseCandidateScripts) {
-  assert.match(
-    releaseCandidateScript,
-    new RegExp(`args: \\["run", "${scriptName.replace(":", "\\:")}"\\]`),
-    `verify:release-candidate should include ${scriptName}`,
+assert.deepEqual(
+  releaseCandidateChecks.map((check) => check.scriptName),
+  releaseCandidateScripts,
+  "verify:release-candidate should keep the required release gate checks",
+);
+
+for (const check of releaseCandidateChecks) {
+  assert.equal(
+    check.command,
+    "npm",
+    `${check.label} release gate check should run through npm`,
+  );
+  assert.deepEqual(
+    check.args,
+    ["run", check.scriptName],
+    `${check.label} release gate args should match scriptName`,
   );
 }
 

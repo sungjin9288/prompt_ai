@@ -1,32 +1,12 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import {
+  releaseCandidateChecks,
+  releaseRootTempPaths,
+} from "./lib/release-candidate-checks.mjs";
 
-const checks = [
-  {
-    args: ["run", "verify:repo-boundary"],
-    command: "npm",
-    label: "Repository boundary",
-  },
-  {
-    args: ["run", "verify:evidence-hygiene"],
-    command: "npm",
-    label: "Evidence hygiene",
-  },
-  {
-    args: ["run", "verify:smoke-evidence"],
-    command: "npm",
-    label: "Local smoke evidence",
-  },
-  {
-    args: ["run", "verify:secrets"],
-    command: "npm",
-    label: "Secret safety",
-  },
-];
-const rootTempPaths = [".prompt-ai-studio", ".playwright-cli"];
-
-for (const check of checks) {
+for (const check of releaseCandidateChecks) {
   const result = spawnSync(check.command, check.args, {
     cwd: process.cwd(),
     encoding: "utf8",
@@ -44,7 +24,7 @@ for (const check of checks) {
   }
 }
 
-const existingTempPaths = rootTempPaths.filter((path) => existsSync(path));
+const existingTempPaths = releaseRootTempPaths.filter((path) => existsSync(path));
 
 assert.deepEqual(
   existingTempPaths,

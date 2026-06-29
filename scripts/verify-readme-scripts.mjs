@@ -90,6 +90,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /summary records git branch\/commit provenance, working tree state, and changed\s+file count for the local preflight packet set/,
+  "README should document integrated smoke summary git provenance",
+);
+assert.match(
+  readme,
   /production build lock/,
   "README should mention the Next.js build lock limitation",
 );

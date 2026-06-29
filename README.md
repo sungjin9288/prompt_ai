@@ -453,7 +453,9 @@ report links, and manual copy fallback contract. Add
 evidence packet.
 `npm run smoke:integrations` writes the Chrome, MCP bridge, MCP client, and
 Learning smoke evidence packets plus `integrations-smoke-summary.md` to
-`output/smoke` in one preflight pass before any actual external AI handoff.
+`output/smoke` in one preflight pass before any actual external AI handoff. The
+summary records git branch/commit provenance, working tree state, and changed
+file count for the local preflight packet set.
 `npm run verify` and `npm run verify:evidence` use the same verification check
 manifest so the executed gate and the handoff evidence stay aligned. Evidence
 records include both the npm script name and the resolved command.

@@ -35,6 +35,9 @@ Run `npm run smoke:integrations` to refresh all local smoke packets and
 
 ## Actual Evidence Fields
 
+Integrated summary should record: command, gate, external service boundary,
+git branch, commit, working tree state, and changed file count.
+
 Chrome loaded extension evidence should record: command, status, external
 service boundary, runtime, source, review gate, target AI, session, evidence
 result, and feedback record.

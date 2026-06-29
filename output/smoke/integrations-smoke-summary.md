@@ -3,6 +3,10 @@
 - command: npm run smoke:integrations
 - gate: local packets pass before external AI delivery
 - external services: not contacted
+- branch: main
+- commit: 1b5903a
+- workingTree: dirty
+- changedFiles: 5
 
 ## Packets
 - Chrome extension: output/smoke/chrome-extension-smoke.md

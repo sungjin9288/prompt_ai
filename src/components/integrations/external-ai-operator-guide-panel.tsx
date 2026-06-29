@@ -14,7 +14,7 @@ import { writeStudioDraft } from "@/lib/studio/draft";
 
 type ExternalAiOperatorStep = {
   action: string;
-  command: string;
+  commands: string[];
   detail: string;
 };
 
@@ -32,27 +32,37 @@ type McpDefaultExample = {
 const externalAiOperatorSteps = [
   {
     action: "로컬 앱 실행",
-    command: "npm run dev",
+    commands: ["npm run dev"],
     detail: "http://localhost:3000/integrations에서 연결 화면을 엽니다.",
   },
   {
     action: "연결 표면 1개 선택",
-    command: "Chrome extension 또는 MCP client",
+    commands: ["Chrome extension 또는 MCP client"],
     detail: "처음에는 Chrome이나 Codex MCP 중 하나만 연결해 smoke test를 줄입니다.",
   },
   {
     action: "review-required 결과 확인",
-    command: "refine_prompt 또는 Refine selected text",
+    commands: ["refine_prompt 또는 Refine selected text"],
     detail: "handoff package를 읽고 target AI, 가정, 누락 맥락을 확인합니다.",
   },
   {
+    action: "로컬 smoke evidence 저장",
+    commands: [
+      "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
+      "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
+      "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+    ],
+    detail:
+      "외부 AI로 넘기기 전에 Chrome, MCP, Learning feedback 증거 파일을 남깁니다.",
+  },
+  {
     action: "외부 AI에 수동 전달",
-    command: "Copy 후 GPT/Claude/Codex/Gemini에 붙여넣기",
+    commands: ["Copy 후 GPT/Claude/Codex/Gemini에 붙여넣기"],
     detail: "자동 전송은 하지 않고 사람이 확인한 package만 전달합니다.",
   },
   {
     action: "실행 결과 저장 판단",
-    command: "save_execution_feedback confirmSave: true",
+    commands: ["save_execution_feedback confirmSave: true"],
     detail: "의미 있는 결과만 rating, summary, notes와 함께 feedback inbox에 저장합니다.",
   },
 ] satisfies ExternalAiOperatorStep[];
@@ -142,7 +152,7 @@ function buildExternalAiOperatorGuidePackage() {
     ...externalAiOperatorSteps.flatMap((step, index) => [
       `### ${index + 1}. ${step.action}`,
       "",
-      `- Command: ${step.command}`,
+      ...step.commands.map((command) => `- Command: ${command}`),
       `- Detail: ${step.detail}`,
       "",
     ]),
@@ -226,8 +236,15 @@ function ExternalAiOperatorStepItem({
         <span className="block text-sm font-semibold text-foreground">
           {step.action}
         </span>
-        <span className="mt-1 block break-words font-mono text-xs text-accent">
-          {step.command}
+        <span className="mt-1 grid gap-1">
+          {step.commands.map((command) => (
+            <span
+              className="block break-words font-mono text-xs text-accent"
+              key={command}
+            >
+              {command}
+            </span>
+          ))}
         </span>
         <span className="mt-2 block text-sm leading-6 text-muted">
           {step.detail}

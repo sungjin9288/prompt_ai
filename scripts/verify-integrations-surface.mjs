@@ -560,6 +560,7 @@ for (const requiredText of [
   '"use client"',
   "외부 AI 운영 가이드",
   "ExternalAiOperatorStep",
+  "commands: string[]",
   "McpDefaultExample",
   "ExternalAiOperatorSummary",
   "TargetAiDeliveryRule",
@@ -595,6 +596,11 @@ for (const requiredText of [
   "로컬 앱 실행",
   "연결 표면 1개 선택",
   "review-required 결과 확인",
+  "로컬 smoke evidence 저장",
+  "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
+  "npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md",
+  "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+  "외부 AI로 넘기기 전에 Chrome, MCP, Learning feedback 증거 파일을 남깁니다.",
   "외부 AI에 수동 전달",
   "실행 결과 저장 판단",
   "자동화는 정제까지, 외부 전달은 검토 후 복사.",
@@ -657,7 +663,7 @@ assert.match(
 );
 assert.match(
   externalAiOperatorGuidePanel,
-  /function ExternalAiOperatorStepItem[\s\S]*?index: number[\s\S]*?step: ExternalAiOperatorStep[\s\S]*?String\(index \+ 1\)\.padStart\(2, "0"\)[\s\S]*?step\.action[\s\S]*?step\.command[\s\S]*?step\.detail[\s\S]*?function ExternalAiOperatorStepList\(\)[\s\S]*?externalAiOperatorSteps\.map[\s\S]*?<ExternalAiOperatorStepItem[\s\S]*?index=\{index\}[\s\S]*?key=\{step\.action\}[\s\S]*?step=\{step\}[\s\S]*?<ExternalAiOperatorStepList \/>/,
+  /function ExternalAiOperatorStepItem[\s\S]*?index: number[\s\S]*?step: ExternalAiOperatorStep[\s\S]*?String\(index \+ 1\)\.padStart\(2, "0"\)[\s\S]*?step\.action[\s\S]*?step\.commands\.map[\s\S]*?command[\s\S]*?step\.detail[\s\S]*?function ExternalAiOperatorStepList\(\)[\s\S]*?externalAiOperatorSteps\.map[\s\S]*?<ExternalAiOperatorStepItem[\s\S]*?index=\{index\}[\s\S]*?key=\{step\.action\}[\s\S]*?step=\{step\}[\s\S]*?<ExternalAiOperatorStepList \/>/,
   "External AI operator guide should render the execution steps through a dedicated step list",
 );
 assert.match(
@@ -2495,6 +2501,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "로컬 smoke evidence 저장, 외부 AI 수동 전달, confirmSave 피드백 저장 판단 순서",
+  "README should document external AI operator guide smoke evidence step",
+);
+assertIncludes(
+  readme,
   "운영 가이드 복사",
   "README should document external AI operator guide copy",
 );
@@ -2810,7 +2821,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 외부 AI 운영 가이드는 운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여줘야 한다.",
+  "Integrations 외부 AI 운영 가이드는 운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여주고, 외부 AI 전달 전 로컬 smoke evidence 저장 단계를 포함해야 한다.",
   "PRD should document external AI operator guide summary metrics",
 );
 assertIncludes(
@@ -2932,6 +2943,11 @@ assertIncludes(
   developmentBrief,
   "운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여주고",
   "Development brief should document external AI operator guide summary metrics",
+);
+assertIncludes(
+  developmentBrief,
+  "로컬 smoke evidence 저장, 외부 AI 수동 전달, confirmSave 피드백 저장 판단 순서",
+  "Development brief should document external AI operator guide smoke evidence step",
 );
 assertIncludes(
   developmentBrief,

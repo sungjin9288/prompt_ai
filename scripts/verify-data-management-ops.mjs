@@ -1862,6 +1862,118 @@ assert.deepEqual(
   "Supabase importer runner should stop at the first failed insert and keep the completed row count",
 );
 
+const mismatchedPlanInsertCalls = [];
+const mismatchedPlanResult = await runSupabaseImportExecutionPlan(
+  {
+    archiveTraceFields: [],
+    batches: [
+      {
+        dependency: "workspace",
+        order: 1,
+        rows: [
+          {
+            localId: "workspace-local",
+            payload: { id: validWorkspaceId, name: "Validated workspace" },
+            resolvedId: validWorkspaceId,
+            source: "test",
+          },
+        ],
+        table: "workspaces",
+      },
+      {
+        dependency: "prompt asset",
+        order: 2,
+        rows: [
+          {
+            localId: "prompt-local",
+            payload: {
+              id: validPromptId,
+              title: "Validated prompt",
+              workspace_id: validWorkspaceId,
+            },
+            resolvedId: validPromptId,
+            source: "test",
+          },
+          {
+            localId: "version-local",
+            payload: {
+              id: validVersionId,
+              prompt_asset_id: validPromptId,
+              workspace_id: validWorkspaceId,
+            },
+            resolvedId: validVersionId,
+            source: "test",
+          },
+        ],
+        table: "prompt_assets",
+      },
+    ],
+    generatedUuidCount: 0,
+    ownerUserId: validOwnerUserId,
+    totalRows: 3,
+    unresolvedPendingReferences: [],
+    uuidMap: {},
+    workspaceId: validWorkspaceId,
+  },
+  {
+    async insertRows(request) {
+      mismatchedPlanInsertCalls.push({
+        order: request.order,
+        rows: request.rows.length,
+        table: request.table,
+      });
+
+      if (request.table === "prompt_assets") {
+        return { insertedRows: 1 };
+      }
+
+      return { insertedRows: request.rows.length };
+    },
+  },
+);
+
+assert.deepEqual(
+  normalizePlain({
+    completedRows: mismatchedPlanResult.completedRows,
+    failedTable: mismatchedPlanResult.failedTable,
+    insertCalls: mismatchedPlanInsertCalls,
+    status: mismatchedPlanResult.status,
+    tableResults: mismatchedPlanResult.tableResults.map((tableResult) => ({
+      insertedRows: tableResult.insertedRows,
+      note: tableResult.note || "",
+      order: tableResult.order,
+      status: tableResult.status,
+      table: tableResult.table,
+    })),
+  }),
+  {
+    completedRows: 2,
+    failedTable: "prompt_assets",
+    insertCalls: [
+      { order: 1, rows: 1, table: "workspaces" },
+      { order: 2, rows: 2, table: "prompt_assets" },
+    ],
+    status: "failed",
+    tableResults: [
+      {
+        insertedRows: 1,
+        note: "",
+        order: 1,
+        status: "inserted",
+        table: "workspaces",
+      },
+      {
+        insertedRows: 1,
+        note: "Inserted row count 1 did not match expected 2.",
+        order: 2,
+        status: "failed",
+        table: "prompt_assets",
+      },
+    ],
+  },
+  "Supabase importer runner should fail when inserted row count differs from the requested row count",
+);
+
 assert.throws(
   () =>
     createSupabaseRestImportAdapter({

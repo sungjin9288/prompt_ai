@@ -488,6 +488,8 @@ runtime readiness, and the operator-gated OpenAI next step stay aligned.
 `npm run verify:openai-comparison` builds the same local prompt fixture used for
 OpenAI rollout checks, keeps the default run offline, and documents the
 `OPENAI_API_KEY` plus `OPENAI_COMPARISON_LIVE=1` gate for a live comparison.
+Add `-- --out path/to/openai-comparison.md` when the comparison packet should be
+saved as an operator evidence artifact.
 `npm run verify:prompt-package` checks that the Target AI handoff package keeps
 its copy-ready prompt, quality review, missing context, and operator notes.
 `npm run verify:profile-company` checks that Profile and Company keep the
@@ -565,7 +567,9 @@ terms from returning.
   operator가 넣기 전에는 `npm run verify:openai-fallback`으로 local fallback
   계약을 확인합니다. key를 넣은 뒤에는
   `OPENAI_COMPARISON_LIVE=1 npm run verify:openai-comparison`으로 같은 입력의
-  로컬 fallback과 OpenAI 보강 결과를 비교합니다.
+  로컬 fallback과 OpenAI 보강 결과를 비교합니다. 증빙 파일이 필요하면
+  `-- --out docs/evidence/openai-comparison-live.md`를 붙여 같은 comparison
+  packet을 저장합니다.
 - Supabase Postgres 저장소와 백업 JSON importer 구현: Supabase project,
   service-role server 환경, RLS smoke 기준이 준비된 뒤 write path를 엽니다.
 - 문서 업로드 저장, server-side embedding, pgvector 검색 실행 경로 구현:

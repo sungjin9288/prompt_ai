@@ -1,9 +1,32 @@
 import assert from "node:assert/strict";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
 
 const liveComparisonEnabled = process.env.OPENAI_COMPARISON_LIVE === "1";
 const savedApiKey = process.env["OPENAI_API_KEY"];
 const savedModel = process.env["OPENAI_MODEL"];
+
+function getOutputPath(args) {
+  const outIndex = args.indexOf("--out");
+
+  if (outIndex === -1) {
+    return null;
+  }
+
+  const outputPath = args[outIndex + 1];
+
+  assert.ok(outputPath, "--out requires a file path");
+  assert.equal(
+    args.length,
+    outIndex + 2,
+    "verify:openai-comparison only accepts --out <file>",
+  );
+
+  return outputPath;
+}
+
+const outputPath = getOutputPath(process.argv.slice(2));
 
 if (!liveComparisonEnabled) {
   delete process.env["OPENAI_API_KEY"];
@@ -56,6 +79,15 @@ function buildComparisonPacket({ localPrompt, result }) {
   ].join("\n");
 }
 
+function writeComparisonPacket(outputPath, comparisonPacket) {
+  if (!outputPath) {
+    return;
+  }
+
+  mkdirSync(dirname(outputPath), { recursive: true });
+  writeFileSync(outputPath, `${comparisonPacket}\n`, "utf8");
+}
+
 try {
   const {
     createPromptPackage,
@@ -97,7 +129,12 @@ try {
     assert.equal(savedApiKey ? process.env["OPENAI_API_KEY"] : undefined, undefined);
   }
 
+  writeComparisonPacket(outputPath, comparisonPacket);
+
   console.log(comparisonPacket);
+  if (outputPath) {
+    console.log(`OpenAI comparison smoke evidence written to ${outputPath}.`);
+  }
   console.log("OpenAI comparison smoke verification passed.");
 } finally {
   if (savedApiKey === undefined) {

@@ -154,6 +154,11 @@ const mcpSmokeRunbookSteps = [
   "Verify the saved record in the MCP feedback inbox API or the Integrations feedback inbox panel.",
 ];
 
+const mcpEvidenceTrace = [
+  "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
+  "Keep local-smoke-evidence before target-ai-handoff.",
+] satisfies string[];
+
 const mcpFeedbackInboxApiChecks = [
   "/api/integrations/mcp-feedback?targetAI=claude&rating=positive",
   "/api/integrations/mcp-feedback?targetAI=codex&rating=positive",
@@ -347,6 +352,7 @@ function buildMcpEndToEndSmokeRunbook() {
     "",
     "Scope: Claude, Codex, and GPT-compatible MCP clients.",
     "Gate: local-first automation, smoke evidence saved, review-required external delivery, and confirmSave only after operator review.",
+    ...mcpEvidenceTrace,
     "",
     "Steps:",
     ...mcpSmokeRunbookSteps.map((step, index) => `${index + 1}. ${step}`),

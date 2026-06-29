@@ -1122,6 +1122,7 @@ for (const requiredText of [
   "mcp-smoke-",
   "reviewGate",
   "mcpSmokeRunbookSteps",
+  "mcpEvidenceTrace",
   "mcpFeedbackInboxApiChecks",
   "mcpFeedbackInboxCurlChecks",
   "mcpFeedbackInboxFilterLinks",
@@ -1157,6 +1158,8 @@ for (const requiredText of [
   "buildMcpFeedbackInboxApiCheckList",
   "buildMcpFeedbackInboxCurlCheckList",
   "Prompt AI Studio MCP End-to-End Smoke Runbook",
+  "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
+  "Keep local-smoke-evidence before target-ai-handoff.",
   "/api/integrations/mcp-feedback?targetAI=codex&rating=positive",
   'curl -sS "http://localhost:3000/api/integrations/mcp-feedback?limit=5&rating=positive&targetAI=codex"',
   "/integrations?mcpTargetAI=codex&mcpRating=positive",
@@ -1194,6 +1197,16 @@ assert.match(
   mcpConnectionPanel,
   /const mcpSetupWorkflowSteps = \[[\s\S]*?local server \+ MCP bridge self-test[\s\S]*?label: "01 로컬 준비"[\s\S]*?shared config, target AI별 handoff contract[\s\S]*?label: "02 클라이언트 연결"[\s\S]*?reviewRequired smoke evidence \+ confirmed feedback[\s\S]*?label: "03 검증과 학습"/,
   "MCP connection panel should define a visible setup workflow for local setup, client config, and feedback verification",
+);
+assert.match(
+  mcpConnectionPanel,
+  /const mcpEvidenceTrace = \[[\s\S]*?Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff\.[\s\S]*?Keep local-smoke-evidence before target-ai-handoff\.[\s\S]*?\] satisfies string\[\]/,
+  "MCP connection panel should define a reusable evidence trace for the end-to-end runbook",
+);
+assert.match(
+  mcpConnectionPanel,
+  /function buildMcpEndToEndSmokeRunbook\(\)[\s\S]*?Gate: local-first automation, smoke evidence saved, review-required external delivery, and confirmSave only after operator review\.[\s\S]*?\.\.\.mcpEvidenceTrace[\s\S]*?Steps:/,
+  "MCP end-to-end smoke runbook should include the shared evidence trace before runbook steps",
 );
 assert.match(
   mcpConnectionPanel,
@@ -2686,6 +2699,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "`chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함한 end-to-end smoke runbook",
+  "README should document MCP runbook audit source order",
+);
+assertIncludes(
+  readme,
   "Chrome extension, ChatGPT/Claude/Gemini, Codex, MCP client별 connection mode, trigger, Studio action, output, operator check",
   "README should document the environment playbook fields",
 );
@@ -2971,6 +2989,11 @@ assertIncludes(
 );
 assertIncludes(
   prd,
+  "Integrations MCP end-to-end smoke runbook 복사와 `integrations-operations-checklist` Studio 초안은 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함해야 한다.",
+  "PRD should document MCP runbook audit source order",
+);
+assertIncludes(
+  prd,
   "Integrations MCP client examples는 Claude/Codex/GPT-compatible client별 config scope, target AI, use case, operator gate를 카드로 먼저 구분해 보여줘야 한다.",
   "PRD should document MCP client setup cards",
 );
@@ -3193,6 +3216,11 @@ assertIncludes(
   developmentBrief,
   "Studio 초안 저장 실패 시 이동하지 않고 수동 복사용 runbook 원문 표시",
   "Development brief should document MCP runbook Studio draft fallback",
+);
+assertIncludes(
+  developmentBrief,
+  "`chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함한 end-to-end smoke runbook",
+  "Development brief should document MCP runbook audit source order",
 );
 assertIncludes(
   developmentBrief,

@@ -74,6 +74,10 @@ function assertIncludes(source, text, message) {
   assert.ok(source.includes(text), message);
 }
 
+function assertNotIncludes(source, text, message) {
+  assert.ok(!source.includes(text), message);
+}
+
 const {
   createIntegrationRefineResponse,
   parseIntegrationRefineRequest,
@@ -3055,8 +3059,13 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations operations checklist 계열 Studio 전송은 운영자 다음 조치, 외부 AI 운영 가이드, 환경별 실행 가이드, MCP smoke runbook 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다. Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해 각 초안이 저장한 원본 섹션 앵커로 돌아가야 한다.",
-  "PRD should document integrations operations checklist Studio draft fallback",
+  "Integrations operations checklist 계열 Studio 전송은 운영자 다음 조치, 외부 AI 운영 가이드, 환경별 실행 가이드, MCP smoke runbook 초안의 복귀 액션 라벨을 `Integrations 원본 섹션으로 돌아가기`로 표시해 각 초안이 저장한 원본 섹션 앵커로 돌아가야 하며, 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
+  "PRD should document integrations operations checklist Studio draft return actions and fallback",
+);
+assertNotIncludes(
+  prd,
+  "Integrations operations checklist 계열 Studio 전송은 운영자 다음 조치, 외부 AI 운영 가이드, 환경별 실행 가이드, MCP smoke runbook 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
+  "PRD should not keep integrations operations checklist fallback-only draft wording",
 );
 assertIncludes(
   prd,

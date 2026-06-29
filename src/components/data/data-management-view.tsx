@@ -133,6 +133,7 @@ interface RestoreRiskItem {
 }
 
 interface DataManualCopy {
+  id?: string;
   title: string;
   body: string;
 }
@@ -5799,7 +5800,10 @@ function DataManualCopyPanel({
   onClose: () => void;
 }) {
   return (
-    <div className="rounded-md border border-line bg-surface px-3 py-3">
+    <div
+      className="rounded-md border border-line bg-surface px-3 py-3"
+      data-testid={copy.id ? `data-manual-copy-${copy.id}` : undefined}
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold text-soft">수동 복사 필요</p>
@@ -7553,6 +7557,7 @@ export function DataManagementView() {
 
     if (!wroteDraft) {
       setManualCopy({
+        id: "document-rag-studio",
         title: `문서/RAG Studio 초안 · ${sourceName}`,
         body: rawInput,
       });

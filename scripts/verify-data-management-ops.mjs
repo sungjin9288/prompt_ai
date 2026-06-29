@@ -302,6 +302,28 @@ assertFileIncludes(
   "Data 문서/RAG로 돌아가기",
   "Prompt Studio source registry should label Data document RAG source actions as returning to Data",
 );
+assertFileIncludes(
+  promptTypesSource,
+  '"data-document-rag",',
+  "Prompt draft source type list should keep Data document RAG as an explicit source option",
+);
+assert.match(
+  sourceRegistrySource,
+  /"data-document-rag": \{[\s\S]*?dashboardLabel: "Data 문서\/RAG 초안"[\s\S]*?librarySourceLabel: "Data 문서\/RAG chunk 초안"[\s\S]*?sourceActionLabel: "Data 문서\/RAG로 돌아가기"[\s\S]*?studioLabel: "Data 문서\/RAG chunk 초안"[\s\S]*?studioNextAction:[\s\S]*?문서 chunk의 근거와 인용 범위/,
+  "Prompt Studio source registry should keep Data document RAG labels, return action, and citation-oriented next action together",
+);
+assertDataMatches(
+  /interface DataManualCopy \{[\s\S]*?id\?: string;[\s\S]*?title: string;[\s\S]*?body: string;[\s\S]*?\}/,
+  "Data manual copy state should allow source-specific IDs for regression-safe fallback panels",
+);
+assertDataMatches(
+  /function DataManualCopyPanel\(\{[\s\S]*?data-testid=\{copy\.id \? `data-manual-copy-\$\{copy\.id\}` : undefined\}[\s\S]*?aria-label=\{`수동 복사용 \$\{copy\.title\}`\}/,
+  "Data manual copy panel should expose a stable optional test ID while preserving the manual copy textarea label",
+);
+assertDataMatches(
+  /function handleOpenDocumentRagInStudio\(\)[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setManualCopy\(\{[\s\S]*?id: "document-rag-studio"[\s\S]*?title: `문서\/RAG Studio 초안 · \$\{sourceName\}`[\s\S]*?body: rawInput[\s\S]*?\}\);[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=data-document-rag"\)/,
+  "Data document RAG Studio fallback should use a stable manual-copy ID and still navigate only after draft storage succeeds",
+);
 
 assertDataMatches(
   /function buildRestoreReportManualCopyText\(\{[\s\S]*?backup[\s\S]*?currentBackupFingerprint[\s\S]*?importFingerprint[\s\S]*?importSource[\s\S]*?impactItems[\s\S]*?reportText[\s\S]*?riskItems[\s\S]*?RestoreReportParams &[\s\S]*?reportText: string[\s\S]*?changedItems = impactItems\.filter[\s\S]*?formatChange\(item\.current, item\.incoming\) !== "동일"[\s\S]*?fingerprintComparison = currentBackupFingerprint[\s\S]*?currentBackupFingerprint === importFingerprint[\s\S]*?# Prompt AI Studio 복원 리포트[\s\S]*?## 복원 리포트 식별[\s\S]*?백업 생성: \$\{formatBackupDate\(backup\.exportedAt\)\}[\s\S]*?가져온 방식: \$\{importSource\}[\s\S]*?가져온 백업 지문: \$\{importFingerprint\}[\s\S]*?최근 백업 기준 지문: \$\{currentBackupFingerprint \|\| "없음"\}[\s\S]*?지문 비교: \$\{fingerprintComparison\}[\s\S]*?리포트 길이: \$\{formatJsonLength\(reportText\)\}[\s\S]*?## 복원 영향 요약[\s\S]*?변경 항목: \$\{changedItems\.length\}개[\s\S]*?리스크 항목: \$\{riskItems\.length\}개[\s\S]*?프롬프트: \$\{backup\.counts\.prompts\}개[\s\S]*?삭제 보관함: \$\{backup\.counts\.deletedPrompts \?\? 0\}개[\s\S]*?## 실행 전 gate 요약[\s\S]*?original backup JSON file[\s\S]*?changed count and profile fields[\s\S]*?fingerprints differ[\s\S]*?validated backup[\s\S]*?## Restore report[\s\S]*?reportText/,

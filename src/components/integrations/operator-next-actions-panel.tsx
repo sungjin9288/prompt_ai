@@ -34,12 +34,23 @@ const operatorNextActions = [
       "Chrome extension 또는 MCP client 중 하나를 먼저 연결하고 smoke test를 실행합니다.",
   },
   {
+    action: "Save the local smoke evidence before any external AI delivery.",
+    completionGate:
+      "Chrome, MCP, Learning feedback smoke evidence 파일이 모두 생성됩니다.",
+    evidence:
+      "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md; npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md; npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
+    href: "#integrations-smoke-evidence-path",
+    label: "3. 로컬 smoke evidence 저장",
+    operatorTask:
+      "외부 AI에 붙여넣기 전에 Chrome, MCP, Learning feedback smoke evidence 명령을 실행합니다.",
+  },
+  {
     action: "Paste only the reviewed handoff package into GPT, Claude, Codex, or Gemini.",
     completionGate:
       "대상 AI, 언어 전략, 가정, 누락 맥락을 확인한 handoff package만 전달합니다.",
     evidence: "Assumptions, missing context, target AI, and language strategy are checked.",
     href: "#integrations-operation-flow",
-    label: "3. 외부 AI 전달 전 검토",
+    label: "4. 외부 AI 전달 전 검토",
     operatorTask:
       "정제 결과를 그대로 자동 전송하지 않고, 복사 전에 최종 prompt package를 검토합니다.",
   },
@@ -49,7 +60,7 @@ const operatorNextActions = [
       "confirmSave true로 저장된 피드백이 Feedback inbox에서 조회됩니다.",
     evidence: "save_execution_feedback uses confirmSave true and appears in Feedback inbox.",
     href: "#integrations-feedback-inbox",
-    label: "4. 실행 결과 피드백 저장",
+    label: "5. 실행 결과 피드백 저장",
     operatorTask:
       "외부 AI 실행 결과를 요약하고, 저장 동의가 있을 때만 feedback inbox에 남깁니다.",
   },
@@ -67,7 +78,7 @@ type OperatorNextAction = (typeof operatorNextActions)[number];
 const operatorActionSummaryItems = [
   {
     label: "현재 순서",
-    value: "서버 유지 → 연결 1개 검증 → 외부 AI 전달 → 피드백 저장",
+    value: "서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장",
   },
   {
     label: "첫 검증",
@@ -384,7 +395,7 @@ export function OperatorNextActionsPanel() {
     <Panel>
       <PanelHeader
         title="운영자 다음 조치"
-        description="지금 유저가 직접 확인해야 하는 설치, 연결, 전달, 피드백 저장 순서를 먼저 고정합니다."
+        description="지금 유저가 직접 확인해야 하는 설치, 연결, smoke evidence, 전달, 피드백 저장 순서를 먼저 고정합니다."
       />
       <OperatorActionSummary />
       <OperatorActionToolbar

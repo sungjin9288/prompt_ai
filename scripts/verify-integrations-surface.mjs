@@ -417,9 +417,11 @@ assert.match(
 for (const requiredText of [
   '"use client"',
   "운영자 다음 조치",
+  "지금 유저가 직접 확인해야 하는 설치, 연결, smoke evidence, 전달, 피드백 저장 순서를 먼저 고정합니다.",
   "operatorNextActions",
   "로컬 서버 유지",
   "연결 표면 1개 검증",
+  "로컬 smoke evidence 저장",
   "외부 AI 전달 전 검토",
   "실행 결과 피드백 저장",
   "operatorTask",
@@ -430,6 +432,9 @@ for (const requiredText of [
   "브라우저에서 /integrations가 열리고 refine API tester가 응답합니다.",
   "Chrome extension 또는 MCP client 중 하나를 먼저 연결하고 smoke test를 실행합니다.",
   "Chrome handoff 또는 MCP refine_prompt 결과에 reviewRequired가 포함됩니다.",
+  "외부 AI에 붙여넣기 전에 Chrome, MCP, Learning feedback smoke evidence 명령을 실행합니다.",
+  "Chrome, MCP, Learning feedback smoke evidence 파일이 모두 생성됩니다.",
+  "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md; npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md; npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
   "정제 결과를 그대로 자동 전송하지 않고, 복사 전에 최종 prompt package를 검토합니다.",
   "대상 AI, 언어 전략, 가정, 누락 맥락을 확인한 handoff package만 전달합니다.",
   "외부 AI 실행 결과를 요약하고, 저장 동의가 있을 때만 feedback inbox에 남깁니다.",
@@ -448,7 +453,7 @@ for (const requiredText of [
   'data-testid="operator-next-actions-toolbar"',
   'data-testid="operator-next-actions-list"',
   "현재 순서",
-  "서버 유지 → 연결 1개 검증 → 외부 AI 전달 → 피드백 저장",
+  "서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장",
   "첫 검증",
   "Chrome extension 또는 MCP client 중 하나만 먼저 연결",
   "전달 원칙",
@@ -491,6 +496,7 @@ for (const requiredText of [
   "아래 다음 조치 패키지를 직접 선택해 복사하세요.",
   "Keep the Studio dev server running before testing any external surface.",
   "Install one connection surface first, then run the matching smoke test.",
+  "Save the local smoke evidence before any external AI delivery.",
   "Paste only the reviewed handoff package into GPT, Claude, Codex, or Gemini.",
   "Save execution feedback only after confirming the external AI result.",
   "#integrations-operation-flow",
@@ -507,7 +513,7 @@ for (const requiredText of [
 
 assert.match(
   operatorNextActionsPanel,
-  /const operatorActionSummaryItems = \[[\s\S]*?label: "현재 순서"[\s\S]*?서버 유지 → 연결 1개 검증 → 외부 AI 전달 → 피드백 저장[\s\S]*?label: "첫 검증"[\s\S]*?Chrome extension 또는 MCP client 중 하나만 먼저 연결[\s\S]*?label: "전달 원칙"[\s\S]*?reviewRequired package 확인 후 GPT, Claude, Codex, Gemini에 전달[\s\S]*?label: "학습 루프"[\s\S]*?confirmSave true일 때만 Feedback inbox에 저장/,
+  /const operatorActionSummaryItems = \[[\s\S]*?label: "현재 순서"[\s\S]*?서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장[\s\S]*?label: "첫 검증"[\s\S]*?Chrome extension 또는 MCP client 중 하나만 먼저 연결[\s\S]*?label: "전달 원칙"[\s\S]*?reviewRequired package 확인 후 GPT, Claude, Codex, Gemini에 전달[\s\S]*?label: "학습 루프"[\s\S]*?confirmSave true일 때만 Feedback inbox에 저장/,
   "Operator next actions panel should define a compact summary before the detailed action list",
 );
 assert.match(

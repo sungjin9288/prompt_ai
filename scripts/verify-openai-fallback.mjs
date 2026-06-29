@@ -8,12 +8,29 @@ const savedModel = process.env["OPENAI_MODEL"];
 delete process.env["OPENAI_API_KEY"];
 delete process.env["OPENAI_MODEL"];
 
+function getEnvExampleValue(content, key) {
+  const prefix = `${key}=`;
+  const line = content
+    .split(/\r?\n/)
+    .find((candidate) => candidate.startsWith(prefix));
+
+  assert.ok(line, `.env.example should include ${key}`);
+
+  return line.slice(prefix.length);
+}
+
 try {
   const { enhancePromptWithOpenAI } = loadTypescriptModule(
     "src/lib/openai/prompt-optimizer.ts",
   );
   const statusRoute = readFileSync(
     "src/app/api/generate-prompt/status/route.ts",
+    "utf8",
+  );
+  const envExample = readFileSync(".env.example", "utf8");
+  const readme = readFileSync("README.md", "utf8");
+  const environmentReadiness = readFileSync(
+    "src/lib/data/environment-readiness.ts",
     "utf8",
   );
   const localPrompt = {
@@ -60,8 +77,26 @@ try {
   assert.match(statusRoute, /OPENAI_API_KEY\?\.trim\(\)/);
   assert.match(statusRoute, /mode: configured \? "openai" : "local"/);
   assert.match(statusRoute, /model: configured \? model : null/);
+  assert.equal(getEnvExampleValue(envExample, "OPENAI_API_KEY"), "");
+  assert.equal(getEnvExampleValue(envExample, "OPENAI_MODEL"), "gpt-5-mini");
+  assert.match(
+    environmentReadiness,
+    /OPENAI_API_KEY is missing; generation uses local fallback\./,
+  );
+  assert.match(
+    environmentReadiness,
+    /OpenAI 테스트 시점에 OPENAI_API_KEY를 \.env\.local 또는 배포 환경 변수에 설정하세요\./,
+  );
+  assert.match(
+    readme,
+    /OPENAI_API_KEY`가 비어 있으면 앱은 외부 API 없이 로컬 규칙 기반 생성으로 동작합니다\./,
+  );
+  assert.match(
+    readme,
+    /OpenAI API 기반 프롬프트 분석 고도화:[\s\S]*?npm run verify:openai-fallback[\s\S]*?key를 넣은 뒤 로컬 fallback과 OpenAI 보강 결과를 비교합니다\./,
+  );
 
-  console.log("OpenAI fallback verification passed.");
+  console.log("OpenAI fallback and operator readiness verification passed.");
 } finally {
   if (savedApiKey === undefined) {
     delete process.env["OPENAI_API_KEY"];

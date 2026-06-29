@@ -482,7 +482,8 @@ copy fallback coverage.
 package scripts and runs first inside `npm run verify`.
 `npm run verify:openai-fallback` checks that prompt generation stays on the
 local builder when `OPENAI_API_KEY` is absent and that the status route reports
-local mode without exposing a model value.
+local mode without exposing a model value. It also checks that `.env.example`,
+runtime readiness, and the operator-gated OpenAI next step stay aligned.
 `npm run verify:prompt-package` checks that the Target AI handoff package keeps
 its copy-ready prompt, quality review, missing context, and operator notes.
 `npm run verify:profile-company` checks that Profile and Company keep the

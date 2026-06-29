@@ -100,6 +100,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /It also checks that `\.env\.example`,\s+runtime readiness, and the operator-gated OpenAI next step stay aligned/,
+  "README should document the OpenAI operator readiness verification scope",
+);
+assert.match(
+  readme,
   /verify:secrets/,
   "README should require secret scanning in release evidence",
 );

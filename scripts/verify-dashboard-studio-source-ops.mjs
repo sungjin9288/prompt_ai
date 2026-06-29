@@ -438,6 +438,11 @@ assertFileIncludes(
 );
 assertFileIncludes(
   sourceRegistrySource,
+  'sourceActionLabel: "Dashboard로 돌아가기"',
+  "Source registry should expose the Dashboard return action label",
+);
+assertFileIncludes(
+  sourceRegistrySource,
   "Studio 저장 출처별 저장본을 점검",
   "Source registry should describe Dashboard source ops as saved-source review work",
 );
@@ -470,6 +475,16 @@ assertFileIncludes(
   sourceRegistrySource,
   'dashboardLabel: "Library 저장 출처 메타 없음 후보"',
   "Source registry should expose missing saved-source metadata candidate saves as a separate Dashboard source category",
+);
+assertFileIncludes(
+  sourceRegistrySource,
+  '"dashboard-source-health-candidate"',
+  "Source registry should expose Dashboard source-health candidate drafts",
+);
+assertFileIncludes(
+  sourceRegistrySource,
+  'sourceActionLabel: "Library 후보로 돌아가기"',
+  "Source registry should expose the Library candidate return action label",
 );
 assertFileIncludes(
   sourceRegistrySource,
@@ -629,8 +644,8 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Dashboard의 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시합니다.",
-  "README should document Dashboard improvement/source operations Studio draft storage fallback",
+  "Dashboard의 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 Dashboard 맥락을 복원하고, 개선 출처 후보 초안은 `Library 후보로 돌아가기` 복귀 액션 라벨로 대표 후보를 복원하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시합니다.",
+  "README should document Dashboard improvement/source operations Studio draft return actions and fallback",
 );
 assertFileIncludes(
   readme,
@@ -738,6 +753,11 @@ assertFileIncludes(
   "PRD should document the Dashboard workflow shortcuts including Integrations",
 );
 assertFileIncludes(
+  prdSource,
+  "Dashboard 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 Dashboard 맥락을 복원하고, 개선 출처 후보 초안은 `Library 후보로 돌아가기` 복귀 액션 라벨로 대표 후보를 복원해야 하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시해야 한다.",
+  "PRD should document Dashboard improvement/source operations Studio draft return actions and fallback",
+);
+assertFileIncludes(
   developmentBrief,
   "작성, 저장, 학습, 스킬화, 연결, 백업 6단계 핵심 workflow와 Integrations 이동 액션",
   "Development brief should document the Dashboard workflow shortcuts including Integrations",
@@ -754,8 +774,27 @@ assertFileIncludes(
 );
 assertFileIncludes(
   developmentBrief,
-  "Dashboard 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시함",
-  "Development brief should document Dashboard improvement/source operations Studio draft storage fallback",
+  "Dashboard 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 Dashboard 맥락을 복원하고, 개선 출처 후보 초안은 `Library 후보로 돌아가기` 복귀 액션 라벨로 대표 후보를 복원하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시함",
+  "Development brief should document Dashboard improvement/source operations Studio draft return actions and fallback",
+);
+
+const staleDashboardImprovementDraftFallback =
+  "Dashboard 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시";
+
+assertFileNotIncludes(
+  readme,
+  `Dashboard의 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시합니다.`,
+  "README should not keep the Dashboard improvement/source fallback-only Studio draft contract",
+);
+assertFileNotIncludes(
+  prdSource,
+  `${staleDashboardImprovementDraftFallback}해야 한다.`,
+  "PRD should not keep the Dashboard improvement/source fallback-only Studio draft contract",
+);
+assertFileNotIncludes(
+  developmentBrief,
+  `${staleDashboardImprovementDraftFallback}함`,
+  "Development brief should not keep the Dashboard improvement/source fallback-only Studio draft contract",
 );
 assertFileIncludes(
   prdSource,
@@ -819,8 +858,8 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prdSource,
-  "Dashboard 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시해야 한다.",
-  "PRD should document Dashboard improvement/source operations Studio draft storage fallback",
+  "Dashboard 스킬 운영, 피드백 반영 개선, Studio 저장 출처, 저장 출처 메타 없음 큐, 개선 출처 상태 Studio 초안은 `Dashboard로 돌아가기` 복귀 액션 라벨로 Dashboard 맥락을 복원하고, 개선 출처 후보 초안은 `Library 후보로 돌아가기` 복귀 액션 라벨로 대표 후보를 복원해야 하며, 저장이 실패하면 이동하지 않고 해당 패널의 수동 복사용 원문 textarea를 표시해야 한다.",
+  "PRD should document Dashboard improvement/source operations Studio draft return actions and fallback",
 );
 assertFileIncludes(
   prdSource,

@@ -501,6 +501,8 @@ For allowed execute responses, it checks that the route returns the execution
 result summary and embeds the same result in the route audit artifact.
 It also checks that the execute request template keeps the exact execute JSON
 payload, required preconditions, and post-import follow-up checks together.
+It also checks that the execution guard checklist keeps every no-go condition
+and required post-execution action together.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

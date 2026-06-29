@@ -220,6 +220,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the execution guard checklist keeps every no-go condition\s+and required post-execution action together/,
+  "README should document the data-management Supabase execution guard checklist verification scope",
+);
+assert.match(
+  readme,
   /`execute=true`로 실제 Supabase REST insert를 실행하려면[\s\S]*?`SUPABASE_IMPORT_EXECUTION_ENABLED=true`[\s\S]*?`NEXT_PUBLIC_SUPABASE_URL`[\s\S]*?`SUPABASE_SERVICE_ROLE_KEY`[\s\S]*?`confirmation: "RUN_SUPABASE_IMPORT"`[\s\S]*?execution plan validation이 `ok`여야 합니다/,
   "README should document every Supabase execute=true gate, including plan validation",
 );

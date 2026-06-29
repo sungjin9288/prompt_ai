@@ -1,0 +1,156 @@
+export const verificationChecks = [
+  {
+    args: ["run", "verify:manifest"],
+    command: "npm",
+    label: "Verification manifest contract",
+    scriptName: "verify:manifest",
+  },
+  {
+    args: ["run", "verify:docs"],
+    command: "npm",
+    label: "README scripts documentation",
+    scriptName: "verify:docs",
+  },
+  {
+    args: ["run", "verify:repo-boundary"],
+    command: "npm",
+    label: "Repository boundary",
+    scriptName: "verify:repo-boundary",
+  },
+  {
+    args: ["run", "verify:app-shell"],
+    command: "npm",
+    label: "App shell navigation context",
+    scriptName: "verify:app-shell",
+  },
+  {
+    args: ["run", "verify:build-stability"],
+    command: "npm",
+    label: "Build stability guard",
+    scriptName: "verify:build-stability",
+  },
+  {
+    args: ["run", "verify:dashboard-source"],
+    command: "npm",
+    label: "Dashboard Studio source operations",
+    scriptName: "verify:dashboard-source",
+  },
+  {
+    args: ["run", "verify:data-management"],
+    command: "npm",
+    label: "Data management operations",
+    scriptName: "verify:data-management",
+  },
+  {
+    args: ["run", "verify:integrations"],
+    command: "npm",
+    label: "External AI integrations surface",
+    scriptName: "verify:integrations",
+  },
+  {
+    args: ["run", "verify:scope"],
+    command: "npm",
+    label: "Supabase preflight scope guard",
+    scriptName: "verify:scope",
+  },
+  {
+    args: ["run", "verify:runtime"],
+    command: "npm",
+    label: "Runtime readiness scenarios",
+    scriptName: "verify:runtime",
+  },
+  {
+    args: ["run", "verify:prompt-package"],
+    command: "npm",
+    label: "Target AI handoff package",
+    scriptName: "verify:prompt-package",
+  },
+  {
+    args: ["run", "verify:profile-company"],
+    command: "npm",
+    label: "Profile and Company context flow",
+    scriptName: "verify:profile-company",
+  },
+  {
+    args: ["run", "verify:library-summary"],
+    command: "npm",
+    label: "Library operational summary",
+    scriptName: "verify:library-summary",
+  },
+  {
+    args: ["run", "verify:learning-summary"],
+    command: "npm",
+    label: "Learning operational summary",
+    scriptName: "verify:learning-summary",
+  },
+  {
+    args: ["run", "verify:studio-draft-summary"],
+    command: "npm",
+    label: "Studio draft operational summary",
+    scriptName: "verify:studio-draft-summary",
+  },
+  {
+    args: ["run", "verify:studio-draft-fallbacks"],
+    command: "npm",
+    label: "Studio draft fallback guards",
+    scriptName: "verify:studio-draft-fallbacks",
+  },
+  {
+    args: ["run", "verify:studio-result-summary"],
+    command: "npm",
+    label: "Studio result handoff summary",
+    scriptName: "verify:studio-result-summary",
+  },
+  {
+    args: ["run", "verify:skills-summary"],
+    command: "npm",
+    label: "Skills operational summary",
+    scriptName: "verify:skills-summary",
+  },
+  {
+    args: ["run", "verify:studio-safety"],
+    command: "npm",
+    label: "Studio stale handoff guard",
+    scriptName: "verify:studio-safety",
+  },
+  {
+    args: ["run", "verify:terminology"],
+    command: "npm",
+    label: "Terminology consistency",
+    scriptName: "verify:terminology",
+  },
+  {
+    args: ["run", "verify:evidence-cli"],
+    command: "npm",
+    label: "Verification evidence CLI behavior",
+    scriptName: "verify:evidence-cli",
+  },
+  {
+    args: ["run", "verify:evidence-hygiene"],
+    command: "npm",
+    label: "Verification evidence hygiene",
+    scriptName: "verify:evidence-hygiene",
+  },
+  {
+    args: ["run", "verify:secrets"],
+    command: "npm",
+    label: "Secret safety scan",
+    scriptName: "verify:secrets",
+  },
+  {
+    args: ["run", "lint"],
+    command: "npm",
+    label: "ESLint",
+    scriptName: "lint",
+  },
+  {
+    args: ["run", "build"],
+    command: "npm",
+    label: "Next.js production build",
+    scriptName: "build",
+  },
+];
+
+export function formatVerificationCommand(check) {
+  return [check.command, ...check.args].join(" ");
+}

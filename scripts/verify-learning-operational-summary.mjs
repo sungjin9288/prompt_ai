@@ -1,0 +1,473 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+
+const source = readFileSync("src/components/learning/learning-view.tsx", "utf8");
+const promptTypes = readFileSync("src/lib/prompt/types.ts", "utf8");
+const draftVariants = readFileSync("src/lib/studio/draft-variants.ts", "utf8");
+const draftDisplay = readFileSync("src/lib/studio/draft-display.ts", "utf8");
+const sourceRegistry = readFileSync("src/lib/studio/source-registry.ts", "utf8");
+const libraryView = readFileSync("src/components/library/library-view.tsx", "utf8");
+const readme = readFileSync("README.md", "utf8");
+const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
+const devBrief = readFileSync("docs/codex-development-brief.md", "utf8");
+
+function assertMatches(pattern, message) {
+  assert.match(source, pattern, message);
+}
+
+function assertFileIncludes(fileSource, text, message) {
+  assert.ok(fileSource.includes(text), message);
+}
+
+assertMatches(
+  /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
+  "Learning should reuse the shared context operating flow component",
+);
+assertMatches(
+  /const learningLowConfidenceReviewHref = getLearningHref\(\{[\s\S]*?query: ""[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?scope[\s\S]*?sortMode: "confidence-asc"[\s\S]*?\}\);[\s\S]*?const learningOperatingFlowItems = useMemo<ContextOperatingFlowItem\[\]>\([\s\S]*?actionLabel: "준비도 확인"[\s\S]*?href: "#readiness"[\s\S]*?label: "준비도"[\s\S]*?step: "01"[\s\S]*?actionLabel: "검토 큐 열기"[\s\S]*?href: learningLowConfidenceReviewHref[\s\S]*?label: "검토"[\s\S]*?step: "02"[\s\S]*?actionLabel: "직접 보강"[\s\S]*?href: "#learning-manual-memory"[\s\S]*?label: "보강"[\s\S]*?step: "03"[\s\S]*?actionLabel: "현재 조건 확인"[\s\S]*?feedbackImprovementFilterActive[\s\S]*?"#learning-feedback-improvement-queue"[\s\S]*?"#learning-filter-panel"[\s\S]*?label: "Studio"[\s\S]*?step: "04"/,
+  "Learning operating flow should map readiness, low-confidence review, manual memory, and Studio handoff steps",
+);
+assertMatches(
+  /<ContextOperatingFlow[\s\S]*?badge=\{learningReadiness\.label\}[\s\S]*?description="Learning은 저장된 기준을 바로 재사용하지 않고 준비도, 낮은 신뢰도, 수동 보강, Studio 전송 순서로 점검합니다\."[\s\S]*?items=\{learningOperatingFlowItems\}[\s\S]*?testId="learning-operating-flow"[\s\S]*?title="Learning 운영 흐름"/,
+  "Learning should render the shared operating flow before the readiness and filter panels",
+);
+assertMatches(
+  /data-testid="learning-summary-metrics"[\s\S]*?grid-cols-2[\s\S]*?md:grid-cols-4[\s\S]*?전체 메모리[\s\S]*?평균 신뢰도[\s\S]*?text-2xl[\s\S]*?sm:text-3xl/,
+  "Learning top summary metrics should stay compact in two columns on mobile and four columns on desktop",
+);
+assertMatches(
+  /const learningNextActionGuide = useMemo\(\(\) => \{[\s\S]*?memories\.length === 0[\s\S]*?첫 학습 메모리를 만들 차례[\s\S]*?learningReadiness\.lowConfidenceCount > 0[\s\S]*?낮은 신뢰도 검토[\s\S]*?const missingScope = learningReadiness\.missingScopes\[0\][\s\S]*?커버리지 보강[\s\S]*?feedbackImprovementFilterActive[\s\S]*?피드백 개선 규칙을 정리할 차례[\s\S]*?학습 컨텍스트를 생성에 적용하세요[\s\S]*?\}, \[/,
+  "Learning should calculate a state-aware next action guide for first memory, low-confidence review, missing scope coverage, feedback queue, and Studio application",
+);
+assertMatches(
+  /data-testid="learning-summary-metrics"[\s\S]*?data-testid="learning-next-action-guide"[\s\S]*?Next learning action[\s\S]*?learningNextActionGuide\.status[\s\S]*?learningNextActionGuide\.title[\s\S]*?learningNextActionGuide\.detail[\s\S]*?learningNextActionGuide\.primaryHref[\s\S]*?learningNextActionGuide\.secondaryHref[\s\S]*?<Panel id="readiness"/,
+  "Learning should render the next action guide between the compact summary metrics and readiness panel",
+);
+assertMatches(
+  /data-testid="learning-readiness-metrics"[\s\S]*?grid-cols-2[\s\S]*?sm:grid-cols-4[\s\S]*?Scope 커버리지[\s\S]*?높은 신뢰도[\s\S]*?낮은 신뢰도[\s\S]*?최근 업데이트/,
+  "Learning readiness metrics should stay compact in two columns on mobile and four columns on desktop",
+);
+assertMatches(
+  /<Panel id="readiness"[\s\S]*?id="learning-feedback-improvement-queue"[\s\S]*?id="learning-filter-panel"[\s\S]*?id="learning-manual-memory"/,
+  "Learning operating flow should point to stable readiness, feedback queue, filter, and manual-memory anchors",
+);
+assertMatches(
+  /type LearningManualCopy = \{[\s\S]*?id: string;[\s\S]*?title: string;[\s\S]*?body: string;[\s\S]*?reason\?: string;[\s\S]*?\};[\s\S]*?copy\.reason \?\? `\$\{copy\.title\} 복사가 차단됐습니다\.`/,
+  "Learning manual copy panel should support explicit fallback reasons for blocked Studio drafts",
+);
+
+assertMatches(
+  /const learningReadinessHref = "\/learning#readiness"[\s\S]*?function buildLearningReadinessReportText\(\{[\s\S]*?baseUrl[\s\S]*?memories[\s\S]*?readiness[\s\S]*?baseUrl\?: string[\s\S]*?const formatLearningHref = \(href: string\) =>[\s\S]*?formatAbsoluteInternalHref\(href, baseUrl\)[\s\S]*?# 학습 준비도 리포트[\s\S]*?## 점검 링크[\s\S]*?준비도 화면:[\s\S]*?formatLearningHref\(learningReadinessHref\)[\s\S]*?전체 학습 메모리:[\s\S]*?getLearningHref\(\{[\s\S]*?reviewFilter: "all"[\s\S]*?sortMode: "confidence-desc"[\s\S]*?낮은 신뢰도:[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?sortMode: "confidence-asc"[\s\S]*?최근 업데이트:[\s\S]*?sortMode: "updated-desc"[\s\S]*?## Scope별 메모리[\s\S]*?formatLearningHref\([\s\S]*?scope[\s\S]*?sortMode: "confidence-desc"/,
+  "Learning readiness report should include absolute-ready review and scope links",
+);
+assertMatches(
+  /async function copyReadinessReport\(\)[\s\S]*?buildLearningReadinessReportText\(\{[\s\S]*?baseUrl: typeof window === "undefined" \? undefined : window\.location\.origin[\s\S]*?memories[\s\S]*?readiness: learningReadiness[\s\S]*?copyTextToClipboard\(reportText\)/,
+  "Learning readiness report copy should pass the current origin for absolute review links",
+);
+assertMatches(
+  /function buildLearningReadinessStudioDraftInput\(\{[\s\S]*?baseUrl[\s\S]*?memories[\s\S]*?readiness[\s\S]*?Role:[\s\S]*?senior prompt operations strategist[\s\S]*?Use the Learning readiness report below[\s\S]*?missing scopes, low-confidence memories, and stale learning context[\s\S]*?review links[\s\S]*?buildLearningReadinessReportText\(\{ baseUrl, memories, readiness \}\)/,
+  "Learning readiness Studio prompt should turn the readiness report into an operating plan",
+);
+assertMatches(
+  /function openReadinessReportInStudio\(\)[\s\S]*?const rawInput = buildLearningReadinessStudioDraftInput\(\{[\s\S]*?baseUrl:[\s\S]*?window\.location\.origin[\s\S]*?memories[\s\S]*?readiness: learningReadiness[\s\S]*?const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "learning-readiness"[\s\S]*?rawInput,[\s\S]*?goal: "학습 메모리 운영 보강 계획"[\s\S]*?targetModels: \["gpt", "claude", "codex"\][\s\S]*?sourceTitle: "Learning 준비도 리포트"[\s\S]*?sourceHref: learningReadinessHref[\s\S]*?if \(!wroteDraft\)[\s\S]*?setReadinessReportCopyFailed\(true\)[\s\S]*?id: "readiness-report"[\s\S]*?body: rawInput[\s\S]*?Studio 초안 저장이 차단[\s\S]*?return;[\s\S]*?router\.push\("\/studio\?draft=learning-readiness"\)/,
+  "Learning readiness report should block Studio navigation and show manual copy when draft storage fails",
+);
+assertMatches(
+  /<Panel id="readiness"[\s\S]*?onClick=\{openReadinessReportInStudio\}[\s\S]*?준비도 Studio로 보내기/,
+  "Learning readiness card should expose a Studio draft action",
+);
+assertMatches(
+  /function buildFilteredMemoryReportText\(\{[\s\S]*?baseUrl[\s\S]*?filteredMemories[\s\S]*?baseUrl\?: string[\s\S]*?const filterHref = getLearningHref\(\{ query, reviewFilter, scope, sortMode \}\)[\s\S]*?formatAbsoluteInternalHref\(filterHref, baseUrl\)[\s\S]*?# 학습 메모리 필터 결과[\s\S]*?조건 링크: \$\{absoluteFilterHref\}[\s\S]*?범위: \$\{scopeLabels\[scope\]\}[\s\S]*?검토 기준: \$\{reviewFilterLabels\[reviewFilter\]\}/,
+  "Learning filtered memory report should include an absolute-ready filter link before filter metadata",
+);
+assertMatches(
+  /async function copyFilteredMemoryReport\(\)[\s\S]*?const reportPayload = \{[\s\S]*?baseUrl: typeof window === "undefined" \? undefined : window\.location\.origin[\s\S]*?filteredMemories: filtered[\s\S]*?query[\s\S]*?reviewFilter[\s\S]*?scope[\s\S]*?sortMode[\s\S]*?totalMemories: memories\.length[\s\S]*?buildFilteredMemoryReportText\(reportPayload\)[\s\S]*?copyTextToClipboard\(reportText\)/,
+  "Learning filtered memory report copy should pass the current origin for absolute filter links",
+);
+assertMatches(
+  /const feedbackImprovementValidationLibraryHref =[\s\S]*?studioSource=learning-feedback-improvement&studioVariant=learning-low-confidence-validation[\s\S]*?function buildFeedbackImprovementQueueReportText\(\{[\s\S]*?baseUrl[\s\S]*?filteredMemories[\s\S]*?query[\s\S]*?reviewFilter[\s\S]*?scope[\s\S]*?sortMode[\s\S]*?totalMemories[\s\S]*?formatAbsoluteInternalHref\(filterHref, baseUrl\)[\s\S]*?const lowConfidenceHref = getLearningHref\(\{[\s\S]*?query: "feedback-improvement"[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?sortMode: "confidence-asc"[\s\S]*?formatAbsoluteInternalHref\(lowConfidenceHref, baseUrl\)[\s\S]*?formatAbsoluteInternalHref\([\s\S]*?feedbackImprovementValidationLibraryHref[\s\S]*?baseUrl[\s\S]*?# 피드백 개선 메모리 큐 리포트[\s\S]*?## 큐 조건[\s\S]*?조건 링크: \$\{absoluteFilterHref\}[\s\S]*?낮은 신뢰도 큐: \$\{absoluteLowConfidenceHref\}[\s\S]*?저신뢰도 검증 저장본: \$\{absoluteValidationLibraryHref\}[\s\S]*?## 큐 지표[\s\S]*?낮은 신뢰도: \$\{lowConfidenceCount\}개[\s\S]*?포함 scope:[\s\S]*?## 운영 액션[\s\S]*?Studio 템플릿과 외부 AI handoff 체크리스트[\s\S]*?Library 피드백을 추가 수집[\s\S]*?## 메모리/,
+  "Learning feedback-improvement queue report should include queue condition, low-confidence queue link, validation Library link, metrics, operating actions, and memories",
+);
+assertMatches(
+  /async function copyFilteredMemoryReport\(\)[\s\S]*?const reportPayload = \{[\s\S]*?baseUrl: typeof window === "undefined" \? undefined : window\.location\.origin[\s\S]*?filteredMemories: filtered[\s\S]*?totalMemories: memories\.length[\s\S]*?const reportText = feedbackImprovementFilterActive[\s\S]*?buildFeedbackImprovementQueueReportText\(reportPayload\)[\s\S]*?buildFilteredMemoryReportText\(reportPayload\)[\s\S]*?title: feedbackImprovementFilterActive[\s\S]*?피드백 개선 메모리 큐[\s\S]*?필터 결과/,
+  "Learning filtered report copy should use a dedicated feedback-improvement queue report when the queue is active",
+);
+assertMatches(
+  /async function copyFilterLink\(\)[\s\S]*?getLearningHref\(\{ query, reviewFilter, scope, sortMode \}\)[\s\S]*?formatAbsoluteInternalHref\([\s\S]*?href[\s\S]*?window\.location\.origin[\s\S]*?copyTextToClipboard\(linkText\)/,
+  "Learning filter link copy should keep using absolute internal links",
+);
+assertMatches(
+  /const feedbackImprovementFilterActive =[\s\S]*?query\.trim\(\)\.toLowerCase\(\) === "feedback-improvement"[\s\S]*?const feedbackImprovementLowConfidenceHref = getLearningHref\(\{[\s\S]*?query: "feedback-improvement"[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?sortMode: "confidence-asc"[\s\S]*?const feedbackImprovementLowConfidenceMemories = filtered\.filter[\s\S]*?const feedbackImprovementQueueLowConfidenceCount =[\s\S]*?feedbackImprovementLowConfidenceMemories\.length[\s\S]*?const feedbackImprovementQueueScopeCount = trackedScopes\.filter[\s\S]*?async function copyFeedbackImprovementLowConfidenceLink\(\)[\s\S]*?feedbackImprovementLowConfidenceHref[\s\S]*?id: "feedback-improvement-low-confidence-link"[\s\S]*?낮은 신뢰도 큐 링크[\s\S]*?data-testid="learning-feedback-improvement-queue"[\s\S]*?피드백 개선 메모리 큐[\s\S]*?현재 큐[\s\S]*?낮은 신뢰도[\s\S]*?포함 scope[\s\S]*?검토[\s\S]*?href=\{feedbackImprovementLowConfidenceHref\}[\s\S]*?낮은 신뢰도만 보기[\s\S]*?onClick=\{copyFeedbackImprovementLowConfidenceLink\}[\s\S]*?낮은 신뢰도 링크 복사됨[\s\S]*?낮은 신뢰도 링크 복사 실패[\s\S]*?낮은 신뢰도 링크 복사[\s\S]*?onClick=\{copyFilterLink\}[\s\S]*?큐 조건 링크 복사됨[\s\S]*?큐 조건 링크 복사 실패[\s\S]*?큐 조건 링크 복사[\s\S]*?Studio[\s\S]*?onClick=\{openFeedbackImprovementLowConfidenceInStudio\}[\s\S]*?disabled=\{feedbackImprovementQueueLowConfidenceCount === 0\}[\s\S]*?낮은 신뢰도 Studio로[\s\S]*?큐 Studio로 보내기[\s\S]*?기록[\s\S]*?큐 리포트 복사[\s\S]*?href=\{feedbackImprovementValidationLibraryHref\}[\s\S]*?검증 저장본 보기[\s\S]*?Dashboard로 돌아가기/,
+  "Learning should expose a feedback-improvement queue panel grouped into review, Studio, and record actions",
+);
+assertMatches(
+  /data-testid="learning-feedback-improvement-queue"[\s\S]*?data-testid="learning-feedback-improvement-queue-metrics"[\s\S]*?grid-cols-2[\s\S]*?sm:grid-cols-3[\s\S]*?현재 큐[\s\S]*?낮은 신뢰도[\s\S]*?포함 scope/,
+  "Learning feedback-improvement queue metrics should stay compact in two columns on mobile and three columns on desktop",
+);
+assertMatches(
+  /const feedbackImprovementQueueWorkflowSteps = useMemo\([\s\S]*?label: "검토"[\s\S]*?step: "01"[\s\S]*?낮은 신뢰도[\s\S]*?label: "Studio"[\s\S]*?step: "02"[\s\S]*?큐 \$\{filtered\.length\}개 전송[\s\S]*?label: "기록"[\s\S]*?step: "03"[\s\S]*?포함 scope/,
+  "Learning feedback-improvement queue should calculate numbered review, Studio, and record workflow steps",
+);
+assertMatches(
+  /const manualMemoryWorkflowSteps = useMemo\([\s\S]*?label: "범위 선택"[\s\S]*?step: "01"[\s\S]*?title: scopeLabels\[manualScope\][\s\S]*?manualContent\.trim\(\)[\s\S]*?label: "규칙 작성"[\s\S]*?step: "02"[\s\S]*?manualTitle\.trim\(\) \|\| "제목 대기"[\s\S]*?label: "생성 반영"[\s\S]*?step: "03"[\s\S]*?manualSaved \? "저장됨" : "저장 후 반영"/,
+  "Learning manual memory panel should calculate numbered scope, rule, and generation workflow steps",
+);
+assertMatches(
+  /data-testid="learning-feedback-improvement-queue"[\s\S]*?data-testid="learning-feedback-improvement-workflow"[\s\S]*?md:grid-cols-3[\s\S]*?feedbackImprovementQueueWorkflowSteps\.map[\s\S]*?item\.step[\s\S]*?item\.label[\s\S]*?item\.title[\s\S]*?item\.detail[\s\S]*?<div className="grid gap-4">/,
+  "Learning feedback-improvement queue should render numbered workflow cards before the detailed action groups",
+);
+assertMatches(
+  /<Panel[\s\S]*?id="learning-manual-memory"[\s\S]*?className="scroll-mt-64 lg:col-start-1 lg:scroll-mt-6"[\s\S]*?data-testid="learning-manual-memory-workflow"[\s\S]*?manualMemoryWorkflowSteps\.map[\s\S]*?item\.step[\s\S]*?item\.label[\s\S]*?item\.title[\s\S]*?item\.detail[\s\S]*?<label className="block">[\s\S]*?범위/,
+  "Learning manual memory panel should render numbered workflow cards before the input form",
+);
+assertMatches(
+  /data-testid="learning-feedback-improvement-queue"[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-low-confidence-link"[\s\S]*?data-testid="learning-feedback-improvement-queue-manual-copy"[\s\S]*?LearningManualCopyPanel[\s\S]*?!feedbackImprovementFilterActive &&[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?LearningManualCopyPanel/,
+  "Learning feedback-improvement queue should show copy fallback inside the queue and avoid duplicate filter-panel fallback",
+);
+assertMatches(
+  /function openFilteredMemoriesInStudio\(\)[\s\S]*?const studioDraftSource = feedbackImprovementFilterActive[\s\S]*?"learning-feedback-improvement"[\s\S]*?"learning-filter"[\s\S]*?const studioDraftTitle = feedbackImprovementFilterActive[\s\S]*?피드백 개선 메모리 큐 · \$\{filtered\.length\}개[\s\S]*?const rawInput = feedbackImprovementFilterActive[\s\S]*?buildFeedbackImprovementQueueStudioDraftInput[\s\S]*?buildFilteredMemoriesStudioDraftInput[\s\S]*?const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: studioDraftSource[\s\S]*?rawInput,[\s\S]*?goal: feedbackImprovementFilterActive[\s\S]*?피드백 개선 메모리 큐 기반 프롬프트 보강[\s\S]*?sourceTitle: studioDraftTitle[\s\S]*?if \(!wroteDraft\)[\s\S]*?setFilteredReportCopyFailed\(true\)[\s\S]*?id: "filtered-report"[\s\S]*?title: studioDraftTitle[\s\S]*?body: rawInput[\s\S]*?Studio 초안 저장이 차단[\s\S]*?return;[\s\S]*?router\.push\([\s\S]*?\/studio\?draft=learning-feedback-improvement[\s\S]*?\/studio\?draft=learning-filter/,
+  "Learning filtered and feedback-improvement queue Studio handoffs should show manual copy when draft storage fails",
+);
+assertMatches(
+  /function openFeedbackImprovementLowConfidenceInStudio\(\)[\s\S]*?feedbackImprovementLowConfidenceMemories\.length === 0[\s\S]*?const rawInput = buildFeedbackImprovementLowConfidenceStudioDraftInput\(\{[\s\S]*?filteredMemories: feedbackImprovementLowConfidenceMemories[\s\S]*?scope[\s\S]*?totalMemories: memories\.length[\s\S]*?const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "learning-feedback-improvement"[\s\S]*?sourceVariant: "learning-low-confidence-validation"[\s\S]*?rawInput,[\s\S]*?goal: "낮은 신뢰도 피드백 개선 메모리 보강"[\s\S]*?sourceTitle: `피드백 개선 낮은 신뢰도 큐 · \$\{feedbackImprovementLowConfidenceMemories\.length\}개`[\s\S]*?sourceHref: feedbackImprovementLowConfidenceHref[\s\S]*?if \(!wroteDraft\)[\s\S]*?id: "feedback-improvement-low-confidence-studio"[\s\S]*?body: rawInput[\s\S]*?Studio 초안 저장이 차단[\s\S]*?return;[\s\S]*?router\.push\("\/studio\?draft=learning-feedback-improvement"\)/,
+  "Learning feedback-improvement low-confidence queue should show manual copy when draft storage fails",
+);
+assertMatches(
+  /function buildFeedbackImprovementLowConfidenceStudioDraftInput\(\{[\s\S]*?filteredMemories[\s\S]*?scope[\s\S]*?totalMemories[\s\S]*?low-confidence feedback rules before they are reused[\s\S]*?Use the low-confidence feedback-improvement Learning memory subset[\s\S]*?Do not turn low-confidence memories into reusable prompt rules without a validation plan[\s\S]*?collect more feedback, narrow scope, merge with a stronger rule, rewrite, or remove[\s\S]*?Required output[\s\S]*?Evidence gaps to resolve before reuse[\s\S]*?Validation questions to collect from Library feedback or external AI runs[\s\S]*?Merge\/rewrite\/remove recommendations[\s\S]*?Updated Learning memory candidates ready to save after validation[\s\S]*?stripMemoryReferenceLinks\(memory\.content\)/,
+  "Learning feedback-improvement low-confidence Studio prompt should focus on validation, evidence gaps, and cleanup decisions",
+);
+assertMatches(
+  /function buildFeedbackImprovementQueueStudioDraftInput\(\{[\s\S]*?filteredMemories[\s\S]*?query[\s\S]*?reviewFilter[\s\S]*?scope[\s\S]*?sortMode[\s\S]*?totalMemories[\s\S]*?senior prompt quality operator[\s\S]*?feedback-improvement Learning memory queue[\s\S]*?Treat each memory as an evidence-backed feedback rule[\s\S]*?GPT, Claude, Codex, Gemini, and MCP-assisted workflows[\s\S]*?Required output[\s\S]*?Priority prompt rules to reuse immediately[\s\S]*?Rules that need more feedback evidence[\s\S]*?External AI handoff checklist for GPT\/Claude\/Codex\/Gemini[\s\S]*?filteredMemories[\s\S]*?stripMemoryReferenceLinks\(memory\.content\)/,
+  "Learning feedback-improvement Studio prompt should convert queue memories into reusable prompt quality rules",
+);
+assertMatches(
+  /const rawInput = feedbackImprovementFilterActive[\s\S]*?buildFeedbackImprovementQueueStudioDraftInput\(\{[\s\S]*?filteredMemories: filtered[\s\S]*?query[\s\S]*?reviewFilter[\s\S]*?scope[\s\S]*?sortMode[\s\S]*?totalMemories: memories\.length[\s\S]*?buildFilteredMemoriesStudioDraftInput\(\{/,
+  "Learning should use the feedback-improvement prompt builder only for the dedicated queue",
+);
+assertFileIncludes(
+  readme,
+  "Learning 필터 결과 리포트에 현재 조건 절대 URL을 포함",
+  "README should document Learning filtered report condition links",
+);
+assertFileIncludes(
+  readme,
+  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시합니다.",
+  "README should document Learning Studio draft storage fallback",
+);
+assertFileIncludes(
+  readme,
+  "Learning 운영 흐름은 준비도 점검, 낮은 신뢰도 검토, 수동 메모리 보강, 현재 조건 Studio 전송을 상단에서 같은 순서로 보여주고 각 상세 섹션으로 바로 이동하게 합니다.",
+  "README should document the Learning operating flow",
+);
+assertFileIncludes(
+  readme,
+  "Learning 상단 메모리 지표와 준비도 지표는 모바일 2열과 데스크톱 4열로 전체 메모리, scope, 신뢰도, 최근 업데이트를 빠르게 훑게 합니다.",
+  "README should document the compact responsive Learning summary metrics",
+);
+assertFileIncludes(
+  readme,
+  "Learning 상단 다음 학습 액션은 첫 학습, 낮은 신뢰도 검토, 비어 있는 scope 보강, 피드백 개선 큐, Studio 적용 확인 중 현재 우선순위를 골라 바로가기 2개와 함께 보여줍니다.",
+  "README should document the Learning next action guide",
+);
+assertFileIncludes(
+  readme,
+  "Learning 피드백 개선 큐 지표는 모바일 2열과 데스크톱 3열로 현재 큐, 낮은 신뢰도, 포함 scope를 짧게 확인하게 합니다.",
+  "README should document the compact responsive Learning feedback queue metrics",
+);
+assertFileIncludes(
+  readme,
+  "Learning 피드백 개선 큐는 `01 검토`, `02 Studio`, `03 기록` 단계 카드를 함께 보여줘 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록 순서를 바로 읽게 합니다.",
+  "README should document the numbered Learning feedback queue workflow cards",
+);
+assertFileIncludes(
+  readme,
+  "Learning 수동 메모리 추가는 `01 범위 선택`, `02 규칙 작성`, `03 생성 반영` 단계 카드로 학습 scope, 재사용 규칙, 저장 후 Studio 반영 순서를 폼보다 먼저 보여줍니다.",
+  "README should document the numbered Learning manual memory workflow cards",
+);
+assertFileIncludes(
+  readme,
+  "feedback-improvement 검색 조건에서는 피드백 개선 메모리 큐",
+  "README should document Learning feedback improvement queue",
+);
+assertFileIncludes(
+  readme,
+  "`learning-feedback-improvement` 저장 출처",
+  "README should document Learning feedback improvement queue Studio source",
+);
+assertFileIncludes(
+  readme,
+  "반복 피드백을 재사용 가능한 프롬프트 품질 규칙",
+  "README should document Learning feedback improvement queue specialized Studio prompt",
+);
+assertFileIncludes(
+  readme,
+  "피드백 개선 메모리 큐 리포트",
+  "README should document Learning feedback improvement queue report",
+);
+assertFileIncludes(
+  readme,
+  "큐 패널 안에 수동 복사용 textarea",
+  "README should document Learning feedback improvement queue copy fallback location",
+);
+assertFileIncludes(
+  readme,
+  "`큐 조건 링크 복사`",
+  "README should document Learning feedback improvement queue condition link copy",
+);
+assertFileIncludes(
+  readme,
+  "`검토`는 `낮은 신뢰도만 보기`, `낮은 신뢰도 링크 복사`, `큐 조건 링크 복사`",
+  "README should document Learning feedback improvement low-confidence drilldown actions",
+);
+assertFileIncludes(
+  readme,
+  "`낮은 신뢰도 Studio로`",
+  "README should document Learning feedback improvement low-confidence Studio handoff",
+);
+assertFileIncludes(
+  readme,
+  "낮은 신뢰도 메모리만 `learning-feedback-improvement` 초안",
+  "README should document Learning feedback improvement low-confidence subset draft source",
+);
+assertFileIncludes(
+  readme,
+  "`learning-low-confidence-validation` sourceVariant",
+  "README should document Learning feedback improvement low-confidence sourceVariant",
+);
+assertFileIncludes(
+  readme,
+  "`검증 저장본 보기`",
+  "README should document Learning feedback improvement validation Library action",
+);
+assertFileIncludes(
+  readme,
+  "/library?studioSource=learning-feedback-improvement&studioVariant=learning-low-confidence-validation",
+  "README should document Learning feedback improvement validation Library filter URL",
+);
+assertFileIncludes(
+  readme,
+  "Library의 세부 초안 유형 필터에서 전체 큐 개선 초안과 구분",
+  "README should document Learning low-confidence validation Library filtering",
+);
+assertFileIncludes(
+  readme,
+  "검증 질문, 병합/재작성/삭제 판단",
+  "README should document Learning feedback improvement low-confidence validation prompt",
+);
+assertFileIncludes(
+  readme,
+  "Learning 준비도 리포트에 낮은 신뢰도, 최근 업데이트, scope별 점검 절대 URL을 포함",
+  "README should document Learning readiness report review links",
+);
+assertFileIncludes(
+  readme,
+  "Learning 준비도 리포트를 Studio 초안으로 전송하고 `learning-readiness` 저장 출처로 추적",
+  "README should document Learning readiness Studio handoff",
+);
+assertFileIncludes(
+  readme,
+  "`/learning#readiness`",
+  "README should document the Learning readiness source anchor",
+);
+assertFileIncludes(
+  prd,
+  "필터 결과 리포트에는 현재 조건 절대 URL을 포함",
+  "PRD should document Learning filtered report condition links",
+);
+assertFileIncludes(
+  prd,
+  "Learning 운영 흐름은 준비도 점검, 낮은 신뢰도 검토, 수동 메모리 보강, 현재 조건 Studio 전송을 상단에서 같은 순서로 보여주고 각 상세 섹션으로 바로 이동하게 해야 한다.",
+  "PRD should document the Learning operating flow",
+);
+assertFileIncludes(
+  prd,
+  "Learning 상단 메모리 지표와 준비도 지표는 모바일 2열과 데스크톱 4열로 전체 메모리, scope, 신뢰도, 최근 업데이트를 빠르게 훑게 해야 한다.",
+  "PRD should document the compact responsive Learning summary metrics",
+);
+assertFileIncludes(
+  prd,
+  "Learning 상단 다음 학습 액션은 첫 학습, 낮은 신뢰도 검토, 비어 있는 scope 보강, 피드백 개선 큐, Studio 적용 확인 중 현재 우선순위를 골라 바로가기 2개와 함께 보여줘야 한다.",
+  "PRD should document the Learning next action guide",
+);
+assertFileIncludes(
+  prd,
+  "Learning 피드백 개선 큐 지표는 모바일 2열과 데스크톱 3열로 현재 큐, 낮은 신뢰도, 포함 scope를 짧게 확인하게 해야 한다.",
+  "PRD should document the compact responsive Learning feedback queue metrics",
+);
+assertFileIncludes(
+  prd,
+  "`01 검토`, `02 Studio`, `03 기록` 단계 카드로 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록 순서를 먼저 보여준 뒤",
+  "PRD should document the numbered Learning feedback queue workflow cards",
+);
+assertFileIncludes(
+  prd,
+  "`01 범위 선택`, `02 규칙 작성`, `03 생성 반영` 단계 카드로 학습 scope, 재사용 규칙, 저장 후 Studio 반영 순서를 폼보다 먼저 보여줘야 한다.",
+  "PRD should document the numbered Learning manual memory workflow cards",
+);
+assertFileIncludes(
+  prd,
+  "feedback-improvement 검색 조건에서는 피드백 개선 메모리 큐",
+  "PRD should document Learning feedback improvement queue",
+);
+assertFileIncludes(
+  prd,
+  "`learning-feedback-improvement` 저장 출처",
+  "PRD should document Learning feedback improvement queue Studio source",
+);
+assertFileIncludes(
+  prd,
+  "반복 피드백을 재사용 가능한 프롬프트 품질 규칙",
+  "PRD should document Learning feedback improvement queue specialized Studio prompt",
+);
+assertFileIncludes(
+  prd,
+  "피드백 개선 메모리 큐 리포트",
+  "PRD should document Learning feedback improvement queue report",
+);
+assertFileIncludes(
+  prd,
+  "큐 패널 안에 수동 복사용 textarea",
+  "PRD should document Learning feedback improvement queue copy fallback location",
+);
+assertFileIncludes(
+  prd,
+  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
+  "PRD should document Learning Studio draft storage fallback",
+);
+assertFileIncludes(
+  prd,
+  "`큐 조건 링크 복사`",
+  "PRD should document Learning feedback improvement queue condition link copy",
+);
+assertFileIncludes(
+  prd,
+  "`검토`는 `낮은 신뢰도만 보기`, `낮은 신뢰도 링크 복사`, `큐 조건 링크 복사`",
+  "PRD should document Learning feedback improvement low-confidence drilldown actions",
+);
+assertFileIncludes(
+  prd,
+  "`낮은 신뢰도 Studio로`",
+  "PRD should document Learning feedback improvement low-confidence Studio handoff",
+);
+assertFileIncludes(
+  prd,
+  "낮은 신뢰도 메모리만 `learning-feedback-improvement` 초안",
+  "PRD should document Learning feedback improvement low-confidence subset draft source",
+);
+assertFileIncludes(
+  prd,
+  "`learning-low-confidence-validation` sourceVariant",
+  "PRD should document Learning feedback improvement low-confidence sourceVariant",
+);
+assertFileIncludes(
+  prd,
+  "`검증 저장본 보기`",
+  "PRD should document Learning feedback improvement validation Library action",
+);
+assertFileIncludes(
+  prd,
+  "/library?studioSource=learning-feedback-improvement&studioVariant=learning-low-confidence-validation",
+  "PRD should document Learning feedback improvement validation Library filter URL",
+);
+assertFileIncludes(
+  prd,
+  "Library의 세부 초안 유형 필터에서 전체 큐 개선 초안과 구분",
+  "PRD should document Learning low-confidence validation Library filtering",
+);
+assertFileIncludes(
+  prd,
+  "검증 질문, 병합/재작성/삭제 판단",
+  "PRD should document Learning feedback improvement low-confidence validation prompt",
+);
+assertFileIncludes(
+  prd,
+  "준비도 리포트에는 낮은 신뢰도, 최근 업데이트, scope별 점검 절대 URL을 포함",
+  "PRD should document Learning readiness report review links",
+);
+assertFileIncludes(
+  prd,
+  "준비도 리포트는 Studio 초안으로 전송할 수 있고 `learning-readiness` 저장 출처로 추적해야 하며",
+  "PRD should document Learning readiness Studio handoff",
+);
+assertFileIncludes(
+  prd,
+  "`/learning#readiness`",
+  "PRD should document the Learning readiness source anchor",
+);
+assertFileIncludes(
+  promptTypes,
+  '"learning-readiness"',
+  "Prompt Studio draft sources should include learning-readiness",
+);
+assertFileIncludes(
+  promptTypes,
+  '"learning-feedback-improvement"',
+  "Prompt Studio draft sources should include learning-feedback-improvement",
+);
+assertFileIncludes(
+  promptTypes,
+  '"learning-low-confidence-validation"',
+  "Prompt Studio draft source variants should include learning-low-confidence-validation",
+);
+assertFileIncludes(
+  draftVariants,
+  '"learning-low-confidence-validation":',
+  "Studio draft variant rules should include learning-low-confidence-validation",
+);
+assertFileIncludes(
+  draftVariants,
+  'allowedSources: ["learning-feedback-improvement"]',
+  "Learning low-confidence validation variant should only allow learning-feedback-improvement source",
+);
+assertFileIncludes(
+  draftDisplay,
+  '"learning-low-confidence-validation":',
+  "Studio draft display labels should include learning-low-confidence-validation",
+);
+assertFileIncludes(
+  draftDisplay,
+  "Learning 저신뢰도 피드백 검증",
+  "Studio draft display should label Learning low-confidence validation drafts",
+);
+assertFileIncludes(
+  libraryView,
+  '"learning-low-confidence-validation": "Learning 저신뢰도 피드백 검증"',
+  "Library studioVariant filter labels should include Learning low-confidence validation",
+);
+assertFileIncludes(
+  sourceRegistry,
+  '"learning-readiness"',
+  "Studio source registry should include learning-readiness",
+);
+assertFileIncludes(
+  sourceRegistry,
+  '"learning-feedback-improvement"',
+  "Studio source registry should include learning-feedback-improvement",
+);
+assertFileIncludes(
+  sourceRegistry,
+  "Learning 피드백 개선 메모리 큐",
+  "Studio source registry should label Learning feedback improvement queue drafts",
+);
+assertFileIncludes(
+  sourceRegistry,
+  "Learning 준비도 리포트",
+  "Studio source registry should label Learning readiness drafts",
+);
+assertFileIncludes(
+  devBrief,
+  "Learning 피드백 개선 큐는 `01 검토`, `02 Studio`, `03 기록` 단계 카드를 함께 보여줘 낮은 신뢰도 확인, Studio 검증 초안 전송, 큐 리포트/검증 저장본 기록 순서를 바로 읽게 함",
+  "Development brief should document the numbered Learning feedback queue workflow cards",
+);
+assertFileIncludes(
+  devBrief,
+  "Learning 수동 메모리 추가는 `01 범위 선택`, `02 규칙 작성`, `03 생성 반영` 단계 카드로 학습 scope, 재사용 규칙, 저장 후 Studio 반영 순서를 폼보다 먼저 보여줌",
+  "Development brief should document the numbered Learning manual memory workflow cards",
+);
+assertFileIncludes(
+  devBrief,
+  "Learning 준비도, 필터 결과, 개별 메모리, 피드백 개선 큐의 Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시함",
+  "Development brief should document Learning Studio draft storage fallback",
+);
+
+console.log("Learning operational summary verification passed.");

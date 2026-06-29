@@ -1,0 +1,58 @@
+{
+  "name": "prompt-ai-studio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "smoke:chrome-extension": "node scripts/verify-chrome-extension-smoke.mjs",
+    "smoke:learning-feedback": "node scripts/verify-learning-operational-summary.mjs",
+    "smoke:mcp": "node mcp/prompt-ai-studio.mjs --self-test",
+    "verify": "node scripts/verify-all.mjs",
+    "verify:app-shell": "node scripts/verify-app-shell-navigation.mjs",
+    "verify:build-stability": "node scripts/verify-build-stability.mjs",
+    "verify:data-management": "node scripts/verify-data-management-ops.mjs",
+    "verify:dashboard-source": "node scripts/verify-dashboard-studio-source-ops.mjs",
+    "verify:evidence-cli": "node scripts/verify-evidence-cli.mjs",
+    "verify:evidence-hygiene": "node scripts/verify-evidence-hygiene.mjs",
+    "verify:evidence": "node scripts/verify-evidence.mjs",
+    "verify:docs": "node scripts/verify-readme-scripts.mjs",
+    "verify:integrations": "node scripts/verify-integrations-surface.mjs",
+    "verify:manifest": "node scripts/verify-verification-manifest.mjs",
+    "verify:library-summary": "node scripts/verify-library-operational-summary.mjs",
+    "verify:learning-summary": "node scripts/verify-learning-operational-summary.mjs",
+    "verify:prompt-package": "node scripts/verify-target-ai-handoff-package.mjs",
+    "verify:profile-company": "node scripts/verify-profile-company-context.mjs",
+    "verify:release-candidate": "node scripts/verify-release-candidate.mjs",
+    "verify:repo-boundary": "node scripts/verify-repo-boundary.mjs",
+    "verify:runtime": "node scripts/verify-environment-readiness.mjs",
+    "verify:secrets": "node scripts/verify-secret-safety.mjs",
+    "verify:skills-summary": "node scripts/verify-skills-operational-summary.mjs",
+    "verify:scope": "node scripts/verify-supabase-preflight-scope.mjs",
+    "verify:studio-draft-fallbacks": "node scripts/verify-studio-draft-fallback-guards.mjs",
+    "verify:studio-draft-summary": "node scripts/verify-studio-draft-operational-summary.mjs",
+    "verify:studio-result-summary": "node scripts/verify-studio-result-handoff-summary.mjs",
+    "verify:studio-safety": "node scripts/verify-studio-stale-handoff-guard.mjs",
+    "verify:terminology": "node scripts/verify-terminology-consistency.mjs"
+  },
+  "dependencies": {
+    "next": "16.2.7",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "overrides": {
+    "postcss": "8.5.15"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.7",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,1472 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import ts from "typescript";
+import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
+
+const dataSource = readFileSync(
+  "src/components/data/data-management-view.tsx",
+  "utf8",
+);
+const dataSourceFile = ts.createSourceFile(
+  "src/components/data/data-management-view.tsx",
+  dataSource,
+  ts.ScriptTarget.Latest,
+  true,
+  ts.ScriptKind.TSX,
+);
+const manifestSource = readFileSync(
+  "src/lib/data/supabase-import-execution-packet-manifest.ts",
+  "utf8",
+);
+const readme = readFileSync("README.md", "utf8");
+const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
+const developmentBrief = readFileSync(
+  "docs/codex-development-brief.md",
+  "utf8",
+);
+const storageArchitecture = readFileSync(
+  "docs/storage-architecture.md",
+  "utf8",
+);
+const promptTypesSource = readFileSync("src/lib/prompt/types.ts", "utf8");
+const sourceRegistrySource = readFileSync(
+  "src/lib/studio/source-registry.ts",
+  "utf8",
+);
+
+const {
+  buildSupabaseImportExecutionPacketManifestText,
+  buildSupabaseImportExecutionPacketNextActionText,
+  formatSupabaseImportExecutionPacketCopyGateLabel,
+  getSupabaseImportExecutionPacketCopyActionStatuses,
+  getSupabaseImportExecutionPacketManifestItems,
+  getSupabaseImportExecutionPacketManifestNextAction,
+  getSupabaseImportExecutionPacketManifestStatus,
+  getSupabaseImportExecutionPacketManifestSummary,
+} = loadTypescriptModule(
+  "src/lib/data/supabase-import-execution-packet-manifest.ts",
+);
+
+function assertDataMatches(pattern, message) {
+  assert.match(dataSource, pattern, message);
+}
+
+function assertDataTestIdCount(testId, expectedCount, message) {
+  const escapedTestId = testId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const count =
+    dataSource.match(new RegExp(`data-testid="${escapedTestId}"`, "g"))
+      ?.length ?? 0;
+  assert.equal(count, expectedCount, message);
+}
+
+function assertManifestMatches(pattern, message) {
+  assert.match(manifestSource, pattern, message);
+}
+
+function assertFileIncludes(fileSource, text, message) {
+  assert.ok(fileSource.includes(text), message);
+}
+
+function normalizePlain(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function getLineNumber(position) {
+  return dataSourceFile.getLineAndCharacterOfPosition(position).line + 1;
+}
+
+function collectCopyDataTextCalls(node, calls = []) {
+  if (
+    ts.isCallExpression(node) &&
+    node.expression.getText(dataSourceFile) === "copyDataText"
+  ) {
+    calls.push({
+      argumentCount: node.arguments.length,
+      manualFallbackExpression: node.arguments[3]?.getText(dataSourceFile) ?? "",
+      line: getLineNumber(node.getStart(dataSourceFile)),
+    });
+  }
+
+  ts.forEachChild(node, (child) => {
+    collectCopyDataTextCalls(child, calls);
+  });
+
+  return calls;
+}
+
+const copyDataTextCalls = collectCopyDataTextCalls(dataSourceFile);
+const copyDataTextCallsMissingManualFallback = copyDataTextCalls.filter(
+  (call) => call.argumentCount < 4,
+);
+const copyDataTextCallsMissingManualFallbackBuilder = copyDataTextCalls.filter(
+  (call) => !/^build[A-Za-z0-9]+ManualCopyText\(/.test(call.manualFallbackExpression),
+);
+
+assert.ok(
+  copyDataTextCalls.length > 0,
+  "Data view should have clipboard copy actions to verify",
+);
+
+assert.equal(
+  copyDataTextCallsMissingManualFallback.length,
+  0,
+  `Every Data copyDataText call should include success notice, failure notice, and metadata-rich manual fallback body. Missing calls: ${JSON.stringify(
+    copyDataTextCallsMissingManualFallback,
+  )}`,
+);
+assert.equal(
+  copyDataTextCallsMissingManualFallbackBuilder.length,
+  0,
+  `Every Data copyDataText manual fallback should use a dedicated build*ManualCopyText helper. Missing helpers: ${JSON.stringify(
+    copyDataTextCallsMissingManualFallbackBuilder,
+  )}`,
+);
+
+assertDataMatches(
+  /interface SupabaseImportExecutionPlanSummaryProps[\s\S]*?onCopyExecutionPacket: \(\) => void;[\s\S]*?onCopyExecutionPacketManifest: \(\) => void;[\s\S]*?onCopyExecutionPacketNextAction: \(\) => void;/,
+  "Data import execution plan props should include execution packet manifest and next-action copy actions",
+);
+
+assertDataMatches(
+  /function buildBackupManualCopyText\(\{[\s\S]*?counts: WorkspaceBackupCounts[\s\S]*?exportedAt: string[\s\S]*?fingerprint: string[\s\S]*?json: string[\s\S]*?# Prompt AI Studio 백업 JSON[\s\S]*?## 백업 식별[\s\S]*?생성 시각: \$\{formatBackupDate\(exportedAt\)\}[\s\S]*?백업 지문: \$\{fingerprint\}[\s\S]*?JSON 길이: \$\{formatJsonLength\(json\)\}[\s\S]*?## 수량 요약[\s\S]*?프롬프트: \$\{counts\.prompts\}개[\s\S]*?삭제 보관함: \$\{counts\.deletedPrompts \?\? 0\}개[\s\S]*?## JSON[\s\S]*?json/,
+  "Data backup JSON manual fallback should prepend backup identity, counts, fingerprint, and JSON length before the raw JSON",
+);
+
+assertDataMatches(
+  /async function copyDataText\([\s\S]*?manualBody = text[\s\S]*?copyTextToClipboard\(text\)[\s\S]*?body: manualBody/,
+  "Data copy helper should allow metadata-rich manual fallback bodies while preserving the clipboard payload",
+);
+
+assertDataMatches(
+  /async function handleCopyBackup\(\)[\s\S]*?copyDataText\([\s\S]*?exportJson[\s\S]*?백업 JSON을 클립보드에 복사했습니다[\s\S]*?buildBackupManualCopyText\(\{[\s\S]*?counts: backupMeta\.counts[\s\S]*?exportedAt: backupMeta\.exportedAt[\s\S]*?fingerprint:[\s\S]*?backupMeta\.fingerprint \|\| getWorkspaceBackupFingerprint\(exportJson\)[\s\S]*?json: exportJson/,
+  "Data backup copy should keep raw JSON on clipboard and use the metadata-rich backup fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /interface DocumentRagReadinessItem[\s\S]*?artifact: string;[\s\S]*?detail: string;[\s\S]*?evidence: string;[\s\S]*?nextAction: string;[\s\S]*?status: "planned" \| "ready";/,
+  "Data document RAG readiness should use a typed readiness item contract",
+);
+
+assertDataMatches(
+  /interface DocumentRagReadinessSummaryProps[\s\S]*?chunks: DocumentRagChunkPreview\[\];[\s\S]*?onClearDraft: \(\) => void;[\s\S]*?onCopyIngestionPacket: \(\) => void;[\s\S]*?onCopyReadiness: \(\) => void;[\s\S]*?onDocumentFileChange: \(event: ChangeEvent<HTMLInputElement>\) => void;[\s\S]*?sourceName: string;[\s\S]*?text: string;/,
+  "Data document RAG readiness props should include draft input, file input, chunk preview, clear, readiness copy, and ingestion packet actions",
+);
+
+assertDataMatches(
+  /interface DocumentRagChunkPreview[\s\S]*?content: string;[\s\S]*?end: number;[\s\S]*?index: number;[\s\S]*?start: number;/,
+  "Data document RAG chunk preview should keep content and source text ranges",
+);
+
+assertDataMatches(
+  /const documentRagReadinessItems = \[[\s\S]*?pgvector extension[\s\S]*?document_sources[\s\S]*?document_chunks[\s\S]*?ingestion gate[\s\S]*?retrieval gate[\s\S]*?satisfies DocumentRagReadinessItem\[\];/,
+  "Data document RAG readiness should expose schema, ingestion, and retrieval gates",
+);
+
+assertDataMatches(
+  /function buildDocumentRagReadinessText\(\)[\s\S]*?# Prompt AI Studio Document RAG Readiness[\s\S]*?Ready artifacts:[\s\S]*?Current scope: schema and operator readiness only; no document upload writes yet[\s\S]*?Required gates before upload[\s\S]*?document_sources\.workspace_id[\s\S]*?document_chunks\.chunk_index[\s\S]*?trusted server-side job[\s\S]*?source IDs and chunk indexes/,
+  "Data document RAG readiness report should document schema readiness, local-only scope, workspace scope, chunk order, server-side embeddings, and citation gates",
+);
+
+assertDataMatches(
+  /function buildDocumentRagReadinessManualCopyText\(\{[\s\S]*?reportText[\s\S]*?# Prompt AI Studio 문서\/RAG 준비도[\s\S]*?준비된 항목:[\s\S]*?설계 필요 항목:[\s\S]*?리포트 길이:[\s\S]*?pgvector schema exists[\s\S]*?document_sources and document_chunks must stay workspace-scoped[\s\S]*?Embeddings should be generated server-side[\s\S]*?Retrieved chunks must keep source ID and chunk index citations/,
+  "Data document RAG readiness manual fallback should prepend readiness counts, length, workspace scope, server-side embedding, and citation gates",
+);
+
+assertDataMatches(
+  /function normalizeDocumentRagText\(value: string\)[\s\S]*?replace\(\/\\r\\n\/g, "\\n"\)[\s\S]*?replace\(\/\\n\{3,\}\/g, "\\n\\n"\)[\s\S]*?trim\(\)/,
+  "Data document RAG text normalization should keep chunking deterministic",
+);
+
+assertDataMatches(
+  /function createDocumentRagChunks\(value: string\)[\s\S]*?const text = normalizeDocumentRagText\(value\)[\s\S]*?while \(cursor < text\.length\)[\s\S]*?documentRagChunkSize[\s\S]*?chunks\.push\(\{[\s\S]*?content[\s\S]*?end: nextCursor[\s\S]*?index: chunks\.length[\s\S]*?start: cursor/,
+  "Data document RAG chunk preview should split local text into ordered fixed-size chunks with ranges",
+);
+
+assertDataMatches(
+  /function buildDocumentRagIngestionPacketText\(\{[\s\S]*?chunks[\s\S]*?sourceName[\s\S]*?text[\s\S]*?# Prompt AI Studio Document RAG Ingestion Packet[\s\S]*?executionMode: local preview only[\s\S]*?chunkCount:[\s\S]*?Do not write these rows until the Supabase repository and server-side embedding job are ready[\s\S]*?document_sources[\s\S]*?document_chunks[\s\S]*?source ID plus chunk index citations[\s\S]*?Chunk preview/,
+  "Data document RAG ingestion packet should be local-only and preserve source/chunk citation gates",
+);
+
+assertDataMatches(
+  /function buildDocumentRagIngestionPacketManualCopyText\(\{[\s\S]*?packetText[\s\S]*?# Prompt AI Studio 문서\/RAG 수집 패킷[\s\S]*?sourceName:[\s\S]*?원문 길이:[\s\S]*?chunk 수:[\s\S]*?패킷 길이:[\s\S]*?This packet is local preview only[\s\S]*?document_sources row must be created before document_chunks rows[\s\S]*?Embeddings must be generated server-side[\s\S]*?Retrieval must preserve source ID and chunk index citations/,
+  "Data document RAG ingestion packet manual fallback should prepend source, length, chunk count, local-only, table order, embedding, and citation gates",
+);
+
+assertDataMatches(
+  /function buildDocumentRagStudioDraftInput\(\{[\s\S]*?chunks[\s\S]*?sourceName[\s\S]*?text[\s\S]*?문서 이름:[\s\S]*?이 문서 맥락을 바탕으로 외부 AI에 전달할 전문 프롬프트를 작성해줘[\s\S]*?전체 영어 지시문 또는 한영 하이브리드[\s\S]*?source ID와 chunk index를 인용 기준으로 남기고[\s\S]*?Chunk context/,
+  "Data document RAG Studio draft input should preserve document identity, prompt intent, automatic language strategy, citation rule, and chunk context",
+);
+
+assertDataMatches(
+  /function DocumentRagReadinessSummary\(\{[\s\S]*?onOpenInStudio[\s\S]*?studioDraftSummaryItems = \[[\s\S]*?프롬프트 언어[\s\S]*?자동 판단[\s\S]*?입력 언어와 동일[\s\S]*?source ID \+ chunk index[\s\S]*?문서\/RAG 준비도[\s\S]*?문서 업로드와 pgvector 검색[\s\S]*?RAG 준비도 복사[\s\S]*?document_sources[\s\S]*?document_chunks\.embedding[\s\S]*?documentRagReadinessItems\.map[\s\S]*?문서 입력[\s\S]*?텍스트 파일[\s\S]*?문서 원문[\s\S]*?Studio로 보내기[\s\S]*?수집 패킷 복사[\s\S]*?Studio 전송 준비[\s\S]*?chunk preview/,
+  "Data view should render a document RAG readiness summary with Studio, copy action, storage/search units, and Studio handoff readiness",
+);
+assertDataMatches(
+  /className="grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-document-rag-summary-metrics"[\s\S]*?min-w-0 rounded-md border border-line bg-surface px-3 py-3[\s\S]*?준비된 항목[\s\S]*?break-words font-mono text-sm text-soft[\s\S]*?설계 필요[\s\S]*?저장 단위[\s\S]*?검색 단위[\s\S]*?document_chunks\.embedding/,
+  "Data document RAG summary metrics should keep a compact two-column mobile grid and four-column desktop grid",
+);
+
+assertDataMatches(
+  /async function handleCopyDocumentRagReadiness\(\)[\s\S]*?const readinessText = buildDocumentRagReadinessText\(\)[\s\S]*?copyDataText\([\s\S]*?readinessText[\s\S]*?문서\/RAG 준비도 리포트를 클립보드에 복사했습니다[\s\S]*?buildDocumentRagReadinessManualCopyText\(\{[\s\S]*?reportText: readinessText/,
+  "Data document RAG readiness copy should keep the report on the clipboard and expose a metadata-rich manual fallback",
+);
+
+assertDataMatches(
+  /async function handleDocumentRagFileChange\([\s\S]*?event: ChangeEvent<HTMLInputElement>[\s\S]*?file\.type\.startsWith\("text\/"\)[\s\S]*?application\/json[\s\S]*?setDocumentRagSourceName\(file\.name\)[\s\S]*?setDocumentRagText\(fileContents\)[\s\S]*?chunk preview/,
+  "Data document RAG file handler should accept text-like files and load them into the local chunk preview draft",
+);
+
+assertDataMatches(
+  /async function handleCopyDocumentRagIngestionPacket\(\)[\s\S]*?documentRagChunks\.length === 0[\s\S]*?buildDocumentRagIngestionPacketText\(\{[\s\S]*?chunks: documentRagChunks[\s\S]*?sourceName: documentRagSourceName[\s\S]*?text: documentRagText[\s\S]*?copyDataText\([\s\S]*?packetText[\s\S]*?문서\/RAG 수집 패킷을 클립보드에 복사했습니다[\s\S]*?buildDocumentRagIngestionPacketManualCopyText/,
+  "Data document RAG ingestion packet copy should require chunks and expose a metadata-rich manual fallback",
+);
+
+assertDataMatches(
+  /function handleOpenDocumentRagInStudio\(\)[\s\S]*?documentRagChunks\.length === 0[\s\S]*?const rawInput = buildDocumentRagStudioDraftInput\(\{[\s\S]*?chunks: documentRagChunks[\s\S]*?sourceName[\s\S]*?text: documentRagText[\s\S]*?const wroteDraft = writeStudioDraft\(\{[\s\S]*?domain: "문서 기반 RAG"[\s\S]*?goal: "문서 맥락 기반 프롬프트 작성"[\s\S]*?outputLanguage: "same_as_input"[\s\S]*?rawInput[\s\S]*?source: "data-document-rag"[\s\S]*?sourceHref: "\/data"[\s\S]*?targetModels: \["gpt", "claude", "gemini"\][\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setManualCopy\(\{[\s\S]*?title: `문서\/RAG Studio 초안 · \$\{sourceName\}`[\s\S]*?body: rawInput[\s\S]*?아래 원문을 직접 선택해 복사하세요[\s\S]*?return[\s\S]*?setManualCopy\(null\)[\s\S]*?router\.push\("\/studio\?draft=data-document-rag"\)/,
+  "Data document RAG Studio action should keep a source-tracked manual fallback when draft storage fails and navigate only after a saved draft",
+);
+
+assertDataMatches(
+  /<DocumentRagReadinessSummary[\s\S]*?chunks=\{documentRagChunks\}[\s\S]*?onClearDraft=\{handleClearDocumentRagDraft\}[\s\S]*?onCopyIngestionPacket=\{handleCopyDocumentRagIngestionPacket\}[\s\S]*?onCopyReadiness=\{handleCopyDocumentRagReadiness\}[\s\S]*?onOpenInStudio=\{handleOpenDocumentRagInStudio\}[\s\S]*?sourceName=\{documentRagSourceName\}[\s\S]*?text=\{documentRagText\}/,
+  "Data readiness panel should render document RAG draft input and chunk preview before environment readiness",
+);
+assertDataMatches(
+  /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
+  "Data view should use the shared context operating flow component",
+);
+assertDataMatches(
+  /const dataOperationFlowItems: ContextOperatingFlowItem\[\] = \[[\s\S]*?backupIsCurrent[\s\S]*?handleGenerateBackup[\s\S]*?readinessDoneCount[\s\S]*?readinessItems\.length[\s\S]*?documentRagReadyCount[\s\S]*?documentRagChunks\.length[\s\S]*?runtimeReadiness\.data[\s\S]*?formatReleaseGateStage\(runtimeReadiness\.data\.releaseGate\.stage\)/,
+  "Data operating flow should summarize backup, readiness, document RAG, and runtime gate state without adding new persistence state",
+);
+assertDataMatches(
+  /<ContextOperatingFlow[\s\S]*?badge="destructive action 분리"[\s\S]*?description="백업을 먼저 고정하고 준비도, 문서\/RAG, Supabase 전환 gate를 순서대로 확인합니다\."[\s\S]*?items=\{dataOperationFlowItems\}[\s\S]*?testId="data-operating-flow"[\s\S]*?title="데이터 운영 흐름"/,
+  "Data view should render the shared safe operating flow before detailed data sections",
+);
+assertDataMatches(
+  /const dataSafetyWorkflowSteps = \[[\s\S]*?label: "백업 고정"[\s\S]*?step: "01"[\s\S]*?label: "준비도 확인"[\s\S]*?step: "02"[\s\S]*?label: "실행 분리"[\s\S]*?step: "03"[\s\S]*?data-testid="data-safety-workflow"[\s\S]*?dataSafetyWorkflowSteps\.map[\s\S]*?item\.step[\s\S]*?item\.label[\s\S]*?item\.title[\s\S]*?item\.detail/,
+  "Data view should render numbered backup, readiness, and separated execution workflow cards",
+);
+assertDataMatches(
+  /<ContextOperatingFlow[\s\S]*?title="데이터 운영 흐름"[\s\S]*?data-testid="data-safety-workflow"[\s\S]*?<Panel>[\s\S]*?<PanelHeader[\s\S]*?title="워크스페이스 스냅샷"/,
+  "Data safety workflow should sit between the top operating flow and workspace snapshot details",
+);
+assertDataMatches(
+  /function CountGrid\(\{ counts \}: \{ counts: WorkspaceBackupCounts \}\)[\s\S]*?className="grid grid-cols-2 gap-3 xl:grid-cols-4"[\s\S]*?data-testid="data-workspace-count-metrics"[\s\S]*?프롬프트[\s\S]*?버전[\s\S]*?피드백[\s\S]*?학습 메모리[\s\S]*?삭제 보관함/,
+  "Data workspace count metrics should keep a compact two-column mobile grid and four-column desktop grid",
+);
+assertDataMatches(
+  /className="grid grid-cols-2 gap-3 text-sm leading-6 text-soft md:grid-cols-2"[\s\S]*?data-testid="data-workspace-context-summary"[\s\S]*?사용자 프로필[\s\S]*?회사 프로필[\s\S]*?col-span-2[\s\S]*?최근 백업/,
+  "Data workspace context summary should show user and company in two mobile columns while keeping the backup summary full-width",
+);
+assertDataMatches(
+  /href: "#data-readiness"[\s\S]*?href: "#data-document-rag"[\s\S]*?href: "#data-supabase-migration"/,
+  "Data operating flow should link to readiness, RAG, and migration sections in order",
+);
+assertFileIncludes(
+  dataSource,
+  'id="data-readiness"',
+  "Data view should expose a readiness section anchor",
+);
+assertFileIncludes(
+  dataSource,
+  'id="data-document-rag"',
+  "Data view should expose a document RAG section anchor",
+);
+assertFileIncludes(
+  dataSource,
+  'id="data-supabase-migration"',
+  "Data view should expose a Supabase migration section anchor",
+);
+
+assertFileIncludes(
+  promptTypesSource,
+  '"data-document-rag"',
+  "Prompt draft sources should include the Data document RAG Studio source",
+);
+assertFileIncludes(
+  sourceRegistrySource,
+  '"data-document-rag"',
+  "Prompt Studio source registry should include the Data document RAG source",
+);
+assertFileIncludes(
+  sourceRegistrySource,
+  "Data 문서/RAG chunk 초안",
+  "Prompt Studio source registry should label Data document RAG drafts",
+);
+
+assertDataMatches(
+  /function buildRestoreReportManualCopyText\(\{[\s\S]*?backup[\s\S]*?currentBackupFingerprint[\s\S]*?importFingerprint[\s\S]*?importSource[\s\S]*?impactItems[\s\S]*?reportText[\s\S]*?riskItems[\s\S]*?RestoreReportParams &[\s\S]*?reportText: string[\s\S]*?changedItems = impactItems\.filter[\s\S]*?formatChange\(item\.current, item\.incoming\) !== "동일"[\s\S]*?fingerprintComparison = currentBackupFingerprint[\s\S]*?currentBackupFingerprint === importFingerprint[\s\S]*?# Prompt AI Studio 복원 리포트[\s\S]*?## 복원 리포트 식별[\s\S]*?백업 생성: \$\{formatBackupDate\(backup\.exportedAt\)\}[\s\S]*?가져온 방식: \$\{importSource\}[\s\S]*?가져온 백업 지문: \$\{importFingerprint\}[\s\S]*?최근 백업 기준 지문: \$\{currentBackupFingerprint \|\| "없음"\}[\s\S]*?지문 비교: \$\{fingerprintComparison\}[\s\S]*?리포트 길이: \$\{formatJsonLength\(reportText\)\}[\s\S]*?## 복원 영향 요약[\s\S]*?변경 항목: \$\{changedItems\.length\}개[\s\S]*?리스크 항목: \$\{riskItems\.length\}개[\s\S]*?프롬프트: \$\{backup\.counts\.prompts\}개[\s\S]*?삭제 보관함: \$\{backup\.counts\.deletedPrompts \?\? 0\}개[\s\S]*?## 실행 전 gate 요약[\s\S]*?original backup JSON file[\s\S]*?changed count and profile fields[\s\S]*?fingerprints differ[\s\S]*?validated backup[\s\S]*?## Restore report[\s\S]*?reportText/,
+  "Data restore report manual fallback should prepend backup identity, fingerprint comparison, report length, changed/risk counts, data counts, pre-restore backup guard, fingerprint guard, and restore replacement guard",
+);
+
+assertDataMatches(
+  /async function handleCopyRestoreReport\(\)[\s\S]*?const restoreReportParams = \{[\s\S]*?backup: parseResult\.backup[\s\S]*?currentBackupFingerprint[\s\S]*?importFingerprint: importBackupFingerprint[\s\S]*?importSource: importFileName \|\| "붙여넣기"[\s\S]*?impactItems: restoreImpactItems[\s\S]*?riskItems: restoreRiskItems[\s\S]*?\}[\s\S]*?const reportText = buildRestoreReportText\(restoreReportParams\)[\s\S]*?copyDataText\([\s\S]*?reportText[\s\S]*?복원 리포트를 클립보드에 복사했습니다[\s\S]*?buildRestoreReportManualCopyText\(\{[\s\S]*?\.\.\.restoreReportParams[\s\S]*?reportText/,
+  "Data restore report copy should keep the original restore report on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildMigrationMappingManualCopyText\(\{[\s\S]*?items: MigrationMappingItem\[\][\s\S]*?mappingText: string[\s\S]*?readyItems = items\.filter[\s\S]*?item\.status === "ready"[\s\S]*?contextItems = items\.filter[\s\S]*?item\.status === "needs-context"[\s\S]*?futureItems = items\.filter[\s\S]*?item\.status === "future"[\s\S]*?totalRows = items\.reduce\(\(sum, item\) => sum \+ item\.records, 0\)[\s\S]*?# Prompt AI Studio Supabase 마이그레이션 매핑[\s\S]*?## 매핑 식별[\s\S]*?매핑 테이블: \$\{items\.length\}개[\s\S]*?1차 이관 가능 테이블: \$\{readyItems\.length\}개[\s\S]*?컨텍스트 필요 테이블: \$\{contextItems\.length\}개[\s\S]*?추후 테이블: \$\{futureItems\.length\}개[\s\S]*?예상 row 수: \$\{totalRows\}개[\s\S]*?매핑 길이: \$\{formatJsonLength\(mappingText\)\}[\s\S]*?## 실행 전 gate 요약[\s\S]*?workspace owner and auth user id[\s\S]*?workspaces and workspace_members[\s\S]*?deleted_prompt_assets[\s\S]*?document_sources and document_chunks[\s\S]*?## Migration mapping[\s\S]*?mappingText/,
+  "Data migration mapping manual fallback should prepend table status counts, expected rows, mapping length, workspace owner gate, insert-order gate, deleted snapshot gate, and future RAG table gate",
+);
+
+assertDataMatches(
+  /async function handleCopyMigrationMapping\(\)[\s\S]*?const mappingText = buildMigrationMappingText\(migrationMappingItems\)[\s\S]*?copyDataText\([\s\S]*?mappingText[\s\S]*?Supabase 매핑 요약을 클립보드에 복사했습니다[\s\S]*?buildMigrationMappingManualCopyText\(\{[\s\S]*?items: migrationMappingItems[\s\S]*?mappingText/,
+  "Data migration mapping copy should keep the original mapping on the clipboard and use the status-count fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildMigrationChecklistManualCopyText\(\{[\s\S]*?checklistText: string[\s\S]*?items: MigrationChecklistItem\[\][\s\S]*?readyItems = items\.filter[\s\S]*?item\.status === "ready"[\s\S]*?blockedItems = items\.filter[\s\S]*?item\.status === "blocked"[\s\S]*?manualItems = items\.filter[\s\S]*?item\.status === "manual"[\s\S]*?# Prompt AI Studio Supabase 마이그레이션 실행 체크리스트[\s\S]*?## 체크리스트 식별[\s\S]*?체크리스트 항목: \$\{items\.length\}개[\s\S]*?준비됨: \$\{readyItems\.length\}개[\s\S]*?결정 필요: \$\{blockedItems\.length\}개[\s\S]*?수동 확인: \$\{manualItems\.length\}개[\s\S]*?체크리스트 길이: \$\{formatJsonLength\(checklistText\)\}[\s\S]*?## 실행 전 gate 요약[\s\S]*?backup fingerprint and imported backup source[\s\S]*?service role keys server-side only[\s\S]*?docs\/database-schema\.sql[\s\S]*?RLS policies[\s\S]*?rollback criteria and original backup JSON[\s\S]*?## Migration checklist[\s\S]*?checklistText/,
+  "Data migration checklist manual fallback should prepend checklist status counts, checklist length, backup-source gate, service-role gate, schema gate, RLS gate, and rollback gate",
+);
+
+assertDataMatches(
+  /async function handleCopyMigrationChecklist\(\)[\s\S]*?const checklistText = buildMigrationChecklistText\(migrationChecklistItems\)[\s\S]*?copyDataText\([\s\S]*?checklistText[\s\S]*?마이그레이션 체크리스트를 클립보드에 복사했습니다[\s\S]*?buildMigrationChecklistManualCopyText\(\{[\s\S]*?checklistText[\s\S]*?items: migrationChecklistItems/,
+  "Data migration checklist copy should keep the original checklist on the clipboard and use the status-count fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildEnvironmentTemplateManualCopyText\(\{[\s\S]*?templateText: string[\s\S]*?counts = getEnvironmentReadinessCounts\(\)[\s\S]*?# Prompt AI Studio \.env\.local Template[\s\S]*?## 템플릿 식별[\s\S]*?템플릿 길이: \$\{formatJsonLength\(templateText\)\}[\s\S]*?Active variables: \$\{counts\.active\}[\s\S]*?Supabase migration variables: \$\{counts\.migration\}[\s\S]*?Future storage variables: \$\{counts\.future\}[\s\S]*?## Exposure guard 요약[\s\S]*?OPENAI_API_KEY and SUPABASE_SERVICE_ROLE_KEY are server-only values[\s\S]*?NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are browser-public values[\s\S]*?SUPABASE_IMPORT_EXECUTION_ENABLED must default to false[\s\S]*?APP_STORAGE_MODE stays local[\s\S]*?Do not commit \.env\.local[\s\S]*?real secret values[\s\S]*?## \.env\.local template[\s\S]*?templateText/,
+  "Data environment template manual fallback should prepend template length, readiness counts, server-only guard, browser-public guard, execution gate default, storage-mode guard, and secret-handling guard",
+);
+
+assertDataMatches(
+  /async function handleCopyEnvironmentTemplate\(\)[\s\S]*?const environmentTemplateText = buildEnvironmentExampleText\(\)[\s\S]*?copyDataText\([\s\S]*?environmentTemplateText[\s\S]*?\.env\.local 템플릿을 클립보드에 복사했습니다[\s\S]*?buildEnvironmentTemplateManualCopyText\(\{[\s\S]*?templateText: environmentTemplateText/,
+  "Data environment template copy should keep the raw env template on the clipboard and use the exposure-guard fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildEnvironmentReadinessManualCopyText\(\{[\s\S]*?checklistText: string[\s\S]*?runtimeStatus\?: EnvironmentRuntimeStatus[\s\S]*?counts = getEnvironmentReadinessCounts\(\)[\s\S]*?actionQueue =[\s\S]*?runtimeStatus\?\.releaseGate\.checks\.filter[\s\S]*?check\.status !== "pass"[\s\S]*?missingVariables =[\s\S]*?runtimeStatus\?\.variables\.filter[\s\S]*?!item\.configured[\s\S]*?# Prompt AI Studio Environment Readiness Checklist[\s\S]*?## Readiness checklist 식별[\s\S]*?체크리스트 길이: \$\{formatJsonLength\(checklistText\)\}[\s\S]*?Active variables: \$\{counts\.active\}[\s\S]*?Supabase migration variables: \$\{counts\.migration\}[\s\S]*?Future storage variables: \$\{counts\.future\}[\s\S]*?## Runtime readiness 요약[\s\S]*?확인 시각:[\s\S]*?runtimeStatus \? formatBackupDate\(runtimeStatus\.checkedAt\) : "not refreshed"[\s\S]*?Release gate:[\s\S]*?formatReleaseGateStage\(runtimeStatus\.releaseGate\.stage\)[\s\S]*?runtimeStatus\.releaseGate\.score[\s\S]*?Generation mode:[\s\S]*?OpenAI[\s\S]*?Local fallback[\s\S]*?Storage mode: \$\{runtimeStatus\?\.storage\.mode \?\? "not refreshed"\}[\s\S]*?Supabase client:[\s\S]*?Server importer:[\s\S]*?Import execution gate:[\s\S]*?Missing variables: \$\{missingVariables\.length\}개[\s\S]*?Action queue: \$\{actionQueue\.length\}개[\s\S]*?## 운영 gate 요약[\s\S]*?server-only and browser-public values separate[\s\S]*?local fallback[\s\S]*?SUPABASE_IMPORT_EXECUTION_ENABLED should stay false[\s\S]*?RLS smoke tests with app-session credentials[\s\S]*?## Environment readiness checklist[\s\S]*?checklistText/,
+  "Data environment readiness manual fallback should prepend checklist length, readiness counts, runtime release gate, generation/storage/Supabase summary, missing variables, action queue, secret exposure gate, local fallback gate, execution gate, and app-session RLS gate",
+);
+
+assertDataMatches(
+  /async function handleCopyEnvironmentReadiness\(\)[\s\S]*?const readinessText = buildEnvironmentReadinessText\(runtimeReadiness\.data\)[\s\S]*?copyDataText\([\s\S]*?readinessText[\s\S]*?운영 환경 readiness 체크리스트를 클립보드에 복사했습니다[\s\S]*?buildEnvironmentReadinessManualCopyText\(\{[\s\S]*?checklistText: readinessText[\s\S]*?runtimeStatus: runtimeReadiness\.data/,
+  "Data environment readiness copy should keep the original checklist on the clipboard and use the runtime-summary fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildRuntimeStatusManualCopyText\(\{[\s\S]*?runtimeStatus: EnvironmentRuntimeStatus[\s\S]*?# Prompt AI Studio 런타임 상태 JSON[\s\S]*?## 런타임 식별[\s\S]*?확인 시각: \$\{formatBackupDate\(runtimeStatus\.checkedAt\)\}[\s\S]*?Release gate: \$\{formatReleaseGateStage\([\s\S]*?runtimeStatus\.releaseGate\.stage[\s\S]*?runtimeStatus\.releaseGate\.score[\s\S]*?JSON 길이: \$\{formatJsonLength\(json\)\}[\s\S]*?## 운영 요약[\s\S]*?Supabase client:[\s\S]*?Server importer:[\s\S]*?Import execution gate:[\s\S]*?Missing variables:[\s\S]*?Action queue:[\s\S]*?## JSON[\s\S]*?json/,
+  "Data runtime status JSON manual fallback should prepend checked time, release gate, environment readiness summary, action queue, and JSON length",
+);
+
+assertDataMatches(
+  /function buildRuntimeDiagnosticsManualCopyText\(\{[\s\S]*?diagnosticsText: string[\s\S]*?runtimeStatus: EnvironmentRuntimeStatus[\s\S]*?actionQueue = runtimeStatus\.releaseGate\.checks\.filter[\s\S]*?check\.status !== "pass"[\s\S]*?missingVariables = runtimeStatus\.variables\.filter[\s\S]*?!item\.configured[\s\S]*?# Prompt AI Studio 런타임 진단 리포트[\s\S]*?## 진단 식별[\s\S]*?확인 시각: \$\{formatBackupDate\(runtimeStatus\.checkedAt\)\}[\s\S]*?Release gate: \$\{formatReleaseGateStage\([\s\S]*?runtimeStatus\.releaseGate\.stage[\s\S]*?runtimeStatus\.releaseGate\.score[\s\S]*?리포트 길이: \$\{formatJsonLength\(diagnosticsText\)\}[\s\S]*?## 운영 요약[\s\S]*?생성 엔진:[\s\S]*?OpenAI[\s\S]*?Local fallback[\s\S]*?Storage mode: \$\{runtimeStatus\.storage\.mode\}[\s\S]*?Supabase client:[\s\S]*?Server importer:[\s\S]*?Project ref:[\s\S]*?Import execution gate:[\s\S]*?Missing variables: \$\{missingVariables\.length\}개[\s\S]*?Action queue: \$\{actionQueue\.length\}개[\s\S]*?## 공유 gate 요약[\s\S]*?Do not paste raw API keys[\s\S]*?operator action queue[\s\S]*?SUPABASE_IMPORT_EXECUTION_ENABLED disabled[\s\S]*?## Runtime diagnostics report[\s\S]*?diagnosticsText/,
+  "Data runtime diagnostics manual fallback should prepend checked time, release gate, diagnostics length, generation/storage/Supabase summary, missing variables, action queue, secret-sharing guard, operator queue guard, and import execution gate guard",
+);
+
+assertDataMatches(
+  /function buildRuntimeSnapshotsManualCopyText\(\{[\s\S]*?snapshots: EnvironmentRuntimeSnapshot\[\][\s\S]*?# Prompt AI Studio 런타임 스냅샷 JSON[\s\S]*?## 스냅샷 식별[\s\S]*?스냅샷 수: \$\{snapshots\.length\}개[\s\S]*?최근 스냅샷 ID: \$\{latestSnapshot\.id\}[\s\S]*?최근 저장 시각: \$\{formatBackupDate\(latestSnapshot\.savedAt\)\}[\s\S]*?최근 확인 시각: \$\{formatBackupDate\(latestSnapshot\.status\.checkedAt\)\}[\s\S]*?최근 Release gate: \$\{formatReleaseGateStage\([\s\S]*?latestSnapshot\.status\.releaseGate\.stage[\s\S]*?latestSnapshot\.status\.releaseGate\.score[\s\S]*?JSON 길이: \$\{formatJsonLength\(json\)\}[\s\S]*?## JSON[\s\S]*?json/,
+  "Data runtime snapshots JSON manual fallback should prepend snapshot count, latest snapshot identity, release gate, and JSON length",
+);
+
+assertDataMatches(
+  /function buildRuntimeSnapshotComparisonManualCopyText\(\{[\s\S]*?comparisonText: string[\s\S]*?currentStatus: EnvironmentRuntimeStatus[\s\S]*?snapshot: EnvironmentRuntimeSnapshot[\s\S]*?comparison = compareEnvironmentRuntimeSnapshot\(currentStatus, snapshot\)[\s\S]*?# Prompt AI Studio 런타임 스냅샷 비교 리포트[\s\S]*?## 비교 리포트 식별[\s\S]*?최근 스냅샷 ID: \$\{snapshot\.id\}[\s\S]*?최근 저장 시각: \$\{formatBackupDate\(snapshot\.savedAt\)\}[\s\S]*?스냅샷 점검 시각: \$\{formatBackupDate\(snapshot\.status\.checkedAt\)\}[\s\S]*?현재 점검 시각: \$\{formatBackupDate\(currentStatus\.checkedAt\)\}[\s\S]*?리포트 길이: \$\{formatJsonLength\(comparisonText\)\}[\s\S]*?## Gate 변화 요약[\s\S]*?이전 stage: \$\{formatReleaseGateStage\(comparison\.snapshotStage\)\}[\s\S]*?현재 stage: \$\{formatReleaseGateStage\(comparison\.currentStage\)\}[\s\S]*?Stage 변경: \$\{comparison\.stageChanged \? "yes" : "no"\}[\s\S]*?Score delta:[\s\S]*?comparison\.scoreDelta[\s\S]*?변수 변경: \$\{comparison\.changedVariables\.length\}개[\s\S]*?Release gate check 변경: \$\{comparison\.changedChecks\.length\}개[\s\S]*?## 후속 확인 gate[\s\S]*?fresh runtime diagnostics report[\s\S]*?save a new runtime readiness snapshot[\s\S]*?no raw secret values[\s\S]*?## Runtime snapshot comparison report[\s\S]*?comparisonText/,
+  "Data runtime snapshot comparison manual fallback should prepend snapshot identity, checked times, report length, stage/score movement, changed variable/check counts, and follow-up verification gates",
+);
+
+assertDataMatches(
+  /async function handleCopyRuntimeStatusJson\(\)[\s\S]*?const runtimeStatusJson = buildEnvironmentRuntimeStatusJson\([\s\S]*?runtimeReadiness\.data[\s\S]*?copyDataText\([\s\S]*?runtimeStatusJson[\s\S]*?런타임 상태 JSON을 클립보드에 복사했습니다[\s\S]*?buildRuntimeStatusManualCopyText\(\{[\s\S]*?json: runtimeStatusJson[\s\S]*?runtimeStatus: runtimeReadiness\.data/,
+  "Data runtime status JSON copy should keep raw JSON on clipboard and use a metadata-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopyRuntimeDiagnostics\(\)[\s\S]*?const diagnosticsText = buildEnvironmentRuntimeDiagnosticsText\([\s\S]*?runtimeReadiness\.data[\s\S]*?\)[\s\S]*?copyDataText\([\s\S]*?diagnosticsText[\s\S]*?런타임 진단 리포트를 클립보드에 복사했습니다[\s\S]*?buildRuntimeDiagnosticsManualCopyText\(\{[\s\S]*?diagnosticsText[\s\S]*?runtimeStatus: runtimeReadiness\.data/,
+  "Data runtime diagnostics copy should keep the original diagnostics report on the clipboard and use the runtime-summary fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildOperatorActionPlanManualCopyText\(\{[\s\S]*?actionPlanText: string[\s\S]*?runtimeStatus: EnvironmentRuntimeStatus[\s\S]*?actionQueue = runtimeStatus\.releaseGate\.checks\.filter[\s\S]*?check\.status !== "pass"[\s\S]*?blockers = runtimeStatus\.releaseGate\.checks\.filter[\s\S]*?check\.status === "block"[\s\S]*?warnings = runtimeStatus\.releaseGate\.checks\.filter[\s\S]*?check\.status === "warn"[\s\S]*?# Prompt AI Studio 운영자 조치 계획[\s\S]*?## 조치 계획 식별[\s\S]*?확인 시각: \$\{formatBackupDate\(runtimeStatus\.checkedAt\)\}[\s\S]*?Release gate: \$\{formatReleaseGateStage\([\s\S]*?runtimeStatus\.releaseGate\.stage[\s\S]*?runtimeStatus\.releaseGate\.score[\s\S]*?계획 길이: \$\{formatJsonLength\(actionPlanText\)\}[\s\S]*?## Action queue 요약[\s\S]*?Action queue: \$\{actionQueue\.length\}개[\s\S]*?Blockers: \$\{blockers\.length\}개[\s\S]*?Warnings: \$\{warnings\.length\}개[\s\S]*?Generation mode: \$\{runtimeStatus\.generation\.mode\}[\s\S]*?Storage mode: \$\{runtimeStatus\.storage\.mode\}[\s\S]*?Import execution gate:[\s\S]*?## 실행 후 확인 gate[\s\S]*?Restart the dev or deployment runtime[\s\S]*?Open `\/data` and refresh runtime readiness[\s\S]*?fresh runtime diagnostics report[\s\S]*?no raw API keys[\s\S]*?service_role keys[\s\S]*?## Operator action plan[\s\S]*?actionPlanText/,
+  "Data operator action plan manual fallback should prepend checked time, release gate, plan length, action queue counts, blocker/warning counts, runtime mode, storage mode, import gate, verification steps, and secret-sharing guard",
+);
+
+assertDataMatches(
+  /async function handleCopyOperatorActionPlan\(\)[\s\S]*?const actionPlanText = buildEnvironmentOperatorActionPlanText\([\s\S]*?runtimeReadiness\.data[\s\S]*?\)[\s\S]*?copyDataText\([\s\S]*?actionPlanText[\s\S]*?운영자 조치 계획을 클립보드에 복사했습니다[\s\S]*?buildOperatorActionPlanManualCopyText\(\{[\s\S]*?actionPlanText[\s\S]*?runtimeStatus: runtimeReadiness\.data/,
+  "Data operator action plan copy should keep the original action plan on the clipboard and use the action-queue fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopyRuntimeSnapshots\(\)[\s\S]*?const runtimeSnapshotsJson =[\s\S]*?buildEnvironmentRuntimeSnapshotsJson\(runtimeSnapshots\)[\s\S]*?copyDataText\([\s\S]*?runtimeSnapshotsJson[\s\S]*?런타임 readiness 스냅샷 JSON을 클립보드에 복사했습니다[\s\S]*?buildRuntimeSnapshotsManualCopyText\(\{[\s\S]*?json: runtimeSnapshotsJson[\s\S]*?snapshots: runtimeSnapshots/,
+  "Data runtime snapshots JSON copy should keep raw JSON on clipboard and use a metadata-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopySnapshotComparison\(\)[\s\S]*?const comparisonText = buildEnvironmentRuntimeSnapshotComparisonText\([\s\S]*?runtimeReadiness\.data[\s\S]*?runtimeSnapshots\[0\][\s\S]*?\)[\s\S]*?copyDataText\([\s\S]*?comparisonText[\s\S]*?런타임 readiness 스냅샷 비교 리포트를 복사했습니다[\s\S]*?buildRuntimeSnapshotComparisonManualCopyText\(\{[\s\S]*?comparisonText[\s\S]*?currentStatus: runtimeReadiness\.data[\s\S]*?snapshot: runtimeSnapshots\[0\]/,
+  "Data runtime snapshot comparison copy should keep the original comparison report on the clipboard and use the movement-summary fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportDryRunManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?dryRunText: string[\s\S]*?deletedArchiveRows =[\s\S]*?deleted_prompt_assets[\s\S]*?setupWarnings = dryRun\.warningItems\.filter[\s\S]*?relationshipWarnings = dryRun\.warningItems\.filter[\s\S]*?# Prompt AI Studio Supabase Importer Dry-run[\s\S]*?## Dry-run 식별[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?Dry-run 길이: \$\{formatJsonLength\(dryRunText\)\}[\s\S]*?## Payload 요약[\s\S]*?Total rows: \$\{dryRun\.totalRows\}[\s\S]*?Insert batches: \$\{dryRun\.batches\.length\}[\s\S]*?Deleted archive rows: \$\{deletedArchiveRows\}[\s\S]*?Pending row IDs: \$\{dryRun\.totalRows\}[\s\S]*?## Warning 요약[\s\S]*?Total warnings: \$\{dryRun\.warnings\.length\}[\s\S]*?Setup warnings: \$\{setupWarnings\.length\}[\s\S]*?Relationship warnings: \$\{relationshipWarnings\.length\}[\s\S]*?## Dry-run gate 요약[\s\S]*?does not connect to Supabase or write data[\s\S]*?pending-\* IDs must be replaced[\s\S]*?deleted_prompt_assets rows preserve deleted prompt snapshots[\s\S]*?review setup and relationship warnings before API preflight[\s\S]*?## Importer dry-run[\s\S]*?dryRunText/,
+  "Data importer dry-run manual fallback should prepend schema, row/batch/deleted archive counts, warning categories, local-only guard, pending replacement guard, archive trace guard, and dry-run length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportDryRun\(\)[\s\S]*?const dryRunText = buildSupabaseImportDryRunText\(supabaseImportDryRun\)[\s\S]*?copyDataText\([\s\S]*?dryRunText[\s\S]*?Supabase importer dry-run을 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportDryRunManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?dryRunText/,
+  "Data importer dry-run copy should keep the original dry-run on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseReferenceReplacementGuideManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?guideText: string[\s\S]*?replacementTables = \[[\s\S]*?prompt_assets[\s\S]*?prompt_versions[\s\S]*?learning_memories[\s\S]*?replacementRows = replacementTables\.flatMap[\s\S]*?deletedArchiveRows =[\s\S]*?deleted_prompt_assets[\s\S]*?# Prompt AI Studio Supabase Pending ID Replacement Guide[\s\S]*?## 치환 가이드 식별[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?가이드 길이: \$\{formatJsonLength\(guideText\)\}[\s\S]*?## 치환 범위 요약[\s\S]*?Replacement tables: \$\{replacementTables\.length\}[\s\S]*?Local-to-pending rows: \$\{replacementRows\.length\}[\s\S]*?Deleted archive rows: \$\{deletedArchiveRows\}[\s\S]*?Total dry-run rows: \$\{dryRun\.totalRows\}[\s\S]*?Dry-run warnings: \$\{dryRun\.warnings\.length\}[\s\S]*?## 치환 gate 요약[\s\S]*?Replace every pending-\* primary key and foreign key[\s\S]*?Rewrite active improvement source[\s\S]*?Rewrite learning_memories\.source_id[\s\S]*?Keep deleted_prompt_assets original local IDs[\s\S]*?Run pending ID audit SQL after import[\s\S]*?## Pending ID replacement guide[\s\S]*?guideText/,
+  "Data pending ID replacement guide manual fallback should prepend schema, replacement table count, local-to-pending row count, deleted archive rows, warnings, rewrite gates, archive trace gate, pending audit gate, and guide length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseReferenceReplacementGuide\(\)[\s\S]*?const guideText =[\s\S]*?buildSupabaseImportReferenceReplacementGuideText\(supabaseImportDryRun\)[\s\S]*?copyDataText\([\s\S]*?guideText[\s\S]*?Supabase pending ID 치환 가이드를 클립보드에 복사했습니다[\s\S]*?buildSupabaseReferenceReplacementGuideManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?guideText/,
+  "Data pending ID replacement guide copy should keep the original guide on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportVerificationSqlManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?sql: string[\s\S]*?workspaceId\?: string[\s\S]*?workspaceScope = workspaceId\?\.trim\(\) \|\| "<workspace_id>"[\s\S]*?deletedArchiveRows =[\s\S]*?deleted_prompt_assets[\s\S]*?# Prompt AI Studio Supabase Import Verification SQL[\s\S]*?## 검증 SQL 식별[\s\S]*?workspace_id: \$\{workspaceScope\}[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?SQL 길이: \$\{formatJsonLength\(sql\)\}[\s\S]*?## Row count 검증 요약[\s\S]*?Expected rows: \$\{dryRun\.totalRows\}[\s\S]*?Expected tables: \$\{dryRun\.batches\.length\}[\s\S]*?Deleted archive rows: \$\{deletedArchiveRows\}[\s\S]*?Workspace scope: \$\{workspaceId\?\.trim\(\) \? "resolved" : "template"\}[\s\S]*?## 실행 후 gate 요약[\s\S]*?Run this SQL after the import completes[\s\S]*?row count mismatch blocks migration acceptance[\s\S]*?relationship, pending ID, and RLS owner audits[\s\S]*?## Verification SQL[\s\S]*?sql/,
+  "Data row count verification SQL manual fallback should prepend workspace scope, schema, SQL length, expected rows/tables, deleted archive rows, execution gate, mismatch gate, and follow-up audit gates",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseVerificationSql\(\)[\s\S]*?const verificationSql =[\s\S]*?buildSupabaseImportVerificationSql\(supabaseImportDryRun\)[\s\S]*?copyDataText\([\s\S]*?verificationSql[\s\S]*?Supabase 검증 SQL을 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportVerificationSqlManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?sql: verificationSql/,
+  "Data row count verification SQL template copy should keep the original SQL on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopyResolvedSupabaseVerificationSql\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const verificationSql = buildSupabaseImportVerificationSql\([\s\S]*?workspaceId[\s\S]*?copyDataText\([\s\S]*?verificationSql[\s\S]*?workspace_id가 반영된 Supabase 검증 SQL을 복사했습니다[\s\S]*?buildSupabaseImportVerificationSqlManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?sql: verificationSql[\s\S]*?workspaceId/,
+  "Data resolved row count verification SQL copy should keep workspace_id-resolved SQL on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseRelationshipVerificationSqlManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?sql: string[\s\S]*?workspaceId\?: string[\s\S]*?workspaceScope = workspaceId\?\.trim\(\) \|\| "<workspace_id>"[\s\S]*?relationshipWarnings = dryRun\.warningItems\.filter[\s\S]*?warning\.category === "relationship"[\s\S]*?deletedArchiveRows =[\s\S]*?deleted_prompt_assets[\s\S]*?# Prompt AI Studio Supabase Relationship Verification SQL[\s\S]*?## 관계 검증 SQL 식별[\s\S]*?workspace_id: \$\{workspaceScope\}[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?SQL 길이: \$\{formatJsonLength\(sql\)\}[\s\S]*?## 관계 검증 요약[\s\S]*?Relationship checks: \$\{supabaseImportVerificationCheckCounts\.relationship\}[\s\S]*?Relationship warnings: \$\{relationshipWarnings\.length\}[\s\S]*?Deleted archive rows: \$\{deletedArchiveRows\}[\s\S]*?Workspace scope: \$\{workspaceId\?\.trim\(\) \? "resolved" : "template"\}[\s\S]*?## 실행 후 gate 요약[\s\S]*?Run this SQL after row count verification passes[\s\S]*?Every issue_count must be 0[\s\S]*?deleted_prompt_assets snapshots[\s\S]*?pending ID and RLS owner audits[\s\S]*?## Relationship verification SQL[\s\S]*?sql/,
+  "Data relationship verification SQL manual fallback should prepend workspace scope, schema, SQL length, relationship checks/warnings, deleted archive rows, execution order, issue_count gate, archive reference gate, and follow-up audit gates",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseRelationshipVerificationSql\(\)[\s\S]*?const relationshipSql = buildSupabaseImportRelationshipVerificationSql\(\)[\s\S]*?copyDataText\([\s\S]*?relationshipSql[\s\S]*?Supabase 관계 검증 SQL 템플릿을 클립보드에 복사했습니다[\s\S]*?buildSupabaseRelationshipVerificationSqlManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?sql: relationshipSql/,
+  "Data relationship verification SQL template copy should keep the original SQL on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopyResolvedSupabaseRelationshipVerificationSql\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const relationshipSql = buildSupabaseImportRelationshipVerificationSql\(\{[\s\S]*?workspaceId[\s\S]*?copyDataText\([\s\S]*?relationshipSql[\s\S]*?workspace_id가 반영된 Supabase 관계 검증 SQL을 복사했습니다[\s\S]*?buildSupabaseRelationshipVerificationSqlManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?sql: relationshipSql[\s\S]*?workspaceId/,
+  "Data resolved relationship verification SQL copy should keep workspace_id-resolved SQL on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabasePendingIdAuditSqlManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?sql: string[\s\S]*?workspaceId\?: string[\s\S]*?workspaceScope = workspaceId\?\.trim\(\) \|\| "<workspace_id>"[\s\S]*?replacementTables = \[[\s\S]*?prompt_assets[\s\S]*?prompt_versions[\s\S]*?learning_memories[\s\S]*?replacementRows = replacementTables\.flatMap[\s\S]*?deletedArchiveRows =[\s\S]*?deleted_prompt_assets[\s\S]*?# Prompt AI Studio Supabase Pending ID Audit SQL[\s\S]*?## Pending ID audit SQL 식별[\s\S]*?workspace_id: \$\{workspaceScope\}[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?SQL 길이: \$\{formatJsonLength\(sql\)\}[\s\S]*?## Pending ID audit 요약[\s\S]*?Pending ID checks: \$\{supabaseImportVerificationCheckCounts\.pendingIdAudit\}[\s\S]*?Replacement tables: \$\{replacementTables\.length\}[\s\S]*?Local-to-pending rows: \$\{replacementRows\.length\}[\s\S]*?Deleted archive rows: \$\{deletedArchiveRows\}[\s\S]*?Workspace scope: \$\{workspaceId\?\.trim\(\) \? "resolved" : "template"\}[\s\S]*?## 실행 후 gate 요약[\s\S]*?row count and relationship verification pass[\s\S]*?Every issue_count must be 0[\s\S]*?remaining pending-\* value[\s\S]*?Supabase UUIDs[\s\S]*?RLS owner access audit and authenticated RLS smoke tests[\s\S]*?## Pending ID audit SQL[\s\S]*?sql/,
+  "Data pending ID audit SQL manual fallback should prepend workspace scope, schema, SQL length, pending check count, replacement table/row counts, deleted archive rows, issue_count gate, UUID rewrite gate, and RLS follow-up gates",
+);
+
+assertDataMatches(
+  /async function handleCopySupabasePendingIdAuditSql\(\)[\s\S]*?const pendingIdAuditSql = buildSupabaseImportPendingIdAuditSql\(\)[\s\S]*?copyDataText\([\s\S]*?pendingIdAuditSql[\s\S]*?Supabase pending ID audit SQL 템플릿을 클립보드에 복사했습니다[\s\S]*?buildSupabasePendingIdAuditSqlManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?sql: pendingIdAuditSql/,
+  "Data pending ID audit SQL template copy should keep the original SQL on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopyResolvedSupabasePendingIdAuditSql\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const pendingIdAuditSql = buildSupabaseImportPendingIdAuditSql\(\{[\s\S]*?workspaceId[\s\S]*?copyDataText\([\s\S]*?pendingIdAuditSql[\s\S]*?workspace_id가 반영된 Supabase pending ID audit SQL을 복사했습니다[\s\S]*?buildSupabasePendingIdAuditSqlManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?sql: pendingIdAuditSql[\s\S]*?workspaceId/,
+  "Data resolved pending ID audit SQL copy should keep workspace_id-resolved SQL on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseRlsAccessAuditSqlManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?ownerUserId\?: string[\s\S]*?sql: string[\s\S]*?workspaceId\?: string[\s\S]*?workspaceScope = workspaceId\?\.trim\(\) \|\| "<workspace_id>"[\s\S]*?ownerScope = ownerUserId\?\.trim\(\) \|\| "<owner_user_id>"[\s\S]*?deletedArchiveRows =[\s\S]*?deleted_prompt_assets[\s\S]*?# Prompt AI Studio Supabase RLS Owner Access Audit SQL[\s\S]*?## RLS audit SQL 식별[\s\S]*?workspace_id: \$\{workspaceScope\}[\s\S]*?owner_user_id: \$\{ownerScope\}[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?SQL 길이: \$\{formatJsonLength\(sql\)\}[\s\S]*?## Owner access audit 요약[\s\S]*?RLS owner access checks: \$\{supabaseImportVerificationCheckCounts\.rlsOwnerAccess\}[\s\S]*?Expected imported rows: \$\{dryRun\.totalRows\}[\s\S]*?Insert batches: \$\{dryRun\.batches\.length\}[\s\S]*?Deleted archive rows: \$\{deletedArchiveRows\}[\s\S]*?Scope:[\s\S]*?workspaceId\?\.trim\(\) && ownerUserId\?\.trim\(\) \? "resolved" : "template"[\s\S]*?## 실행 후 gate 요약[\s\S]*?row count, relationship, and pending ID audits pass[\s\S]*?Every issue_count must be 0[\s\S]*?workspaces\.owner_user_id and workspace_members owner row[\s\S]*?authenticated app-session RLS smoke tests[\s\S]*?## RLS owner access audit SQL[\s\S]*?sql/,
+  "Data RLS owner access audit SQL manual fallback should prepend workspace/owner identity, schema, SQL length, owner access check count, imported row/batch/archive counts, issue_count gate, owner mapping gate, and authenticated smoke-test gate",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseRlsAccessAuditSql\(\)[\s\S]*?const rlsAccessAuditSql = buildSupabaseImportRlsAccessAuditSql\(\)[\s\S]*?copyDataText\([\s\S]*?rlsAccessAuditSql[\s\S]*?Supabase RLS owner access audit SQL 템플릿을 클립보드에 복사했습니다[\s\S]*?buildSupabaseRlsAccessAuditSqlManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?sql: rlsAccessAuditSql/,
+  "Data RLS owner access audit SQL template copy should keep the original SQL on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopyResolvedSupabaseRlsAccessAuditSql\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const rlsAccessAuditSql = buildSupabaseImportRlsAccessAuditSql\(\{[\s\S]*?ownerUserId[\s\S]*?workspaceId[\s\S]*?copyDataText\([\s\S]*?rlsAccessAuditSql[\s\S]*?workspace_id와 owner_user_id가 반영된 RLS audit SQL을 복사했습니다[\s\S]*?buildSupabaseRlsAccessAuditSqlManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?ownerUserId[\s\S]*?sql: rlsAccessAuditSql[\s\S]*?workspaceId/,
+  "Data resolved RLS owner access audit SQL copy should keep workspace_id/owner_user_id-resolved SQL on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseRlsPolicyDraftSqlManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?sql: string[\s\S]*?# Prompt AI Studio Supabase RLS Policy Draft SQL[\s\S]*?## RLS policy draft 식별[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?SQL 길이: \$\{formatJsonLength\(sql\)\}[\s\S]*?## Policy draft 요약[\s\S]*?RLS policy tables: \$\{supabaseImportVerificationCheckCounts\.rlsPolicyTables\}[\s\S]*?Expected imported rows: \$\{dryRun\.totalRows\}[\s\S]*?Insert batches: \$\{dryRun\.batches\.length\}[\s\S]*?Access source: workspace_members[\s\S]*?Write roles: owner, admin, member[\s\S]*?Read roles: owner, admin, member, viewer[\s\S]*?## 적용 전 gate 요약[\s\S]*?Review and adapt this draft before running[\s\S]*?row count, relationship, pending ID, and RLS owner access audits first[\s\S]*?safe search_path and workspace_members role semantics[\s\S]*?authenticated owner\/member\/viewer\/non-member RLS smoke tests[\s\S]*?## RLS policy draft SQL[\s\S]*?sql/,
+  "Data RLS policy draft SQL manual fallback should prepend schema, SQL length, policy table count, imported row/batch counts, access source, role semantics, review gate, prerequisite audits, safe helper gate, and authenticated smoke-test gate",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseRlsPolicyDraftSql\(\)[\s\S]*?const rlsPolicyDraftSql = buildSupabaseRlsPolicyDraftSql\(\)[\s\S]*?copyDataText\([\s\S]*?rlsPolicyDraftSql[\s\S]*?Supabase RLS policy draft SQL을 클립보드에 복사했습니다[\s\S]*?buildSupabaseRlsPolicyDraftSqlManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?sql: rlsPolicyDraftSql/,
+  "Data RLS policy draft SQL copy should keep the original SQL on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseRlsSmokeTestChecklistManualCopyText\(\{[\s\S]*?checklistText: string[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?ownerUserId\?: string[\s\S]*?workspaceId\?: string[\s\S]*?ownerScope = ownerUserId\?\.trim\(\) \|\| "<owner_user_id>"[\s\S]*?workspaceScope = workspaceId\?\.trim\(\) \|\| "<workspace_id>"[\s\S]*?# Prompt AI Studio Supabase RLS Smoke Test Checklist[\s\S]*?## RLS smoke test 식별[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?체크리스트 길이: \$\{formatJsonLength\(checklistText\)\}[\s\S]*?workspace_id: \$\{workspaceScope\}[\s\S]*?owner_user_id: \$\{ownerScope\}[\s\S]*?## Smoke test 요약[\s\S]*?RLS policy tables: \$\{supabaseImportVerificationCheckCounts\.rlsPolicyTables\}[\s\S]*?RLS owner access checks: \$\{supabaseImportVerificationCheckCounts\.rlsOwnerAccess\}[\s\S]*?Expected imported rows: \$\{dryRun\.totalRows\}[\s\S]*?Insert batches: \$\{dryRun\.batches\.length\}[\s\S]*?Required sessions: owner, member, viewer, non-member[\s\S]*?## 실행 gate 요약[\s\S]*?RLS policy draft review and rollout[\s\S]*?authenticated app sessions[\s\S]*?service role key[\s\S]*?Owner\/member write cases[\s\S]*?viewer read-only cases[\s\S]*?non-member deny cases[\s\S]*?cross-workspace read or write access[\s\S]*?## RLS smoke test checklist[\s\S]*?checklistText/,
+  "Data RLS smoke test checklist manual fallback should prepend schema, checklist length, workspace/owner identity, policy/owner check counts, imported row/batch counts, required sessions, rollout gate, app-session-only gate, role behavior gate, and cross-workspace isolation gate",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseRlsSmokeTestChecklist\(\)[\s\S]*?const checklistText = buildSupabaseRlsSmokeTestChecklistText\(\)[\s\S]*?copyDataText\([\s\S]*?checklistText[\s\S]*?Supabase RLS smoke test 체크리스트 템플릿을 클립보드에 복사했습니다[\s\S]*?buildSupabaseRlsSmokeTestChecklistManualCopyText\(\{[\s\S]*?checklistText[\s\S]*?dryRun: supabaseImportDryRun/,
+  "Data RLS smoke test checklist copy should keep the original checklist on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopyResolvedSupabaseRlsSmokeTestChecklist\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const checklistText = buildSupabaseRlsSmokeTestChecklistText\(\{[\s\S]*?ownerUserId[\s\S]*?workspaceId[\s\S]*?\}\)[\s\S]*?copyDataText\([\s\S]*?checklistText[\s\S]*?workspace_id와 owner_user_id가 반영된 RLS smoke test 체크리스트를 복사했습니다[\s\S]*?buildSupabaseRlsSmokeTestChecklistManualCopyText\(\{[\s\S]*?checklistText[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?ownerUserId[\s\S]*?workspaceId/,
+  "Data resolved RLS smoke test checklist copy should keep the resolved checklist on the clipboard and use the workspace/owner-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseVerificationReportManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?ownerUserId\?: string[\s\S]*?reportText: string[\s\S]*?workspaceId\?: string[\s\S]*?ownerScope = ownerUserId\?\.trim\(\) \|\| "<owner_user_id>"[\s\S]*?relationshipWarnings = dryRun\.warningItems\.filter[\s\S]*?warning\.category === "relationship"[\s\S]*?setupWarnings = dryRun\.warningItems\.filter[\s\S]*?warning\.category === "setup"[\s\S]*?workspaceScope = workspaceId\?\.trim\(\) \|\| "<workspace_id>"[\s\S]*?# Prompt AI Studio Supabase Verification Report[\s\S]*?## Verification report 식별[\s\S]*?workspace_id: \$\{workspaceScope\}[\s\S]*?owner_user_id: \$\{ownerScope\}[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?리포트 길이: \$\{formatJsonLength\(reportText\)\}[\s\S]*?## 검증 요약[\s\S]*?Expected imported rows: \$\{dryRun\.totalRows\}[\s\S]*?Row count checks: \$\{dryRun\.batches\.length\}[\s\S]*?Relationship checks: \$\{supabaseImportVerificationCheckCounts\.relationship\}[\s\S]*?Pending ID checks: \$\{supabaseImportVerificationCheckCounts\.pendingIdAudit\}[\s\S]*?RLS owner access checks: \$\{supabaseImportVerificationCheckCounts\.rlsOwnerAccess\}[\s\S]*?Setup warnings: \$\{setupWarnings\.length\}[\s\S]*?Relationship warnings: \$\{relationshipWarnings\.length\}[\s\S]*?## Acceptance gate 요약[\s\S]*?Row count, relationship, pending ID, and RLS owner access audits must pass[\s\S]*?Every issue_count[\s\S]*?must be 0[\s\S]*?RLS policy draft must be reviewed[\s\S]*?Authenticated owner\/member\/viewer\/non-member RLS smoke tests must be archived[\s\S]*?## Verification report[\s\S]*?reportText/,
+  "Data verification report manual fallback should prepend workspace/owner identity, schema, report length, expected rows, verification check counts, warning counts, audit pass gates, issue_count 0 gate, RLS policy review gate, and smoke-test evidence gate",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseVerificationReport\(\)[\s\S]*?const reportText =[\s\S]*?buildSupabaseImportVerificationReportText\(supabaseImportDryRun\)[\s\S]*?copyDataText\([\s\S]*?reportText[\s\S]*?Supabase 검증 판정 리포트 템플릿을 클립보드에 복사했습니다[\s\S]*?buildSupabaseVerificationReportManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?reportText/,
+  "Data verification report copy should keep the original report on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopyResolvedSupabaseVerificationReport\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const reportText = buildSupabaseImportVerificationReportText\([\s\S]*?supabaseImportDryRun[\s\S]*?ownerUserId[\s\S]*?workspaceId[\s\S]*?\)[\s\S]*?copyDataText\([\s\S]*?reportText[\s\S]*?workspace_id와 owner_user_id가 반영된 Supabase 검증 판정 리포트를 복사했습니다[\s\S]*?buildSupabaseVerificationReportManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?ownerUserId[\s\S]*?reportText[\s\S]*?workspaceId/,
+  "Data resolved verification report copy should keep the resolved report on the clipboard and use the workspace/owner-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseMigrationHandoffPackageManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?ownerUserId\?: string[\s\S]*?packageText: string[\s\S]*?workspaceId\?: string[\s\S]*?ownerScope = ownerUserId\?\.trim\(\) \|\| "<owner_user_id>"[\s\S]*?relationshipWarnings = dryRun\.warningItems\.filter[\s\S]*?warning\.category === "relationship"[\s\S]*?setupWarnings = dryRun\.warningItems\.filter[\s\S]*?warning\.category === "setup"[\s\S]*?workspaceScope = workspaceId\?\.trim\(\) \|\| "<workspace_id>"[\s\S]*?# Prompt AI Studio Supabase Migration Handoff Package[\s\S]*?## Handoff package 식별[\s\S]*?workspace_id: \$\{workspaceScope\}[\s\S]*?owner_user_id: \$\{ownerScope\}[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?패키지 길이: \$\{formatJsonLength\(packageText\)\}[\s\S]*?## Handoff package 요약[\s\S]*?Expected imported rows: \$\{dryRun\.totalRows\}[\s\S]*?Insert batches: \$\{dryRun\.batches\.length\}[\s\S]*?Handoff sections: \$\{supabaseImportVerificationCheckCounts\.handoffSections\}[\s\S]*?Relationship checks: \$\{supabaseImportVerificationCheckCounts\.relationship\}[\s\S]*?Pending ID checks: \$\{supabaseImportVerificationCheckCounts\.pendingIdAudit\}[\s\S]*?RLS owner access checks: \$\{supabaseImportVerificationCheckCounts\.rlsOwnerAccess\}[\s\S]*?RLS policy tables: \$\{supabaseImportVerificationCheckCounts\.rlsPolicyTables\}[\s\S]*?Setup warnings: \$\{setupWarnings\.length\}[\s\S]*?Relationship warnings: \$\{relationshipWarnings\.length\}[\s\S]*?## 인수인계 gate 요약[\s\S]*?Read sections in order[\s\S]*?importer dry-run through verification report[\s\S]*?Attach row count, relationship, pending ID, and RLS owner access audit outputs[\s\S]*?Archive RLS policy review decision[\s\S]*?authenticated RLS smoke test evidence[\s\S]*?backup JSON, replacement guide, and local-to-Supabase UUID trace[\s\S]*?## Migration handoff package[\s\S]*?packageText/,
+  "Data migration handoff package manual fallback should prepend workspace/owner identity, schema, package length, row/batch counts, handoff sections, verification counts, warning counts, read-order gate, audit evidence gate, RLS evidence gate, and UUID trace gate",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseMigrationHandoffPackage\(\)[\s\S]*?const packageText =[\s\S]*?buildSupabaseMigrationHandoffPackageText\(supabaseImportDryRun\)[\s\S]*?copyDataText\([\s\S]*?packageText[\s\S]*?Supabase migration handoff package 템플릿을 클립보드에 복사했습니다[\s\S]*?buildSupabaseMigrationHandoffPackageManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?packageText/,
+  "Data migration handoff package copy should keep the original package on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /async function handleCopyResolvedSupabaseMigrationHandoffPackage\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const packageText = buildSupabaseMigrationHandoffPackageText\([\s\S]*?supabaseImportDryRun[\s\S]*?ownerUserId[\s\S]*?workspaceId[\s\S]*?\)[\s\S]*?copyDataText\([\s\S]*?packageText[\s\S]*?workspace_id와 owner_user_id가 반영된 Supabase migration handoff package를 복사했습니다[\s\S]*?buildSupabaseMigrationHandoffPackageManualCopyText\(\{[\s\S]*?dryRun: supabaseImportDryRun[\s\S]*?ownerUserId[\s\S]*?packageText[\s\S]*?workspaceId/,
+  "Data resolved migration handoff package copy should keep the resolved package on the clipboard and use the workspace/owner-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportApiPreflightReportManualCopyText\(\{[\s\S]*?preflightText: string[\s\S]*?response: SupabaseImportApiPreflightResponse[\s\S]*?# Prompt AI Studio Supabase Import API Preflight[\s\S]*?## Preflight 식별[\s\S]*?확인 시각: \$\{formatBackupDate\([\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?리포트 길이: \$\{formatJsonLength\(preflightText\)\}[\s\S]*?## Route validation 요약[\s\S]*?Route status: \$\{response\.status\}[\s\S]*?Validation:[\s\S]*?Dry-run rows:[\s\S]*?Insert tables:[\s\S]*?Generated UUIDs:[\s\S]*?Unresolved pending references:[\s\S]*?Required confirmation:[\s\S]*?## API preflight report[\s\S]*?preflightText/,
+  "Data API preflight report manual fallback should prepend backup/workspace identity, route validation, row/table counts, confirmation gate, and report length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportApiPreflightReport\(\)[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const checkedAt = supabaseImportApiPreflight\.checkedAt[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const preflightText = buildSupabaseImportApiPreflightReportText\(\{[\s\S]*?copyDataText\([\s\S]*?preflightText[\s\S]*?Supabase import API preflight 리포트를 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportApiPreflightReportManualCopyText\(\{[\s\S]*?backupFingerprint[\s\S]*?checkedAt[\s\S]*?ownerUserId[\s\S]*?preflightText[\s\S]*?response: preflightData[\s\S]*?workspaceId/,
+  "Data API preflight report copy should keep the original report on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportApiAuditArtifactManualCopyText\(\{[\s\S]*?artifactText: string[\s\S]*?response: SupabaseImportApiPreflightResponse[\s\S]*?# Prompt AI Studio Supabase Import Route Audit Artifact[\s\S]*?## Audit artifact 식별[\s\S]*?확인 시각: \$\{formatBackupDate\([\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?Artifact 길이: \$\{formatJsonLength\(artifactText\)\}[\s\S]*?## Route audit 요약[\s\S]*?Route status: \$\{response\.status\}[\s\S]*?Execute requested: false \(API preflight\)[\s\S]*?Validation:[\s\S]*?Validation blockers:[\s\S]*?Dry-run rows:[\s\S]*?Insert tables:[\s\S]*?Required confirmation:[\s\S]*?## Route audit artifact[\s\S]*?artifactText/,
+  "Data API route audit artifact manual fallback should prepend backup/workspace identity, route status, preflight execution mode, validation, row/table counts, confirmation gate, and artifact length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportApiAuditArtifact\(\)[\s\S]*?const artifactText = preflightData\.auditArtifactText[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const checkedAt = supabaseImportApiPreflight\.checkedAt[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?copyDataText\([\s\S]*?artifactText[\s\S]*?Supabase import API audit artifact를 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportApiAuditArtifactManualCopyText\(\{[\s\S]*?artifactText[\s\S]*?backupFingerprint[\s\S]*?checkedAt[\s\S]*?ownerUserId[\s\S]*?response: preflightData[\s\S]*?workspaceId/,
+  "Data API route audit artifact copy should keep the original artifact on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportExecutionPlanManualCopyText\(\{[\s\S]*?plan: ReturnType<typeof createSupabaseImporterPlan>[\s\S]*?planText: string[\s\S]*?# Prompt AI Studio Supabase Import Execution Plan[\s\S]*?## 실행 계획 식별[\s\S]*?workspace_id: \$\{plan\.workspaceId\}[\s\S]*?owner_user_id: \$\{plan\.ownerUserId\}[\s\S]*?계획 길이: \$\{formatJsonLength\(planText\)\}[\s\S]*?## UUID 치환 요약[\s\S]*?Total rows: \$\{plan\.totalRows\}[\s\S]*?Insert batches: \$\{plan\.batches\.length\}[\s\S]*?UUID map entries: \$\{plan\.generatedUuidCount\}[\s\S]*?Archive trace fields: \$\{plan\.archiveTraceFields\.length\}[\s\S]*?Unresolved pending references: \$\{plan\.unresolvedPendingReferences\.length\}[\s\S]*?## 실행 전 acceptance gate[\s\S]*?No pending-\* value should remain[\s\S]*?original local IDs and prompt_snapshot JSON must stay traceable[\s\S]*?workspace_members\.user_id must match[\s\S]*?does not connect to Supabase or write data[\s\S]*?row count, relationship, pending ID, and RLS owner access audits[\s\S]*?## Import execution plan[\s\S]*?planText/,
+  "Data import execution plan manual fallback should prepend workspace identity, UUID replacement counts, trace counts, pending counts, acceptance gates, local-only guard, audit gate, and plan length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportExecutionPlan\(\)[\s\S]*?const plan = createSupabaseImporterPlan\(supabaseImportDryRun,[\s\S]*?const planText = buildSupabaseImportExecutionPlanText\(supabaseImportDryRun,[\s\S]*?uuidByPendingId: plan\.uuidByPendingId[\s\S]*?copyDataText\([\s\S]*?planText[\s\S]*?Supabase import 실행 계획을 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportExecutionPlanManualCopyText\(\{[\s\S]*?plan[\s\S]*?planText/,
+  "Data import execution plan copy should reuse the same UUID map, keep the original plan on the clipboard, and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseImporterAdapterContractManualCopyText\(\{[\s\S]*?contractText: string[\s\S]*?plan: ReturnType<typeof createSupabaseImporterPlan>[\s\S]*?# Prompt AI Studio Supabase Importer Adapter Contract[\s\S]*?## Adapter 계약 식별[\s\S]*?workspace_id: \$\{plan\.workspaceId\}[\s\S]*?owner_user_id: \$\{plan\.ownerUserId\}[\s\S]*?계약 길이: \$\{formatJsonLength\(contractText\)\}[\s\S]*?## Import plan 요약[\s\S]*?Total rows: \$\{plan\.totalRows\}[\s\S]*?Insert batches: \$\{plan\.batches\.length\}[\s\S]*?Generated UUIDs: \$\{plan\.generatedUuidCount\}[\s\S]*?Archive trace fields: \$\{plan\.archiveTraceFields\.length\}[\s\S]*?Unresolved pending references: \$\{plan\.unresolvedPendingReferences\.length\}[\s\S]*?## Adapter gate 요약[\s\S]*?service-role server context[\s\S]*?Browser\/public Supabase clients must not execute importer writes[\s\S]*?Runner must stop before insert if validation has blockers[\s\S]*?Runner must insert tables in the listed order[\s\S]*?row count, relationship, pending ID, and RLS owner audits[\s\S]*?## Adapter contract[\s\S]*?contractText/,
+  "Data importer adapter contract manual fallback should prepend workspace identity, plan row/batch/UUID/archive/pending counts, server-only gate, insert-order gate, audit gate, and contract length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImporterAdapterContract\(\)[\s\S]*?const plan = createSupabaseImporterPlan\(supabaseImportDryRun,[\s\S]*?const contractText = buildSupabaseImporterAdapterContractText\(plan\)[\s\S]*?copyDataText\([\s\S]*?contractText[\s\S]*?Supabase importer adapter 계약을 클립보드에 복사했습니다[\s\S]*?buildSupabaseImporterAdapterContractManualCopyText\(\{[\s\S]*?contractText[\s\S]*?plan/,
+  "Data importer adapter contract copy should keep the original contract on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseMigrationRehearsalReportManualCopyText\(\{[\s\S]*?preflight: SupabaseImportApiPreflightResponse[\s\S]*?rehearsalText: string[\s\S]*?# Prompt AI Studio Supabase Migration Rehearsal[\s\S]*?## 리허설 식별[\s\S]*?기준 시각: \$\{formatBackupDate\([\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?리포트 길이: \$\{formatJsonLength\(rehearsalText\)\}[\s\S]*?## 리허설 readiness 요약[\s\S]*?Preflight status: \$\{preflight\.status\}[\s\S]*?Validation:[\s\S]*?Validation blockers:[\s\S]*?Import rows:[\s\S]*?Insert tables:[\s\S]*?Required confirmation:[\s\S]*?Handoff sections: \$\{supabaseImportVerificationCheckCounts\.handoffSections\}[\s\S]*?## Migration rehearsal report[\s\S]*?rehearsalText/,
+  "Data migration rehearsal manual fallback should prepend backup/workspace identity, validation blockers, row/table counts, confirmation gate, handoff sections, and report length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseMigrationRehearsalReport\(\)[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const checkedAt = supabaseImportApiPreflight\.checkedAt[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const rehearsalText = buildSupabaseMigrationRehearsalReportText\(\{[\s\S]*?copyDataText\([\s\S]*?rehearsalText[\s\S]*?Supabase migration rehearsal 리포트를 클립보드에 복사했습니다[\s\S]*?buildSupabaseMigrationRehearsalReportManualCopyText\(\{[\s\S]*?backupFingerprint[\s\S]*?checkedAt[\s\S]*?ownerUserId[\s\S]*?preflight: preflightData[\s\S]*?rehearsalText[\s\S]*?workspaceId/,
+  "Data migration rehearsal copy should keep the original report on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportExecutionReadinessDecisionManualCopyText\(\{[\s\S]*?decisionText: string[\s\S]*?runtimeStatus: EnvironmentRuntimeStatus[\s\S]*?# Prompt AI Studio Supabase Import 실행 판정 메모[\s\S]*?## 판정 식별[\s\S]*?생성 시각: \$\{formatBackupDate\(checkedAt\)\}[\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?메모 길이: \$\{formatJsonLength\(decisionText\)\}[\s\S]*?## 실행 판정 요약[\s\S]*?Decision: \$\{decision\}[\s\S]*?Preflight validation:[\s\S]*?Runtime release gate: \$\{formatReleaseGateStage\([\s\S]*?Runtime blockers: \$\{runtimeBlockers\.length\}개[\s\S]*?Supabase migration ready:[\s\S]*?Server importer ready:[\s\S]*?Import execution gate:[\s\S]*?## Execution readiness decision[\s\S]*?decisionText/,
+  "Data execution readiness decision manual fallback should prepend decision identity, runtime gate, blockers, migration readiness, importer readiness, execution gate, and memo length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportExecutionReadinessDecision\(\)[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const checkedAt = new Date\(\)\.toISOString\(\)[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const decisionText = buildSupabaseImportExecutionReadinessDecisionText\(\{[\s\S]*?copyDataText\([\s\S]*?decisionText[\s\S]*?Supabase import 실행 판정 메모를 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportExecutionReadinessDecisionManualCopyText\(\{[\s\S]*?backupFingerprint[\s\S]*?checkedAt[\s\S]*?decisionText[\s\S]*?ownerUserId[\s\S]*?preflight: preflightData[\s\S]*?runtimeStatus: runtimeReadiness\.data[\s\S]*?workspaceId/,
+  "Data execution readiness decision copy should keep the original memo on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportExecutionRequestTemplateManualCopyText\(\{[\s\S]*?templateText: string[\s\S]*?# Prompt AI Studio Supabase Import 실행 요청 템플릿[\s\S]*?## 요청 템플릿 식별[\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?템플릿 길이: \$\{formatJsonLength\(templateText\)\}[\s\S]*?## 실행 gate 요약[\s\S]*?execute: true[\s\S]*?confirmation: RUN_SUPABASE_IMPORT[\s\S]*?includePayload: false[\s\S]*?server gate: SUPABASE_IMPORT_EXECUTION_ENABLED=true[\s\S]*?trusted server-side\/operator execution window only[\s\S]*?## Execute request template[\s\S]*?templateText/,
+  "Data execution request template manual fallback should prepend backup/workspace identity, execute gate, confirmation, payload mode, server gate, and template length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportExecutionRequestTemplate\(\)[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const templateText = buildSupabaseImportExecutionRequestTemplateText\(\{[\s\S]*?copyDataText\([\s\S]*?templateText[\s\S]*?Supabase import 실행 요청 템플릿을 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportExecutionRequestTemplateManualCopyText\(\{[\s\S]*?backupFingerprint[\s\S]*?ownerUserId[\s\S]*?templateText[\s\S]*?workspaceId/,
+  "Data execution request template copy should keep the original template on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportExecutionGuardChecklistManualCopyText\(\{[\s\S]*?checklistText: string[\s\S]*?# Prompt AI Studio Supabase Import 실행 금지 체크리스트[\s\S]*?## 체크리스트 식별[\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?체크리스트 길이: \$\{formatJsonLength\(checklistText\)\}[\s\S]*?## 실행 차단 gate 요약[\s\S]*?API preflight must match this exact backup\/workspace\/owner combination[\s\S]*?API preflight validation must be ok[\s\S]*?database-schema\.sql must be applied[\s\S]*?SUPABASE_SERVICE_ROLE_KEY must remain server-side only[\s\S]*?SUPABASE_IMPORT_EXECUTION_ENABLED must be disabled immediately after the run[\s\S]*?Row count, relationship, pending ID, and RLS owner audits must be runnable[\s\S]*?RLS smoke test identities must be prepared[\s\S]*?## Execution guard checklist[\s\S]*?checklistText/,
+  "Data execution guard checklist manual fallback should prepend backup/workspace identity, execution-blocking gates, audit readiness, RLS smoke readiness, and checklist length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportExecutionGuardChecklist\(\)[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const checklistText = buildSupabaseImportExecutionGuardChecklistText\(\{[\s\S]*?copyDataText\([\s\S]*?checklistText[\s\S]*?Supabase import 실행 금지 체크리스트를 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportExecutionGuardChecklistManualCopyText\(\{[\s\S]*?backupFingerprint[\s\S]*?checklistText[\s\S]*?ownerUserId[\s\S]*?workspaceId/,
+  "Data execution guard checklist copy should keep the original checklist on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertManifestMatches(
+  /interface SupabaseImportExecutionPacketManifestItem[\s\S]*?copyDetail\?: string;[\s\S]*?detail\?: string;[\s\S]*?label: string;[\s\S]*?ready: boolean;[\s\S]*?value: string;[\s\S]*?interface SupabaseImportExecutionPacketCopyActionStatus[\s\S]*?action: string;[\s\S]*?detail: string;[\s\S]*?label: string;[\s\S]*?ready: boolean;[\s\S]*?interface SupabaseImportExecutionPacketManifestSummary[\s\S]*?copyGate: "operator review required" \| "resolve waiting items";[\s\S]*?readyCount: number;[\s\S]*?totalCount: number;[\s\S]*?waitingCount: number;/,
+  "Data execution packet manifest items should have typed manifest and copy-action status fields",
+);
+
+assertDataMatches(
+  /from "@\/lib\/data\/supabase-import-execution-packet-manifest";/,
+  "Data view should import reusable execution packet manifest helpers from the data lib",
+);
+
+assertManifestMatches(
+  /import \{[\s\S]*?formatSupabaseImportPreflightScopeChangeDetails[\s\S]*?formatSupabaseImportPreflightScopeChanges[\s\S]*?getSupabaseImportPreflightScopeChangeDetails[\s\S]*?getSupabaseImportPreflightScopeChanges[\s\S]*?getSupabaseImportPreflightScopeStatus[\s\S]*?from "\.\/supabase-import-preflight-scope";[\s\S]*?function getSupabaseImportExecutionPacketManifestItems\(\{[\s\S]*?backupFingerprint[\s\S]*?ownerUserId[\s\S]*?preflightState[\s\S]*?runtimeState[\s\S]*?sectionCount[\s\S]*?workspaceId[\s\S]*?getSupabaseImportPreflightScopeStatus\(\{[\s\S]*?getSupabaseImportPreflightScopeChanges\(\{[\s\S]*?getSupabaseImportPreflightScopeChangeDetails\(\{[\s\S]*?copyDetail: scopeChangeDetail \|\| undefined[\s\S]*?detail: scopeChangeSummary \|\| undefined[\s\S]*?Execution gate[\s\S]*?Packet sections/,
+  "Data execution packet manifest lib should derive short display scope detail, full copy scope detail, validation, runtime, gate, and packet-section readiness",
+);
+
+assertDataMatches(
+  /function getSupabaseImportExecutionPacketRuntimeState\([\s\S]*?runtimeData\?\.supabase\.importExecutionEnabled[\s\S]*?formatReleaseGateStage\(runtimeData\.releaseGate\.stage\)[\s\S]*?status: runtimeState\.status/,
+  "Data view should adapt runtime readiness into manifest-specific runtime state",
+);
+
+assertDataMatches(
+  /getSupabaseImportExecutionPacketManifestItems\(\{[\s\S]*?runtimeState:[\s\S]*?getSupabaseImportExecutionPacketRuntimeState\([\s\S]*?sectionCount: supabaseImportExecutionPacketSectionCount/,
+  "Data view should build execution packet manifest items through the reusable manifest item builder",
+);
+
+assertManifestMatches(
+  /function getSupabaseImportExecutionPacketManifestSummary\([\s\S]*?readyCount = items\.filter\([\s\S]*?waitingCount = items\.length - readyCount[\s\S]*?copyGate:[\s\S]*?"operator review required"[\s\S]*?"resolve waiting items"[\s\S]*?function formatSupabaseImportExecutionPacketCopyGateLabel\([\s\S]*?operator review 필요[\s\S]*?대기 항목 해결 필요[\s\S]*?function buildSupabaseImportExecutionPacketManifestText\(\{[\s\S]*?backupFingerprint[\s\S]*?checkedAt[\s\S]*?items[\s\S]*?ownerUserId[\s\S]*?preflightCheckedAt[\s\S]*?workspaceId[\s\S]*?# Prompt AI Studio Supabase Import Execution Packet Manifest[\s\S]*?ready: \$\{summary\.readyCount\}\/\$\{summary\.totalCount\}[\s\S]*?waitingItems: \$\{summary\.waitingCount\}[\s\S]*?copyGate: \$\{summary\.copyGate\}[\s\S]*?manifestStatus: \$\{manifestStatus\.label\}[\s\S]*?manifestStatusDetail: \$\{manifestStatus\.detail\}[\s\S]*?## Manifest[\s\S]*?## Waiting items[\s\S]*?## Copy actions[\s\S]*?This manifest is a status artifact only/,
+  "Data execution packet manifest text should be a copy-ready Markdown artifact with ready counts, status, waiting items, copy actions, and non-execution guardrails",
+);
+
+assertManifestMatches(
+  /function getSupabaseImportExecutionPacketManifestItemCopyDetail\([\s\S]*?item\.copyDetail \?\? item\.detail[\s\S]*?function formatSupabaseImportExecutionPacketManifestItemLine\([\s\S]*?getSupabaseImportExecutionPacketManifestItemCopyDetail\(item\)[\s\S]*?function getSupabaseImportExecutionPacketManifestNextAction\([\s\S]*?items: SupabaseImportExecutionPacketManifestItem\[\][\s\S]*?detailMode\?: "copy" \| "display"[\s\S]*?const waitingItem = items\.find\(\(item\) => !item\.ready\)[\s\S]*?getSupabaseImportExecutionPacketManifestItemCopyDetail\(waitingItem\)[\s\S]*?saved preflight scope is stale[\s\S]*?Refresh runtime readiness[\s\S]*?controlled execution packet/,
+  "Data execution packet manifest should derive a concrete next action with display or copy stale-scope detail from the first waiting item",
+);
+
+assertDataMatches(
+  /function getExecutionPacketManifestStatusClass\([\s\S]*?border-attention\/40 bg-attention\/10 text-attention/,
+  "Data view should keep only display-specific execution packet manifest status styling",
+);
+
+assertManifestMatches(
+  /function getSupabaseImportExecutionPacketManifestStatus\([\s\S]*?detailMode\?: "copy" \| "display"[\s\S]*?getSupabaseImportExecutionPacketManifestSummary\(items\)[\s\S]*?getSupabaseImportExecutionPacketManifestNextAction\([\s\S]*?function buildSupabaseImportExecutionPacketNextActionText\(\{[\s\S]*?backupFingerprint[\s\S]*?checkedAt[\s\S]*?items[\s\S]*?ownerUserId[\s\S]*?preflightCheckedAt[\s\S]*?workspaceId[\s\S]*?getSupabaseImportExecutionPacketManifestItemCopyDetail\(waitingItem\)[\s\S]*?detailMode: "copy"[\s\S]*?getSupabaseImportExecutionPacketCopyActionStatuses\(items\)[\s\S]*?# Supabase Import Execution Packet Next Action[\s\S]*?manifestReady: \$\{summary\.readyCount\}\/\$\{summary\.totalCount\}[\s\S]*?waitingItems: \$\{summary\.waitingCount\}[\s\S]*?copyGate: \$\{summary\.copyGate\}[\s\S]*?manifestStatus: \$\{manifestStatus\.label\}[\s\S]*?manifestStatusDetail: \$\{manifestStatus\.detail\}[\s\S]*?waitingItem:[\s\S]*?waitingDetail: \$\{waitingDetail \|\| "none"\}[\s\S]*?## Copy actions[\s\S]*?## Next action[\s\S]*?## Guardrail/,
+  "Data execution packet next-action text should be copy-ready with manifest context, waiting detail, and guardrails",
+);
+
+assertManifestMatches(
+  /function getSupabaseImportExecutionPacketCopyActionStatuses\([\s\S]*?action: "대기 항목이 바뀌면 다시 복사해 operator note를 갱신하세요\."[\s\S]*?label: "Next action"[\s\S]*?API preflight를 현재 입력값으로 다시 실행하세요\.[\s\S]*?label: "Manifest"[\s\S]*?runtime readiness를 새로고침하고 current preflight scope를 확인하세요\.[\s\S]*?label: "Controlled packet"[\s\S]*?function formatSupabaseImportExecutionPacketCopyActionStatusLine[\s\S]*?Next:[\s\S]*?action\.action[\s\S]*?function buildSupabaseImportExecutionPacketManifestText\([\s\S]*?detailMode: "copy"[\s\S]*?getSupabaseImportExecutionPacketCopyActionStatuses\(items\)[\s\S]*?## Manifest[\s\S]*?\.\.\.items\.map\(formatSupabaseImportExecutionPacketManifestItemLine\)[\s\S]*?## Waiting items[\s\S]*?waitingItems\.map\(formatSupabaseImportExecutionPacketWaitingItemLine\)[\s\S]*?## Copy actions[\s\S]*?formatSupabaseImportExecutionPacketCopyActionStatusLine[\s\S]*?## Next action[\s\S]*?`\- \$\{nextAction\}`[\s\S]*?## Operator note/,
+  "Data execution packet manifest text should include copy-grade stale scope detail and the derived next action before operator guardrails",
+);
+
+assertDataMatches(
+  /const supabaseImportExecutionPacketSectionCount = 10;[\s\S]*?function buildSupabaseImportExecutionPacketText\(\{[\s\S]*?executionPacketManifestText[\s\S]*?## Packet index[\s\S]*?1\. Execution packet manifest[\s\S]*?10\. Importer adapter contract[\s\S]*?executionPacketManifestText[\s\S]*?executionReadinessDecisionText/,
+  "Data controlled execution packet should include the manifest as the first indexed section",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportExecutionPacketManualCopyText\(\{[\s\S]*?manifestItems: SupabaseImportExecutionPacketManifestItem\[\][\s\S]*?runtimeStatus: EnvironmentRuntimeStatus[\s\S]*?# Prompt AI Studio Supabase Import 실행 패킷[\s\S]*?## 패킷 식별[\s\S]*?생성 시각: \$\{formatBackupDate\(checkedAt\)\}[\s\S]*?Preflight 시각:[\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?패킷 길이: \$\{formatJsonLength\(packetText\)\}[\s\S]*?## 실행 gate 요약[\s\S]*?Manifest status: \$\{manifestStatus\.label\}[\s\S]*?Ready items: \$\{manifestSummary\.readyCount\}\/\$\{manifestSummary\.totalCount\}[\s\S]*?Waiting items: \$\{manifestSummary\.waitingCount\}개[\s\S]*?Copy gate: \$\{formatSupabaseImportExecutionPacketCopyGateLabel[\s\S]*?Runtime release gate: \$\{formatReleaseGateStage\([\s\S]*?runtimeStatus\.releaseGate\.stage[\s\S]*?Import execution gate:[\s\S]*?## Controlled execution packet[\s\S]*?packetText/,
+  "Data controlled execution packet manual fallback should prepend packet identity, manifest readiness, copy gate, runtime gate, and packet length",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportExecutionPacketManifestManualCopyText\(\{[\s\S]*?manifestItems: SupabaseImportExecutionPacketManifestItem\[\][\s\S]*?manifestText: string[\s\S]*?manifestSummary =[\s\S]*?getSupabaseImportExecutionPacketManifestSummary\(manifestItems\)[\s\S]*?manifestStatus =[\s\S]*?getSupabaseImportExecutionPacketManifestStatus\(manifestItems\)[\s\S]*?nextAction = getSupabaseImportExecutionPacketManifestNextAction\([\s\S]*?detailMode: "copy"[\s\S]*?# Prompt AI Studio Supabase Import Execution Packet Manifest[\s\S]*?## Manifest 식별[\s\S]*?생성 시각: \$\{formatBackupDate\(checkedAt\)\}[\s\S]*?Preflight 시각:[\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?Manifest 길이: \$\{formatJsonLength\(manifestText\)\}[\s\S]*?## Manifest gate 요약[\s\S]*?Manifest status: \$\{manifestStatus\.label\}[\s\S]*?Manifest detail: \$\{manifestStatus\.detail\}[\s\S]*?Ready items: \$\{manifestSummary\.readyCount\}\/\$\{manifestSummary\.totalCount\}[\s\S]*?Waiting items: \$\{manifestSummary\.waitingCount\}개[\s\S]*?Copy gate: \$\{formatSupabaseImportExecutionPacketCopyGateLabel[\s\S]*?Next action: \$\{nextAction\}[\s\S]*?## Operator guardrails[\s\S]*?status artifact only[\s\S]*?service-role keys[\s\S]*?waiting items are resolved[\s\S]*?## Execution packet manifest[\s\S]*?manifestText/,
+  "Data execution packet manifest manual fallback should prepend manifest identity, readiness counts, copy gate, next action, guardrails, and manifest length",
+);
+
+assertDataMatches(
+  /function buildSupabaseImportExecutionPacketNextActionManualCopyText\(\{[\s\S]*?manifestItems: SupabaseImportExecutionPacketManifestItem\[\][\s\S]*?nextActionText: string[\s\S]*?manifestSummary =[\s\S]*?getSupabaseImportExecutionPacketManifestSummary\(manifestItems\)[\s\S]*?manifestStatus =[\s\S]*?getSupabaseImportExecutionPacketManifestStatus\(manifestItems\)[\s\S]*?waitingItem = manifestItems\.find\(\(item\) => !item\.ready\)[\s\S]*?nextAction = getSupabaseImportExecutionPacketManifestNextAction\([\s\S]*?detailMode: "copy"[\s\S]*?# Prompt AI Studio Supabase Import Execution Packet Next Action[\s\S]*?## 다음 조치 식별[\s\S]*?생성 시각: \$\{formatBackupDate\(checkedAt\)\}[\s\S]*?Preflight 시각:[\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?메모 길이: \$\{formatJsonLength\(nextActionText\)\}[\s\S]*?## 다음 조치 gate 요약[\s\S]*?Manifest status: \$\{manifestStatus\.label\}[\s\S]*?Ready items: \$\{manifestSummary\.readyCount\}\/\$\{manifestSummary\.totalCount\}[\s\S]*?Waiting items: \$\{manifestSummary\.waitingCount\}개[\s\S]*?Copy gate: \$\{formatSupabaseImportExecutionPacketCopyGateLabel[\s\S]*?Waiting item:[\s\S]*?Next action: \$\{nextAction\}[\s\S]*?## Operator guardrails[\s\S]*?operator handoff artifact only[\s\S]*?Re-copy this note[\s\S]*?## Next action memo[\s\S]*?nextActionText/,
+  "Data execution packet next-action manual fallback should prepend note identity, readiness counts, copy gate, waiting item, next action, guardrails, and note length",
+);
+
+assertManifestMatches(
+  /label: "Packet sections"[\s\S]*?`\$\{sectionCount\}개`/,
+  "Data execution packet manifest should show the supplied controlled packet section count",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportExecutionPacketManifest\(\)[\s\S]*?getSupabaseImportPreflightScopeError\(\)[\s\S]*?getSupabaseImportExecutionPacketManifestItems\(\{[\s\S]*?backupFingerprint: importBackupFingerprint[\s\S]*?preflightState: supabaseImportApiPreflight[\s\S]*?runtimeState:[\s\S]*?getSupabaseImportExecutionPacketRuntimeState\(runtimeReadiness\)[\s\S]*?sectionCount: supabaseImportExecutionPacketSectionCount[\s\S]*?const checkedAt = new Date\(\)\.toISOString\(\)[\s\S]*?const manifestText = buildSupabaseImportExecutionPacketManifestText\(\{[\s\S]*?preflightCheckedAt: supabaseImportApiPreflight\.checkedAt[\s\S]*?copyDataText\([\s\S]*?manifestText[\s\S]*?Supabase import execution packet manifest를 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportExecutionPacketManifestManualCopyText\(\{[\s\S]*?manifestItems[\s\S]*?manifestText/,
+  "Data execution packet manifest copy handler should enforce current preflight scope and use clipboard fallback metadata",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportExecutionPacketNextAction\(\)[\s\S]*?supabaseImportApiPreflight\.data[\s\S]*?먼저 Supabase import API preflight를 실행하세요[\s\S]*?getSupabaseImportExecutionPacketManifestItems\(\{[\s\S]*?preflightState: supabaseImportApiPreflight[\s\S]*?getSupabaseImportExecutionPacketRuntimeState\(runtimeReadiness\)[\s\S]*?sectionCount: supabaseImportExecutionPacketSectionCount[\s\S]*?const checkedAt = new Date\(\)\.toISOString\(\)[\s\S]*?const nextActionText = buildSupabaseImportExecutionPacketNextActionText\(\{[\s\S]*?preflightCheckedAt: supabaseImportApiPreflight\.checkedAt[\s\S]*?copyDataText\([\s\S]*?nextActionText[\s\S]*?Supabase import execution packet 다음 조치를 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportExecutionPacketNextActionManualCopyText\(\{[\s\S]*?manifestItems[\s\S]*?nextActionText/,
+  "Data execution packet next-action copy handler should copy the current blocker/action even when the manifest is not fully ready",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportExecutionPacket\(\)[\s\S]*?const manifestItems = getSupabaseImportExecutionPacketManifestItems\(\{[\s\S]*?preflightState: supabaseImportApiPreflight[\s\S]*?getSupabaseImportExecutionPacketRuntimeState\(runtimeReadiness\)[\s\S]*?sectionCount: supabaseImportExecutionPacketSectionCount[\s\S]*?const executionPacketManifestText =[\s\S]*?buildSupabaseImportExecutionPacketManifestText\(\{[\s\S]*?items: manifestItems[\s\S]*?buildSupabaseImportExecutionPacketText\(\{[\s\S]*?executionPacketManifestText/,
+  "Data full execution packet copy should embed the same manifest artifact used by the standalone manifest copy action",
+);
+
+assertDataMatches(
+  /async function handleCopySupabaseImportExecutionPacket\(\)[\s\S]*?const executionPacketText = buildSupabaseImportExecutionPacketText\(\{[\s\S]*?executionPacketManifestText[\s\S]*?copyDataText\([\s\S]*?executionPacketText[\s\S]*?Supabase import 실행 패킷을 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportExecutionPacketManualCopyText\(\{[\s\S]*?backupFingerprint: importBackupFingerprint[\s\S]*?checkedAt[\s\S]*?manifestItems[\s\S]*?ownerUserId[\s\S]*?packetText: executionPacketText[\s\S]*?preflightCheckedAt: supabaseImportApiPreflight\.checkedAt[\s\S]*?runtimeStatus: runtimeReadiness\.data[\s\S]*?workspaceId/,
+  "Data full execution packet copy should keep the original controlled packet on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /function buildSupabasePostImportVerificationEvidenceManualCopyText\(\{[\s\S]*?evidenceText: string[\s\S]*?preflight: SupabaseImportApiPreflightResponse[\s\S]*?# Prompt AI Studio Supabase Post-import 검증 기록지[\s\S]*?## 검증 기록 식별[\s\S]*?기준 시각: \$\{formatBackupDate\([\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?기록지 길이: \$\{formatJsonLength\(evidenceText\)\}[\s\S]*?## 실행 결과 대조 요약[\s\S]*?Preflight status: \$\{preflight\.status\}[\s\S]*?Validation:[\s\S]*?Expected rows:[\s\S]*?Expected insert tables:[\s\S]*?Relationship checks: \$\{supabaseImportVerificationCheckCounts\.relationship\}[\s\S]*?Pending ID checks: \$\{supabaseImportVerificationCheckCounts\.pendingIdAudit\}[\s\S]*?RLS owner access checks: \$\{supabaseImportVerificationCheckCounts\.rlsOwnerAccess\}[\s\S]*?## Post-import verification evidence[\s\S]*?evidenceText/,
+  "Data post-import evidence manual fallback should prepend backup/workspace identity, expected rows, acceptance gate counts, and evidence length",
+);
+
+assertDataMatches(
+  /async function handleCopySupabasePostImportVerificationEvidence\(\)[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const checkedAt = supabaseImportApiPreflight\.checkedAt[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?const evidenceText = buildSupabasePostImportVerificationEvidenceText\(\{[\s\S]*?copyDataText\([\s\S]*?evidenceText[\s\S]*?Supabase post-import 검증 기록지를 클립보드에 복사했습니다[\s\S]*?buildSupabasePostImportVerificationEvidenceManualCopyText\(\{[\s\S]*?backupFingerprint[\s\S]*?checkedAt[\s\S]*?evidenceText[\s\S]*?ownerUserId[\s\S]*?preflight: preflightData[\s\S]*?workspaceId/,
+  "Data post-import evidence copy should keep the original evidence on the clipboard and use the identity-rich fallback body only for manual copy",
+);
+
+assertDataMatches(
+  /packetManifestStatus =[\s\S]*?getSupabaseImportExecutionPacketManifestStatus\(packetManifestItems\)[\s\S]*?packetCopyActionStatuses =[\s\S]*?getSupabaseImportExecutionPacketCopyActionStatuses\(packetManifestItems\)[\s\S]*?packetManifestScopeDetail = packetManifestItems\.find[\s\S]*?preflightScopeStatus === "stale"[\s\S]*?packetManifestScopeDetail[\s\S]*?Execution packet manifest[\s\S]*?getExecutionPacketManifestStatusClass\([\s\S]*?packetManifestStatus\.tone[\s\S]*?packetManifestStatus\.label[\s\S]*?data-testid="data-execution-packet-manifest-copy"[\s\S]*?Manifest 복사[\s\S]*?packetManifestStatus\.detail[\s\S]*?packetCopyActionStatuses\.map\(\(action\) =>[\s\S]*?action\.ready \? "ready" : "waiting"[\s\S]*?Next: \{action\.action\}[\s\S]*?packetManifestItems\.map\(\(item\) =>[\s\S]*?item\.detail[\s\S]*?data-testid="data-execution-packet-manifest-next-action"[\s\S]*?Next action[\s\S]*?data-testid="data-execution-packet-next-action-copy"[\s\S]*?다음 조치 복사[\s\S]*?packetManifestNextAction/,
+  "Data execution packet manifest UI should expose stale scope detail, manifest status, copy-action statuses, manifest copy, derived next action, and next-action copy",
+);
+assertDataMatches(
+  /function EnvironmentReadinessSummary\([\s\S]*?runtimeSummaryItems = \[[\s\S]*?생성 엔진[\s\S]*?Supabase client[\s\S]*?Server importer[\s\S]*?Storage mode[\s\S]*?className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3"[\s\S]*?data-testid="data-environment-readiness-metrics"[\s\S]*?현재 사용[\s\S]*?Supabase 전환[\s\S]*?후속 전환[\s\S]*?className="mt-3 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-runtime-preflight-metrics"[\s\S]*?className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3"[\s\S]*?data-testid="data-runtime-snapshot-metrics"[\s\S]*?저장 수[\s\S]*?최근 stage[\s\S]*?최근 score/,
+  "Data environment readiness should expose compact two-column mobile metrics for readiness counts, runtime preflight, and snapshot history",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-import-execution-plan-metrics"[\s\S]*?Payload rows[\s\S]*?UUID map[\s\S]*?Archive snapshots[\s\S]*?상태/,
+  "Data import execution plan metrics should keep a compact two-column mobile grid and four-column desktop grid",
+);
+assertDataTestIdCount(
+  "data-import-execution-plan-metrics",
+  1,
+  "Data import execution plan metrics test id should appear exactly once",
+);
+assertDataMatches(
+  /function ImportValidationSummary\([\s\S]*?백업 앱[\s\S]*?스키마[\s\S]*?백업 생성[\s\S]*?가져온 방식[\s\S]*?복원 상태[\s\S]*?className="grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-import-validation-metrics"/,
+  "Data import validation metrics should keep a compact two-column mobile grid and four-column desktop grid",
+);
+assertDataMatches(
+  /function RestoreReportSummary\([\s\S]*?백업 생성[\s\S]*?가져온 방식[\s\S]*?지문 비교[\s\S]*?변경 항목[\s\S]*?리스크[\s\S]*?className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-5"[\s\S]*?data-testid="data-restore-report-metrics"/,
+  "Data restore report metrics should keep a compact two-column mobile grid and five-column desktop grid",
+);
+assertDataMatches(
+  /className="grid grid-cols-2 gap-2 sm:grid-cols-3"[\s\S]*?data-testid="data-migration-checklist-metrics"[\s\S]*?준비됨[\s\S]*?결정 필요[\s\S]*?수동 확인/,
+  "Data migration checklist metrics should keep two mobile columns before the detailed checklist",
+);
+assertDataMatches(
+  /className="grid grid-cols-2 gap-2 sm:grid-cols-3"[\s\S]*?data-testid="data-migration-mapping-metrics"[\s\S]*?매핑 가능[\s\S]*?결정 필요[\s\S]*?예상 rows/,
+  "Data migration mapping metrics should keep two mobile columns before the detailed table",
+);
+assertDataMatches(
+  /className="grid grid-cols-2 gap-2 sm:grid-cols-3"[\s\S]*?data-testid="data-import-dry-run-metrics"[\s\S]*?Insert batches[\s\S]*?예상 rows[\s\S]*?경고/,
+  "Data import dry-run metrics should keep two mobile columns before the batch table",
+);
+assertDataMatches(
+  /className="grid grid-cols-2 gap-2"[\s\S]*?data-testid="data-import-dry-run-warning-metrics"[\s\S]*?설정 필요[\s\S]*?관계 참조 확인/,
+  "Data import dry-run warning metrics should keep a compact two-column mobile grid",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-reference-replacement-metrics"[\s\S]*?Prompt refs[\s\S]*?Version refs[\s\S]*?Feedback refs[\s\S]*?Archive traces/,
+  "Data pending ID replacement metrics should keep a compact two-column mobile grid and separate test id",
+);
+assertDataTestIdCount(
+  "data-reference-replacement-metrics",
+  1,
+  "Data pending ID replacement metrics test id should appear exactly once",
+);
+assertDataMatches(
+  /className="mt-3 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-api-preflight-summary-metrics"[\s\S]*?Validation[\s\S]*?Insert tables[\s\S]*?Rows[\s\S]*?Confirmation/,
+  "Data API preflight summary metrics should keep a compact two-column mobile grid and four-column desktop grid",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-row-count-verification-metrics"[\s\S]*?검증 테이블[\s\S]*?예상 rows[\s\S]*?필터 기준[\s\S]*?최대 batch/,
+  "Data row count verification metrics should keep a compact two-column mobile grid before the SQL preview",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-relationship-verification-metrics"[\s\S]*?검증 항목[\s\S]*?정상 기준[\s\S]*?필터 기준[\s\S]*?workspace_id/,
+  "Data relationship verification metrics should keep a compact two-column mobile grid before the SQL preview",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-pending-id-audit-metrics"[\s\S]*?검증 항목[\s\S]*?정상 기준[\s\S]*?대상 필드[\s\S]*?workspace_id/,
+  "Data pending ID audit metrics should keep a compact two-column mobile grid before the SQL preview",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-rls-access-audit-metrics"[\s\S]*?검증 항목[\s\S]*?정상 기준[\s\S]*?필수 입력[\s\S]*?owner_user_id/,
+  "Data RLS owner access audit metrics should keep a compact two-column mobile grid before the SQL preview",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-rls-policy-draft-metrics"[\s\S]*?Helper functions[\s\S]*?RLS tables[\s\S]*?Write roles[\s\S]*?상태/,
+  "Data RLS policy draft metrics should keep a compact two-column mobile grid before the SQL preview",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-rls-smoke-test-metrics"[\s\S]*?Test roles[\s\S]*?Allow\/deny[\s\S]*?Cross-workspace[\s\S]*?상태/,
+  "Data RLS smoke test metrics should keep a compact two-column mobile grid before the checklist preview",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-verification-report-metrics"[\s\S]*?Row checks[\s\S]*?Relationship checks[\s\S]*?RLS checks[\s\S]*?Setup warnings[\s\S]*?Reference warnings/,
+  "Data verification report metrics should keep a compact two-column mobile grid before the report preview",
+);
+assertDataMatches(
+  /className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-4"[\s\S]*?data-testid="data-migration-handoff-metrics"[\s\S]*?Sections[\s\S]*?Expected rows[\s\S]*?Workspace[\s\S]*?Owner/,
+  "Data migration handoff metrics should keep a compact two-column mobile grid before the package preview",
+);
+[
+  "data-row-count-verification-metrics",
+  "data-relationship-verification-metrics",
+  "data-pending-id-audit-metrics",
+  "data-rls-access-audit-metrics",
+  "data-rls-policy-draft-metrics",
+  "data-rls-smoke-test-metrics",
+  "data-verification-report-metrics",
+  "data-migration-handoff-metrics",
+].forEach((testId) => {
+  assertDataTestIdCount(
+    testId,
+    1,
+    `Data metric test id ${testId} should appear exactly once`,
+  );
+});
+
+assertDataMatches(
+  /formatSupabaseImportExecutionPacketCopyGateLabel[\s\S]*?getSupabaseImportExecutionPacketManifestSummary[\s\S]*?packetManifestSummary =[\s\S]*?getSupabaseImportExecutionPacketManifestSummary\(packetManifestItems\)[\s\S]*?data-testid="data-execution-packet-manifest-summary"[\s\S]*?Ready items[\s\S]*?`\$\{packetManifestSummary\.readyCount\}\/\$\{packetManifestSummary\.totalCount\}`[\s\S]*?Waiting items[\s\S]*?`\$\{packetManifestSummary\.waitingCount\}개`[\s\S]*?Copy gate[\s\S]*?formatSupabaseImportExecutionPacketCopyGateLabel\([\s\S]*?packetManifestSummary\.copyGate/,
+  "Data execution packet manifest UI should summarize ready items, waiting items, and copy gate state above the detailed checklist",
+);
+assertDataMatches(
+  /className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3"[\s\S]*?data-testid="data-execution-packet-manifest-summary"[\s\S]*?Ready items[\s\S]*?Waiting items[\s\S]*?Copy gate/,
+  "Data execution packet manifest summary should keep two mobile columns before detailed manifest rows",
+);
+
+assertDataMatches(
+  /<SupabaseImportExecutionPlanSummary[\s\S]*?onCopyExecutionPacket=\{[\s\S]*?handleCopySupabaseImportExecutionPacket[\s\S]*?onCopyExecutionPacketManifest=\{[\s\S]*?handleCopySupabaseImportExecutionPacketManifest[\s\S]*?onCopyExecutionPacketNextAction=\{[\s\S]*?handleCopySupabaseImportExecutionPacketNextAction/,
+  "Data view should pass execution packet manifest and next-action copy handlers into the import execution plan summary",
+);
+
+const generatedStaleManifestItems = getSupabaseImportExecutionPacketManifestItems(
+  {
+    backupFingerprint: "backup:new",
+    ownerUserId: "owner-new",
+    preflightState: {
+      backupFingerprint: "backup:old",
+      data: {
+        auditArtifactText: "# audit",
+        status: "ready",
+        validation: {
+          ok: true,
+        },
+      },
+      ownerUserId: "owner-new",
+      status: "ready",
+      workspaceId: "workspace-old",
+    },
+    runtimeState: {
+      importExecutionEnabled: false,
+      ready: true,
+      releaseGateStageLabel: "ready",
+      status: "ready",
+    },
+    sectionCount: 10,
+    workspaceId: "workspace-new",
+  },
+);
+
+assert.deepEqual(
+  normalizePlain(
+    generatedStaleManifestItems.map((item) => ({
+      copyDetail: item.copyDetail,
+      detail: item.detail,
+      label: item.label,
+      ready: item.ready,
+      value: item.value,
+    })),
+  ),
+  [
+    {
+      label: "Preflight",
+      ready: false,
+      value: "stale",
+    },
+    {
+      copyDetail:
+        "Changed scope inputs: backup fingerprint (preflight: backup:old -> current: backup:new), workspace_id (preflight: workspace-old -> current: workspace-new)",
+      detail: "Changed scope inputs: backup fingerprint, workspace_id",
+      label: "Scope",
+      ready: false,
+      value: "재실행 필요",
+    },
+    {
+      label: "Validation",
+      ready: false,
+      value: "blocked",
+    },
+    {
+      label: "Runtime",
+      ready: true,
+      value: "ready",
+    },
+    {
+      label: "Route audit",
+      ready: true,
+      value: "포함",
+    },
+    {
+      label: "Execution gate",
+      ready: true,
+      value: "disabled",
+    },
+    {
+      label: "Packet sections",
+      ready: false,
+      value: "대기",
+    },
+  ],
+  "Execution packet manifest item builder should preserve stale scope details and runtime readiness",
+);
+
+const staleScopeManifestItems = [
+  {
+    label: "Preflight",
+    ready: false,
+    value: "stale",
+  },
+  {
+    copyDetail:
+      "Changed scope inputs: workspace_id (preflight: old-workspace -> current: new-workspace)",
+    detail: "Changed scope inputs: workspace_id",
+    label: "Scope",
+    ready: false,
+    value: "재실행 필요",
+  },
+  {
+    label: "Validation",
+    ready: false,
+    value: "blocked",
+  },
+  {
+    label: "Runtime",
+    ready: false,
+    value: "미확인",
+  },
+  {
+    label: "Route audit",
+    ready: true,
+    value: "포함",
+  },
+  {
+    label: "Execution gate",
+    ready: false,
+    value: "미확인",
+  },
+  {
+    label: "Packet sections",
+    ready: false,
+    value: "대기",
+  },
+];
+
+assert.deepEqual(
+  normalizePlain(
+    getSupabaseImportExecutionPacketCopyActionStatuses(
+      staleScopeManifestItems,
+    ).map((item) => ({
+      action: item.action,
+      label: item.label,
+      ready: item.ready,
+    })),
+  ),
+  [
+    {
+      action: "대기 항목이 바뀌면 다시 복사해 operator note를 갱신하세요.",
+      label: "Next action",
+      ready: true,
+    },
+    {
+      action: "API preflight를 현재 입력값으로 다시 실행하세요.",
+      label: "Manifest",
+      ready: false,
+    },
+    {
+      action:
+        "runtime readiness를 새로고침하고 current preflight scope를 확인하세요.",
+      label: "Controlled packet",
+      ready: false,
+    },
+  ],
+  "Execution packet copy actions should expose actionable waiting steps",
+);
+
+assert.match(
+  getSupabaseImportExecutionPacketManifestNextAction(staleScopeManifestItems, {
+    detailMode: "copy",
+  }),
+  /old-workspace -> current: new-workspace/,
+  "Execution packet next action should use copy-grade stale scope detail",
+);
+
+assert.deepEqual(
+  normalizePlain(
+    getSupabaseImportExecutionPacketManifestStatus(staleScopeManifestItems, {
+      detailMode: "copy",
+    }),
+  ),
+  {
+    detail:
+      "Rerun API preflight because the saved preflight scope is stale. Changed scope inputs: workspace_id (preflight: old-workspace -> current: new-workspace).",
+    label: "1/7 ready - waiting: Preflight",
+    tone: "blocked",
+  },
+  "Execution packet status should summarize ready count and first waiting item",
+);
+
+assert.deepEqual(
+  normalizePlain(
+    getSupabaseImportExecutionPacketManifestSummary(staleScopeManifestItems),
+  ),
+  {
+    copyGate: "resolve waiting items",
+    readyCount: 1,
+    totalCount: 7,
+    waitingCount: 6,
+  },
+  "Execution packet manifest summary should count waiting items and keep the copy gate blocked while items are unresolved",
+);
+
+assert.equal(
+  formatSupabaseImportExecutionPacketCopyGateLabel("resolve waiting items"),
+  "대기 항목 해결 필요",
+  "Execution packet copy gate display label should localize waiting state for the UI",
+);
+
+const manifestText = buildSupabaseImportExecutionPacketManifestText({
+  backupFingerprint: "backup:abc",
+  checkedAt: "2026-06-19T00:00:00.000Z",
+  items: staleScopeManifestItems,
+  ownerUserId: "owner-uuid",
+  preflightCheckedAt: "2026-06-18T00:00:00.000Z",
+  workspaceId: "workspace-uuid",
+});
+
+assert.match(
+  manifestText,
+  /## Copy actions[\s\S]*Next: API preflight를 현재 입력값으로 다시 실행하세요\./,
+  "Execution packet manifest text should include copy-action next steps",
+);
+assert.match(
+  manifestText,
+  /- waitingItems: 6[\s\S]*- copyGate: resolve waiting items/,
+  "Execution packet manifest text should include the same waiting count and copy gate summary shown in the UI",
+);
+assert.match(
+  manifestText,
+  /old-workspace -> current: new-workspace/,
+  "Execution packet manifest text should preserve copy-grade stale scope detail",
+);
+
+const nextActionText = buildSupabaseImportExecutionPacketNextActionText({
+  backupFingerprint: "backup:abc",
+  checkedAt: "2026-06-19T00:00:00.000Z",
+  items: staleScopeManifestItems,
+  ownerUserId: "owner-uuid",
+  preflightCheckedAt: "2026-06-18T00:00:00.000Z",
+  workspaceId: "workspace-uuid",
+});
+
+assert.match(
+  nextActionText,
+  /waitingDetail: none/,
+  "Execution packet next-action text should report no waiting detail when Preflight is the first blocker",
+);
+assert.match(
+  nextActionText,
+  /- waitingItems: 6[\s\S]*- copyGate: resolve waiting items/,
+  "Execution packet next-action text should include waiting count and copy gate summary",
+);
+assert.match(
+  nextActionText,
+  /## Copy actions[\s\S]*Controlled packet:[\s\S]*runtime readiness를 새로고침/,
+  "Execution packet next-action text should include controlled-packet action guidance",
+);
+
+const readyManifestItems = getSupabaseImportExecutionPacketManifestItems({
+  backupFingerprint: "backup:ready",
+  ownerUserId: "owner-ready",
+  preflightState: {
+    backupFingerprint: "backup:ready",
+    data: {
+      auditArtifactText: "# audit",
+      status: "ready",
+      validation: {
+        ok: true,
+      },
+    },
+    ownerUserId: "owner-ready",
+    status: "ready",
+    workspaceId: "workspace-ready",
+  },
+  runtimeState: {
+    importExecutionEnabled: true,
+    ready: true,
+    releaseGateStageLabel: "ready",
+    status: "ready",
+  },
+  sectionCount: 10,
+  workspaceId: "workspace-ready",
+});
+
+assert.deepEqual(
+  normalizePlain(
+    readyManifestItems.map((item) => ({
+      label: item.label,
+      ready: item.ready,
+      value: item.value,
+    })),
+  ),
+  [
+    {
+      label: "Preflight",
+      ready: true,
+      value: "ready",
+    },
+    {
+      label: "Scope",
+      ready: true,
+      value: "current",
+    },
+    {
+      label: "Validation",
+      ready: true,
+      value: "ok",
+    },
+    {
+      label: "Runtime",
+      ready: true,
+      value: "ready",
+    },
+    {
+      label: "Route audit",
+      ready: true,
+      value: "포함",
+    },
+    {
+      label: "Execution gate",
+      ready: true,
+      value: "armed",
+    },
+    {
+      label: "Packet sections",
+      ready: true,
+      value: "10개",
+    },
+  ],
+  "Execution packet manifest item builder should mark every item ready when preflight scope and runtime are current",
+);
+
+assert.deepEqual(
+  normalizePlain(
+    getSupabaseImportExecutionPacketManifestStatus(readyManifestItems),
+  ),
+  {
+    detail:
+      "Controlled packet is ready to copy after operator review; it still does not execute Supabase writes.",
+    label: "7/7 ready",
+    tone: "ready",
+  },
+  "Execution packet manifest status should close as ready when every manifest item is ready",
+);
+
+assert.deepEqual(
+  normalizePlain(
+    getSupabaseImportExecutionPacketManifestSummary(readyManifestItems),
+  ),
+  {
+    copyGate: "operator review required",
+    readyCount: 7,
+    totalCount: 7,
+    waitingCount: 0,
+  },
+  "Execution packet manifest summary should mark the copy gate as operator review when every item is ready",
+);
+
+assert.equal(
+  formatSupabaseImportExecutionPacketCopyGateLabel(
+    "operator review required",
+  ),
+  "operator review 필요",
+  "Execution packet copy gate display label should localize ready state for the UI",
+);
+
+assert.deepEqual(
+  normalizePlain(
+    getSupabaseImportExecutionPacketCopyActionStatuses(readyManifestItems).map(
+      (item) => ({
+        action: item.action,
+        detail: item.detail,
+        label: item.label,
+        ready: item.ready,
+      }),
+    ),
+  ),
+  [
+    {
+      action:
+        "대기 항목이 바뀌면 다시 복사해 operator note를 갱신하세요.",
+      detail: "첫 대기 항목과 다음 조치를 복사할 수 있습니다.",
+      label: "Next action",
+      ready: true,
+    },
+    {
+      action: "manifest를 복사해 실행 패킷 검토 기록에 첨부하세요.",
+      detail: "현재 preflight scope로 manifest를 복사할 수 있습니다.",
+      label: "Manifest",
+      ready: true,
+    },
+    {
+      action:
+        "controlled packet을 복사하기 전에 operator review를 완료하세요.",
+      detail:
+        "runtime readiness가 포함된 controlled packet을 복사할 수 있습니다.",
+      label: "Controlled packet",
+      ready: true,
+    },
+  ],
+  "Execution packet copy actions should all become ready when manifest items are ready",
+);
+
+const readyManifestText = buildSupabaseImportExecutionPacketManifestText({
+  backupFingerprint: "backup:ready",
+  checkedAt: "2026-06-19T00:00:00.000Z",
+  items: readyManifestItems,
+  ownerUserId: "owner-ready",
+  preflightCheckedAt: "2026-06-19T00:00:00.000Z",
+  workspaceId: "workspace-ready",
+});
+
+assert.match(
+  readyManifestText,
+  /- ready: 7\/7/,
+  "Ready execution packet manifest text should show every manifest item as ready",
+);
+assert.match(
+  readyManifestText,
+  /- waitingItems: 0[\s\S]*- copyGate: operator review required/,
+  "Ready execution packet manifest text should include the operator-review copy gate summary",
+);
+assert.match(
+  readyManifestText,
+  /## Waiting items\n- none/,
+  "Ready execution packet manifest text should show no waiting items",
+);
+assert.match(
+  readyManifestText,
+  /Controlled packet: runtime readiness가 포함된 controlled packet을 복사할 수 있습니다\. Next: controlled packet을 복사하기 전에 operator review를 완료하세요\./,
+  "Ready execution packet manifest text should keep operator review guidance for the controlled packet",
+);
+
+const readyNextActionText = buildSupabaseImportExecutionPacketNextActionText({
+  backupFingerprint: "backup:ready",
+  checkedAt: "2026-06-19T00:00:00.000Z",
+  items: readyManifestItems,
+  ownerUserId: "owner-ready",
+  preflightCheckedAt: "2026-06-19T00:00:00.000Z",
+  workspaceId: "workspace-ready",
+});
+
+assert.match(
+  readyNextActionText,
+  /waitingItem: none/,
+  "Ready execution packet next-action text should show no waiting item",
+);
+assert.match(
+  readyNextActionText,
+  /waitingDetail: none/,
+  "Ready execution packet next-action text should show no waiting detail",
+);
+assert.match(
+  readyNextActionText,
+  /- waitingItems: 0[\s\S]*- copyGate: operator review required/,
+  "Ready execution packet next-action text should include the operator-review copy gate summary",
+);
+assert.match(
+  readyNextActionText,
+  /All manifest items are ready/,
+  "Ready execution packet next-action text should direct the operator to copy the controlled packet",
+);
+
+assertFileIncludes(
+  readme,
+  "manifest 복사, 다음 조치 단독 복사",
+  "README should document the Data execution packet manifest and next-action copy actions",
+);
+assertFileIncludes(
+  readme,
+  "`waitingItems`는 아직 해결되지 않은 manifest 항목 수",
+  "README should explain the execution packet manifest waitingItems field",
+);
+assertFileIncludes(
+  readme,
+  "`copyGate`는 `resolve waiting items` 또는 `operator review required`",
+  "README should explain the execution packet manifest copyGate field",
+);
+assertFileIncludes(
+  readme,
+  "Data 상단 운영 흐름은 백업, 데이터 준비도, 문서/RAG, Supabase 전환 gate를 먼저 보여주고 백업 생성과 각 상세 섹션 이동을 안전한 순서로 분리합니다.",
+  "README should document the Data operating flow summary",
+);
+assertFileIncludes(
+  readme,
+  "Data 안전 실행 순서는 `01 백업 고정`, `02 준비도 확인`, `03 실행 분리` 단계 카드로 백업 최신 여부, 데이터/runtime readiness, execute=false preflight와 execution packet 분리를 먼저 보여줍니다.",
+  "README should document the numbered Data safety workflow cards",
+);
+assertFileIncludes(
+  readme,
+  "Data 워크스페이스 스냅샷 수량과 문서/RAG 핵심 상태는 모바일 2열과 데스크톱 4열로 압축해 로컬 데이터와 RAG 준비 상태를 짧게 훑게 합니다.",
+  "README should document responsive Data snapshot and document RAG metrics",
+);
+assertFileIncludes(
+  readme,
+  "Data 운영 환경 readiness와 Supabase 실행 패킷의 핵심 gate 상태는 모바일 2열 요약으로 먼저 보여주고, 상세 체크리스트와 복사 액션은 그대로 분리합니다.",
+  "README should document responsive Data runtime and execution packet gate metrics",
+);
+assertFileIncludes(
+  readme,
+  "Data 가져오기 검증, 복원 리포트, Supabase 매핑, 체크리스트, dry-run, pending ID 치환 요약은 모바일 2열로 먼저 보여주고 상세 테이블과 실행 gate는 별도로 유지합니다.",
+  "README should document responsive Data import and migration metrics",
+);
+assertFileIncludes(
+  readme,
+  "Data post-import 검증 SQL, 관계 검증, pending ID audit, RLS audit/policy/smoke, 검증 리포트, migration handoff 요약은 모바일 2열로 먼저 보여주고 SQL/체크리스트/패키지 원문은 별도 preview로 유지합니다.",
+  "README should document responsive Data post-import and RLS verification metrics",
+);
+assertFileIncludes(
+  prd,
+  "Data 워크스페이스 스냅샷 수량과 문서/RAG 핵심 상태는 모바일 2열과 데스크톱 4열로 압축해 로컬 데이터와 RAG 준비 상태를 짧게 훑게 해야 한다.",
+  "PRD should document responsive Data snapshot and document RAG metrics",
+);
+assertFileIncludes(
+  prd,
+  "Data 안전 실행 순서는 `01 백업 고정`, `02 준비도 확인`, `03 실행 분리` 단계 카드로 백업 최신 여부, 데이터/runtime readiness, execute=false preflight와 execution packet 분리를 먼저 보여줘야 한다.",
+  "PRD should document the numbered Data safety workflow cards",
+);
+assertFileIncludes(
+  prd,
+  "Data 운영 환경 readiness와 Supabase 실행 패킷의 핵심 gate 상태는 모바일 2열 요약으로 먼저 보여주고, 상세 체크리스트와 복사 액션은 그대로 분리해야 한다.",
+  "PRD should document responsive Data runtime and execution packet gate metrics",
+);
+assertFileIncludes(
+  prd,
+  "Data 가져오기 검증, 복원 리포트, Supabase 매핑, 체크리스트, dry-run, pending ID 치환 요약은 모바일 2열로 먼저 보여주고 상세 테이블과 실행 gate는 별도로 유지해야 한다.",
+  "PRD should document responsive Data import and migration metrics",
+);
+assertFileIncludes(
+  prd,
+  "Data post-import 검증 SQL, 관계 검증, pending ID audit, RLS audit/policy/smoke, 검증 리포트, migration handoff 요약은 모바일 2열로 먼저 보여주고 SQL/체크리스트/패키지 원문은 별도 preview로 유지해야 한다.",
+  "PRD should document responsive Data post-import and RLS verification metrics",
+);
+assertFileIncludes(
+  developmentBrief,
+  "Data 워크스페이스 스냅샷 수량과 문서/RAG 핵심 상태는 모바일 2열과 데스크톱 4열로 압축해 로컬 데이터와 RAG 준비 상태를 짧게 훑게 한다",
+  "Development brief should document responsive Data snapshot and document RAG metrics",
+);
+assertFileIncludes(
+  developmentBrief,
+  "Data 안전 실행 순서는 `01 백업 고정`, `02 준비도 확인`, `03 실행 분리` 단계 카드로 백업 최신 여부, 데이터/runtime readiness, execute=false preflight와 execution packet 분리를 먼저 보여준다",
+  "Development brief should document the numbered Data safety workflow cards",
+);
+assertFileIncludes(
+  developmentBrief,
+  "Data 운영 환경 readiness와 Supabase 실행 패킷의 핵심 gate 상태는 모바일 2열 요약으로 먼저 보여주고, 상세 체크리스트와 복사 액션은 그대로 분리한다",
+  "Development brief should document responsive Data runtime and execution packet gate metrics",
+);
+assertFileIncludes(
+  developmentBrief,
+  "Data 가져오기 검증, 복원 리포트, Supabase 매핑, 체크리스트, dry-run, pending ID 치환 요약은 모바일 2열로 먼저 보여주고 상세 테이블과 실행 gate는 별도로 유지한다",
+  "Development brief should document responsive Data import and migration metrics",
+);
+assertFileIncludes(
+  developmentBrief,
+  "Data post-import 검증 SQL, 관계 검증, pending ID audit, RLS audit/policy/smoke, 검증 리포트, migration handoff 요약은 모바일 2열로 먼저 보여주고 SQL/체크리스트/패키지 원문은 별도 preview로 유지한다",
+  "Development brief should document responsive Data post-import and RLS verification metrics",
+);
+assertFileIncludes(
+  readme,
+  "Data 문서/RAG 준비도",
+  "README should document the Data document RAG readiness surface",
+);
+assertFileIncludes(
+  readme,
+  "workspace scope, server-side embedding, source ID/chunk index citation",
+  "README should document the document RAG upload safety and citation gates",
+);
+assertFileIncludes(
+  readme,
+  "local-only ingestion packet",
+  "README should document the local-only document RAG ingestion packet",
+);
+assertFileIncludes(
+  readme,
+  "`data-document-rag` Studio 초안",
+  "README should document the Data document RAG Studio draft source",
+);
+assertFileIncludes(
+  readme,
+  "전송 준비 요약에서 프롬프트 언어 자동 판단",
+  "README should document the Data document RAG Studio handoff readiness summary",
+);
+assertFileIncludes(
+  readme,
+  "Studio 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시",
+  "README should document the Data document RAG Studio draft storage fallback",
+);
+assertFileIncludes(
+  prd,
+  "문서/RAG chunk 맥락을 `data-document-rag` Studio 초안으로 보낼 때 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시해야 한다.",
+  "PRD should document the Data document RAG Studio draft storage fallback",
+);
+assertFileIncludes(
+  developmentBrief,
+  "Data 문서/RAG Studio 초안 저장이 실패하면 이동하지 않고 문서/RAG Studio 원문을 수동 복사용 textarea로 표시한다",
+  "Development brief should document the Data document RAG Studio draft storage fallback",
+);
+assertFileIncludes(
+  storageArchitecture,
+  "`waitingItems` as the\nnumber of unresolved manifest items",
+  "Storage architecture should explain the execution packet manifest waitingItems field",
+);
+assertFileIncludes(
+  storageArchitecture,
+  "`copyGate` as either\n`resolve waiting items` or `operator review required`",
+  "Storage architecture should explain the execution packet manifest copyGate field",
+);
+assertFileIncludes(
+  storageArchitecture,
+  "The `/data` screen now exposes document/RAG readiness before upload execution\nexists.",
+  "Storage architecture should document the document RAG readiness boundary",
+);
+assertFileIncludes(
+  storageArchitecture,
+  "retrieved prompt context must preserve source ID\nand chunk index citations",
+  "Storage architecture should document document RAG citation preservation",
+);
+assertFileIncludes(
+  storageArchitecture,
+  "local-only chunk preview",
+  "Storage architecture should document the document RAG local chunk preview boundary",
+);
+assertFileIncludes(
+  storageArchitecture,
+  "source name, text length, chunk count, chunk ranges, table\nwrite order, server-side embedding gate, and retrieval citation requirements",
+  "Storage architecture should document the document RAG ingestion packet fields",
+);
+assertFileIncludes(
+  storageArchitecture,
+  "sent to Studio as a `data-document-rag` draft",
+  "Storage architecture should document the Data document RAG Studio draft handoff",
+);
+assertFileIncludes(
+  storageArchitecture,
+  "Studio handoff readiness before navigation",
+  "Storage architecture should document the Data document RAG Studio handoff readiness summary",
+);
+assertFileIncludes(
+  storageArchitecture,
+  "If draft storage is blocked, the panel stays\non `/data` and shows the document/RAG Studio prompt in the existing manual copy\ntextarea.",
+  "Storage architecture should document the Data document RAG Studio draft storage fallback",
+);
+assertFileIncludes(
+  readme,
+  "npm run verify:data-management",
+  "README Scripts should document the data-management verification command",
+);
+
+console.log(
+  `Data management operations verification passed for ${copyDataTextCalls.length} copy actions with dedicated manual fallback builders.`,
+);

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prompt AI Studio Refine</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="header">
+        <div>
+          <p class="eyebrow">Prompt AI Studio</p>
+          <h1>Chrome Refine</h1>
+        </div>
+        <span class="badge">review gate</span>
+      </header>
+
+      <section class="workflow" aria-label="Chrome refine workflow">
+        <div class="workflowStep">
+          <span class="workflowIndex">01</span>
+          <div>
+            <strong>선택 수집</strong>
+            <p>페이지 선택 텍스트나 우클릭 선택을 팝업으로 가져옵니다.</p>
+          </div>
+        </div>
+        <div class="workflowStep">
+          <span class="workflowIndex">02</span>
+          <div>
+            <strong>Studio 정제</strong>
+            <p>저장된 로컬 URL과 목표 기준으로 refine API를 호출합니다.</p>
+          </div>
+        </div>
+        <div class="workflowStep">
+          <span class="workflowIndex">03</span>
+          <div>
+            <strong>검토 전달</strong>
+            <p>review-required handoff를 확인한 뒤 외부 AI에 복사합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="evidencePanel" aria-label="Chrome smoke evidence">
+        <div class="evidenceHeader">
+          <p class="eyebrow">Smoke evidence</p>
+          <span class="badge">local only</span>
+        </div>
+        <dl class="evidenceList">
+          <div class="evidenceRow">
+            <dt>Runtime</dt>
+            <dd id="runtimeEvidence">checking Chrome runtime</dd>
+          </div>
+          <div class="evidenceRow">
+            <dt>Capture</dt>
+            <dd>selected text + source URL</dd>
+          </div>
+          <div class="evidenceRow">
+            <dt>Refine</dt>
+            <dd>POST /api/integrations/refine · reviewRequired</dd>
+          </div>
+          <div class="evidenceRow">
+            <dt>Deliver</dt>
+            <dd>copy-ready handoff after operator review</dd>
+          </div>
+          <div class="evidenceRow">
+            <dt>Evidence</dt>
+            <dd>handoff evidence packet + manual fallback</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="panel">
+        <label>
+          <span>Studio URL</span>
+          <input id="studioUrl" value="http://localhost:3000" />
+        </label>
+        <label>
+          <span>Source selection</span>
+          <textarea id="rawInput" rows="6"></textarea>
+        </label>
+        <div class="grid">
+          <label>
+            <span>Target AI</span>
+            <select id="targetAI">
+              <option value="auto">Auto</option>
+              <option value="gpt">GPT</option>
+              <option value="claude">Claude</option>
+              <option value="codex" selected>Codex</option>
+              <option value="gemini">Gemini</option>
+            </select>
+          </label>
+          <label>
+            <span>Domain</span>
+            <input id="domain" value="개발" />
+          </label>
+        </div>
+        <label>
+          <span>Goal</span>
+          <input id="goal" value="전문 프롬프트로 변환" />
+        </label>
+        <button id="refineButton" type="button">Refine selected text</button>
+        <p id="status" class="status">Select text on the current page, then open this popup.</p>
+      </section>
+
+      <section class="panel">
+        <div class="resultHeader">
+          <div>
+            <p class="eyebrow">Handoff package</p>
+            <p id="resultMeta" class="meta">Not generated</p>
+          </div>
+          <div class="resultActions">
+            <button id="copyButton" class="secondary" type="button" disabled>Copy</button>
+            <button id="evidenceButton" class="secondary" type="button" disabled>Evidence</button>
+            <button id="clearButton" class="secondary" type="button" disabled>Clear</button>
+          </div>
+        </div>
+        <dl class="handoffReview" aria-label="Handoff review summary">
+          <div class="handoffReviewItem">
+            <dt>Review gate</dt>
+            <dd id="reviewGateMeta">Not generated</dd>
+          </div>
+          <div class="handoffReviewItem">
+            <dt>Target AI</dt>
+            <dd id="targetMeta">Waiting</dd>
+          </div>
+          <div class="handoffReviewItem">
+            <dt>Source</dt>
+            <dd id="sourceMeta">No source yet</dd>
+          </div>
+          <div class="handoffReviewItem">
+            <dt>Session</dt>
+            <dd id="sessionMeta">Not saved</dd>
+          </div>
+        </dl>
+        <textarea id="handoffText" rows="10" readonly></textarea>
+        <div id="evidenceFallback" class="evidenceFallback" hidden>
+          <p class="meta">Evidence copy failed. Select this packet manually.</p>
+          <textarea
+            id="evidenceText"
+            aria-label="Chrome handoff evidence manual copy"
+            rows="6"
+            readonly
+          ></textarea>
+        </div>
+      </section>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

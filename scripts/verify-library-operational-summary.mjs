@@ -8,6 +8,10 @@ const sourceRegistrySource = readFileSync(
   "src/lib/studio/source-registry.ts",
   "utf8",
 );
+const draftDisplaySource = readFileSync(
+  "src/lib/studio/draft-display.ts",
+  "utf8",
+);
 const readme = readFileSync("README.md", "utf8");
 const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
 const developmentBrief = readFileSync("docs/codex-development-brief.md", "utf8");
@@ -157,6 +161,32 @@ assertFileIncludes(
   "Library 학습 컨텍스트 리포트",
   "Studio source registry should label Library learning context reports",
 );
+for (const sourceActionLabel of [
+  "Library 원본으로 돌아가기",
+  "Library 운영 요약으로 돌아가기",
+  "Library 필터로 돌아가기",
+  "Library 후보로 돌아가기",
+  "Library 운영 묶음으로 돌아가기",
+  "Library 큐로 돌아가기",
+  "원본 저장본으로 돌아가기",
+  "Library 학습 증거로 돌아가기",
+]) {
+  assertFileIncludes(
+    sourceRegistrySource,
+    sourceActionLabel,
+    `Studio source registry should include ${sourceActionLabel}`,
+  );
+}
+assertFileIncludes(
+  draftDisplaySource,
+  'sourceActionLabel: "Library 피드백으로 돌아가기"',
+  "Studio draft display should return feedback variants to the Library feedback source",
+);
+assertFileIncludes(
+  draftDisplaySource,
+  'sourceActionLabel: "Library 원본으로 돌아가기"',
+  "Studio draft display should return handoff variants to the Library source",
+);
 assertMatches(
   /function buildLearningContextStudioDraftText\(\{[\s\S]*?buildLearningContextReportText\(prompt\)[\s\S]*?Library 추적[\s\S]*?Library 상세: \$\{detailLink\}[\s\S]*?재개선 계획/,
   "Library learning context Studio draft should reuse the report and include a traceable Library detail link",
@@ -227,6 +257,21 @@ assertFileIncludes(
   developmentBrief,
   "Library 출처 사유 조치 리포트와 대표 후보 메모의 Studio 초안 저장이 실패하면 이동하지 않고 출처 사유 조치 패널의 수동 복사용 원문 textarea를 표시함",
   "Development brief should document Library source-health Studio draft fallback",
+);
+assertFileIncludes(
+  readme,
+  "Library 계열 Studio 초안은 `Library 원본으로 돌아가기`, `Library 피드백으로 돌아가기`, `Library 운영 요약으로 돌아가기`, `Library 필터로 돌아가기`, `Library 후보로 돌아가기`, `Library 운영 묶음으로 돌아가기`, `Library 큐로 돌아가기`, `원본 저장본으로 돌아가기`, `Library 학습 증거로 돌아가기` 복귀 액션 라벨로 원래 Library 조건이나 상세를 복원합니다.",
+  "README should document Library return action labels",
+);
+assertFileIncludes(
+  prd,
+  "Library 계열 Studio 초안은 `Library 원본으로 돌아가기`, `Library 피드백으로 돌아가기`, `Library 운영 요약으로 돌아가기`, `Library 필터로 돌아가기`, `Library 후보로 돌아가기`, `Library 운영 묶음으로 돌아가기`, `Library 큐로 돌아가기`, `원본 저장본으로 돌아가기`, `Library 학습 증거로 돌아가기` 복귀 액션 라벨로 원래 Library 조건이나 상세를 복원해야 한다.",
+  "PRD should document Library return action labels",
+);
+assertFileIncludes(
+  developmentBrief,
+  "Library 계열 Studio 초안은 `Library 원본으로 돌아가기`, `Library 피드백으로 돌아가기`, `Library 운영 요약으로 돌아가기`, `Library 필터로 돌아가기`, `Library 후보로 돌아가기`, `Library 운영 묶음으로 돌아가기`, `Library 큐로 돌아가기`, `원본 저장본으로 돌아가기`, `Library 학습 증거로 돌아가기` 복귀 액션 라벨로 원래 Library 조건이나 상세를 복원함",
+  "Development brief should document Library return action labels",
 );
 assertMatches(
   /const selectedOperationalSummary = useMemo[\s\S]*?\(\(\) => \{[\s\S]*?blockedReadinessCount[\s\S]*?reviewReadinessCount[\s\S]*?handoffStatusLabel/,

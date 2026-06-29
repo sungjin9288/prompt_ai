@@ -1660,7 +1660,7 @@ export function SkillsView({
                       type="button"
                       onClick={openSelectedPromptInLibrary}
                     >
-                      Library 원본 보기
+                      Library 원본으로 돌아가기
                     </button>
                     <button
                       className={`${secondaryButtonClass} w-full sm:w-auto`}

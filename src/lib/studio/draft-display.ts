@@ -24,19 +24,19 @@ const studioDraftVariantDisplayLabels = {
     label: "Library 피드백 개선 브리프",
     nextAction:
       "선택한 저장 프롬프트와 사용자 피드백을 반영해 다음 버전으로 재작성하세요.",
-    sourceActionLabel: "Library 피드백 보기",
+    sourceActionLabel: "Library 피드백으로 돌아가기",
   },
   "handoff-improvement": {
     label: "AI 전달 보강 브리프",
     nextAction:
       "전달 전 체크 결과를 반영해 외부 AI에 바로 보낼 수 있는 다음 버전으로 재작성하세요.",
-    sourceActionLabel: "Library 원본 보기",
+    sourceActionLabel: "Library 원본으로 돌아가기",
   },
   "learning-low-confidence-validation": {
     label: "Learning 저신뢰도 피드백 검증",
     nextAction:
       "낮은 신뢰도 피드백 규칙의 근거, 충돌, scope를 검증한 뒤 저장 후보를 정리하세요.",
-    sourceActionLabel: "Learning 저신뢰도 큐 보기",
+    sourceActionLabel: "Learning 저신뢰도 큐로 돌아가기",
   },
 } satisfies Record<StudioDraftSourceVariant, PromptStudioSourceStudioLabel>;
 

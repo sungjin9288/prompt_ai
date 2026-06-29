@@ -54,6 +54,9 @@ const {
   createSupabaseRestImportAdapter,
   getSupabaseRestImportEnvironmentStatus,
 } = loadTypescriptModule("src/lib/data/supabase-rest-import-adapter.ts");
+const { runSupabaseImportExecutionPlan } = loadTypescriptModule(
+  "src/lib/data/supabase-importer.ts",
+);
 
 function assertDataMatches(pattern, message) {
   assert.match(dataSource, pattern, message);
@@ -1578,6 +1581,59 @@ assert.match(
   supabaseImportRouteSource,
   /- executionEnabled: \$\{environment\.executionEnabled\}[\s\S]*?- supabaseUrlConfigured: \$\{environment\.supabaseUrlConfigured\}[\s\S]*?- serviceRoleKeyConfigured: \$\{environment\.serviceRoleKeyConfigured\}[\s\S]*?This artifact intentionally contains only configuration booleans/,
   "Supabase import route audit artifact should expose only gate booleans, not secret values",
+);
+
+let blockedPlanInsertCalls = 0;
+const blockedPlanResult = await runSupabaseImportExecutionPlan(
+  {
+    archiveTraceFields: [],
+    batches: [
+      {
+        dependency: "workspace",
+        order: 1,
+        rows: [
+          {
+            localId: "local-row",
+            payload: { id: "pending-workspace", name: "Blocked workspace" },
+            resolvedId: "pending-workspace",
+            source: "test",
+          },
+        ],
+        table: "workspaces",
+      },
+    ],
+    generatedUuidCount: 0,
+    ownerUserId: "not-a-uuid",
+    totalRows: 1,
+    unresolvedPendingReferences: ["pending-workspace"],
+    uuidMap: {},
+    workspaceId: "not-a-uuid",
+  },
+  {
+    async insertRows() {
+      blockedPlanInsertCalls += 1;
+
+      return { insertedRows: 1 };
+    },
+  },
+);
+
+assert.deepEqual(
+  {
+    blockers: blockedPlanResult.blockers.length,
+    completedRows: blockedPlanResult.completedRows,
+    insertCalls: blockedPlanInsertCalls,
+    status: blockedPlanResult.status,
+    tableResults: blockedPlanResult.tableResults.length,
+  },
+  {
+    blockers: 5,
+    completedRows: 0,
+    insertCalls: 0,
+    status: "blocked",
+    tableResults: 0,
+  },
+  "Supabase importer runner should stop before calling the insert adapter when validation has blockers",
 );
 
 assert.throws(

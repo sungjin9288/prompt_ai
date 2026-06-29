@@ -210,6 +210,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the route returns the execution\s+result summary and embeds the same result in the route audit artifact/,
+  "README should document the data-management Supabase execute result verification scope",
+);
+assert.match(
+  readme,
   /`execute=true`로 실제 Supabase REST insert를 실행하려면[\s\S]*?`SUPABASE_IMPORT_EXECUTION_ENABLED=true`[\s\S]*?`NEXT_PUBLIC_SUPABASE_URL`[\s\S]*?`SUPABASE_SERVICE_ROLE_KEY`[\s\S]*?`confirmation: "RUN_SUPABASE_IMPORT"`[\s\S]*?execution plan validation이 `ok`여야 합니다/,
   "README should document every Supabase execute=true gate, including plan validation",
 );

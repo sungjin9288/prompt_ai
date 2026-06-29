@@ -1582,6 +1582,16 @@ assert.match(
   /- executionEnabled: \$\{environment\.executionEnabled\}[\s\S]*?- supabaseUrlConfigured: \$\{environment\.supabaseUrlConfigured\}[\s\S]*?- serviceRoleKeyConfigured: \$\{environment\.serviceRoleKeyConfigured\}[\s\S]*?This artifact intentionally contains only configuration booleans/,
   "Supabase import route audit artifact should expose only gate booleans, not secret values",
 );
+assert.match(
+  supabaseImportRouteSource,
+  /## Execution result[\s\S]*result[\s\S]*status: \$\{result\.status\}[\s\S]*completedRows: \$\{result\.completedRows\}[\s\S]*totalRows: \$\{result\.totalRows\}[\s\S]*failedTable: \$\{result\.failedTable \|\| "none"\}[\s\S]*Table results[\s\S]*tableResult\.table[\s\S]*tableResult\.status[\s\S]*tableResult\.insertedRows[\s\S]*tableResult\.expectedRows/,
+  "Supabase import route audit artifact should include execution result details when a write runs",
+);
+assert.match(
+  supabaseImportRouteSource,
+  /const result = await runSupabaseImportExecutionPlan\(plan, adapter\);[\s\S]*const resultSummary = \{[\s\S]*completedRows: result\.completedRows[\s\S]*failedTable: result\.failedTable[\s\S]*status: result\.status[\s\S]*tableResults: result\.tableResults[\s\S]*totalRows: result\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*environment: environmentStatus[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*validation/,
+  "Supabase import route should return the execute result summary and include the same result in the audit artifact",
+);
 
 let blockedPlanInsertCalls = 0;
 const blockedPlanResult = await runSupabaseImportExecutionPlan(

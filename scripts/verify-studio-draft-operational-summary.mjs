@@ -14,6 +14,9 @@ const {
   analyzePromptInputReadiness,
   buildPromptInputReadinessReportText,
 } = loadTypescriptModule("src/lib/prompt/input-analysis.ts");
+const { decidePromptLanguageStrategy } = loadTypescriptModule(
+  "src/lib/prompt/language-decision.ts",
+);
 const { decideTargetModels } = loadTypescriptModule(
   "src/lib/prompt/target-model-decision.ts",
 );
@@ -75,6 +78,31 @@ const codexPlanningDecision = decideTargetModels({
   goal: "전문 프롬프트로 변환",
   rawInput:
     "내가 만든 앱 아이디어를 투자자에게 설명할 수 있게 정리하고, 나중에 Codex로 개발할 수 있도록 기능 범위도 나눠줘.",
+});
+const codexImplementationLanguageDecision = decidePromptLanguageStrategy({
+  domain: "개발",
+  goal: "Codex implementation brief",
+  rawInput:
+    "Refactor the billing report component, inspect the Next.js repo first, and include lint, build, and smoke verification commands.",
+  targetModels: ["codex"],
+});
+const companyContextLanguageDecision = decidePromptLanguageStrategy({
+  domain: "기획",
+  goal: "전문 프롬프트로 변환",
+  rawInput:
+    "투자자에게 보낼 제품 설명 프롬프트를 만들어줘. 회사명과 내부 용어는 유지해야 해.",
+  targetModels: ["gpt"],
+  companyProfile: {
+    id: "company_language_test",
+    companyName: "프롬프트AI스튜디오",
+    description: "한국 시장의 창업자와 운영팀을 위한 프롬프트 운영 도구",
+    products: ["한영 하이브리드 프롬프트", "학습 메모리"],
+    customers: ["국내 스타트업", "운영팀"],
+    brandTone: "전문적이고 간결한 한국어",
+    internalTerms: ["학습 메모리", "검증 증빙"],
+    bannedPhrases: [],
+    documentFormats: ["투자자 요약", "Codex 작업 브리프"],
+  },
 });
 
 assertIncludes(
@@ -200,6 +228,24 @@ assert.doesNotMatch(
   /Claude/,
   "Target AI recommendation reason should not mention a model that is not recommended",
 );
+assert.equal(
+  codexImplementationLanguageDecision.strategy,
+  "english",
+  "Codex implementation work should use an all-English prompt language strategy when Korean context does not need preservation",
+);
+assert.ok(
+  codexImplementationLanguageDecision.signals.includes("개발/Codex 작업 신호"),
+  "Codex implementation language decision should expose the development signal",
+);
+assert.equal(
+  companyContextLanguageDecision.strategy,
+  "hybrid",
+  "Korean company, brand, and internal-term context should use a Korean-English hybrid prompt language strategy",
+);
+assert.ok(
+  companyContextLanguageDecision.signals.includes("회사/브랜드 한국어 맥락 감지"),
+  "Company-context language decision should expose the Korean company-context signal",
+);
 assertMatches(
   /const studioGenerationOperatingFlowItems =[\s\S]*?useMemo<ContextOperatingFlowItem\[\]>\([\s\S]*?actionLabel: "원문 확인"[\s\S]*?href: "#studio-raw-input"[\s\S]*?label: "입력"[\s\S]*?step: "01"[\s\S]*?title: rawInput\.trim\(\) \? inputReadinessLabel : "원문 필요"[\s\S]*?actionLabel: "판단 기준 확인"[\s\S]*?href: "#studio-decision-controls"[\s\S]*?label: "AI 판단"[\s\S]*?step: "02"[\s\S]*?actionLabel: "학습 기준 확인"[\s\S]*?href: "#studio-learning-context"[\s\S]*?label: "컨텍스트"[\s\S]*?step: "03"[\s\S]*?actionLabel: "생성 위치로 이동"[\s\S]*?href: "#studio-next-generation-action"[\s\S]*?label: "실행"[\s\S]*?step: "04"/,
   "Studio generation operating flow should map the shared input readiness label, AI decision, learning context, and execution anchors",
@@ -277,8 +323,13 @@ assertMatches(
   "Studio next-generation summary should place final input-question action and generate action beside status, language/model detail, learning evidence, and source tracking",
 );
 assertMatches(
-  /프롬프트 언어[\s\S]*?AI 판단 · \{promptLanguageDecision\.label\}[\s\S]*?promptLanguageDecision\.reason[\s\S]*?사용자 선택 없음[\s\S]*?languageDecisionSummaryItems\.map[\s\S]*?promptLanguageDecision\.signals\.map[\s\S]*?최종 답변 언어[\s\S]*?프롬프트 작성 언어는 위에서 자동 적용하고[\s\S]*?최종 답변 언어만 정합니다/,
+  /프롬프트 언어[\s\S]*?AI 판단 · \{promptLanguageDecision\.label\}[\s\S]*?promptLanguageDecision\.reason[\s\S]*?사용자 선택 없음[\s\S]*?languageDecisionSummaryItems\.map[\s\S]*?promptLanguageDecision\.signals\.map[\s\S]*?최종 답변 언어[\s\S]*?프롬프트 작성 언어는 위에서 자동 적용하고[\s\S]*?최종 답변 언어만 정합니다[\s\S]*?outputLanguages\.map\(\(item\) =>/,
   "Studio language controls should distinguish automatic prompt language from answer-language configuration",
+);
+assert.doesNotMatch(
+  source,
+  /setPromptLanguage|setLanguageStrategy/,
+  "Studio should not expose manual prompt-language strategy state",
 );
 assertMatches(
   /대상 AI 도구[\s\S]*?AI 추천 · \{formatModelLabels\(recommendedTargetModels\)\}[\s\S]*?targetModelDecision\.reason[\s\S]*?targetModelRecommendationApplied[\s\S]*?modelsTouched \? "추천과 동일" : "자동 적용"[\s\S]*?추천 적용[\s\S]*?targetModelSelectionSummaryItems\.map[\s\S]*?targetModelDecision\.signals\.map[\s\S]*?targetModels\.map/,

@@ -41,9 +41,10 @@ target AI, session, evidence result, and feedback record.
 MCP client evidence should record: client, target AI, tool sequence, review
 gate, evidence result, and feedback record.
 
-Learning feedback evidence should record: low-confidence condition, Studio
-validation draft, Library validation filter, release evidence command, release
-candidate command, and feedback memory action.
+Learning feedback evidence should record: command, status, external service
+boundary, low-confidence condition, Studio validation draft, Library validation
+filter, release evidence command, release candidate command, and feedback memory
+action.
 
 ## Storage Rules
 

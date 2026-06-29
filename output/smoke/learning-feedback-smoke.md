@@ -4,6 +4,10 @@
 - source: learning-feedback-improvement
 - sourceVariant: learning-low-confidence-validation
 - validationLibraryFilter: /library?studioSource=learning-feedback-improvement&studioVariant=learning-low-confidence-validation
+- command: npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md
+- status: pass
+- external services: not contacted
+- operator gate: local packet only; external AI handoff still requires review-required output and confirmSave review.
 
 ## Verified contract
 - Learning renders readiness, low-confidence review, manual memory, and Studio handoff steps in order.

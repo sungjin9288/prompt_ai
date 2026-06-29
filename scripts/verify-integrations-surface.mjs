@@ -211,6 +211,8 @@ for (const requiredText of [
   'data-testid="integrations-execution-evidence-checklist"',
   "local app과 refine API",
   "reviewRequired true, target handoff package",
+  "03 증거 저장",
+  "Chrome, MCP, Learning smoke evidence file",
   "copy-ready prompt, missing context review",
   "rating, result summary, inbox record",
   "smokeEvidenceRows",
@@ -347,8 +349,8 @@ assert.match(
 );
 assert.match(
   view,
-  /const executionEvidenceRows = \[[\s\S]*?label: "01 로컬 연결"[\s\S]*?localhost:3000, POST \/api\/integrations\/refine[\s\S]*?label: "02 정제 결과"[\s\S]*?reviewRequired true, target handoff package[\s\S]*?label: "03 전달 승인"[\s\S]*?copy-ready prompt, missing context review[\s\S]*?label: "04 피드백 증거"[\s\S]*?rating, result summary, inbox record/,
-  "Integrations execution evidence checklist should define local, refine, delivery, and feedback evidence gates",
+  /const executionEvidenceRows = \[[\s\S]*?label: "01 로컬 연결"[\s\S]*?localhost:3000, POST \/api\/integrations\/refine[\s\S]*?label: "02 정제 결과"[\s\S]*?reviewRequired true, target handoff package[\s\S]*?label: "03 증거 저장"[\s\S]*?Chrome, MCP, Learning smoke evidence file[\s\S]*?href: "#integrations-smoke-evidence-path"[\s\S]*?label: "04 전달 승인"[\s\S]*?copy-ready prompt, missing context review[\s\S]*?label: "05 피드백 증거"[\s\S]*?rating, result summary, inbox record/,
+  "Integrations execution evidence checklist should define local, refine, smoke evidence, delivery, and feedback evidence gates",
 );
 assert.match(
   view,
@@ -2444,7 +2446,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Integrations 실행 증거 체크: 로컬 연결, 정제 결과, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 합니다.",
+  "Integrations 실행 증거 체크: 로컬 연결, 정제 결과, 증거 저장, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 합니다.",
   "README should document the integrations execution evidence checklist",
 );
 assertIncludes(
@@ -2769,7 +2771,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 실행 증거 체크는 로컬 연결, 정제 결과, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 해야 한다.",
+  "Integrations 실행 증거 체크는 로컬 연결, 정제 결과, 증거 저장, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 해야 한다.",
   "PRD should document the integrations execution evidence checklist",
 );
 assertIncludes(
@@ -2894,7 +2896,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations 실행 증거 체크에서 로컬 연결, 정제 결과, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 한다",
+  "Integrations 실행 증거 체크에서 로컬 연결, 정제 결과, 증거 저장, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 한다",
   "Development brief should document the integrations execution evidence checklist",
 );
 assertIncludes(

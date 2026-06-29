@@ -113,14 +113,21 @@ const executionEvidenceRows = [
     linkLabel: "Refine 테스트",
   },
   {
-    label: "03 전달 승인",
+    label: "03 증거 저장",
+    action: "외부 AI 전달 전에 Chrome, MCP, Learning smoke evidence를 파일로 남깁니다.",
+    evidence: "Chrome, MCP, Learning smoke evidence file",
+    href: "#integrations-smoke-evidence-path",
+    linkLabel: "Smoke 증거 확인",
+  },
+  {
+    label: "04 전달 승인",
     action: "외부 AI로 붙여넣기 전에 operator가 package와 누락 맥락을 확인합니다.",
     evidence: "copy-ready prompt, missing context review",
     href: "#integrations-environment-guide",
     linkLabel: "실행 가이드",
   },
   {
-    label: "04 피드백 증거",
+    label: "05 피드백 증거",
     action: "실행 결과가 의미 있을 때만 confirmSave true로 feedback inbox에 저장합니다.",
     evidence: "rating, result summary, inbox record",
     href: "#integrations-feedback-inbox",
@@ -568,7 +575,7 @@ function ExecutionEvidenceChecklist() {
         description="외부 AI로 넘기기 전에 남아야 하는 확인 증거를 단계별로 고정합니다."
       />
       <div
-        className="grid gap-3 px-5 pb-5 md:grid-cols-2"
+        className="grid gap-3 px-5 pb-5 md:grid-cols-2 xl:grid-cols-5"
         data-testid="integrations-execution-evidence-checklist"
       >
         {executionEvidenceRows.map((row) => (

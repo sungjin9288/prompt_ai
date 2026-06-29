@@ -73,6 +73,11 @@ const environmentSummaryItems = [
   { label: "피드백 경로", value: "confirmSave" },
 ];
 
+const environmentEvidenceTrace = [
+  "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
+  "Keep local-smoke-evidence before target-ai-handoff.",
+] satisfies string[];
+
 type CopyState = "idle" | "error" | string;
 type EnvironmentPlaybook = (typeof environmentPlaybooks)[number];
 
@@ -94,6 +99,7 @@ function buildEnvironmentPlaybookChecklist(
     `- Target AI: ${formatTargetModels(playbook.targetModels)}`,
     "",
     "Gate: refine automatically, save local smoke evidence, deliver with review.",
+    ...environmentEvidenceTrace,
   ].join("\n");
 }
 
@@ -103,6 +109,7 @@ function buildAllEnvironmentPlaybookChecklist() {
     "",
     "Gate: refine automatically, save local smoke evidence, deliver with review.",
     "Scope: Chrome extension, ChatGPT / Claude / Gemini, Codex, MCP client.",
+    ...environmentEvidenceTrace,
     "",
     ...environmentPlaybooks.flatMap((playbook, index) => [
       `## ${index + 1}. ${playbook.environment}`,

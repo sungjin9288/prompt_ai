@@ -753,6 +753,7 @@ for (const requiredText of [
   "환경별 실행 가이드",
   "environmentPlaybooks",
   "environmentSummaryItems",
+  "environmentEvidenceTrace",
   "EnvironmentSummary",
   "EnvironmentPlaybookRow",
   "EnvironmentPlaybookTable",
@@ -817,6 +818,8 @@ for (const requiredText of [
   "전체 운영 패키지",
   "아래 체크리스트를 직접 선택해 복사하세요.",
   "Gate: refine automatically, save local smoke evidence, deliver with review.",
+  "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
+  "Keep local-smoke-evidence before target-ai-handoff.",
   "- Save local smoke evidence before delivery.",
   "confirmSave: true",
 ]) {
@@ -831,6 +834,16 @@ assert.match(
   environmentPlaybookPanel,
   /const environmentSummaryItems = \[[\s\S]*?label: "연결 환경"[\s\S]*?environmentPlaybooks\.length[\s\S]*?label: "대상 AI"[\s\S]*?GPT, Claude, Codex, Gemini[\s\S]*?label: "운영 gate"[\s\S]*?evidence \+ review-required[\s\S]*?label: "피드백 경로"[\s\S]*?confirmSave/,
   "Environment playbook panel should derive environment count, target AI coverage, review gate, and feedback path",
+);
+assert.match(
+  environmentPlaybookPanel,
+  /const environmentEvidenceTrace = \[[\s\S]*?Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff\.[\s\S]*?Keep local-smoke-evidence before target-ai-handoff\.[\s\S]*?\] satisfies string\[\]/,
+  "Environment playbook panel should define a reusable evidence trace for copied checklists",
+);
+assert.match(
+  environmentPlaybookPanel,
+  /function buildEnvironmentPlaybookChecklist[\s\S]*?Gate: refine automatically, save local smoke evidence, deliver with review\.[\s\S]*?\.\.\.environmentEvidenceTrace[\s\S]*?function buildAllEnvironmentPlaybookChecklist[\s\S]*?Gate: refine automatically, save local smoke evidence, deliver with review\.[\s\S]*?Scope: Chrome extension, ChatGPT \/ Claude \/ Gemini, Codex, MCP client\.[\s\S]*?\.\.\.environmentEvidenceTrace/,
+  "Environment playbook copied checklists should include the shared evidence trace after the delivery gate",
 );
 assert.match(
   environmentPlaybookPanel,
@@ -2618,6 +2631,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "전체 체크리스트 Studio 전송 패키지에는 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함합니다.",
+  "README should document environment checklist audit source order",
+);
+assertIncludes(
+  readme,
   "docs/external-ai-operator-guide.md",
   "README should link the external AI operator guide",
 );
@@ -2633,7 +2651,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "전체 체크리스트 Studio로",
+  "전체 체크리스트 Studio 전송 패키지",
   "README should document all-environment checklist Studio handoff",
 );
 assertIncludes(
@@ -2972,6 +2990,11 @@ assertIncludes(
   "PRD should document environment operator checks as evidence-first",
 );
 assertIncludes(
+  prd,
+  "환경별 체크리스트 복사와 `integrations-operations-checklist` Studio 초안은 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함해야 한다.",
+  "PRD should document environment checklist audit source order",
+);
+assertIncludes(
   developmentBrief,
   "### `/integrations`",
   "Development brief should document the Integrations route",
@@ -3123,6 +3146,11 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
+  "`integrations-operations-checklist` 전체 체크리스트 Studio 전송 패키지는 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
+  "Development brief should document environment checklist audit source order",
+);
+assertIncludes(
+  developmentBrief,
   "환경별 체크리스트 복사",
   "Development brief should document environment checklist copy",
 );
@@ -3133,7 +3161,7 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "전체 체크리스트 Studio로",
+  "전체 체크리스트 Studio 전송 패키지",
   "Development brief should document all-environment checklist Studio handoff",
 );
 assertIncludes(

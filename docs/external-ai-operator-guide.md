@@ -23,7 +23,15 @@ http://localhost:3000/integrations
 npm run verify:integrations
 ```
 
-4. 실제 외부 AI에 붙이기 전 확인
+4. 로컬 smoke evidence 저장
+
+```bash
+npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md
+npm run smoke:mcp -- --out docs/evidence/mcp-bridge-smoke.md
+npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md
+```
+
+5. 실제 외부 AI에 붙이기 전 확인
 
 - Chrome extension 또는 MCP client 중 하나만 먼저 연결합니다.
 - 정제 결과에 `reviewRequired` 또는 review-required 문구가 있는지 확인합니다.
@@ -189,6 +197,12 @@ GPT-compatible client는 `PROMPT_AI_STUDIO_TARGET_AI`를 `gpt`로 바꿉니다.
 }
 ```
 
+저장 흐름을 바꾼 뒤에는 Learning feedback 큐 smoke evidence를 남깁니다.
+
+```bash
+npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md
+```
+
 ## 문제 대응
 
 앱 연결 실패:
@@ -213,6 +227,12 @@ node /Users/sungjin/dev/personal/prompt-ai-studio/mcp/prompt-ai-studio.mjs --sel
 
 ```bash
 npm run verify:integrations
+```
+
+Learning feedback 큐 확인:
+
+```bash
+npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md
 ```
 
 Chrome popup 변경이 반영되지 않음:

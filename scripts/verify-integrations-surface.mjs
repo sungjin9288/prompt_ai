@@ -2246,6 +2246,8 @@ for (const requiredText of [
   "npm run dev",
   "http://localhost:3000/integrations",
   "npm run verify:integrations",
+  "로컬 smoke evidence 저장",
+  "npm run smoke:learning-feedback -- --out docs/evidence/learning-feedback-smoke.md",
   "Chrome으로 테스트",
   "npm run smoke:chrome-extension",
   "npm run smoke:chrome-extension -- --out docs/evidence/chrome-extension-smoke.md",
@@ -2266,6 +2268,8 @@ for (const requiredText of [
   "save_execution_feedback",
   "피드백 저장 기준",
   "confirmSave",
+  "Learning feedback 큐 smoke evidence를 남깁니다.",
+  "Learning feedback 큐 확인",
   "운영 원칙",
   "외부 AI 계정으로의 전달은 항상 사람이 검토한 뒤 복사합니다.",
 ]) {

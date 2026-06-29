@@ -160,6 +160,7 @@ for (const requiredText of [
   "review-required handoff",
   "로컬 앱",
   "입력 수집",
+  "증거 저장",
   "검토 전달",
   "피드백 저장",
   "준비도 확인",
@@ -168,9 +169,11 @@ for (const requiredText of [
   "Feedback 확인",
   "localhost:3000",
   "source app",
+  "local evidence",
   "GPT/Claude/Codex/Gemini",
   "MCP feedback",
   "dev server와 local refine API",
+  "외부 AI 전달 전에 Chrome, MCP, Learning smoke evidence를 남깁니다.",
   "reviewRequired package를 사람이 확인",
   "confirmSave true인 실행 결과",
   "검증 게이트 요약",
@@ -309,8 +312,8 @@ assert.match(
 );
 assert.match(
   view,
-  /const integrationExecutionStrip: ContextOperatingFlowItem\[\] = \[[\s\S]*?actionLabel: "준비도 확인"[\s\S]*?href: "#integrations-readiness"[\s\S]*?label: "로컬 앱"[\s\S]*?step: "01"[\s\S]*?title: "localhost:3000"[\s\S]*?actionLabel: "Refine 테스트"[\s\S]*?href: "#integrations-refine-tester"[\s\S]*?title: "source app"[\s\S]*?actionLabel: "실행 가이드"[\s\S]*?href: "#integrations-environment-guide"[\s\S]*?title: "GPT\/Claude\/Codex\/Gemini"[\s\S]*?actionLabel: "Feedback 확인"[\s\S]*?href: "#integrations-feedback-inbox"[\s\S]*?title: "MCP feedback"/,
-  "Integrations execution strip should map local app, capture, review delivery, and feedback to shared operating-flow items",
+  /const integrationExecutionStrip: ContextOperatingFlowItem\[\] = \[[\s\S]*?actionLabel: "준비도 확인"[\s\S]*?href: "#integrations-readiness"[\s\S]*?label: "로컬 앱"[\s\S]*?step: "01"[\s\S]*?title: "localhost:3000"[\s\S]*?actionLabel: "Refine 테스트"[\s\S]*?href: "#integrations-refine-tester"[\s\S]*?title: "source app"[\s\S]*?actionLabel: "Smoke 증거 확인"[\s\S]*?href: "#integrations-smoke-evidence-path"[\s\S]*?label: "증거 저장"[\s\S]*?step: "03"[\s\S]*?title: "local evidence"[\s\S]*?actionLabel: "실행 가이드"[\s\S]*?href: "#integrations-environment-guide"[\s\S]*?step: "04"[\s\S]*?title: "GPT\/Claude\/Codex\/Gemini"[\s\S]*?actionLabel: "Feedback 확인"[\s\S]*?href: "#integrations-feedback-inbox"[\s\S]*?step: "05"[\s\S]*?title: "MCP feedback"/,
+  "Integrations execution strip should map local app, capture, smoke evidence, review delivery, and feedback to shared operating-flow items",
 );
 assert.match(
   view,
@@ -2706,7 +2709,7 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Integrations 연결 실행 순서: 로컬 앱, 입력 수집, 검토 전달, 피드백 저장을 첫 화면에서 확인",
+  "Integrations 연결 실행 순서: 로컬 앱, 입력 수집, 증거 저장, 검토 전달, 피드백 저장을 첫 화면에서 확인",
   "README should document the integrations execution strip",
 );
 assertIncludes(
@@ -2746,7 +2749,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "로컬 앱, 입력 수집, 검토 전달, 피드백 저장",
+  "로컬 앱, 입력 수집, 증거 저장, 검토 전달, 피드백 저장",
   "PRD should document the integrations execution sequence",
 );
 assertIncludes(
@@ -2868,6 +2871,16 @@ assertIncludes(
   developmentBrief,
   "Integrations 연결 실행 순서",
   "Development brief should document the integrations execution sequence",
+);
+assertIncludes(
+  developmentBrief,
+  "로컬 앱, 입력 수집, 증거 저장, 검토 전달, 피드백 저장을 첫 화면에 표시",
+  "Development brief should document the evidence step in the integrations execution sequence",
+);
+assertIncludes(
+  developmentBrief,
+  "smoke evidence 저장, copy-ready 전달, confirmSave 피드백 저장 책임",
+  "Development brief should document smoke evidence responsibility in the integrations execution sequence",
 );
 assertIncludes(
   developmentBrief,

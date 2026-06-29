@@ -380,11 +380,19 @@ const integrationExecutionStrip: ContextOperatingFlowItem[] = [
     title: "source app",
   },
   {
+    actionLabel: "Smoke 증거 확인",
+    detail: "외부 AI 전달 전에 Chrome, MCP, Learning smoke evidence를 남깁니다.",
+    href: "#integrations-smoke-evidence-path",
+    label: "증거 저장",
+    step: "03",
+    title: "local evidence",
+  },
+  {
     actionLabel: "실행 가이드",
     detail: "reviewRequired package를 사람이 확인한 뒤 외부 AI에 전달합니다.",
     href: "#integrations-environment-guide",
     label: "검토 전달",
-    step: "03",
+    step: "04",
     title: "GPT/Claude/Codex/Gemini",
   },
   {
@@ -392,7 +400,7 @@ const integrationExecutionStrip: ContextOperatingFlowItem[] = [
     detail: "confirmSave true인 실행 결과만 feedback inbox에 남깁니다.",
     href: "#integrations-feedback-inbox",
     label: "피드백 저장",
-    step: "04",
+    step: "05",
     title: "MCP feedback",
   },
 ];

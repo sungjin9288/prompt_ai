@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const smokeDir = "output/smoke";
+const smokeReadmeName = "README.md";
 const expectedSmokeFiles = [
   {
     name: "chrome-extension-smoke.md",
@@ -30,7 +31,10 @@ const expectedSmokeFiles = [
   },
 ];
 
-const expectedFileNames = expectedSmokeFiles.map((file) => file.name);
+const expectedFileNames = [
+  smokeReadmeName,
+  ...expectedSmokeFiles.map((file) => file.name),
+].sort();
 const actualFileNames = readdirSync(smokeDir)
   .filter((name) => name.endsWith(".md"))
   .sort();
@@ -38,8 +42,22 @@ const actualFileNames = readdirSync(smokeDir)
 assert.deepEqual(
   actualFileNames,
   expectedFileNames,
-  "output/smoke should contain exactly the committed local smoke evidence packets",
+  "output/smoke should contain its README and exactly the committed local smoke evidence packets",
 );
+
+const smokeReadme = readFileSync(join(smokeDir, smokeReadmeName), "utf8");
+const smokeReadmePatterns = [
+  /# Local Smoke Evidence/,
+  /checked without external AI access/,
+  /Chrome extension file contract/,
+  /MCP bridge self-test contract/,
+  /Learning feedback-improvement queue contract/,
+  /docs\/evidence/,
+];
+
+for (const pattern of smokeReadmePatterns) {
+  assert.match(smokeReadme, pattern, `${smokeReadmeName} is missing ${pattern}`);
+}
 
 for (const file of expectedSmokeFiles) {
   const content = readFileSync(join(smokeDir, file.name), "utf8");
@@ -50,5 +68,5 @@ for (const file of expectedSmokeFiles) {
 }
 
 console.log(
-  `Smoke evidence verification passed for ${expectedFileNames.length} packets.`,
+  `Smoke evidence verification passed for ${expectedSmokeFiles.length} packets and README.md.`,
 );

@@ -140,7 +140,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /verify:smoke-evidence` checks that `output\/smoke` contains exactly the\s+Chrome, MCP, and Learning smoke evidence packets and that each packet keeps its\s+local-only or review-required contract text/,
+  /verify:smoke-evidence` checks that `output\/smoke` contains its local\s+README plus exactly the Chrome, MCP, and Learning smoke evidence packets and\s+that each packet keeps its local-only or review-required contract text/,
   "README should document the smoke evidence verification scope",
 );
 assert.match(

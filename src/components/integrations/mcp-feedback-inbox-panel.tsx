@@ -938,6 +938,9 @@ function buildLearningMemoryCandidateText(record: McpFeedbackRecord) {
     `- Target AI: ${record.targetAI ?? "general"}`,
     `- Rating: ${record.rating ?? "neutral"}`,
     `- Created: ${record.createdAt ?? "unknown"}`,
+    `- Feedback ID: ${record.id ?? "unknown"}`,
+    "- Gate: confirmSave true",
+    "- Evidence: ready for audit packet",
     `- Result: ${record.resultSummary ?? "No result summary"}`,
     record.improvementQueueItem
       ? `- Improvement queue item: ${record.improvementQueueItem}`
@@ -990,6 +993,12 @@ function buildStudioFeedbackImprovementDraft(record: McpFeedbackRecord) {
     "",
     "## Execution feedback",
     "",
+    `- Gate: confirmSave true`,
+    `- Evidence: ready for audit packet`,
+    `- Result: ${record.resultSummary ?? "No result summary"}`,
+    "",
+    "## Raw feedback summary",
+    "",
     record.resultSummary ?? "No result summary",
     "",
     "## Learning memory candidate",
@@ -1012,6 +1021,7 @@ function buildStudioFeedbackImprovementDraft(record: McpFeedbackRecord) {
     "2. Applied feedback summary with concrete changes.",
     "3. Missing context or assumptions that still require human review.",
     "4. Verification checklist before sending to the target AI.",
+    "5. Confirm this improvement still traces back to confirmSave true feedback evidence.",
   ].join("\n");
 }
 

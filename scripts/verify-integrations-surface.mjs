@@ -1685,6 +1685,16 @@ assert.match(
 );
 assert.match(
   mcpFeedbackInboxPanel,
+  /function buildLearningMemoryCandidateText\(record: McpFeedbackRecord\)[\s\S]*?# MCP Learning Memory Candidate[\s\S]*?Feedback ID: \$\{record\.id \?\? "unknown"\}[\s\S]*?Gate: confirmSave true[\s\S]*?Evidence: ready for audit packet[\s\S]*?Result: \$\{record\.resultSummary \?\? "No result summary"\}/,
+  "MCP feedback learning memory candidate should carry confirmSave and evidence readiness before reusable memory text",
+);
+assert.match(
+  mcpFeedbackInboxPanel,
+  /function buildStudioFeedbackImprovementDraft\(record: McpFeedbackRecord\)[\s\S]*?# Studio Improvement Draft From MCP Feedback[\s\S]*?## Execution feedback[\s\S]*?Gate: confirmSave true[\s\S]*?Evidence: ready for audit packet[\s\S]*?## Raw feedback summary[\s\S]*?## Required output[\s\S]*?Confirm this improvement still traces back to confirmSave true feedback evidence/,
+  "MCP feedback Studio improvement draft should carry confirmSave evidence trace into the required output",
+);
+assert.match(
+  mcpFeedbackInboxPanel,
   /function buildMcpFeedbackInboxHref[\s\S]*?const query = params\.toString\(\)[\s\S]*?const href = query \? `\/integrations\?\$\{query\}` : "\/integrations"[\s\S]*?return `\$\{href\}#integrations-feedback-inbox`/,
   "MCP feedback inbox links should preserve filters and return to the feedback inbox section",
 );
@@ -2707,6 +2717,11 @@ assertIncludes(
 );
 assertIncludes(
   readme,
+  "Learning candidate와 Studio 개선 초안은 confirmSave true와 evidence-ready trace를 포함해 재사용 전 audit 기준을 보존합니다.",
+  "README should document MCP feedback reusable drafts carrying confirmSave evidence trace",
+);
+assertIncludes(
+  readme,
   "원본 필터 링크, record trace, 다음 확인 액션을 포함한 feedback report",
   "README should document MCP feedback record evidence and Studio improvement draft copy",
 );
@@ -2862,7 +2877,7 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations MCP feedback inbox는 `save_execution_feedback`으로 confirmSave된 외부 AI 실행 피드백을 저장 상태, 현재 결과, 현재 필터, 검증 상태의 모바일 2열 요약으로 먼저 보여주고, 비어 있는 inbox에서는 `confirmSave: true` 저장 예시를 복사해 첫 feedback record를 만들 수 있게 하며, 저장된 각 record에서는 Feedback ID, confirmSave gate, 증빙 준비 상태를 확인한 뒤 다음 확인 액션을 포함한 Feedback 증빙 패킷, learning memory candidate, Studio 개선 초안을 복사하고 단건 개선 초안의 `evidence-ready` source title과 feedback report의 `trace-ready` source title에는 같은 record trace와 다음 확인 액션을 포함해야 한다. Studio에서 단건 개선 초안을 불러오면 learning candidate와 Studio 개선 초안 비교를 먼저 안내하고, feedback report 초안을 불러오면 단건 evidence-ready 초안과 trace-ready report 비교를 먼저 안내해야 한다. 저장 후에도 각 비교 결과가 저장본에 반영됐는지 확인하게 하고 Feedback inbox 복귀 링크를 보존해야 하며, 복귀 클릭 후 같은 `mcpRating`/`mcpTargetAI` 필터와 `#integrations-feedback-inbox` 앵커를 복원해야 한다. Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
+  "Integrations MCP feedback inbox는 `save_execution_feedback`으로 confirmSave된 외부 AI 실행 피드백을 저장 상태, 현재 결과, 현재 필터, 검증 상태의 모바일 2열 요약으로 먼저 보여주고, 비어 있는 inbox에서는 `confirmSave: true` 저장 예시를 복사해 첫 feedback record를 만들 수 있게 하며, 저장된 각 record에서는 Feedback ID, confirmSave gate, 증빙 준비 상태를 확인한 뒤 다음 확인 액션을 포함한 Feedback 증빙 패킷, learning memory candidate, Studio 개선 초안을 복사하고 learning candidate와 Studio 개선 초안에는 confirmSave true와 evidence-ready trace를 포함해 재사용 전 audit 기준을 보존해야 한다. 단건 개선 초안의 `evidence-ready` source title과 feedback report의 `trace-ready` source title에는 같은 record trace와 다음 확인 액션을 포함해야 한다. Studio에서 단건 개선 초안을 불러오면 learning candidate와 Studio 개선 초안 비교를 먼저 안내하고, feedback report 초안을 불러오면 단건 evidence-ready 초안과 trace-ready report 비교를 먼저 안내해야 한다. 저장 후에도 각 비교 결과가 저장본에 반영됐는지 확인하게 하고 Feedback inbox 복귀 링크를 보존해야 하며, 복귀 클릭 후 같은 `mcpRating`/`mcpTargetAI` 필터와 `#integrations-feedback-inbox` 앵커를 복원해야 한다. Studio 초안 저장이 실패하면 이동하지 않고 수동 복사용 원문을 표시해야 한다.",
   "PRD should document MCP feedback review summary metrics",
 );
 assertIncludes(
@@ -3184,6 +3199,11 @@ assertIncludes(
   developmentBrief,
   "다음 확인 액션을 포함한 Feedback 증빙 패킷",
   "Development brief should document MCP feedback evidence next action",
+);
+assertIncludes(
+  developmentBrief,
+  "Learning candidate와 Studio 개선 초안에는 confirmSave true와 evidence-ready trace를 포함해 재사용 전 audit 기준을 보존한다.",
+  "Development brief should document MCP feedback reusable drafts carrying confirmSave evidence trace",
 );
 assertIncludes(
   developmentBrief,

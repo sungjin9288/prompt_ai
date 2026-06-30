@@ -448,6 +448,19 @@ export async function POST(request: Request) {
     }
 
     const preflightStatus = validation.ok ? "ready" : "blocked";
+    const preflightDryRunSummary = {
+      batches: dryRun.batches.length,
+      totalRows: dryRun.totalRows,
+      warnings: dryRun.warningItems,
+    };
+    const preflightPlanSummary = {
+      archiveTraceFields: plan.archiveTraceFields.length,
+      generatedUuidCount: plan.generatedUuidCount,
+      ownerUserId: plan.ownerUserId,
+      totalRows: plan.totalRows,
+      unresolvedPendingReferences: plan.unresolvedPendingReferences,
+      workspaceId: plan.workspaceId,
+    };
 
     return NextResponse.json({
       adapterContractText,
@@ -460,21 +473,10 @@ export async function POST(request: Request) {
         status: preflightStatus,
         validation,
       }),
-      dryRun: {
-        batches: dryRun.batches.length,
-        totalRows: dryRun.totalRows,
-        warnings: dryRun.warningItems,
-      },
+      dryRun: preflightDryRunSummary,
       insertOrder: preflightInsertOrder,
       requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-      plan: {
-        archiveTraceFields: plan.archiveTraceFields.length,
-        generatedUuidCount: plan.generatedUuidCount,
-        ownerUserId: plan.ownerUserId,
-        totalRows: plan.totalRows,
-        unresolvedPendingReferences: plan.unresolvedPendingReferences,
-        workspaceId: plan.workspaceId,
-      },
+      plan: preflightPlanSummary,
       status: preflightStatus,
       validation,
     });

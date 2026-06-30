@@ -507,6 +507,8 @@ are trimmed before dry-run and execution planning.
 It also checks that the route prepares request body, scope identity, dry-run,
 execution plan, validation, insert order, and adapter contract before the
 execute branch.
+It also checks that `includePayload` only affects execute=false preflight
+previews, while execute blockers and route audit responses stay payload-free.
 Each blocked execute response must return the adapter contract, route audit
 artifact, environment, error, insert order, required confirmation, status, and
 validation payload together.

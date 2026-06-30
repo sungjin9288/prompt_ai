@@ -225,6 +225,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that `includePayload` only affects execute=false preflight\s+previews, while execute blockers and route audit responses stay payload-free/,
+  "README should document the data-management Supabase route payload preview boundary",
+);
+assert.match(
+  readme,
   /Each blocked execute response must return the adapter contract, route audit\s+artifact, environment, error, insert order, required confirmation, status, and\s+validation payload together/,
   "README should document the data-management Supabase blocked execute response payload scope",
 );

@@ -2841,6 +2841,28 @@ assertFileIncludesInOrder(
   ],
   "Supabase import route should prepare request body, identity, dry-run, plan, validation, insert order, and adapter contract before the execute branch",
 );
+assertFileIncludesInOrder(
+  supabaseImportRouteSource,
+  [
+    "    const includePayload = body.includePayload === true;",
+    "    const insertRequests = getSupabaseImportInsertRequests(plan);",
+    "    const summarizedInsertOrder = summarizeInsertRequests(",
+    "      insertRequests,",
+    "      includePayload,",
+    "    );",
+    "    const summarizedInsertOrderWithoutPayload = summarizeInsertRequests(",
+    "      insertRequests,",
+    "      false,",
+    "    );",
+    "    if (execute) {",
+    "              insertOrder: summarizedInsertOrderWithoutPayload,",
+    "            insertOrder: summarizedInsertOrderWithoutPayload,",
+    "    return NextResponse.json({",
+    "        insertOrder: summarizedInsertOrder,",
+    "      insertOrder: summarizedInsertOrder,",
+  ],
+  "Supabase import route should keep payload rows out of execute responses while allowing explicit preflight payload previews",
+);
 assert.match(
   supabaseImportRouteSource,
   /if \(execute\) \{[\s\S]*?if \(!environmentStatus\.executionEnabled\) \{[\s\S]*?status: "execution-disabled"[\s\S]*?\{ status: 403 \}[\s\S]*?if \(body\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?status: "confirmation-required"[\s\S]*?\{ status: 400 \}[\s\S]*?if \([\s\S]*?!environmentStatus\.supabaseUrlConfigured[\s\S]*?!environmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?status: "environment-incomplete"[\s\S]*?\{ status: 503 \}[\s\S]*?if \(!validation\.ok\) \{[\s\S]*?status: "validation-blocked"[\s\S]*?\{ status: 422 \}[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,

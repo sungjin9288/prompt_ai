@@ -530,6 +530,9 @@ together.
 It also checks that the importer dry-run keeps summary, insert batches,
 warnings, payload preview, local-only gate, pending replacement gate, and
 archive trace gate together.
+It also checks that the pending ID replacement guide keeps replacement scope,
+rewrite gates, local-to-pending map, deleted archive trace IDs, and pending
+audit gate together.
 It also checks that the route audit artifact fallback keeps identity, route
 status, execute=false mode, validation, row/table counts, confirmation gate,
 and the raw artifact together.

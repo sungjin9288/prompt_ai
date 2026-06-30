@@ -275,6 +275,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the pending ID replacement guide keeps replacement scope,\s+rewrite gates, local-to-pending map, deleted archive trace IDs, and pending\s+audit gate together/,
+  "README should document the data-management Supabase pending ID replacement guide verification scope",
+);
+assert.match(
+  readme,
   /checks that the route audit artifact fallback keeps identity, route\s+status, execute=false mode, validation, row\/table counts, confirmation gate,\s+and the raw artifact together/,
   "README should document the data-management Supabase route audit artifact fallback verification scope",
 );

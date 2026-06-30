@@ -3013,9 +3013,13 @@ assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
     "function buildSupabaseImportRouteAuditArtifactText({",
+    "  const routeSummaryLines = [",
     "`- executionEnabled: ${environment.executionEnabled}`",
     "`- supabaseUrlConfigured: ${environment.supabaseUrlConfigured}`",
     "`- serviceRoleKeyConfigured: ${environment.serviceRoleKeyConfigured}`",
+    "`- requiredConfirmation: ${requiredConfirmation}`",
+    "# Prompt AI Studio Supabase Import Route Audit",
+    "    ...routeSummaryLines,",
     '"## Secret handling"',
     '"- This artifact intentionally contains only configuration booleans, not Supabase keys or raw secret values."',
     '"- Do not attach raw service-role secret values or API keys to migration evidence."',

@@ -220,6 +220,18 @@ function buildSupabaseImportRouteAuditArtifactText({
   validation: SupabaseImportPlanValidation;
 }) {
   const validationStatus = validation.ok ? "ok" : "blocked";
+  const routeSummaryLines = [
+    `- checkedAt: ${checkedAt}`,
+    `- route: POST /api/data/supabase-import`,
+    `- executeRequested: ${execute ? "true" : "false"}`,
+    `- status: ${status}`,
+    `- validation: ${validationStatus}`,
+    `- executionEnabled: ${environment.executionEnabled}`,
+    `- supabaseUrlConfigured: ${environment.supabaseUrlConfigured}`,
+    `- serviceRoleKeyConfigured: ${environment.serviceRoleKeyConfigured}`,
+    `- requiredConfirmation: ${requiredConfirmation}`,
+    ...(error ? [`- error: ${error}`] : []),
+  ];
   const validationBlockerLines =
     validation.blockers.length > 0
       ? validation.blockers.map(formatSupabaseImportRouteValidationBlocker)
@@ -243,16 +255,7 @@ function buildSupabaseImportRouteAuditArtifactText({
   return [
     "# Prompt AI Studio Supabase Import Route Audit",
     "",
-    `- checkedAt: ${checkedAt}`,
-    `- route: POST /api/data/supabase-import`,
-    `- executeRequested: ${execute ? "true" : "false"}`,
-    `- status: ${status}`,
-    `- validation: ${validationStatus}`,
-    `- executionEnabled: ${environment.executionEnabled}`,
-    `- supabaseUrlConfigured: ${environment.supabaseUrlConfigured}`,
-    `- serviceRoleKeyConfigured: ${environment.serviceRoleKeyConfigured}`,
-    `- requiredConfirmation: ${requiredConfirmation}`,
-    ...(error ? [`- error: ${error}`] : []),
+    ...routeSummaryLines,
     "",
     "## Validation blockers",
     ...validationBlockerLines,

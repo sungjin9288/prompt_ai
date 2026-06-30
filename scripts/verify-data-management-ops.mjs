@@ -1644,6 +1644,33 @@ assertDataMatches(
   /function buildSupabaseImportExecutionGuardChecklistText\(\{[\s\S]*?backupFingerprint[\s\S]*?ownerUserId[\s\S]*?workspaceId[\s\S]*?# Prompt AI Studio Supabase Import Execution Guard[\s\S]*?backupFingerprint: \$\{backupFingerprint \|\| "not provided"\}[\s\S]*?workspaceId: \$\{workspaceId \|\| "not provided"\}[\s\S]*?ownerUserId: \$\{ownerUserId \|\| "not provided"\}[\s\S]*?Do not execute if any item is true[\s\S]*?API preflight has not been run for this exact backup\/workspace\/owner combination[\s\S]*?API preflight validation is not `ok`[\s\S]*?docs\/database-schema\.sql[\s\S]*?Target project ref is unknown or mismatched[\s\S]*?SUPABASE_SERVICE_ROLE_KEY[\s\S]*?browser\/public environment[\s\S]*?SUPABASE_IMPORT_EXECUTION_ENABLED[\s\S]*?would remain true after the run[\s\S]*?Backup JSON fingerprint\/source owner is not recorded[\s\S]*?Rollback artifact and local backup copy are not available[\s\S]*?row count, relationship, pending ID, and RLS owner audits[\s\S]*?RLS smoke test identities are not prepared[\s\S]*?Required after execution[\s\S]*?Copy route audit artifact[\s\S]*?Disable execution gate[\s\S]*?Run verification SQL bundle[\s\S]*?Attach verification report and migration handoff package/,
   "Data execution guard checklist should keep every no-go condition and required post-execution action together",
 );
+assertFileIncludesInOrder(
+  dataSource,
+  [
+    "function buildSupabaseImportExecutionGuardChecklistText",
+    "# Prompt AI Studio Supabase Import Execution Guard",
+    "backupFingerprint: ${backupFingerprint || \"not provided\"}",
+    "workspaceId: ${workspaceId || \"not provided\"}",
+    "ownerUserId: ${ownerUserId || \"not provided\"}",
+    "## Do not execute if any item is true",
+    "API preflight has not been run for this exact backup/workspace/owner combination.",
+    "API preflight validation is not `ok`.",
+    "`docs/database-schema.sql` has not been applied to the target Supabase project.",
+    "Target project ref is unknown or mismatched.",
+    "`SUPABASE_SERVICE_ROLE_KEY` is present in any browser/public environment.",
+    "`SUPABASE_IMPORT_EXECUTION_ENABLED` would remain true after the run.",
+    "Backup JSON fingerprint/source owner is not recorded.",
+    "Rollback artifact and local backup copy are not available.",
+    "The operator cannot run row count, relationship, pending ID, and RLS owner audits immediately after import.",
+    "RLS smoke test identities are not prepared.",
+    "## Required after execution",
+    "Copy route audit artifact.",
+    "Disable execution gate.",
+    "Run verification SQL bundle.",
+    "Attach verification report and migration handoff package.",
+  ],
+  "Data execution guard checklist should keep target identity, every no-go condition, audit readiness, RLS smoke readiness, and required post-execution actions together",
+);
 
 assertDataMatches(
   /async function handleCopySupabaseImportExecutionGuardChecklist\(\)[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const checklistText = buildSupabaseImportExecutionGuardChecklistText\(\{[\s\S]*?copyDataText\([\s\S]*?checklistText[\s\S]*?Supabase import 실행 금지 체크리스트를 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportExecutionGuardChecklistManualCopyText\(\{[\s\S]*?backupFingerprint[\s\S]*?checklistText[\s\S]*?ownerUserId[\s\S]*?workspaceId/,

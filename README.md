@@ -502,8 +502,9 @@ result summary and embeds the same result in the route audit artifact.
 It also checks that the execute request template keeps the server/operator
 context, exact execute JSON payload, execution-window preconditions, and
 post-import follow-up checks together.
-It also checks that the execution guard checklist keeps every no-go condition
-and required post-execution action together.
+It also checks that the execution guard checklist keeps target identity, every
+no-go condition, audit readiness, RLS smoke readiness, and required
+post-execution actions together.
 It also checks that the post-import evidence record keeps identity, required
 evidence, acceptance gates, expected insert order, evidence slots, and rollback
 triggers together.

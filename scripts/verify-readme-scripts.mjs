@@ -220,7 +220,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /checks that the execution guard checklist keeps every no-go condition\s+and required post-execution action together/,
+  /checks that the execution guard checklist keeps target identity, every\s+no-go condition, audit readiness, RLS smoke readiness, and required\s+post-execution actions together/,
   "README should document the data-management Supabase execution guard checklist verification scope",
 );
 assert.match(

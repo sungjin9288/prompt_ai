@@ -176,6 +176,16 @@ type SupabaseImportRouteResultSummary = {
   }>;
   totalRows: number;
 };
+type SupabaseImportRouteTableResult =
+  SupabaseImportRouteResultSummary["tableResults"][number];
+
+function formatSupabaseImportRouteTableResult(
+  tableResult: SupabaseImportRouteTableResult,
+) {
+  const note = tableResult.note ? ` / ${tableResult.note}` : "";
+
+  return `- ${tableResult.order}. ${tableResult.table}: ${tableResult.status} / inserted ${tableResult.insertedRows}/${tableResult.expectedRows}${note}`;
+}
 
 function buildSupabaseImportRouteAuditArtifactText({
   checkedAt,
@@ -234,10 +244,7 @@ function buildSupabaseImportRouteAuditArtifactText({
           `- failedTable: ${result.failedTable || "none"}`,
           "",
           "### Table results",
-          ...result.tableResults.map(
-            (tableResult) =>
-              `- ${tableResult.order}. ${tableResult.table}: ${tableResult.status} / inserted ${tableResult.insertedRows}/${tableResult.expectedRows}${tableResult.note ? ` / ${tableResult.note}` : ""}`,
-          ),
+          ...result.tableResults.map(formatSupabaseImportRouteTableResult),
         ]
       : ["- not executed"]),
     "",

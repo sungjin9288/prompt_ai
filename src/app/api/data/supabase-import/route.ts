@@ -69,14 +69,14 @@ function parseWorkspaceBackupForImport(requestBody: SupabaseImportRequestBody) {
   }
 
   const backupData = backup.data;
-  const hasRequiredData =
+  const hasRequiredBackupData =
     isRecord(backupData.userProfile) &&
     isRecord(backupData.companyProfile) &&
     Array.isArray(backupData.prompts) &&
     Array.isArray(backupData.memories) &&
     Array.isArray(backupData.skills);
 
-  if (!hasRequiredData) {
+  if (!hasRequiredBackupData) {
     throw new Error(
       "backup.data must include userProfile, companyProfile, prompts, memories, and skills.",
     );

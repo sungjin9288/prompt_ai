@@ -521,6 +521,9 @@ non-execution guard, secret guard, and every required execution artifact in
 order.
 It also checks that the execution packet manifest keeps readiness items and
 copy actions in the operator review order.
+It also checks that the execution packet next-action memo keeps identity,
+manifest summary, waiting detail, copy actions, next action, and the
+non-execution guardrail in memo order.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

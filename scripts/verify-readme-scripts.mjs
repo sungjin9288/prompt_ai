@@ -300,6 +300,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the RLS policy draft SQL keeps workspace_members helper\s+functions, safe search_path, RLS-enabled tables, role semantics, direct\s+workspace policies, prompt-asset-scoped policies, and feedback auth ownership\s+together/,
+  "README should document the data-management Supabase RLS policy draft SQL scope",
+);
+assert.match(
+  readme,
   /checks that the route audit artifact fallback keeps identity, route\s+status, execute=false mode, validation, row\/table counts, confirmation gate,\s+and the raw artifact together/,
   "README should document the data-management Supabase route audit artifact fallback verification scope",
 );

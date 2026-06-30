@@ -545,6 +545,10 @@ RLS follow-up gate together.
 It also checks that the RLS owner access audit SQL keeps workspace/owner target
 context, owner mapping checks, imported row/archive summary, issue_count
 status, RLS rollout gate, and app-session smoke follow-up together.
+It also checks that the RLS policy draft SQL keeps workspace_members helper
+functions, safe search_path, RLS-enabled tables, role semantics, direct
+workspace policies, prompt-asset-scoped policies, and feedback auth ownership
+together.
 It also checks that the route audit artifact fallback keeps identity, route
 status, execute=false mode, validation, row/table counts, confirmation gate,
 and the raw artifact together.

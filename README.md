@@ -505,6 +505,8 @@ It also checks that the execution guard checklist keeps every no-go condition
 and required post-execution action together.
 It also checks that the post-import evidence record keeps identity, required
 evidence, acceptance gates, evidence slots, and rollback triggers together.
+It also checks that the migration handoff package keeps target identity, read
+order, SQL audits, RLS checks, and the verification report together.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

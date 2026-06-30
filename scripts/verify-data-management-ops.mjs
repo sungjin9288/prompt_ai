@@ -22,6 +22,10 @@ const supabaseImportRouteSource = readFileSync(
   "src/app/api/data/supabase-import/route.ts",
   "utf8",
 );
+const supabaseImportDryRunSource = readFileSync(
+  "src/lib/data/supabase-import-dry-run.ts",
+  "utf8",
+);
 const readme = readFileSync("README.md", "utf8");
 const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
 const developmentBrief = readFileSync(
@@ -80,6 +84,18 @@ function assertFileIncludes(fileSource, text, message) {
 
 function assertFileNotIncludes(fileSource, text, message) {
   assert.ok(!fileSource.includes(text), message);
+}
+
+function assertFileIncludesInOrder(fileSource, texts, message) {
+  let cursor = 0;
+
+  for (const text of texts) {
+    const index = fileSource.indexOf(text, cursor);
+
+    assert.notEqual(index, -1, `${message}: missing ${JSON.stringify(text)}`);
+
+    cursor = index + text.length;
+  }
 }
 
 function normalizePlain(value) {
@@ -588,6 +604,46 @@ assertDataMatches(
 assertDataMatches(
   /function buildSupabaseMigrationHandoffPackageManualCopyText\(\{[\s\S]*?dryRun: SupabaseImportDryRun[\s\S]*?ownerUserId\?: string[\s\S]*?packageText: string[\s\S]*?workspaceId\?: string[\s\S]*?ownerScope = ownerUserId\?\.trim\(\) \|\| "<owner_user_id>"[\s\S]*?relationshipWarnings = dryRun\.warningItems\.filter[\s\S]*?warning\.category === "relationship"[\s\S]*?setupWarnings = dryRun\.warningItems\.filter[\s\S]*?warning\.category === "setup"[\s\S]*?workspaceScope = workspaceId\?\.trim\(\) \|\| "<workspace_id>"[\s\S]*?# Prompt AI Studio Supabase Migration Handoff Package[\s\S]*?## Handoff package 식별[\s\S]*?workspace_id: \$\{workspaceScope\}[\s\S]*?owner_user_id: \$\{ownerScope\}[\s\S]*?schemaVersion: \$\{dryRun\.schemaVersion\}[\s\S]*?패키지 길이: \$\{formatJsonLength\(packageText\)\}[\s\S]*?## Handoff package 요약[\s\S]*?Expected imported rows: \$\{dryRun\.totalRows\}[\s\S]*?Insert batches: \$\{dryRun\.batches\.length\}[\s\S]*?Handoff sections: \$\{supabaseImportVerificationCheckCounts\.handoffSections\}[\s\S]*?Relationship checks: \$\{supabaseImportVerificationCheckCounts\.relationship\}[\s\S]*?Pending ID checks: \$\{supabaseImportVerificationCheckCounts\.pendingIdAudit\}[\s\S]*?RLS owner access checks: \$\{supabaseImportVerificationCheckCounts\.rlsOwnerAccess\}[\s\S]*?RLS policy tables: \$\{supabaseImportVerificationCheckCounts\.rlsPolicyTables\}[\s\S]*?Setup warnings: \$\{setupWarnings\.length\}[\s\S]*?Relationship warnings: \$\{relationshipWarnings\.length\}[\s\S]*?## 인수인계 gate 요약[\s\S]*?Read sections in order[\s\S]*?importer dry-run through verification report[\s\S]*?Attach row count, relationship, pending ID, and RLS owner access audit outputs[\s\S]*?Archive RLS policy review decision[\s\S]*?authenticated RLS smoke test evidence[\s\S]*?backup JSON, replacement guide, and local-to-Supabase UUID trace[\s\S]*?## Migration handoff package[\s\S]*?packageText/,
   "Data migration handoff package manual fallback should prepend workspace/owner identity, schema, package length, row/batch counts, handoff sections, verification counts, warning counts, read-order gate, audit evidence gate, RLS evidence gate, and UUID trace gate",
+);
+assertFileIncludesInOrder(
+  supabaseImportDryRunSource,
+  [
+    "export function buildSupabaseMigrationHandoffPackageText",
+    "const workspaceIdValue =",
+    "isSupabaseWorkspaceUuid(workspaceId)",
+    "const ownerUserIdValue =",
+    "isSupabaseWorkspaceUuid(ownerUserId)",
+    "const resolvedOptions =",
+    "const checkCounts = getSupabaseImportVerificationCheckCounts();",
+    "# Prompt AI Studio Supabase Migration Handoff Package",
+    "## Package target",
+    "schemaVersion: ${dryRun.schemaVersion}",
+    "workspace_id: ${workspaceIdValue}",
+    "owner_user_id: ${ownerUserIdValue}",
+    "expected total rows: ${dryRun.totalRows}",
+    "generated sections: ${checkCounts.handoffSections}",
+    "## Read order",
+    "...supabaseMigrationHandoffSectionTitles.map",
+    "## 1. Importer dry-run",
+    "buildSupabaseImportDryRunText(dryRun)",
+    "## 2. Pending ID replacement guide",
+    "buildSupabaseImportReferenceReplacementGuideText(dryRun)",
+    "## 3. Row count verification SQL",
+    "buildSupabaseImportVerificationSql(dryRun, resolvedOptions)",
+    "## 4. Relationship verification SQL",
+    "buildSupabaseImportRelationshipVerificationSql(resolvedOptions)",
+    "## 5. Pending ID audit SQL",
+    "buildSupabaseImportPendingIdAuditSql(resolvedOptions)",
+    "## 6. RLS owner access audit SQL",
+    "buildSupabaseImportRlsAccessAuditSql(resolvedOptions)",
+    "## 7. RLS policy draft SQL",
+    "buildSupabaseRlsPolicyDraftSql()",
+    "## 8. RLS smoke test checklist",
+    "buildSupabaseRlsSmokeTestChecklistText(resolvedOptions)",
+    "## 9. Verification report",
+    "buildSupabaseImportVerificationReportText(dryRun, resolvedOptions)",
+  ],
+  "Supabase migration handoff package should keep target identity, read order, SQL audits, RLS checks, and verification report together",
 );
 
 assertDataMatches(

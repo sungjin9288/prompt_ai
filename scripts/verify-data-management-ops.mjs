@@ -2759,6 +2759,27 @@ assertFileIncludes(
 assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
+    "type SupabaseImportInsertRequests = ReturnType<",
+    "  typeof getSupabaseImportInsertRequests",
+    "function summarizeInsertRequests(",
+    "  requests: SupabaseImportInsertRequests,",
+    "type SupabaseImportEnvironmentStatus = ReturnType<",
+    "  typeof getSupabaseRestImportEnvironmentStatus",
+    "type SupabaseImportInsertOrder = ReturnType<typeof summarizeInsertRequests>;",
+    "type SupabaseImportPlanValidation = ReturnType<",
+    "  typeof validateSupabaseImportExecutionPlan",
+    "  environment: SupabaseImportEnvironmentStatus;",
+    "  insertOrder: SupabaseImportInsertOrder;",
+    "  validation: SupabaseImportPlanValidation;",
+    "  environmentStatus: SupabaseImportEnvironmentStatus;",
+    "  insertOrder: SupabaseImportInsertOrder;",
+    "  validation: SupabaseImportPlanValidation;",
+  ],
+  "Supabase import route should use readable route-local type aliases for repeated helper contracts",
+);
+assertFileIncludesInOrder(
+  supabaseImportRouteSource,
+  [
     "function parseBackupPayload(body: SupabaseImportRequestBody) {",
     '  if (typeof body.backupJson === "string") {',
     "    try {",

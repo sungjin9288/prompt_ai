@@ -25,6 +25,10 @@ interface SupabaseImportRequestBody {
   workspaceId?: unknown;
 }
 
+type SupabaseImportInsertRequests = ReturnType<
+  typeof getSupabaseImportInsertRequests
+>;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -139,7 +143,7 @@ function normalizeBackupCounts(
 }
 
 function summarizeInsertRequests(
-  requests: ReturnType<typeof getSupabaseImportInsertRequests>,
+  requests: SupabaseImportInsertRequests,
   includePayload: boolean,
 ) {
   return requests.map((request) => ({
@@ -150,6 +154,14 @@ function summarizeInsertRequests(
     table: request.table,
   }));
 }
+
+type SupabaseImportEnvironmentStatus = ReturnType<
+  typeof getSupabaseRestImportEnvironmentStatus
+>;
+type SupabaseImportInsertOrder = ReturnType<typeof summarizeInsertRequests>;
+type SupabaseImportPlanValidation = ReturnType<
+  typeof validateSupabaseImportExecutionPlan
+>;
 
 function buildSupabaseImportRouteAuditArtifactText({
   checkedAt,
@@ -163,10 +175,10 @@ function buildSupabaseImportRouteAuditArtifactText({
   validation,
 }: {
   checkedAt: string;
-  environment: ReturnType<typeof getSupabaseRestImportEnvironmentStatus>;
+  environment: SupabaseImportEnvironmentStatus;
   error?: string;
   execute: boolean;
-  insertOrder: ReturnType<typeof summarizeInsertRequests>;
+  insertOrder: SupabaseImportInsertOrder;
   requiredConfirmation: string;
   result?: {
     completedRows: number;
@@ -183,7 +195,7 @@ function buildSupabaseImportRouteAuditArtifactText({
     totalRows: number;
   };
   status: string;
-  validation: ReturnType<typeof validateSupabaseImportExecutionPlan>;
+  validation: SupabaseImportPlanValidation;
 }) {
   return [
     "# Prompt AI Studio Supabase Import Route Audit",
@@ -247,13 +259,13 @@ function createSupabaseImportBlockedResponse({
 }: {
   adapterContractText: string;
   checkedAt: string;
-  environmentStatus: ReturnType<typeof getSupabaseRestImportEnvironmentStatus>;
+  environmentStatus: SupabaseImportEnvironmentStatus;
   error: string;
   execute: boolean;
   httpStatus: number;
-  insertOrder: ReturnType<typeof summarizeInsertRequests>;
+  insertOrder: SupabaseImportInsertOrder;
   status: string;
-  validation: ReturnType<typeof validateSupabaseImportExecutionPlan>;
+  validation: SupabaseImportPlanValidation;
 }) {
   return NextResponse.json(
     {

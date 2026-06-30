@@ -510,6 +510,9 @@ order, SQL audits, RLS checks, and the verification report together.
 It also checks that the verification report keeps import target, execution
 order, replacement guidance, acceptance checks, warnings, rollback triggers,
 and sign-off together.
+It also checks that the migration rehearsal report keeps preflight identity,
+readiness checklist, acceptance gates, insert order, blockers, and required
+artifacts together.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

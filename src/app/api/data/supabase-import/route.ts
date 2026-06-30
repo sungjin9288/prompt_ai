@@ -335,8 +335,8 @@ export async function POST(request: Request) {
       "ownerUserId",
     );
     const workspaceBackup = parseWorkspaceBackupForImport(requestBody);
-    const dryRun = createSupabaseImportDryRun(workspaceBackup);
-    const plan = createSupabaseImporterPlan(dryRun, {
+    const importDryRun = createSupabaseImportDryRun(workspaceBackup);
+    const plan = createSupabaseImporterPlan(importDryRun, {
       ownerUserId,
       workspaceId,
     });
@@ -460,9 +460,9 @@ export async function POST(request: Request) {
 
     const preflightStatus = planValidation.ok ? "ready" : "blocked";
     const preflightDryRunSummary = {
-      batches: dryRun.batches.length,
-      totalRows: dryRun.totalRows,
-      warnings: dryRun.warningItems,
+      batches: importDryRun.batches.length,
+      totalRows: importDryRun.totalRows,
+      warnings: importDryRun.warningItems,
     };
     const preflightPlanSummary = {
       archiveTraceFields: plan.archiveTraceFields.length,

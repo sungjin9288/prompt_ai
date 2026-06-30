@@ -2911,7 +2911,10 @@ assertFileIncludesInOrder(
     "          httpStatus: 422,",
     '          status: "validation-blocked",',
     "      const adapter = createSupabaseRestImportAdapter({",
-    "      const result = await runSupabaseImportExecutionPlan(plan, adapter);",
+    "      const executionResult = await runSupabaseImportExecutionPlan(",
+    "        plan,",
+    "        adapter,",
+    "      );",
   ],
   "Supabase import route should keep every execute blocker and status code before constructing the write adapter",
 );
@@ -3096,7 +3099,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /const result = await runSupabaseImportExecutionPlan\(plan, adapter\);[\s\S]*const resultSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: result\.completedRows[\s\S]*failedTable: result\.failedTable[\s\S]*status: result\.status[\s\S]*tableResults: result\.tableResults[\s\S]*totalRows: result\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*environment: environmentStatus[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*validation/,
+  /const executionResult = await runSupabaseImportExecutionPlan\([\s\S]*plan,[\s\S]*adapter,[\s\S]*\);[\s\S]*const executionResultSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: executionResult\.completedRows[\s\S]*failedTable: executionResult\.failedTable[\s\S]*status: executionResult\.status[\s\S]*tableResults: executionResult\.tableResults[\s\S]*totalRows: executionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: executionResultSummary[\s\S]*status: executionResult\.status[\s\S]*environment: environmentStatus[\s\S]*result: executionResultSummary[\s\S]*status: executionResult\.status[\s\S]*validation/,
   "Supabase import route should return the execute result summary and include the same result in the audit artifact",
 );
 assertFileIncludesInOrder(

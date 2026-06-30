@@ -419,13 +419,16 @@ export async function POST(request: Request) {
         serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
         supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
       });
-      const result = await runSupabaseImportExecutionPlan(plan, adapter);
-      const resultSummary: SupabaseImportRouteResultSummary = {
-        completedRows: result.completedRows,
-        failedTable: result.failedTable,
-        status: result.status,
-        tableResults: result.tableResults,
-        totalRows: result.totalRows,
+      const executionResult = await runSupabaseImportExecutionPlan(
+        plan,
+        adapter,
+      );
+      const executionResultSummary: SupabaseImportRouteResultSummary = {
+        completedRows: executionResult.completedRows,
+        failedTable: executionResult.failedTable,
+        status: executionResult.status,
+        tableResults: executionResult.tableResults,
+        totalRows: executionResult.totalRows,
       };
 
       return NextResponse.json({
@@ -436,13 +439,13 @@ export async function POST(request: Request) {
           execute,
           insertOrder: operatorInsertOrder,
           requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-          result: resultSummary,
-          status: result.status,
+          result: executionResultSummary,
+          status: executionResult.status,
           validation,
         }),
         environment: environmentStatus,
-        result: resultSummary,
-        status: result.status,
+        result: executionResultSummary,
+        status: executionResult.status,
         validation,
       });
     }

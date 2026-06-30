@@ -504,7 +504,8 @@ payload, required preconditions, and post-import follow-up checks together.
 It also checks that the execution guard checklist keeps every no-go condition
 and required post-execution action together.
 It also checks that the post-import evidence record keeps identity, required
-evidence, acceptance gates, evidence slots, and rollback triggers together.
+evidence, acceptance gates, expected insert order, evidence slots, and rollback
+triggers together.
 It also checks that the migration handoff package keeps target identity, read
 order, SQL audits, RLS checks, and the verification report together.
 It also checks that the verification report keeps import target, execution

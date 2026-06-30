@@ -225,7 +225,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /checks that the post-import evidence record keeps identity, required\s+evidence, acceptance gates, evidence slots, and rollback triggers together/,
+  /checks that the post-import evidence record keeps identity, required\s+evidence, acceptance gates, expected insert order, evidence slots, and rollback\s+triggers together/,
   "README should document the data-management Supabase post-import evidence verification scope",
 );
 assert.match(

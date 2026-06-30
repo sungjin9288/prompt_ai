@@ -3025,6 +3025,17 @@ assertFileIncludesInOrder(
 assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
+    "function formatSupabaseImportRouteValidationBlocker(blocker: string) {",
+    "  return `- ${blocker}`;",
+    '"## Validation blockers"',
+    "      ? validation.blockers.map(formatSupabaseImportRouteValidationBlocker)",
+    '      : ["- none"]),',
+  ],
+  "Supabase import route audit artifact should format validation blockers through the route helper",
+);
+assertFileIncludesInOrder(
+  supabaseImportRouteSource,
+  [
     "type SupabaseImportInsertOrder = ReturnType<typeof summarizeInsertRequests>;",
     "type SupabaseImportRouteInsertOrderItem = SupabaseImportInsertOrder[number];",
     "function formatSupabaseImportRouteInsertOrderItem(",

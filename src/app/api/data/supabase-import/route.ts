@@ -194,6 +194,10 @@ function formatSupabaseImportRouteInsertOrderItem(
   return `- ${item.order}. ${item.table}: ${item.rowCount} rows / dependency: ${item.dependency}`;
 }
 
+function formatSupabaseImportRouteValidationBlocker(blocker: string) {
+  return `- ${blocker}`;
+}
+
 function buildSupabaseImportRouteAuditArtifactText({
   checkedAt,
   environment,
@@ -231,7 +235,7 @@ function buildSupabaseImportRouteAuditArtifactText({
     "",
     "## Validation blockers",
     ...(validation.blockers.length > 0
-      ? validation.blockers.map((blocker) => `- ${blocker}`)
+      ? validation.blockers.map(formatSupabaseImportRouteValidationBlocker)
       : ["- none"]),
     "",
     "## Insert order",

@@ -516,6 +516,9 @@ artifacts together.
 It also checks that the execution readiness decision keeps decision inputs,
 operator sequence, blockers, runtime warnings, preflight blockers, and insert
 order together.
+It also checks that the controlled execution packet keeps the packet index,
+non-execution guard, secret guard, and every required execution artifact in
+order.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

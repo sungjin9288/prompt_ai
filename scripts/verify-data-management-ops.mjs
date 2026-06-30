@@ -26,6 +26,10 @@ const supabaseImportDryRunSource = readFileSync(
   "src/lib/data/supabase-import-dry-run.ts",
   "utf8",
 );
+const supabaseImporterSource = readFileSync(
+  "src/lib/data/supabase-importer.ts",
+  "utf8",
+);
 const readme = readFileSync("README.md", "utf8");
 const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
 const developmentBrief = readFileSync(
@@ -813,6 +817,65 @@ assertDataMatches(
 assertDataMatches(
   /function buildSupabaseImporterAdapterContractManualCopyText\(\{[\s\S]*?contractText: string[\s\S]*?plan: ReturnType<typeof createSupabaseImporterPlan>[\s\S]*?# Prompt AI Studio Supabase Importer Adapter Contract[\s\S]*?## Adapter 계약 식별[\s\S]*?workspace_id: \$\{plan\.workspaceId\}[\s\S]*?owner_user_id: \$\{plan\.ownerUserId\}[\s\S]*?계약 길이: \$\{formatJsonLength\(contractText\)\}[\s\S]*?## Import plan 요약[\s\S]*?Total rows: \$\{plan\.totalRows\}[\s\S]*?Insert batches: \$\{plan\.batches\.length\}[\s\S]*?Generated UUIDs: \$\{plan\.generatedUuidCount\}[\s\S]*?Archive trace fields: \$\{plan\.archiveTraceFields\.length\}[\s\S]*?Unresolved pending references: \$\{plan\.unresolvedPendingReferences\.length\}[\s\S]*?## Adapter gate 요약[\s\S]*?service-role server context[\s\S]*?Browser\/public Supabase clients must not execute importer writes[\s\S]*?Runner must stop before insert if validation has blockers[\s\S]*?Runner must insert tables in the listed order[\s\S]*?row count, relationship, pending ID, and RLS owner audits[\s\S]*?## Adapter contract[\s\S]*?contractText/,
   "Data importer adapter contract manual fallback should prepend workspace identity, plan row/batch/UUID/archive/pending counts, server-only gate, insert-order gate, audit gate, and contract length",
+);
+assertFileIncludesInOrder(
+  dataSource,
+  [
+    "function buildSupabaseImporterAdapterContractManualCopyText",
+    "# Prompt AI Studio Supabase Importer Adapter Contract",
+    "## Adapter 계약 식별",
+    "workspace_id: ${plan.workspaceId}",
+    "owner_user_id: ${plan.ownerUserId}",
+    "계약 길이: ${formatJsonLength(contractText)}",
+    "## Import plan 요약",
+    "Total rows: ${plan.totalRows}",
+    "Insert batches: ${plan.batches.length}",
+    "Generated UUIDs: ${plan.generatedUuidCount}",
+    "Archive trace fields: ${plan.archiveTraceFields.length}",
+    "Unresolved pending references: ${plan.unresolvedPendingReferences.length}",
+    "## Adapter gate 요약",
+    "Adapter must run in a service-role server context.",
+    "Browser/public Supabase clients must not execute importer writes.",
+    "Runner must stop before insert if validation has blockers.",
+    "Runner must insert tables in the listed order.",
+    "Operators must run row count, relationship, pending ID, and RLS owner audits after import.",
+    "## Adapter contract",
+    "contractText",
+  ],
+  "Data importer adapter contract manual fallback should keep identity, plan counts, server-only gate, insert order gate, audit gate, and raw contract together",
+);
+assertFileIncludesInOrder(
+  supabaseImporterSource,
+  [
+    "export function buildSupabaseImporterAdapterContractText",
+    "const validation = validateSupabaseImportExecutionPlan(plan);",
+    "const requests = getSupabaseImportInsertRequests(plan);",
+    "# Prompt AI Studio Supabase Importer Adapter Contract",
+    "This contract is for the future server-side importer.",
+    "## Adapter shape",
+    "interface SupabaseImportInsertAdapter",
+    "insertRows(request: {",
+    "table: string;",
+    "order: number;",
+    "dependency: string;",
+    "rows: Record<string, unknown>[];",
+    "Promise<{ insertedRows?: number; note?: string } | void>;",
+    "## Validation",
+    "status: ${validation.ok ? \"ready\" : \"blocked\"}",
+    "blocker: none",
+    "## Insert order",
+    "...requests.map",
+    "request.order",
+    "request.table",
+    "request.rows.length",
+    "request.dependency",
+    "## Runner acceptance",
+    "The runner must stop before insert if validation has blockers.",
+    "The runner must insert tables in the listed order.",
+    "The adapter must use a service-role server context, never a browser client.",
+    "After a completed run, operators must run row count, relationship, pending ID, and RLS owner access audits.",
+  ],
+  "Supabase importer adapter contract should keep adapter shape, validation, insert order, server-only gate, and post-import audit gate in contract order",
 );
 
 assertDataMatches(

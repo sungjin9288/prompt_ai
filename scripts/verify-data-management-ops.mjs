@@ -2962,6 +2962,19 @@ assert.match(
   /- executionEnabled: \$\{environment\.executionEnabled\}[\s\S]*?- supabaseUrlConfigured: \$\{environment\.supabaseUrlConfigured\}[\s\S]*?- serviceRoleKeyConfigured: \$\{environment\.serviceRoleKeyConfigured\}[\s\S]*?This artifact intentionally contains only configuration booleans/,
   "Supabase import route audit artifact should expose only gate booleans, not secret values",
 );
+assertFileIncludesInOrder(
+  supabaseImportRouteSource,
+  [
+    "function buildSupabaseImportRouteAuditArtifactText({",
+    "`- executionEnabled: ${environment.executionEnabled}`",
+    "`- supabaseUrlConfigured: ${environment.supabaseUrlConfigured}`",
+    "`- serviceRoleKeyConfigured: ${environment.serviceRoleKeyConfigured}`",
+    '"## Secret handling"',
+    '"- This artifact intentionally contains only configuration booleans, not Supabase keys or raw secret values."',
+    '"- Do not attach raw service-role secret values or API keys to migration evidence."',
+  ],
+  "Supabase import route audit artifact should keep secret handling guidance with configuration booleans",
+);
 assert.match(
   supabaseImportRouteSource,
   /## Execution result[\s\S]*result[\s\S]*status: \$\{result\.status\}[\s\S]*completedRows: \$\{result\.completedRows\}[\s\S]*totalRows: \$\{result\.totalRows\}[\s\S]*failedTable: \$\{result\.failedTable \|\| "none"\}[\s\S]*Table results[\s\S]*tableResult\.table[\s\S]*tableResult\.status[\s\S]*tableResult\.insertedRows[\s\S]*tableResult\.expectedRows/,

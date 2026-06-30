@@ -521,6 +521,9 @@ payload fields.
 For allowed execute responses, it checks that the route returns the execution
 result summary and embeds result status, row totals, failed table, and per-table
 inserted/expected rows in the route audit artifact.
+It also checks that route audit artifacts expose only configuration booleans and
+carry explicit guidance not to attach Supabase keys, service-role values, or API
+keys to migration evidence.
 It also checks that the execute request template keeps the server/operator
 context, exact execute JSON payload, execution-window preconditions, and
 post-import follow-up checks together.

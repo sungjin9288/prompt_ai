@@ -250,6 +250,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that route audit artifacts expose only configuration booleans and\s+carry explicit guidance not to attach Supabase keys, service-role values, or API\s+keys to migration evidence/,
+  "README should document the data-management Supabase route audit secret handling scope",
+);
+assert.match(
+  readme,
   /checks that the execute request template keeps the server\/operator\s+context, exact execute JSON payload, execution-window preconditions, and\s+post-import follow-up checks together/,
   "README should document the data-management Supabase execute request template verification scope",
 );

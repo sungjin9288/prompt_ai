@@ -334,8 +334,8 @@ export async function POST(request: Request) {
       requestBody.ownerUserId,
       "ownerUserId",
     );
-    const backup = parseWorkspaceBackupForImport(requestBody);
-    const dryRun = createSupabaseImportDryRun(backup);
+    const workspaceBackup = parseWorkspaceBackupForImport(requestBody);
+    const dryRun = createSupabaseImportDryRun(workspaceBackup);
     const plan = createSupabaseImporterPlan(dryRun, {
       ownerUserId,
       workspaceId,

@@ -210,7 +210,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /checks that the route returns the execution\s+result summary and embeds the same result in the route audit artifact/,
+  /checks that the route returns the execution\s+result summary and embeds result status, row totals, failed table, and per-table\s+inserted\/expected rows in the route audit artifact/,
   "README should document the data-management Supabase execute result verification scope",
 );
 assert.match(

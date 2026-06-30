@@ -498,7 +498,8 @@ skips empty batches without calling Supabase. It also checks the REST insert
 URL, method, headers, JSON body, success count, and failure response message
 through a local fetch stub. It also checks that the import route returns explicit execute-gate and validation-blocked responses before any write adapter can run.
 For allowed execute responses, it checks that the route returns the execution
-result summary and embeds the same result in the route audit artifact.
+result summary and embeds result status, row totals, failed table, and per-table
+inserted/expected rows in the route audit artifact.
 It also checks that the execute request template keeps the server/operator
 context, exact execute JSON payload, execution-window preconditions, and
 post-import follow-up checks together.

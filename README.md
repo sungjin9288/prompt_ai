@@ -505,6 +505,9 @@ validation payload together.
 For execute=false preflight responses, it checks that dry-run metrics, insert
 order, plan identity, required confirmation, route audit artifact, adapter
 contract, status, and validation stay in the same no-write response.
+For invalid import requests, it checks that the route returns only a bounded
+error, `invalid-request` status, and HTTP 400 without preflight or write
+payload fields.
 For allowed execute responses, it checks that the route returns the execution
 result summary and embeds result status, row totals, failed table, and per-table
 inserted/expected rows in the route audit artifact.

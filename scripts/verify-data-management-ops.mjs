@@ -2930,6 +2930,23 @@ assertFileIncludesInOrder(
   ],
   "Supabase import route preflight response should return dry-run metrics, insert order, plan identity, required confirmation, audit artifact, and validation together",
 );
+assertFileIncludesInOrder(
+  supabaseImportRouteSource,
+  [
+    "  } catch (error) {",
+    "    return NextResponse.json(",
+    "      {",
+    "        error:",
+    "          error instanceof Error",
+    "            ? error.message",
+    '            : "Invalid Supabase import request.",',
+    '        status: "invalid-request",',
+    "      },",
+    "      { status: 400 },",
+    "    );",
+  ],
+  "Supabase import route invalid request response should return only a bounded error, invalid-request status, and HTTP 400",
+);
 
 let blockedPlanInsertCalls = 0;
 const blockedPlanResult = await runSupabaseImportExecutionPlan(

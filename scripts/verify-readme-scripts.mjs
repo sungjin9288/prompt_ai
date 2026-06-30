@@ -220,6 +220,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /For invalid import requests, it checks that the route returns only a bounded\s+error, `invalid-request` status, and HTTP 400 without preflight or write\s+payload fields/,
+  "README should document the data-management Supabase invalid request response scope",
+);
+assert.match(
+  readme,
   /checks that the route returns the execution\s+result summary and embeds result status, row totals, failed table, and per-table\s+inserted\/expected rows in the route audit artifact/,
   "README should document the data-management Supabase execute result verification scope",
 );

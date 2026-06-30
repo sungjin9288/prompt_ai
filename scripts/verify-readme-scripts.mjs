@@ -210,6 +210,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the route prepares request body, scope identity, dry-run,\s+execution plan, validation, insert order, and adapter contract before the\s+execute branch/,
+  "README should document the data-management Supabase route request preparation verification scope",
+);
+assert.match(
+  readme,
   /Each blocked execute response must return the adapter contract, route audit\s+artifact, environment, error, insert order, required confirmation, status, and\s+validation payload together/,
   "README should document the data-management Supabase blocked execute response payload scope",
 );

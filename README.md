@@ -499,6 +499,9 @@ URL, method, headers, JSON body, success count, and failure response message
 through a local fetch stub. It also checks that the import route returns explicit
 execution-disabled, confirmation-required, environment-incomplete, and
 validation-blocked responses with status codes before any write adapter can run.
+It also checks that the route accepts `backupJson` or `backup` payloads and
+validates prompt-ai-studio app identity, schema version, and required backup data
+before import planning.
 It also checks that the route prepares request body, scope identity, dry-run,
 execution plan, validation, insert order, and adapter contract before the
 execute branch.

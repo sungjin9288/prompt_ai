@@ -210,6 +210,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the route accepts `backupJson` or `backup` payloads and\s+validates prompt-ai-studio app identity, schema version, and required backup data\s+before import planning/,
+  "README should document the data-management Supabase route backup payload verification scope",
+);
+assert.match(
+  readme,
   /checks that the route prepares request body, scope identity, dry-run,\s+execution plan, validation, insert order, and adapter contract before the\s+execute branch/,
   "README should document the data-management Supabase route request preparation verification scope",
 );

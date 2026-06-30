@@ -162,6 +162,20 @@ type SupabaseImportInsertOrder = ReturnType<typeof summarizeInsertRequests>;
 type SupabaseImportPlanValidation = ReturnType<
   typeof validateSupabaseImportExecutionPlan
 >;
+type SupabaseImportRouteResultSummary = {
+  completedRows: number;
+  failedTable?: string;
+  status: string;
+  tableResults: Array<{
+    expectedRows: number;
+    insertedRows: number;
+    note?: string;
+    order: number;
+    status: string;
+    table: string;
+  }>;
+  totalRows: number;
+};
 
 function buildSupabaseImportRouteAuditArtifactText({
   checkedAt,
@@ -180,20 +194,7 @@ function buildSupabaseImportRouteAuditArtifactText({
   execute: boolean;
   insertOrder: SupabaseImportInsertOrder;
   requiredConfirmation: string;
-  result?: {
-    completedRows: number;
-    failedTable?: string;
-    status: string;
-    tableResults: Array<{
-      expectedRows: number;
-      insertedRows: number;
-      note?: string;
-      order: number;
-      status: string;
-      table: string;
-    }>;
-    totalRows: number;
-  };
+  result?: SupabaseImportRouteResultSummary;
   status: string;
   validation: SupabaseImportPlanValidation;
 }) {

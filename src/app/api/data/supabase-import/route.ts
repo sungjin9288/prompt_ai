@@ -159,6 +159,7 @@ type SupabaseImportEnvironmentStatus = ReturnType<
   typeof getSupabaseRestImportEnvironmentStatus
 >;
 type SupabaseImportInsertOrder = ReturnType<typeof summarizeInsertRequests>;
+type SupabaseImportRouteInsertOrderItem = SupabaseImportInsertOrder[number];
 type SupabaseImportPlanValidation = ReturnType<
   typeof validateSupabaseImportExecutionPlan
 >;
@@ -185,6 +186,12 @@ function formatSupabaseImportRouteTableResult(
   const note = tableResult.note ? ` / ${tableResult.note}` : "";
 
   return `- ${tableResult.order}. ${tableResult.table}: ${tableResult.status} / inserted ${tableResult.insertedRows}/${tableResult.expectedRows}${note}`;
+}
+
+function formatSupabaseImportRouteInsertOrderItem(
+  item: SupabaseImportRouteInsertOrderItem,
+) {
+  return `- ${item.order}. ${item.table}: ${item.rowCount} rows / dependency: ${item.dependency}`;
 }
 
 function buildSupabaseImportRouteAuditArtifactText({
@@ -229,10 +236,7 @@ function buildSupabaseImportRouteAuditArtifactText({
     "",
     "## Insert order",
     ...(insertOrder.length > 0
-      ? insertOrder.map(
-          (item) =>
-            `- ${item.order}. ${item.table}: ${item.rowCount} rows / dependency: ${item.dependency}`,
-        )
+      ? insertOrder.map(formatSupabaseImportRouteInsertOrderItem)
       : ["- none"]),
     "",
     "## Execution result",

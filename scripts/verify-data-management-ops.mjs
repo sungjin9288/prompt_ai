@@ -3022,6 +3022,20 @@ assertFileIncludesInOrder(
   ],
   "Supabase import route audit artifact should keep secret handling guidance with configuration booleans",
 );
+assertFileIncludesInOrder(
+  supabaseImportRouteSource,
+  [
+    "type SupabaseImportInsertOrder = ReturnType<typeof summarizeInsertRequests>;",
+    "type SupabaseImportRouteInsertOrderItem = SupabaseImportInsertOrder[number];",
+    "function formatSupabaseImportRouteInsertOrderItem(",
+    "  item: SupabaseImportRouteInsertOrderItem,",
+    "  return `- ${item.order}. ${item.table}: ${item.rowCount} rows / dependency: ${item.dependency}`;",
+    '"## Insert order"',
+    "      ? insertOrder.map(formatSupabaseImportRouteInsertOrderItem)",
+    '      : ["- none"]),',
+  ],
+  "Supabase import route audit artifact should format insert order rows through the route helper",
+);
 assert.match(
   supabaseImportRouteSource,
   /function formatSupabaseImportRouteTableResult[\s\S]*tableResult\.table[\s\S]*tableResult\.status[\s\S]*tableResult\.insertedRows[\s\S]*tableResult\.expectedRows[\s\S]*## Execution result[\s\S]*result[\s\S]*status: \$\{result\.status\}[\s\S]*completedRows: \$\{result\.completedRows\}[\s\S]*totalRows: \$\{result\.totalRows\}[\s\S]*failedTable: \$\{result\.failedTable \|\| "none"\}[\s\S]*Table results[\s\S]*result\.tableResults\.map\(formatSupabaseImportRouteTableResult\)/,

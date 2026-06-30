@@ -305,6 +305,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the RLS smoke test checklist keeps workspace\/owner target\s+identity, role fixtures, owner\/member\/viewer\/non-member behavior,\s+cross-workspace isolation, evidence capture, and acceptance gates together/,
+  "README should document the data-management Supabase RLS smoke test checklist scope",
+);
+assert.match(
+  readme,
   /checks that the route audit artifact fallback keeps identity, route\s+status, execute=false mode, validation, row\/table counts, confirmation gate,\s+and the raw artifact together/,
   "README should document the data-management Supabase route audit artifact fallback verification scope",
 );

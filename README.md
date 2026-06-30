@@ -549,6 +549,9 @@ It also checks that the RLS policy draft SQL keeps workspace_members helper
 functions, safe search_path, RLS-enabled tables, role semantics, direct
 workspace policies, prompt-asset-scoped policies, and feedback auth ownership
 together.
+It also checks that the RLS smoke test checklist keeps workspace/owner target
+identity, role fixtures, owner/member/viewer/non-member behavior,
+cross-workspace isolation, evidence capture, and acceptance gates together.
 It also checks that the route audit artifact fallback keeps identity, route
 status, execute=false mode, validation, row/table counts, confirmation gate,
 and the raw artifact together.

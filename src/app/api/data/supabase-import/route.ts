@@ -33,24 +33,24 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function parseBackupPayload(body: SupabaseImportRequestBody) {
-  if (typeof body.backupJson === "string") {
+function parseBackupPayload(requestBody: SupabaseImportRequestBody) {
+  if (typeof requestBody.backupJson === "string") {
     try {
-      return JSON.parse(body.backupJson) as unknown;
+      return JSON.parse(requestBody.backupJson) as unknown;
     } catch {
       throw new Error("backupJson must be valid JSON.");
     }
   }
 
-  if (body.backup) {
-    return body.backup;
+  if (requestBody.backup) {
+    return requestBody.backup;
   }
 
   throw new Error("backup or backupJson is required.");
 }
 
-function parseWorkspaceBackupForImport(body: SupabaseImportRequestBody) {
-  const backup = parseBackupPayload(body);
+function parseWorkspaceBackupForImport(requestBody: SupabaseImportRequestBody) {
+  const backup = parseBackupPayload(requestBody);
 
   if (!isRecord(backup)) {
     throw new Error("backup must be an object.");
@@ -319,14 +319,20 @@ function createSupabaseImportBlockedResponse({
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as SupabaseImportRequestBody;
+    const requestBody = (await request.json()) as SupabaseImportRequestBody;
     const checkedAt = new Date().toISOString();
-    const execute = body.execute === true;
-    const includePayload = body.includePayload === true;
+    const execute = requestBody.execute === true;
+    const includePayload = requestBody.includePayload === true;
     const environmentStatus = getSupabaseRestImportEnvironmentStatus();
-    const workspaceId = parseStringField(body.workspaceId, "workspaceId");
-    const ownerUserId = parseStringField(body.ownerUserId, "ownerUserId");
-    const backup = parseWorkspaceBackupForImport(body);
+    const workspaceId = parseStringField(
+      requestBody.workspaceId,
+      "workspaceId",
+    );
+    const ownerUserId = parseStringField(
+      requestBody.ownerUserId,
+      "ownerUserId",
+    );
+    const backup = parseWorkspaceBackupForImport(requestBody);
     const dryRun = createSupabaseImportDryRun(backup);
     const plan = createSupabaseImporterPlan(dryRun, {
       ownerUserId,
@@ -362,7 +368,7 @@ export async function POST(request: Request) {
         });
       }
 
-      if (body.confirmation !== SUPABASE_IMPORT_CONFIRMATION) {
+      if (requestBody.confirmation !== SUPABASE_IMPORT_CONFIRMATION) {
         const error = `confirmation must equal ${SUPABASE_IMPORT_CONFIRMATION}.`;
 
         return createSupabaseImportBlockedResponse({

@@ -336,12 +336,12 @@ export async function POST(request: Request) {
     );
     const workspaceBackup = parseWorkspaceBackupForImport(requestBody);
     const importDryRun = createSupabaseImportDryRun(workspaceBackup);
-    const plan = createSupabaseImporterPlan(importDryRun, {
+    const importPlan = createSupabaseImporterPlan(importDryRun, {
       ownerUserId,
       workspaceId,
     });
-    const planValidation = validateSupabaseImportExecutionPlan(plan);
-    const insertRequests = getSupabaseImportInsertRequests(plan);
+    const planValidation = validateSupabaseImportExecutionPlan(importPlan);
+    const insertRequests = getSupabaseImportInsertRequests(importPlan);
     const preflightInsertOrder = summarizeInsertRequests(
       insertRequests,
       includePayload,
@@ -350,7 +350,8 @@ export async function POST(request: Request) {
       insertRequests,
       false,
     );
-    const adapterContractText = buildSupabaseImporterAdapterContractText(plan);
+    const adapterContractText =
+      buildSupabaseImporterAdapterContractText(importPlan);
 
     if (execute) {
       if (!environmentStatus.executionEnabled) {
@@ -428,7 +429,7 @@ export async function POST(request: Request) {
         supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
       });
       const executionResult = await runSupabaseImportExecutionPlan(
-        plan,
+        importPlan,
         adapter,
       );
       const executionResultSummary: SupabaseImportRouteResultSummary = {
@@ -465,12 +466,12 @@ export async function POST(request: Request) {
       warnings: importDryRun.warningItems,
     };
     const preflightPlanSummary = {
-      archiveTraceFields: plan.archiveTraceFields.length,
-      generatedUuidCount: plan.generatedUuidCount,
-      ownerUserId: plan.ownerUserId,
-      totalRows: plan.totalRows,
-      unresolvedPendingReferences: plan.unresolvedPendingReferences,
-      workspaceId: plan.workspaceId,
+      archiveTraceFields: importPlan.archiveTraceFields.length,
+      generatedUuidCount: importPlan.generatedUuidCount,
+      ownerUserId: importPlan.ownerUserId,
+      totalRows: importPlan.totalRows,
+      unresolvedPendingReferences: importPlan.unresolvedPendingReferences,
+      workspaceId: importPlan.workspaceId,
     };
 
     return NextResponse.json({

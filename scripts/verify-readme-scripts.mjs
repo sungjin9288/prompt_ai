@@ -215,7 +215,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /checks that the execute request template keeps the exact execute JSON\s+payload, required preconditions, and post-import follow-up checks together/,
+  /checks that the execute request template keeps the server\/operator\s+context, exact execute JSON payload, execution-window preconditions, and\s+post-import follow-up checks together/,
   "README should document the data-management Supabase execute request template verification scope",
 );
 assert.match(

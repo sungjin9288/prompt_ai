@@ -499,8 +499,9 @@ URL, method, headers, JSON body, success count, and failure response message
 through a local fetch stub. It also checks that the import route returns explicit execute-gate and validation-blocked responses before any write adapter can run.
 For allowed execute responses, it checks that the route returns the execution
 result summary and embeds the same result in the route audit artifact.
-It also checks that the execute request template keeps the exact execute JSON
-payload, required preconditions, and post-import follow-up checks together.
+It also checks that the execute request template keeps the server/operator
+context, exact execute JSON payload, execution-window preconditions, and
+post-import follow-up checks together.
 It also checks that the execution guard checklist keeps every no-go condition
 and required post-execution action together.
 It also checks that the post-import evidence record keeps identity, required

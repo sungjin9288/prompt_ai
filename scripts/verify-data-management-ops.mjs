@@ -1598,6 +1598,38 @@ assertDataMatches(
   /function buildSupabaseImportExecutionRequestTemplateText\(\{[\s\S]*?backupFingerprint[\s\S]*?ownerUserId[\s\S]*?workspaceId[\s\S]*?# Prompt AI Studio Supabase Import Execute Request Template[\s\S]*?trusted server-side\/operator context[\s\S]*?JSON\.stringify\([\s\S]*?backupJson: "<paste validated Prompt AI Studio backup JSON here>"[\s\S]*?confirmation: "RUN_SUPABASE_IMPORT"[\s\S]*?execute: true[\s\S]*?includePayload: false[\s\S]*?ownerUserId[\s\S]*?workspaceId[\s\S]*?Required preconditions[\s\S]*?backupFingerprint: \$\{backupFingerprint \|\| "not provided"\}[\s\S]*?SUPABASE_IMPORT_EXECUTION_ENABLED=true[\s\S]*?NEXT_PUBLIC_SUPABASE_URL[\s\S]*?SUPABASE_SERVICE_ROLE_KEY[\s\S]*?API preflight returned validation `ok`[\s\S]*?Migration rehearsal report has no unresolved blockers[\s\S]*?Immediate follow-up[\s\S]*?SUPABASE_IMPORT_EXECUTION_ENABLED=false[\s\S]*?Copy the route audit artifact[\s\S]*?Run row count verification SQL[\s\S]*?Run relationship verification SQL[\s\S]*?Run pending ID audit SQL[\s\S]*?Run RLS owner access audit SQL[\s\S]*?Complete authenticated RLS smoke test/,
   "Data execution request template should include the exact execute payload, preconditions, and post-import follow-up checks",
 );
+assertFileIncludesInOrder(
+  dataSource,
+  [
+    "function buildSupabaseImportExecutionRequestTemplateText",
+    "# Prompt AI Studio Supabase Import Execute Request Template",
+    "Use this only from a trusted server-side/operator context after rehearsal has passed.",
+    "```json",
+    "JSON.stringify",
+    "backupJson: \"<paste validated Prompt AI Studio backup JSON here>\"",
+    "confirmation: \"RUN_SUPABASE_IMPORT\"",
+    "execute: true",
+    "includePayload: false",
+    "ownerUserId",
+    "workspaceId",
+    "## Required preconditions",
+    "backupFingerprint: ${backupFingerprint || \"not provided\"}",
+    "`SUPABASE_IMPORT_EXECUTION_ENABLED=true` is set only in the server environment for the execution window.",
+    "`NEXT_PUBLIC_SUPABASE_URL` points to the target project.",
+    "`SUPABASE_SERVICE_ROLE_KEY` is configured server-side and is not exposed in browser/public env.",
+    "API preflight returned validation `ok` for the same backup/workspace/owner IDs.",
+    "Migration rehearsal report has no unresolved blockers.",
+    "## Immediate follow-up",
+    "Set `SUPABASE_IMPORT_EXECUTION_ENABLED=false` immediately after execution.",
+    "Copy the route audit artifact from the execution response.",
+    "Run row count verification SQL.",
+    "Run relationship verification SQL.",
+    "Run pending ID audit SQL.",
+    "Run RLS owner access audit SQL.",
+    "Complete authenticated RLS smoke test.",
+  ],
+  "Data execution request template should keep the server/operator context, exact execute JSON payload, execution-window preconditions, and post-import follow-up checks together",
+);
 
 assertDataMatches(
   /async function handleCopySupabaseImportExecutionRequestTemplate\(\)[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const templateText = buildSupabaseImportExecutionRequestTemplateText\(\{[\s\S]*?copyDataText\([\s\S]*?templateText[\s\S]*?Supabase import 실행 요청 템플릿을 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportExecutionRequestTemplateManualCopyText\(\{[\s\S]*?backupFingerprint[\s\S]*?ownerUserId[\s\S]*?templateText[\s\S]*?workspaceId/,

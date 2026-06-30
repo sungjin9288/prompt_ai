@@ -340,7 +340,7 @@ export async function POST(request: Request) {
       ownerUserId,
       workspaceId,
     });
-    const validation = validateSupabaseImportExecutionPlan(plan);
+    const planValidation = validateSupabaseImportExecutionPlan(plan);
     const insertRequests = getSupabaseImportInsertRequests(plan);
     const preflightInsertOrder = summarizeInsertRequests(
       insertRequests,
@@ -366,7 +366,7 @@ export async function POST(request: Request) {
           httpStatus: 403,
           insertOrder: operatorInsertOrder,
           status: "execution-disabled",
-          validation,
+          validation: planValidation,
         });
       }
 
@@ -382,7 +382,7 @@ export async function POST(request: Request) {
           httpStatus: 400,
           insertOrder: operatorInsertOrder,
           status: "confirmation-required",
-          validation,
+          validation: planValidation,
         });
       }
 
@@ -402,11 +402,11 @@ export async function POST(request: Request) {
           httpStatus: 503,
           insertOrder: operatorInsertOrder,
           status: "environment-incomplete",
-          validation,
+          validation: planValidation,
         });
       }
 
-      if (!validation.ok) {
+      if (!planValidation.ok) {
         const error =
           "Supabase import execution plan has validation blockers.";
 
@@ -419,7 +419,7 @@ export async function POST(request: Request) {
           httpStatus: 422,
           insertOrder: operatorInsertOrder,
           status: "validation-blocked",
-          validation,
+          validation: planValidation,
         });
       }
 
@@ -449,16 +449,16 @@ export async function POST(request: Request) {
           requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
           result: executionResultSummary,
           status: executionResult.status,
-          validation,
+          validation: planValidation,
         }),
         environment: environmentStatus,
         result: executionResultSummary,
         status: executionResult.status,
-        validation,
+        validation: planValidation,
       });
     }
 
-    const preflightStatus = validation.ok ? "ready" : "blocked";
+    const preflightStatus = planValidation.ok ? "ready" : "blocked";
     const preflightDryRunSummary = {
       batches: dryRun.batches.length,
       totalRows: dryRun.totalRows,
@@ -482,14 +482,14 @@ export async function POST(request: Request) {
         insertOrder: preflightInsertOrder,
         requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
         status: preflightStatus,
-        validation,
+        validation: planValidation,
       }),
       dryRun: preflightDryRunSummary,
       insertOrder: preflightInsertOrder,
       requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
       plan: preflightPlanSummary,
       status: preflightStatus,
-      validation,
+      validation: planValidation,
     });
   } catch (error) {
     return NextResponse.json(

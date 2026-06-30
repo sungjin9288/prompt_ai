@@ -2890,7 +2890,7 @@ assertFileIncludesInOrder(
     "      ownerUserId,",
     "      workspaceId,",
     "    });",
-    "    const validation = validateSupabaseImportExecutionPlan(plan);",
+    "    const planValidation = validateSupabaseImportExecutionPlan(plan);",
     "    const insertRequests = getSupabaseImportInsertRequests(plan);",
     "    const preflightInsertOrder = summarizeInsertRequests(",
     "      insertRequests,",
@@ -2929,7 +2929,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /if \(execute\) \{[\s\S]*?if \(!environmentStatus\.executionEnabled\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 403[\s\S]*?status: "execution-disabled"[\s\S]*?if \(requestBody\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 400[\s\S]*?status: "confirmation-required"[\s\S]*?if \([\s\S]*?!environmentStatus\.supabaseUrlConfigured[\s\S]*?!environmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 503[\s\S]*?status: "environment-incomplete"[\s\S]*?if \(!validation\.ok\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 422[\s\S]*?status: "validation-blocked"[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
+  /if \(execute\) \{[\s\S]*?if \(!environmentStatus\.executionEnabled\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 403[\s\S]*?status: "execution-disabled"[\s\S]*?if \(requestBody\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 400[\s\S]*?status: "confirmation-required"[\s\S]*?if \([\s\S]*?!environmentStatus\.supabaseUrlConfigured[\s\S]*?!environmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 503[\s\S]*?status: "environment-incomplete"[\s\S]*?if \(!planValidation\.ok\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 422[\s\S]*?status: "validation-blocked"[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
   "Supabase import route should check execution enabled, confirmation, env readiness, and validation before constructing the write adapter",
 );
 assertFileIncludesInOrder(
@@ -2949,7 +2949,7 @@ assertFileIncludesInOrder(
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 503,",
     '          status: "environment-incomplete",',
-    "      if (!validation.ok) {",
+    "      if (!planValidation.ok) {",
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 422,",
     '          status: "validation-blocked",',
@@ -3015,7 +3015,7 @@ const supabaseImportRouteExecuteBlockerResponses = [
     status: '          status: "environment-incomplete",',
   },
   {
-    branch: "      if (!validation.ok) {",
+    branch: "      if (!planValidation.ok) {",
     httpStatus: "          httpStatus: 422,",
     status: '          status: "validation-blocked",',
   },
@@ -3035,7 +3035,7 @@ for (const response of supabaseImportRouteExecuteBlockerResponses) {
       response.httpStatus,
       "          insertOrder: operatorInsertOrder,",
       response.status,
-      "          validation,",
+      "          validation: planValidation,",
     ],
     `Supabase import route should return a complete operator payload for ${response.status} execute responses`,
   );
@@ -3148,7 +3148,7 @@ assert.match(
 assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
-    '    const preflightStatus = validation.ok ? "ready" : "blocked";',
+    '    const preflightStatus = planValidation.ok ? "ready" : "blocked";',
     "    const preflightDryRunSummary = {",
     "      batches: dryRun.batches.length,",
     "      totalRows: dryRun.totalRows,",
@@ -3171,14 +3171,14 @@ assertFileIncludesInOrder(
     "        insertOrder: preflightInsertOrder,",
     "        requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
     "        status: preflightStatus,",
-    "        validation,",
+    "        validation: planValidation,",
     "      }),",
     "      dryRun: preflightDryRunSummary,",
     "      insertOrder: preflightInsertOrder,",
     "      requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
     "      plan: preflightPlanSummary,",
     "      status: preflightStatus,",
-    "      validation,",
+    "      validation: planValidation,",
     "    });",
   ],
   "Supabase import route preflight response should return dry-run metrics, insert order, plan identity, required confirmation, audit artifact, and validation together",

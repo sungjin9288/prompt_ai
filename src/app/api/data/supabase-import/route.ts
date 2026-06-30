@@ -68,13 +68,13 @@ function parseWorkspaceBackupForImport(requestBody: SupabaseImportRequestBody) {
     throw new Error("backup.data is required.");
   }
 
-  const data = backup.data;
+  const backupData = backup.data;
   const hasRequiredData =
-    isRecord(data.userProfile) &&
-    isRecord(data.companyProfile) &&
-    Array.isArray(data.prompts) &&
-    Array.isArray(data.memories) &&
-    Array.isArray(data.skills);
+    isRecord(backupData.userProfile) &&
+    isRecord(backupData.companyProfile) &&
+    Array.isArray(backupData.prompts) &&
+    Array.isArray(backupData.memories) &&
+    Array.isArray(backupData.skills);
 
   if (!hasRequiredData) {
     throw new Error(
@@ -82,19 +82,21 @@ function parseWorkspaceBackupForImport(requestBody: SupabaseImportRequestBody) {
     );
   }
 
-  const normalizedData = {
-    companyProfile: data.companyProfile,
-    deletedPrompts: Array.isArray(data.deletedPrompts) ? data.deletedPrompts : [],
-    memories: data.memories,
-    prompts: data.prompts,
-    skills: data.skills,
-    userProfile: data.userProfile,
+  const normalizedBackupData = {
+    companyProfile: backupData.companyProfile,
+    deletedPrompts: Array.isArray(backupData.deletedPrompts)
+      ? backupData.deletedPrompts
+      : [],
+    memories: backupData.memories,
+    prompts: backupData.prompts,
+    skills: backupData.skills,
+    userProfile: backupData.userProfile,
   } as WorkspaceBackup["data"];
 
   return {
     app: "prompt-ai-studio",
-    counts: normalizeBackupCounts(normalizedData),
-    data: normalizedData,
+    counts: normalizeBackupCounts(normalizedBackupData),
+    data: normalizedBackupData,
     exportedAt:
       typeof backup.exportedAt === "string"
         ? backup.exportedAt
@@ -129,16 +131,16 @@ function countNestedArrayRows(
 }
 
 function normalizeBackupCounts(
-  data: WorkspaceBackup["data"],
+  backupData: WorkspaceBackup["data"],
 ): WorkspaceBackup["counts"] {
   return {
-    deletedPrompts: data.deletedPrompts.length,
-    feedback: countNestedArrayRows(data.prompts, "feedback"),
-    memories: data.memories.length,
-    promptVersions: countNestedArrayRows(data.prompts, "versions"),
-    prompts: data.prompts.length,
+    deletedPrompts: backupData.deletedPrompts.length,
+    feedback: countNestedArrayRows(backupData.prompts, "feedback"),
+    memories: backupData.memories.length,
+    promptVersions: countNestedArrayRows(backupData.prompts, "versions"),
+    prompts: backupData.prompts.length,
     skillRuns: 0,
-    skills: data.skills.length,
+    skills: backupData.skills.length,
   };
 }
 

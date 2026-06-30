@@ -524,6 +524,9 @@ copy actions in the operator review order.
 It also checks that the execution packet next-action memo keeps identity,
 manifest summary, waiting detail, copy actions, next action, and the
 non-execution guardrail in memo order.
+It also checks that the API preflight report keeps status, validation,
+dry-run metrics, UUID metrics, blockers, insert order, and no-write guard
+together.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

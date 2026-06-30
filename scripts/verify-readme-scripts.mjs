@@ -215,6 +215,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /For execute=false preflight responses, it checks that dry-run metrics, insert\s+order, plan identity, required confirmation, route audit artifact, adapter\s+contract, status, and validation stay in the same no-write response/,
+  "README should document the data-management Supabase no-write preflight response payload scope",
+);
+assert.match(
+  readme,
   /checks that the route returns the execution\s+result summary and embeds result status, row totals, failed table, and per-table\s+inserted\/expected rows in the route audit artifact/,
   "README should document the data-management Supabase execute result verification scope",
 );

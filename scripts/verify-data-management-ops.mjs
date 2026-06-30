@@ -2895,6 +2895,41 @@ assert.match(
   /const result = await runSupabaseImportExecutionPlan\(plan, adapter\);[\s\S]*const resultSummary = \{[\s\S]*completedRows: result\.completedRows[\s\S]*failedTable: result\.failedTable[\s\S]*status: result\.status[\s\S]*tableResults: result\.tableResults[\s\S]*totalRows: result\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*environment: environmentStatus[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*validation/,
   "Supabase import route should return the execute result summary and include the same result in the audit artifact",
 );
+assertFileIncludesInOrder(
+  supabaseImportRouteSource,
+  [
+    "    return NextResponse.json({",
+    "      adapterContractText,",
+    "      auditArtifactText: buildSupabaseImportRouteAuditArtifactText({",
+    "        checkedAt,",
+    "        environment: environmentStatus,",
+    "        execute,",
+    "        insertOrder: summarizedInsertOrder,",
+    "        requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
+    '        status: validation.ok ? "ready" : "blocked",',
+    "        validation,",
+    "      }),",
+    "      dryRun: {",
+    "        batches: dryRun.batches.length,",
+    "        totalRows: dryRun.totalRows,",
+    "        warnings: dryRun.warningItems,",
+    "      },",
+    "      insertOrder: summarizedInsertOrder,",
+    "      requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
+    "      plan: {",
+    "        archiveTraceFields: plan.archiveTraceFields.length,",
+    "        generatedUuidCount: plan.generatedUuidCount,",
+    "        ownerUserId: plan.ownerUserId,",
+    "        totalRows: plan.totalRows,",
+    "        unresolvedPendingReferences: plan.unresolvedPendingReferences,",
+    "        workspaceId: plan.workspaceId,",
+    "      },",
+    '      status: validation.ok ? "ready" : "blocked",',
+    "      validation,",
+    "    });",
+  ],
+  "Supabase import route preflight response should return dry-run metrics, insert order, plan identity, required confirmation, audit artifact, and validation together",
+);
 
 let blockedPlanInsertCalls = 0;
 const blockedPlanResult = await runSupabaseImportExecutionPlan(

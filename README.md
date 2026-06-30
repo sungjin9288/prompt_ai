@@ -502,6 +502,9 @@ validation-blocked responses with status codes before any write adapter can run.
 Each blocked execute response must return the adapter contract, route audit
 artifact, environment, error, insert order, required confirmation, status, and
 validation payload together.
+For execute=false preflight responses, it checks that dry-run metrics, insert
+order, plan identity, required confirmation, route audit artifact, adapter
+contract, status, and validation stay in the same no-write response.
 For allowed execute responses, it checks that the route returns the execution
 result summary and embeds result status, row totals, failed table, and per-table
 inserted/expected rows in the route audit artifact.

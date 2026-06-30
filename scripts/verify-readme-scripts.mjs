@@ -280,6 +280,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the row count verification SQL keeps workspace target,\s+expected\/actual count checks, pass\/review status, check-order sorting, and\s+follow-up audit gates together/,
+  "README should document the data-management Supabase row count verification SQL scope",
+);
+assert.match(
+  readme,
   /checks that the route audit artifact fallback keeps identity, route\s+status, execute=false mode, validation, row\/table counts, confirmation gate,\s+and the raw artifact together/,
   "README should document the data-management Supabase route audit artifact fallback verification scope",
 );

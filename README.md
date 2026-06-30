@@ -533,6 +533,9 @@ archive trace gate together.
 It also checks that the pending ID replacement guide keeps replacement scope,
 rewrite gates, local-to-pending map, deleted archive trace IDs, and pending
 audit gate together.
+It also checks that the row count verification SQL keeps workspace target,
+expected/actual count checks, pass/review status, check-order sorting, and
+follow-up audit gates together.
 It also checks that the route audit artifact fallback keeps identity, route
 status, execute=false mode, validation, row/table counts, confirmation gate,
 and the raw artifact together.

@@ -215,6 +215,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that `workspaceId` and `ownerUserId` must be non-empty strings and\s+are trimmed before dry-run and execution planning/,
+  "README should document the data-management Supabase route scope identity verification scope",
+);
+assert.match(
+  readme,
   /checks that the route prepares request body, scope identity, dry-run,\s+execution plan, validation, insert order, and adapter contract before the\s+execute branch/,
   "README should document the data-management Supabase route request preparation verification scope",
 );

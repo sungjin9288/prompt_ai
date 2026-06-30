@@ -502,6 +502,8 @@ validation-blocked responses with status codes before any write adapter can run.
 It also checks that the route accepts `backupJson` or `backup` payloads and
 validates prompt-ai-studio app identity, schema version, and required backup data
 before import planning.
+It also checks that `workspaceId` and `ownerUserId` must be non-empty strings and
+are trimmed before dry-run and execution planning.
 It also checks that the route prepares request body, scope identity, dry-run,
 execution plan, validation, insert order, and adapter contract before the
 execute branch.

@@ -2793,6 +2793,24 @@ assertFileIncludesInOrder(
 assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
+    "function parseStringField(value: unknown, label: string) {",
+    '  if (typeof value !== "string" || !value.trim()) {',
+    "    throw new Error(`${label} is required.`);",
+    "  return value.trim();",
+    '    const workspaceId = parseStringField(body.workspaceId, "workspaceId");',
+    '    const ownerUserId = parseStringField(body.ownerUserId, "ownerUserId");',
+    "    const backup = parseWorkspaceBackupForImport(body);",
+    "    const dryRun = createSupabaseImportDryRun(backup);",
+    "    const plan = createSupabaseImporterPlan(dryRun, {",
+    "      ownerUserId,",
+    "      workspaceId,",
+    "    });",
+  ],
+  "Supabase import route should require trimmed workspace and owner identity before dry-run planning",
+);
+assertFileIncludesInOrder(
+  supabaseImportRouteSource,
+  [
     "export async function POST(request: Request) {",
     "  try {",
     "    const body = (await request.json()) as SupabaseImportRequestBody;",

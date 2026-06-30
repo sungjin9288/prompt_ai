@@ -536,6 +536,9 @@ audit gate together.
 It also checks that the row count verification SQL keeps workspace target,
 expected/actual count checks, pass/review status, check-order sorting, and
 follow-up audit gates together.
+It also checks that the relationship verification SQL keeps workspace CTEs,
+active/deleted relationship checks, issue_count status, check-order sorting,
+and follow-up audit gates together.
 It also checks that the route audit artifact fallback keeps identity, route
 status, execute=false mode, validation, row/table counts, confirmation gate,
 and the raw artifact together.

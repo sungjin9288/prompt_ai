@@ -285,6 +285,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the relationship verification SQL keeps workspace CTEs,\s+active\/deleted relationship checks, issue_count status, check-order sorting,\s+and follow-up audit gates together/,
+  "README should document the data-management Supabase relationship verification SQL scope",
+);
+assert.match(
+  readme,
   /checks that the route audit artifact fallback keeps identity, route\s+status, execute=false mode, validation, row\/table counts, confirmation gate,\s+and the raw artifact together/,
   "README should document the data-management Supabase route audit artifact fallback verification scope",
 );

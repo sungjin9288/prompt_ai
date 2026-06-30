@@ -530,6 +530,9 @@ together.
 It also checks that the route audit artifact fallback keeps identity, route
 status, execute=false mode, validation, row/table counts, confirmation gate,
 and the raw artifact together.
+It also checks that the import execution plan keeps the local-only guard,
+identity summary, acceptance gates, pending references, archive trace, UUID
+map, and insert payload batches together.
 It also checks that the importer adapter contract keeps the adapter shape,
 validation, insert order, server-only gate, and post-import audit gate together.
 `npm run verify:library-summary` checks that the Library detail panel keeps the

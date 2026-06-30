@@ -26,6 +26,10 @@ const supabaseImportDryRunSource = readFileSync(
   "src/lib/data/supabase-import-dry-run.ts",
   "utf8",
 );
+const supabaseImportExecutionPlanSource = readFileSync(
+  "src/lib/data/supabase-import-execution-plan.ts",
+  "utf8",
+);
 const supabaseImporterSource = readFileSync(
   "src/lib/data/supabase-importer.ts",
   "utf8",
@@ -807,6 +811,65 @@ assertDataMatches(
 assertDataMatches(
   /function buildSupabaseImportExecutionPlanManualCopyText\(\{[\s\S]*?plan: ReturnType<typeof createSupabaseImporterPlan>[\s\S]*?planText: string[\s\S]*?# Prompt AI Studio Supabase Import Execution Plan[\s\S]*?## 실행 계획 식별[\s\S]*?workspace_id: \$\{plan\.workspaceId\}[\s\S]*?owner_user_id: \$\{plan\.ownerUserId\}[\s\S]*?계획 길이: \$\{formatJsonLength\(planText\)\}[\s\S]*?## UUID 치환 요약[\s\S]*?Total rows: \$\{plan\.totalRows\}[\s\S]*?Insert batches: \$\{plan\.batches\.length\}[\s\S]*?UUID map entries: \$\{plan\.generatedUuidCount\}[\s\S]*?Archive trace fields: \$\{plan\.archiveTraceFields\.length\}[\s\S]*?Unresolved pending references: \$\{plan\.unresolvedPendingReferences\.length\}[\s\S]*?## 실행 전 acceptance gate[\s\S]*?No pending-\* value should remain[\s\S]*?original local IDs and prompt_snapshot JSON must stay traceable[\s\S]*?workspace_members\.user_id must match[\s\S]*?does not connect to Supabase or write data[\s\S]*?row count, relationship, pending ID, and RLS owner access audits[\s\S]*?## Import execution plan[\s\S]*?planText/,
   "Data import execution plan manual fallback should prepend workspace identity, UUID replacement counts, trace counts, pending counts, acceptance gates, local-only guard, audit gate, and plan length",
+);
+assertFileIncludesInOrder(
+  dataSource,
+  [
+    "function buildSupabaseImportExecutionPlanManualCopyText",
+    "# Prompt AI Studio Supabase Import Execution Plan",
+    "## 실행 계획 식별",
+    "workspace_id: ${plan.workspaceId}",
+    "owner_user_id: ${plan.ownerUserId}",
+    "계획 길이: ${formatJsonLength(planText)}",
+    "## UUID 치환 요약",
+    "Total rows: ${plan.totalRows}",
+    "Insert batches: ${plan.batches.length}",
+    "UUID map entries: ${plan.generatedUuidCount}",
+    "Archive trace fields: ${plan.archiveTraceFields.length}",
+    "Unresolved pending references: ${plan.unresolvedPendingReferences.length}",
+    "## 실행 전 acceptance gate",
+    "No pending-* value should remain in the execution payload.",
+    "deleted_prompt_assets original local IDs and prompt_snapshot JSON must stay traceable.",
+    "workspaces.owner_user_id and workspace_members.user_id must match the target Supabase auth user.",
+    "This plan is generated locally and does not connect to Supabase or write data.",
+    "After insert, run row count, relationship, pending ID, and RLS owner access audits.",
+    "## Import execution plan",
+    "planText",
+  ],
+  "Data import execution plan manual fallback should keep identity, UUID counts, trace counts, acceptance gates, local-only guard, audit gate, and raw plan together",
+);
+assertFileIncludesInOrder(
+  supabaseImportExecutionPlanSource,
+  [
+    "export function buildSupabaseImportExecutionPlanText",
+    "const plan = createSupabaseImportExecutionPlan(dryRun, options);",
+    "const insertPayloadBatches = plan.batches.map",
+    "# Prompt AI Studio Supabase Import Execution Plan",
+    "This document is generated locally. It does not connect to Supabase or write data.",
+    "## Summary",
+    "workspaceId: ${plan.workspaceId}",
+    "ownerUserId: ${plan.ownerUserId}",
+    "totalRows: ${plan.totalRows}",
+    "batches: ${plan.batches.length}",
+    "UUID map entries: ${plan.generatedUuidCount}",
+    "archive trace fields preserved: ${plan.archiveTraceFields.length}",
+    "unresolved pending references: ${plan.unresolvedPendingReferences.length}",
+    "## Acceptance checks before insert",
+    "No `pending-*` value remains in the execution payload.",
+    "`deleted_prompt_assets.original_prompt_asset_id` stays as the original local prompt ID.",
+    "`deleted_prompt_assets.prompt_snapshot` stays as the original deleted prompt JSON.",
+    "`workspaces.owner_user_id` and `workspace_members.user_id` match the target Supabase auth user.",
+    "After insert, run row count verification, relationship verification, pending ID audit, and RLS owner access audit.",
+    "## Unresolved pending references",
+    "plan.unresolvedPendingReferences.map",
+    "## Archive trace fields",
+    "plan.archiveTraceFields.map",
+    "## UUID map",
+    "JSON.stringify(plan.uuidByPendingId, null, 2)",
+    "## Insert payload batches",
+    "JSON.stringify(insertPayloadBatches, null, 2)",
+  ],
+  "Supabase import execution plan should keep local-only guard, identity summary, acceptance gates, pending references, archive trace, UUID map, and insert payload batches in plan order",
 );
 
 assertDataMatches(

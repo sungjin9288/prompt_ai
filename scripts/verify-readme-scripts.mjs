@@ -275,6 +275,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the import execution plan keeps the local-only guard,\s+identity summary, acceptance gates, pending references, archive trace, UUID\s+map, and insert payload batches together/,
+  "README should document the data-management Supabase import execution plan verification scope",
+);
+assert.match(
+  readme,
   /checks that the importer adapter contract keeps the adapter shape,\s+validation, insert order, server-only gate, and post-import audit gate together/,
   "README should document the data-management Supabase importer adapter contract verification scope",
 );

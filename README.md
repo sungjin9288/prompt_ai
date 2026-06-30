@@ -513,6 +513,9 @@ and sign-off together.
 It also checks that the migration rehearsal report keeps preflight identity,
 readiness checklist, acceptance gates, insert order, blockers, and required
 artifacts together.
+It also checks that the execution readiness decision keeps decision inputs,
+operator sequence, blockers, runtime warnings, preflight blockers, and insert
+order together.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

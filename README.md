@@ -527,6 +527,9 @@ non-execution guardrail in memo order.
 It also checks that the API preflight report keeps status, validation,
 dry-run metrics, UUID metrics, blockers, insert order, and no-write guard
 together.
+It also checks that the route audit artifact fallback keeps identity, route
+status, execute=false mode, validation, row/table counts, confirmation gate,
+and the raw artifact together.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

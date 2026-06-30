@@ -768,6 +768,32 @@ assertDataMatches(
   /function buildSupabaseImportApiAuditArtifactManualCopyText\(\{[\s\S]*?artifactText: string[\s\S]*?response: SupabaseImportApiPreflightResponse[\s\S]*?# Prompt AI Studio Supabase Import Route Audit Artifact[\s\S]*?## Audit artifact 식별[\s\S]*?확인 시각: \$\{formatBackupDate\([\s\S]*?백업 지문: \$\{backupFingerprint\}[\s\S]*?workspace_id: \$\{workspaceId\}[\s\S]*?owner_user_id: \$\{ownerUserId\}[\s\S]*?Artifact 길이: \$\{formatJsonLength\(artifactText\)\}[\s\S]*?## Route audit 요약[\s\S]*?Route status: \$\{response\.status\}[\s\S]*?Execute requested: false \(API preflight\)[\s\S]*?Validation:[\s\S]*?Validation blockers:[\s\S]*?Dry-run rows:[\s\S]*?Insert tables:[\s\S]*?Required confirmation:[\s\S]*?## Route audit artifact[\s\S]*?artifactText/,
   "Data API route audit artifact manual fallback should prepend backup/workspace identity, route status, preflight execution mode, validation, row/table counts, confirmation gate, and artifact length",
 );
+assertFileIncludesInOrder(
+  dataSource,
+  [
+    "function buildSupabaseImportApiAuditArtifactManualCopyText",
+    "# Prompt AI Studio Supabase Import Route Audit Artifact",
+    "## Audit artifact 식별",
+    "확인 시각: ${formatBackupDate(checkedAt || new Date().toISOString())}",
+    "백업 지문: ${backupFingerprint}",
+    "workspace_id: ${workspaceId}",
+    "owner_user_id: ${ownerUserId}",
+    "Artifact 길이: ${formatJsonLength(artifactText)}",
+    "## Route audit 요약",
+    "Route status: ${response.status}",
+    "Execute requested: false (API preflight)",
+    "Validation: ${response.validation?.ok ? \"ok\" : \"blocked\"}",
+    "Validation blockers: ${response.validation?.blockers.length ?? 0}",
+    "Dry-run rows: ${",
+    "response.dryRun?.totalRows ?? response.plan?.totalRows ?? 0",
+    "Insert tables: ${response.insertOrder?.length ?? 0}",
+    "Required confirmation: ${",
+    "response.requiredConfirmation || \"not provided\"",
+    "## Route audit artifact",
+    "artifactText",
+  ],
+  "Data API route audit artifact fallback should keep identity, route status, execute=false mode, validation, row/table counts, confirmation gate, and raw artifact together",
+);
 
 assertDataMatches(
   /async function handleCopySupabaseImportApiAuditArtifact\(\)[\s\S]*?const artifactText = preflightData\.auditArtifactText[\s\S]*?const backupFingerprint = importBackupFingerprint[\s\S]*?const checkedAt = supabaseImportApiPreflight\.checkedAt[\s\S]*?const ownerUserId = verificationOwnerUserId\.trim\(\)[\s\S]*?const workspaceId = verificationWorkspaceId\.trim\(\)[\s\S]*?copyDataText\([\s\S]*?artifactText[\s\S]*?Supabase import API audit artifact를 클립보드에 복사했습니다[\s\S]*?buildSupabaseImportApiAuditArtifactManualCopyText\(\{[\s\S]*?artifactText[\s\S]*?backupFingerprint[\s\S]*?checkedAt[\s\S]*?ownerUserId[\s\S]*?response: preflightData[\s\S]*?workspaceId/,

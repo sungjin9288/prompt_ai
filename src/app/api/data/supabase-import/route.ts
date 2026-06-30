@@ -219,6 +219,27 @@ function buildSupabaseImportRouteAuditArtifactText({
   status: string;
   validation: SupabaseImportPlanValidation;
 }) {
+  const validationStatus = validation.ok ? "ok" : "blocked";
+  const validationBlockerLines =
+    validation.blockers.length > 0
+      ? validation.blockers.map(formatSupabaseImportRouteValidationBlocker)
+      : ["- none"];
+  const insertOrderLines =
+    insertOrder.length > 0
+      ? insertOrder.map(formatSupabaseImportRouteInsertOrderItem)
+      : ["- none"];
+  const executionResultLines = result
+    ? [
+        `- status: ${result.status}`,
+        `- completedRows: ${result.completedRows}`,
+        `- totalRows: ${result.totalRows}`,
+        `- failedTable: ${result.failedTable || "none"}`,
+        "",
+        "### Table results",
+        ...result.tableResults.map(formatSupabaseImportRouteTableResult),
+      ]
+    : ["- not executed"];
+
   return [
     "# Prompt AI Studio Supabase Import Route Audit",
     "",
@@ -226,7 +247,7 @@ function buildSupabaseImportRouteAuditArtifactText({
     `- route: POST /api/data/supabase-import`,
     `- executeRequested: ${execute ? "true" : "false"}`,
     `- status: ${status}`,
-    `- validation: ${validation.ok ? "ok" : "blocked"}`,
+    `- validation: ${validationStatus}`,
     `- executionEnabled: ${environment.executionEnabled}`,
     `- supabaseUrlConfigured: ${environment.supabaseUrlConfigured}`,
     `- serviceRoleKeyConfigured: ${environment.serviceRoleKeyConfigured}`,
@@ -234,27 +255,13 @@ function buildSupabaseImportRouteAuditArtifactText({
     ...(error ? [`- error: ${error}`] : []),
     "",
     "## Validation blockers",
-    ...(validation.blockers.length > 0
-      ? validation.blockers.map(formatSupabaseImportRouteValidationBlocker)
-      : ["- none"]),
+    ...validationBlockerLines,
     "",
     "## Insert order",
-    ...(insertOrder.length > 0
-      ? insertOrder.map(formatSupabaseImportRouteInsertOrderItem)
-      : ["- none"]),
+    ...insertOrderLines,
     "",
     "## Execution result",
-    ...(result
-      ? [
-          `- status: ${result.status}`,
-          `- completedRows: ${result.completedRows}`,
-          `- totalRows: ${result.totalRows}`,
-          `- failedTable: ${result.failedTable || "none"}`,
-          "",
-          "### Table results",
-          ...result.tableResults.map(formatSupabaseImportRouteTableResult),
-        ]
-      : ["- not executed"]),
+    ...executionResultLines,
     "",
     "## Secret handling",
     "- This artifact intentionally contains only configuration booleans, not Supabase keys or raw secret values.",

@@ -3027,9 +3027,10 @@ assertFileIncludesInOrder(
   [
     "function formatSupabaseImportRouteValidationBlocker(blocker: string) {",
     "  return `- ${blocker}`;",
-    '"## Validation blockers"',
+    "  const validationBlockerLines =",
     "      ? validation.blockers.map(formatSupabaseImportRouteValidationBlocker)",
-    '      : ["- none"]),',
+    '"## Validation blockers"',
+    "    ...validationBlockerLines,",
   ],
   "Supabase import route audit artifact should format validation blockers through the route helper",
 );
@@ -3041,15 +3042,16 @@ assertFileIncludesInOrder(
     "function formatSupabaseImportRouteInsertOrderItem(",
     "  item: SupabaseImportRouteInsertOrderItem,",
     "  return `- ${item.order}. ${item.table}: ${item.rowCount} rows / dependency: ${item.dependency}`;",
-    '"## Insert order"',
+    "  const insertOrderLines =",
     "      ? insertOrder.map(formatSupabaseImportRouteInsertOrderItem)",
-    '      : ["- none"]),',
+    '"## Insert order"',
+    "    ...insertOrderLines,",
   ],
   "Supabase import route audit artifact should format insert order rows through the route helper",
 );
 assert.match(
   supabaseImportRouteSource,
-  /function formatSupabaseImportRouteTableResult[\s\S]*tableResult\.table[\s\S]*tableResult\.status[\s\S]*tableResult\.insertedRows[\s\S]*tableResult\.expectedRows[\s\S]*## Execution result[\s\S]*result[\s\S]*status: \$\{result\.status\}[\s\S]*completedRows: \$\{result\.completedRows\}[\s\S]*totalRows: \$\{result\.totalRows\}[\s\S]*failedTable: \$\{result\.failedTable \|\| "none"\}[\s\S]*Table results[\s\S]*result\.tableResults\.map\(formatSupabaseImportRouteTableResult\)/,
+  /function formatSupabaseImportRouteTableResult[\s\S]*tableResult\.table[\s\S]*tableResult\.status[\s\S]*tableResult\.insertedRows[\s\S]*tableResult\.expectedRows[\s\S]*const executionResultLines = result[\s\S]*status: \$\{result\.status\}[\s\S]*completedRows: \$\{result\.completedRows\}[\s\S]*totalRows: \$\{result\.totalRows\}[\s\S]*failedTable: \$\{result\.failedTable \|\| "none"\}[\s\S]*Table results[\s\S]*result\.tableResults\.map\(formatSupabaseImportRouteTableResult\)[\s\S]*## Execution result[\s\S]*\.\.\.executionResultLines/,
   "Supabase import route audit artifact should include execution result details when a write runs",
 );
 assertFileIncludesInOrder(
@@ -3076,14 +3078,15 @@ assertFileIncludesInOrder(
     "function buildSupabaseImportRouteAuditArtifactText({",
     "  result,",
     "  result?: SupabaseImportRouteResultSummary;",
-    '    "## Execution result",',
-    "    ...(result",
+    "  const executionResultLines = result",
     "`- status: ${result.status}`",
     "`- completedRows: ${result.completedRows}`",
     "`- totalRows: ${result.totalRows}`",
     '`- failedTable: ${result.failedTable || "none"}`',
-    '          "### Table results",',
-    "          ...result.tableResults.map(formatSupabaseImportRouteTableResult),",
+    '"### Table results"',
+    "        ...result.tableResults.map(formatSupabaseImportRouteTableResult),",
+    '    "## Execution result",',
+    "    ...executionResultLines,",
   ],
   "Supabase import route audit artifact should keep execute result status, row totals, failed table, and per-table inserted/expected rows together",
 );

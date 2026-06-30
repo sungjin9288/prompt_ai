@@ -210,6 +210,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /Each blocked execute response must return the adapter contract, route audit\s+artifact, environment, error, insert order, required confirmation, status, and\s+validation payload together/,
+  "README should document the data-management Supabase blocked execute response payload scope",
+);
+assert.match(
+  readme,
   /checks that the route returns the execution\s+result summary and embeds result status, row totals, failed table, and per-table\s+inserted\/expected rows in the route audit artifact/,
   "README should document the data-management Supabase execute result verification scope",
 );

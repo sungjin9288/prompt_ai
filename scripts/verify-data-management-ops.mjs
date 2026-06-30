@@ -2787,6 +2787,59 @@ assertFileIncludesInOrder(
   ],
   "Supabase import route should keep every execute blocker and status code before constructing the write adapter",
 );
+const supabaseImportRouteExecuteBlockerResponses = [
+  {
+    branch: "      if (!environmentStatus.executionEnabled) {",
+    httpStatus: "          { status: 403 },",
+    status: '"execution-disabled"',
+  },
+  {
+    branch: "      if (body.confirmation !== SUPABASE_IMPORT_CONFIRMATION) {",
+    httpStatus: "          { status: 400 },",
+    status: '"confirmation-required"',
+  },
+  {
+    branch: "        !environmentStatus.supabaseUrlConfigured ||",
+    httpStatus: "          { status: 503 },",
+    status: '"environment-incomplete"',
+  },
+  {
+    branch: "      if (!validation.ok) {",
+    httpStatus: "          { status: 422 },",
+    status: '"validation-blocked"',
+  },
+];
+
+for (const response of supabaseImportRouteExecuteBlockerResponses) {
+  assertFileIncludesInOrder(
+    supabaseImportRouteSource,
+    [
+      response.branch,
+      "        return NextResponse.json(",
+      "          {",
+      "            adapterContractText,",
+      "            auditArtifactText: buildSupabaseImportRouteAuditArtifactText({",
+      "              checkedAt,",
+      "              environment: environmentStatus,",
+      "              error,",
+      "              execute,",
+      "              insertOrder: summarizedInsertOrderWithoutPayload,",
+      "              requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
+      `              status: ${response.status},`,
+      "              validation,",
+      "            }),",
+      "            environment: environmentStatus,",
+      "            error,",
+      "            insertOrder: summarizedInsertOrderWithoutPayload,",
+      "            requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
+      `            status: ${response.status},`,
+      "            validation,",
+      "          },",
+      response.httpStatus,
+    ],
+    `Supabase import route should return a complete operator payload for ${response.status} execute responses`,
+  );
+}
 assert.match(
   supabaseImportRouteSource,
   /status: "environment-incomplete"[\s\S]*?requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION[\s\S]*?validation/,

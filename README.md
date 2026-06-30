@@ -499,6 +499,9 @@ URL, method, headers, JSON body, success count, and failure response message
 through a local fetch stub. It also checks that the import route returns explicit
 execution-disabled, confirmation-required, environment-incomplete, and
 validation-blocked responses with status codes before any write adapter can run.
+Each blocked execute response must return the adapter contract, route audit
+artifact, environment, error, insert order, required confirmation, status, and
+validation payload together.
 For allowed execute responses, it checks that the route returns the execution
 result summary and embeds result status, row totals, failed table, and per-table
 inserted/expected rows in the route audit artifact.

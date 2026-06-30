@@ -295,6 +295,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the RLS owner access audit SQL keeps workspace\/owner target\s+context, owner mapping checks, imported row\/archive summary, issue_count\s+status, RLS rollout gate, and app-session smoke follow-up together/,
+  "README should document the data-management Supabase RLS owner access audit SQL scope",
+);
+assert.match(
+  readme,
   /checks that the route audit artifact fallback keeps identity, route\s+status, execute=false mode, validation, row\/table counts, confirmation gate,\s+and the raw artifact together/,
   "README should document the data-management Supabase route audit artifact fallback verification scope",
 );

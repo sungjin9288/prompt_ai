@@ -542,6 +542,9 @@ and follow-up audit gates together.
 It also checks that the pending ID audit SQL keeps workspace CTEs,
 pending-value field checks, issue_count status, UUID rewrite gate, and
 RLS follow-up gate together.
+It also checks that the RLS owner access audit SQL keeps workspace/owner target
+context, owner mapping checks, imported row/archive summary, issue_count
+status, RLS rollout gate, and app-session smoke follow-up together.
 It also checks that the route audit artifact fallback keeps identity, route
 status, execute=false mode, validation, row/table counts, confirmation gate,
 and the raw artifact together.

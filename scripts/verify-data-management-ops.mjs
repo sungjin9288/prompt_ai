@@ -981,6 +981,39 @@ assertManifestMatches(
   /import \{[\s\S]*?formatSupabaseImportPreflightScopeChangeDetails[\s\S]*?formatSupabaseImportPreflightScopeChanges[\s\S]*?getSupabaseImportPreflightScopeChangeDetails[\s\S]*?getSupabaseImportPreflightScopeChanges[\s\S]*?getSupabaseImportPreflightScopeStatus[\s\S]*?from "\.\/supabase-import-preflight-scope";[\s\S]*?function getSupabaseImportExecutionPacketManifestItems\(\{[\s\S]*?backupFingerprint[\s\S]*?ownerUserId[\s\S]*?preflightState[\s\S]*?runtimeState[\s\S]*?sectionCount[\s\S]*?workspaceId[\s\S]*?getSupabaseImportPreflightScopeStatus\(\{[\s\S]*?getSupabaseImportPreflightScopeChanges\(\{[\s\S]*?getSupabaseImportPreflightScopeChangeDetails\(\{[\s\S]*?copyDetail: scopeChangeDetail \|\| undefined[\s\S]*?detail: scopeChangeSummary \|\| undefined[\s\S]*?Execution gate[\s\S]*?Packet sections/,
   "Data execution packet manifest lib should derive short display scope detail, full copy scope detail, validation, runtime, gate, and packet-section readiness",
 );
+assertFileIncludesInOrder(
+  manifestSource,
+  [
+    "export function getSupabaseImportExecutionPacketManifestItems",
+    "const trimmedWorkspaceId = workspaceId.trim();",
+    "const trimmedOwnerUserId = ownerUserId.trim();",
+    "const preflightReady =",
+    "const preflightScopeStatus =",
+    "const preflightCanUse = preflightReady && preflightScopeStatus === \"current\";",
+    "const preflightValidationOk =",
+    "const scopeChanges =",
+    "const scopeChangeDetails =",
+    "const scopeChangeSummary =",
+    "const scopeChangeDetail =",
+    "label: \"Preflight\"",
+    "ready: preflightCanUse",
+    "copyDetail: scopeChangeDetail || undefined",
+    "detail: scopeChangeSummary || undefined",
+    "label: \"Scope\"",
+    "ready: preflightCanUse",
+    "label: \"Validation\"",
+    "ready: preflightValidationOk",
+    "label: \"Runtime\"",
+    "ready: runtimeState.ready",
+    "label: \"Route audit\"",
+    "ready: Boolean(preflightState.data?.auditArtifactText)",
+    "label: \"Execution gate\"",
+    "ready: runtimeState.ready",
+    "label: \"Packet sections\"",
+    "ready: preflightCanUse && runtimeState.ready",
+  ],
+  "Data execution packet manifest items should keep preflight, scope, validation, runtime, audit, execution gate, and packet section readiness in review order",
+);
 
 assertDataMatches(
   /function getSupabaseImportExecutionPacketRuntimeState\([\s\S]*?runtimeData\?\.supabase\.importExecutionEnabled[\s\S]*?formatReleaseGateStage\(runtimeData\.releaseGate\.stage\)[\s\S]*?status: runtimeState\.status/,
@@ -1015,6 +1048,27 @@ assertManifestMatches(
 assertManifestMatches(
   /function getSupabaseImportExecutionPacketCopyActionStatuses\([\s\S]*?action: "대기 항목이 바뀌면 다시 복사해 operator note를 갱신하세요\."[\s\S]*?label: "Next action"[\s\S]*?API preflight를 현재 입력값으로 다시 실행하세요\.[\s\S]*?label: "Manifest"[\s\S]*?runtime readiness를 새로고침하고 current preflight scope를 확인하세요\.[\s\S]*?label: "Controlled packet"[\s\S]*?function formatSupabaseImportExecutionPacketCopyActionStatusLine[\s\S]*?Next:[\s\S]*?action\.action[\s\S]*?function buildSupabaseImportExecutionPacketManifestText\([\s\S]*?detailMode: "copy"[\s\S]*?getSupabaseImportExecutionPacketCopyActionStatuses\(items\)[\s\S]*?## Manifest[\s\S]*?\.\.\.items\.map\(formatSupabaseImportExecutionPacketManifestItemLine\)[\s\S]*?## Waiting items[\s\S]*?waitingItems\.map\(formatSupabaseImportExecutionPacketWaitingItemLine\)[\s\S]*?## Copy actions[\s\S]*?formatSupabaseImportExecutionPacketCopyActionStatusLine[\s\S]*?## Next action[\s\S]*?`\- \$\{nextAction\}`[\s\S]*?## Operator note/,
   "Data execution packet manifest text should include copy-grade stale scope detail and the derived next action before operator guardrails",
+);
+assertFileIncludesInOrder(
+  manifestSource,
+  [
+    "export function getSupabaseImportExecutionPacketCopyActionStatuses",
+    "const scopeReady =",
+    "const runtimeReady =",
+    "const packetSectionsReady =",
+    "대기 항목이 바뀌면 다시 복사해 operator note를 갱신하세요.",
+    "첫 대기 항목과 다음 조치를 복사할 수 있습니다.",
+    "label: \"Next action\"",
+    "manifest를 복사해 실행 패킷 검토 기록에 첨부하세요.",
+    "API preflight를 현재 입력값으로 다시 실행하세요.",
+    "label: \"Manifest\"",
+    "controlled packet을 복사하기 전에 operator review를 완료하세요.",
+    "runtime readiness를 새로고침하고 current preflight scope를 확인하세요.",
+    "label: \"Controlled packet\"",
+    "export function formatSupabaseImportExecutionPacketCopyActionStatusLine",
+    "Next: ${action.action}",
+  ],
+  "Data execution packet copy actions should keep next-action, manifest, and controlled-packet guidance in operator order",
 );
 
 assertDataMatches(

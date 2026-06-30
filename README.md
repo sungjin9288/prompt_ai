@@ -519,6 +519,8 @@ order together.
 It also checks that the controlled execution packet keeps the packet index,
 non-execution guard, secret guard, and every required execution artifact in
 order.
+It also checks that the execution packet manifest keeps readiness items and
+copy actions in the operator review order.
 `npm run verify:library-summary` checks that the Library detail panel keeps the
 selected prompt operation summary, handoff status, source, persistence, and
 chain labels visible.

@@ -539,6 +539,9 @@ follow-up audit gates together.
 It also checks that the relationship verification SQL keeps workspace CTEs,
 active/deleted relationship checks, issue_count status, check-order sorting,
 and follow-up audit gates together.
+It also checks that the pending ID audit SQL keeps workspace CTEs,
+pending-value field checks, issue_count status, UUID rewrite gate, and
+RLS follow-up gate together.
 It also checks that the route audit artifact fallback keeps identity, route
 status, execute=false mode, validation, row/table counts, confirmation gate,
 and the raw artifact together.

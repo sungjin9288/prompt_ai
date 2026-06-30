@@ -290,6 +290,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the pending ID audit SQL keeps workspace CTEs,\s+pending-value field checks, issue_count status, UUID rewrite gate, and\s+RLS follow-up gate together/,
+  "README should document the data-management Supabase pending ID audit SQL scope",
+);
+assert.match(
+  readme,
   /checks that the route audit artifact fallback keeps identity, route\s+status, execute=false mode, validation, row\/table counts, confirmation gate,\s+and the raw artifact together/,
   "README should document the data-management Supabase route audit artifact fallback verification scope",
 );

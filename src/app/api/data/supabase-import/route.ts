@@ -50,25 +50,25 @@ function parseBackupPayload(requestBody: SupabaseImportRequestBody) {
 }
 
 function parseWorkspaceBackupForImport(requestBody: SupabaseImportRequestBody) {
-  const backup = parseBackupPayload(requestBody);
+  const backupPayload = parseBackupPayload(requestBody);
 
-  if (!isRecord(backup)) {
+  if (!isRecord(backupPayload)) {
     throw new Error("backup must be an object.");
   }
 
-  if (backup.app !== "prompt-ai-studio") {
+  if (backupPayload.app !== "prompt-ai-studio") {
     throw new Error("backup.app must be prompt-ai-studio.");
   }
 
-  if (backup.schemaVersion !== 1) {
+  if (backupPayload.schemaVersion !== 1) {
     throw new Error("Only backup schemaVersion 1 is supported.");
   }
 
-  if (!isRecord(backup.data)) {
+  if (!isRecord(backupPayload.data)) {
     throw new Error("backup.data is required.");
   }
 
-  const backupData = backup.data;
+  const backupData = backupPayload.data;
   const hasRequiredBackupData =
     isRecord(backupData.userProfile) &&
     isRecord(backupData.companyProfile) &&
@@ -98,8 +98,8 @@ function parseWorkspaceBackupForImport(requestBody: SupabaseImportRequestBody) {
     counts: normalizeBackupCounts(normalizedBackupData),
     data: normalizedBackupData,
     exportedAt:
-      typeof backup.exportedAt === "string"
-        ? backup.exportedAt
+      typeof backupPayload.exportedAt === "string"
+        ? backupPayload.exportedAt
         : new Date().toISOString(),
     schemaVersion: 1,
   } as WorkspaceBackup;

@@ -205,7 +205,7 @@ assert.match(
 );
 assert.match(
   readme,
-  /checks that the import\s+route returns explicit execute-gate and validation-blocked responses before any\s+write adapter can run/,
+  /checks that the import route returns explicit\s+execution-disabled, confirmation-required, environment-incomplete, and\s+validation-blocked responses with status codes before any write adapter can run/,
   "README should document the data-management Supabase import route gate verification scope",
 );
 assert.match(

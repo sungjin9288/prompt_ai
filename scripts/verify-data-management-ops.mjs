@@ -2761,6 +2761,32 @@ assert.match(
   /if \(execute\) \{[\s\S]*?if \(!environmentStatus\.executionEnabled\) \{[\s\S]*?status: "execution-disabled"[\s\S]*?\{ status: 403 \}[\s\S]*?if \(body\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?status: "confirmation-required"[\s\S]*?\{ status: 400 \}[\s\S]*?if \([\s\S]*?!environmentStatus\.supabaseUrlConfigured[\s\S]*?!environmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?status: "environment-incomplete"[\s\S]*?\{ status: 503 \}[\s\S]*?if \(!validation\.ok\) \{[\s\S]*?status: "validation-blocked"[\s\S]*?\{ status: 422 \}[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
   "Supabase import route should check execution enabled, confirmation, env readiness, and validation before constructing the write adapter",
 );
+assertFileIncludesInOrder(
+  supabaseImportRouteSource,
+  [
+    "    if (execute) {",
+    "      if (!environmentStatus.executionEnabled) {",
+    '              status: "execution-disabled",',
+    '            status: "execution-disabled",',
+    "          { status: 403 },",
+    "      if (body.confirmation !== SUPABASE_IMPORT_CONFIRMATION) {",
+    '              status: "confirmation-required",',
+    '            status: "confirmation-required",',
+    "          { status: 400 },",
+    "        !environmentStatus.supabaseUrlConfigured ||",
+    "        !environmentStatus.serviceRoleKeyConfigured",
+    '              status: "environment-incomplete",',
+    '            status: "environment-incomplete",',
+    "          { status: 503 },",
+    "      if (!validation.ok) {",
+    '              status: "validation-blocked",',
+    '            status: "validation-blocked",',
+    "          { status: 422 },",
+    "      const adapter = createSupabaseRestImportAdapter({",
+    "      const result = await runSupabaseImportExecutionPlan(plan, adapter);",
+  ],
+  "Supabase import route should keep every execute blocker and status code before constructing the write adapter",
+);
 assert.match(
   supabaseImportRouteSource,
   /status: "environment-incomplete"[\s\S]*?requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION[\s\S]*?validation/,

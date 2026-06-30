@@ -3060,7 +3060,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /const result = await runSupabaseImportExecutionPlan\(plan, adapter\);[\s\S]*const resultSummary = \{[\s\S]*completedRows: result\.completedRows[\s\S]*failedTable: result\.failedTable[\s\S]*status: result\.status[\s\S]*tableResults: result\.tableResults[\s\S]*totalRows: result\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*environment: environmentStatus[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*validation/,
+  /const result = await runSupabaseImportExecutionPlan\(plan, adapter\);[\s\S]*const resultSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: result\.completedRows[\s\S]*failedTable: result\.failedTable[\s\S]*status: result\.status[\s\S]*tableResults: result\.tableResults[\s\S]*totalRows: result\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*environment: environmentStatus[\s\S]*result: resultSummary[\s\S]*status: result\.status[\s\S]*validation/,
   "Supabase import route should return the execute result summary and include the same result in the audit artifact",
 );
 assertFileIncludesInOrder(

@@ -395,7 +395,7 @@ export async function POST(request: Request) {
         supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
       });
       const result = await runSupabaseImportExecutionPlan(plan, adapter);
-      const resultSummary = {
+      const resultSummary: SupabaseImportRouteResultSummary = {
         completedRows: result.completedRows,
         failedTable: result.failedTable,
         status: result.status,

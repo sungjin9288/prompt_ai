@@ -270,6 +270,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that the importer dry-run keeps summary, insert batches,\s+warnings, payload preview, local-only gate, pending replacement gate, and\s+archive trace gate together/,
+  "README should document the data-management Supabase importer dry-run verification scope",
+);
+assert.match(
+  readme,
   /checks that the route audit artifact fallback keeps identity, route\s+status, execute=false mode, validation, row\/table counts, confirmation gate,\s+and the raw artifact together/,
   "README should document the data-management Supabase route audit artifact fallback verification scope",
 );

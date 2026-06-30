@@ -527,6 +527,9 @@ non-execution guardrail in memo order.
 It also checks that the API preflight report keeps status, validation,
 dry-run metrics, UUID metrics, blockers, insert order, and no-write guard
 together.
+It also checks that the importer dry-run keeps summary, insert batches,
+warnings, payload preview, local-only gate, pending replacement gate, and
+archive trace gate together.
 It also checks that the route audit artifact fallback keeps identity, route
 status, execute=false mode, validation, row/table counts, confirmation gate,
 and the raw artifact together.

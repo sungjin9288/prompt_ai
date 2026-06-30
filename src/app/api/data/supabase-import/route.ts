@@ -296,11 +296,11 @@ export async function POST(request: Request) {
     });
     const validation = validateSupabaseImportExecutionPlan(plan);
     const insertRequests = getSupabaseImportInsertRequests(plan);
-    const summarizedInsertOrder = summarizeInsertRequests(
+    const preflightInsertOrder = summarizeInsertRequests(
       insertRequests,
       includePayload,
     );
-    const summarizedInsertOrderWithoutPayload = summarizeInsertRequests(
+    const operatorInsertOrder = summarizeInsertRequests(
       insertRequests,
       false,
     );
@@ -318,7 +318,7 @@ export async function POST(request: Request) {
           error,
           execute,
           httpStatus: 403,
-          insertOrder: summarizedInsertOrderWithoutPayload,
+          insertOrder: operatorInsertOrder,
           status: "execution-disabled",
           validation,
         });
@@ -334,7 +334,7 @@ export async function POST(request: Request) {
           error,
           execute,
           httpStatus: 400,
-          insertOrder: summarizedInsertOrderWithoutPayload,
+          insertOrder: operatorInsertOrder,
           status: "confirmation-required",
           validation,
         });
@@ -354,7 +354,7 @@ export async function POST(request: Request) {
           error,
           execute,
           httpStatus: 503,
-          insertOrder: summarizedInsertOrderWithoutPayload,
+          insertOrder: operatorInsertOrder,
           status: "environment-incomplete",
           validation,
         });
@@ -371,7 +371,7 @@ export async function POST(request: Request) {
           error,
           execute,
           httpStatus: 422,
-          insertOrder: summarizedInsertOrderWithoutPayload,
+          insertOrder: operatorInsertOrder,
           status: "validation-blocked",
           validation,
         });
@@ -396,7 +396,7 @@ export async function POST(request: Request) {
           checkedAt,
           environment: environmentStatus,
           execute,
-          insertOrder: summarizedInsertOrderWithoutPayload,
+          insertOrder: operatorInsertOrder,
           requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
           result: resultSummary,
           status: result.status,
@@ -415,7 +415,7 @@ export async function POST(request: Request) {
         checkedAt,
         environment: environmentStatus,
         execute,
-        insertOrder: summarizedInsertOrder,
+        insertOrder: preflightInsertOrder,
         requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
         status: validation.ok ? "ready" : "blocked",
         validation,
@@ -425,7 +425,7 @@ export async function POST(request: Request) {
         totalRows: dryRun.totalRows,
         warnings: dryRun.warningItems,
       },
-      insertOrder: summarizedInsertOrder,
+      insertOrder: preflightInsertOrder,
       requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
       plan: {
         archiveTraceFields: plan.archiveTraceFields.length,

@@ -422,6 +422,8 @@ export async function POST(request: Request) {
       });
     }
 
+    const preflightStatus = validation.ok ? "ready" : "blocked";
+
     return NextResponse.json({
       adapterContractText,
       auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
@@ -430,7 +432,7 @@ export async function POST(request: Request) {
         execute,
         insertOrder: preflightInsertOrder,
         requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-        status: validation.ok ? "ready" : "blocked",
+        status: preflightStatus,
         validation,
       }),
       dryRun: {
@@ -448,7 +450,7 @@ export async function POST(request: Request) {
         unresolvedPendingReferences: plan.unresolvedPendingReferences,
         workspaceId: plan.workspaceId,
       },
-      status: validation.ok ? "ready" : "blocked",
+      status: preflightStatus,
       validation,
     });
   } catch (error) {

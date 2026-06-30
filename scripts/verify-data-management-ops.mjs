@@ -3066,6 +3066,7 @@ assert.match(
 assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
+    '    const preflightStatus = validation.ok ? "ready" : "blocked";',
     "    return NextResponse.json({",
     "      adapterContractText,",
     "      auditArtifactText: buildSupabaseImportRouteAuditArtifactText({",
@@ -3074,7 +3075,7 @@ assertFileIncludesInOrder(
     "        execute,",
     "        insertOrder: preflightInsertOrder,",
     "        requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
-    '        status: validation.ok ? "ready" : "blocked",',
+    "        status: preflightStatus,",
     "        validation,",
     "      }),",
     "      dryRun: {",
@@ -3092,7 +3093,7 @@ assertFileIncludesInOrder(
     "        unresolvedPendingReferences: plan.unresolvedPendingReferences,",
     "        workspaceId: plan.workspaceId,",
     "      },",
-    '      status: validation.ok ? "ready" : "blocked",',
+    "      status: preflightStatus,",
     "      validation,",
     "    });",
   ],

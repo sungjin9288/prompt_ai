@@ -234,6 +234,51 @@ function buildSupabaseImportRouteAuditArtifactText({
   ].join("\n");
 }
 
+function createSupabaseImportBlockedResponse({
+  adapterContractText,
+  checkedAt,
+  environmentStatus,
+  error,
+  execute,
+  httpStatus,
+  insertOrder,
+  status,
+  validation,
+}: {
+  adapterContractText: string;
+  checkedAt: string;
+  environmentStatus: ReturnType<typeof getSupabaseRestImportEnvironmentStatus>;
+  error: string;
+  execute: boolean;
+  httpStatus: number;
+  insertOrder: ReturnType<typeof summarizeInsertRequests>;
+  status: string;
+  validation: ReturnType<typeof validateSupabaseImportExecutionPlan>;
+}) {
+  return NextResponse.json(
+    {
+      adapterContractText,
+      auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
+        checkedAt,
+        environment: environmentStatus,
+        error,
+        execute,
+        insertOrder,
+        requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
+        status,
+        validation,
+      }),
+      environment: environmentStatus,
+      error,
+      insertOrder,
+      requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
+      status,
+      validation,
+    },
+    { status: httpStatus },
+  );
+}
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as SupabaseImportRequestBody;
@@ -266,55 +311,33 @@ export async function POST(request: Request) {
         const error =
           "Supabase import execution is disabled. Set SUPABASE_IMPORT_EXECUTION_ENABLED=true in a server-only environment before executing.";
 
-        return NextResponse.json(
-          {
-            adapterContractText,
-            auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
-              checkedAt,
-              environment: environmentStatus,
-              error,
-              execute,
-              insertOrder: summarizedInsertOrderWithoutPayload,
-              requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-              status: "execution-disabled",
-              validation,
-            }),
-            environment: environmentStatus,
-            error,
-            insertOrder: summarizedInsertOrderWithoutPayload,
-            requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-            status: "execution-disabled",
-            validation,
-          },
-          { status: 403 },
-        );
+        return createSupabaseImportBlockedResponse({
+          adapterContractText,
+          checkedAt,
+          environmentStatus,
+          error,
+          execute,
+          httpStatus: 403,
+          insertOrder: summarizedInsertOrderWithoutPayload,
+          status: "execution-disabled",
+          validation,
+        });
       }
 
       if (body.confirmation !== SUPABASE_IMPORT_CONFIRMATION) {
         const error = `confirmation must equal ${SUPABASE_IMPORT_CONFIRMATION}.`;
 
-        return NextResponse.json(
-          {
-            adapterContractText,
-            auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
-              checkedAt,
-              environment: environmentStatus,
-              error,
-              execute,
-              insertOrder: summarizedInsertOrderWithoutPayload,
-              requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-              status: "confirmation-required",
-              validation,
-            }),
-            environment: environmentStatus,
-            error,
-            insertOrder: summarizedInsertOrderWithoutPayload,
-            requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-            status: "confirmation-required",
-            validation,
-          },
-          { status: 400 },
-        );
+        return createSupabaseImportBlockedResponse({
+          adapterContractText,
+          checkedAt,
+          environmentStatus,
+          error,
+          execute,
+          httpStatus: 400,
+          insertOrder: summarizedInsertOrderWithoutPayload,
+          status: "confirmation-required",
+          validation,
+        });
       }
 
       if (
@@ -324,56 +347,34 @@ export async function POST(request: Request) {
         const error =
           "NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required for execution.";
 
-        return NextResponse.json(
-          {
-            adapterContractText,
-            auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
-              checkedAt,
-              environment: environmentStatus,
-              error,
-              execute,
-              insertOrder: summarizedInsertOrderWithoutPayload,
-              requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-              status: "environment-incomplete",
-              validation,
-            }),
-            environment: environmentStatus,
-            error,
-            insertOrder: summarizedInsertOrderWithoutPayload,
-            requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-            status: "environment-incomplete",
-            validation,
-          },
-          { status: 503 },
-        );
+        return createSupabaseImportBlockedResponse({
+          adapterContractText,
+          checkedAt,
+          environmentStatus,
+          error,
+          execute,
+          httpStatus: 503,
+          insertOrder: summarizedInsertOrderWithoutPayload,
+          status: "environment-incomplete",
+          validation,
+        });
       }
 
       if (!validation.ok) {
         const error =
           "Supabase import execution plan has validation blockers.";
 
-        return NextResponse.json(
-          {
-            adapterContractText,
-            auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
-              checkedAt,
-              environment: environmentStatus,
-              error,
-              execute,
-              insertOrder: summarizedInsertOrderWithoutPayload,
-              requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-              status: "validation-blocked",
-              validation,
-            }),
-            environment: environmentStatus,
-            error,
-            insertOrder: summarizedInsertOrderWithoutPayload,
-            requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-            status: "validation-blocked",
-            validation,
-          },
-          { status: 422 },
-        );
+        return createSupabaseImportBlockedResponse({
+          adapterContractText,
+          checkedAt,
+          environmentStatus,
+          error,
+          execute,
+          httpStatus: 422,
+          insertOrder: summarizedInsertOrderWithoutPayload,
+          status: "validation-blocked",
+          validation,
+        });
       }
 
       const adapter = createSupabaseRestImportAdapter({

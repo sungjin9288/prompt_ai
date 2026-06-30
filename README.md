@@ -512,6 +512,8 @@ previews, while execute blockers and route audit responses stay payload-free.
 Each blocked execute response must return the adapter contract, route audit
 artifact, environment, error, insert order, required confirmation, status, and
 validation payload together.
+It also checks that blocked execute responses are built through one shared route
+helper so their operator payload cannot drift across branches.
 For execute=false preflight responses, it checks that dry-run metrics, insert
 order, plan identity, required confirmation, route audit artifact, adapter
 contract, status, and validation stay in the same no-write response.

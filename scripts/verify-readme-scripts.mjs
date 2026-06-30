@@ -235,6 +235,11 @@ assert.match(
 );
 assert.match(
   readme,
+  /checks that blocked execute responses are built through one shared route\s+helper so their operator payload cannot drift across branches/,
+  "README should document the data-management Supabase blocked execute response helper scope",
+);
+assert.match(
+  readme,
   /For execute=false preflight responses, it checks that dry-run metrics, insert\s+order, plan identity, required confirmation, route audit artifact, adapter\s+contract, status, and validation stay in the same no-write response/,
   "README should document the data-management Supabase no-write preflight response payload scope",
 );

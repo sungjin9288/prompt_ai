@@ -493,12 +493,12 @@ export async function POST(request: Request) {
       status: preflightStatus,
       validation: planValidation,
     });
-  } catch (error) {
+  } catch (requestError) {
     return NextResponse.json(
       {
         error:
-          error instanceof Error
-            ? error.message
+          requestError instanceof Error
+            ? requestError.message
             : "Invalid Supabase import request.",
         status: "invalid-request",
       },

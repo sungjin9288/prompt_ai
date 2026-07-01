@@ -204,7 +204,7 @@ function buildSupabaseImportRouteAuditArtifactText({
   checkedAt,
   environment,
   error,
-  execute,
+  executeRequested,
   insertOrder,
   requiredConfirmation,
   result,
@@ -214,7 +214,7 @@ function buildSupabaseImportRouteAuditArtifactText({
   checkedAt: string;
   environment: SupabaseImportEnvironmentStatus;
   error?: string;
-  execute: boolean;
+  executeRequested: boolean;
   insertOrder: SupabaseImportInsertOrder;
   requiredConfirmation: string;
   result?: SupabaseImportRouteResultSummary;
@@ -225,7 +225,7 @@ function buildSupabaseImportRouteAuditArtifactText({
   const routeSummaryLines = [
     `- checkedAt: ${checkedAt}`,
     `- route: POST /api/data/supabase-import`,
-    `- executeRequested: ${execute ? "true" : "false"}`,
+    `- executeRequested: ${executeRequested ? "true" : "false"}`,
     `- status: ${status}`,
     `- validation: ${validationStatus}`,
     `- executionEnabled: ${environment.executionEnabled}`,
@@ -279,7 +279,7 @@ function createSupabaseImportBlockedResponse({
   checkedAt,
   environmentStatus,
   error,
-  execute,
+  executeRequested,
   httpStatus,
   insertOrder,
   status,
@@ -289,7 +289,7 @@ function createSupabaseImportBlockedResponse({
   checkedAt: string;
   environmentStatus: SupabaseImportEnvironmentStatus;
   error: string;
-  execute: boolean;
+  executeRequested: boolean;
   httpStatus: number;
   insertOrder: SupabaseImportInsertOrder;
   status: string;
@@ -302,7 +302,7 @@ function createSupabaseImportBlockedResponse({
         checkedAt,
         environment: environmentStatus,
         error,
-        execute,
+        executeRequested,
         insertOrder,
         requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
         status,
@@ -323,7 +323,7 @@ export async function POST(request: Request) {
   try {
     const requestBody = (await request.json()) as SupabaseImportRequestBody;
     const checkedAt = new Date().toISOString();
-    const execute = requestBody.execute === true;
+    const executeRequested = requestBody.execute === true;
     const includePayload = requestBody.includePayload === true;
     const environmentStatus = getSupabaseRestImportEnvironmentStatus();
     const workspaceId = parseStringField(
@@ -353,7 +353,7 @@ export async function POST(request: Request) {
     const adapterContractText =
       buildSupabaseImporterAdapterContractText(importPlan);
 
-    if (execute) {
+    if (executeRequested) {
       if (!environmentStatus.executionEnabled) {
         const error =
           "Supabase import execution is disabled. Set SUPABASE_IMPORT_EXECUTION_ENABLED=true in a server-only environment before executing.";
@@ -363,7 +363,7 @@ export async function POST(request: Request) {
           checkedAt,
           environmentStatus,
           error,
-          execute,
+          executeRequested,
           httpStatus: 403,
           insertOrder: operatorInsertOrder,
           status: "execution-disabled",
@@ -379,7 +379,7 @@ export async function POST(request: Request) {
           checkedAt,
           environmentStatus,
           error,
-          execute,
+          executeRequested,
           httpStatus: 400,
           insertOrder: operatorInsertOrder,
           status: "confirmation-required",
@@ -399,7 +399,7 @@ export async function POST(request: Request) {
           checkedAt,
           environmentStatus,
           error,
-          execute,
+          executeRequested,
           httpStatus: 503,
           insertOrder: operatorInsertOrder,
           status: "environment-incomplete",
@@ -416,7 +416,7 @@ export async function POST(request: Request) {
           checkedAt,
           environmentStatus,
           error,
-          execute,
+          executeRequested,
           httpStatus: 422,
           insertOrder: operatorInsertOrder,
           status: "validation-blocked",
@@ -445,7 +445,7 @@ export async function POST(request: Request) {
         auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
           checkedAt,
           environment: environmentStatus,
-          execute,
+          executeRequested,
           insertOrder: operatorInsertOrder,
           requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
           result: executionResultSummary,
@@ -479,7 +479,7 @@ export async function POST(request: Request) {
       auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
         checkedAt,
         environment: environmentStatus,
-        execute,
+        executeRequested,
         insertOrder: preflightInsertOrder,
         requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
         status: preflightStatus,

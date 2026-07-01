@@ -145,13 +145,13 @@ function normalizeBackupCounts(
 }
 
 function summarizeInsertRequests(
-  requests: SupabaseImportInsertRequests,
-  includePayload: boolean,
+  insertRequests: SupabaseImportInsertRequests,
+  includeRows: boolean,
 ) {
-  return requests.map((request) => ({
+  return insertRequests.map((request) => ({
     dependency: request.dependency,
     order: request.order,
-    rows: includePayload ? request.rows : undefined,
+    rows: includeRows ? request.rows : undefined,
     rowCount: request.rows.length,
     table: request.table,
   }));
@@ -324,7 +324,7 @@ export async function POST(request: Request) {
     const requestBody = (await request.json()) as SupabaseImportRequestBody;
     const checkedAt = new Date().toISOString();
     const executeRequested = requestBody.execute === true;
-    const includePayload = requestBody.includePayload === true;
+    const includePayloadPreview = requestBody.includePayload === true;
     const environmentStatus = getSupabaseRestImportEnvironmentStatus();
     const workspaceId = parseStringField(
       requestBody.workspaceId,
@@ -341,13 +341,13 @@ export async function POST(request: Request) {
       workspaceId,
     });
     const planValidation = validateSupabaseImportExecutionPlan(importPlan);
-    const insertRequests = getSupabaseImportInsertRequests(importPlan);
+    const plannedInsertRequests = getSupabaseImportInsertRequests(importPlan);
     const preflightInsertOrder = summarizeInsertRequests(
-      insertRequests,
-      includePayload,
+      plannedInsertRequests,
+      includePayloadPreview,
     );
     const operatorInsertOrder = summarizeInsertRequests(
-      insertRequests,
+      plannedInsertRequests,
       false,
     );
     const adapterContractText =

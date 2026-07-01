@@ -278,7 +278,7 @@ function createSupabaseImportBlockedResponse({
   adapterContractText,
   checkedAt,
   importEnvironmentStatus,
-  error,
+  blockerMessage,
   executeRequested,
   httpStatus,
   insertOrder,
@@ -288,7 +288,7 @@ function createSupabaseImportBlockedResponse({
   adapterContractText: string;
   checkedAt: string;
   importEnvironmentStatus: SupabaseImportEnvironmentStatus;
-  error: string;
+  blockerMessage: string;
   executeRequested: boolean;
   httpStatus: number;
   insertOrder: SupabaseImportInsertOrder;
@@ -301,7 +301,7 @@ function createSupabaseImportBlockedResponse({
       auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
         checkedAt,
         environment: importEnvironmentStatus,
-        error,
+        error: blockerMessage,
         executeRequested,
         insertOrder,
         requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
@@ -309,7 +309,7 @@ function createSupabaseImportBlockedResponse({
         validation,
       }),
       environment: importEnvironmentStatus,
-      error,
+      error: blockerMessage,
       insertOrder,
       requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
       status,
@@ -356,14 +356,14 @@ export async function POST(request: Request) {
 
     if (executeRequested) {
       if (!importEnvironmentStatus.executionEnabled) {
-        const error =
+        const blockerMessage =
           "Supabase import execution is disabled. Set SUPABASE_IMPORT_EXECUTION_ENABLED=true in a server-only environment before executing.";
 
         return createSupabaseImportBlockedResponse({
           adapterContractText,
           checkedAt,
           importEnvironmentStatus,
-          error,
+          blockerMessage,
           executeRequested,
           httpStatus: 403,
           insertOrder: operatorInsertOrder,
@@ -373,13 +373,13 @@ export async function POST(request: Request) {
       }
 
       if (requestBody.confirmation !== SUPABASE_IMPORT_CONFIRMATION) {
-        const error = `confirmation must equal ${SUPABASE_IMPORT_CONFIRMATION}.`;
+        const blockerMessage = `confirmation must equal ${SUPABASE_IMPORT_CONFIRMATION}.`;
 
         return createSupabaseImportBlockedResponse({
           adapterContractText,
           checkedAt,
           importEnvironmentStatus,
-          error,
+          blockerMessage,
           executeRequested,
           httpStatus: 400,
           insertOrder: operatorInsertOrder,
@@ -392,14 +392,14 @@ export async function POST(request: Request) {
         !importEnvironmentStatus.supabaseUrlConfigured ||
         !importEnvironmentStatus.serviceRoleKeyConfigured
       ) {
-        const error =
+        const blockerMessage =
           "NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required for execution.";
 
         return createSupabaseImportBlockedResponse({
           adapterContractText,
           checkedAt,
           importEnvironmentStatus,
-          error,
+          blockerMessage,
           executeRequested,
           httpStatus: 503,
           insertOrder: operatorInsertOrder,
@@ -409,14 +409,14 @@ export async function POST(request: Request) {
       }
 
       if (!planValidation.ok) {
-        const error =
+        const blockerMessage =
           "Supabase import execution plan has validation blockers.";
 
         return createSupabaseImportBlockedResponse({
           adapterContractText,
           checkedAt,
           importEnvironmentStatus,
-          error,
+          blockerMessage,
           executeRequested,
           httpStatus: 422,
           insertOrder: operatorInsertOrder,

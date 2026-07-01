@@ -2958,10 +2958,10 @@ assertFileIncludesInOrder(
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 422,",
     '          status: "validation-blocked",',
-    "      const adapter = createSupabaseRestImportAdapter({",
-    "      const executionResult = await runSupabaseImportExecutionPlan(",
+    "      const supabaseImportAdapter = createSupabaseRestImportAdapter({",
+    "      const importExecutionResult = await runSupabaseImportExecutionPlan(",
     "        importPlan,",
-    "        adapter,",
+    "        supabaseImportAdapter,",
     "      );",
   ],
   "Supabase import route should keep every execute blocker and status code before constructing the write adapter",
@@ -3147,7 +3147,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /const executionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*adapter,[\s\S]*\);[\s\S]*const executionResultSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: executionResult\.completedRows[\s\S]*failedTable: executionResult\.failedTable[\s\S]*status: executionResult\.status[\s\S]*tableResults: executionResult\.tableResults[\s\S]*totalRows: executionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: executionResultSummary[\s\S]*status: executionResult\.status[\s\S]*environment: importEnvironmentStatus[\s\S]*result: executionResultSummary[\s\S]*status: executionResult\.status[\s\S]*validation/,
+  /const importExecutionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*supabaseImportAdapter,[\s\S]*\);[\s\S]*const importExecutionSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: importExecutionResult\.completedRows[\s\S]*failedTable: importExecutionResult\.failedTable[\s\S]*status: importExecutionResult\.status[\s\S]*tableResults: importExecutionResult\.tableResults[\s\S]*totalRows: importExecutionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: importExecutionSummary[\s\S]*status: importExecutionResult\.status[\s\S]*environment: importEnvironmentStatus[\s\S]*result: importExecutionSummary[\s\S]*status: importExecutionResult\.status[\s\S]*validation/,
   "Supabase import route should return the execute result summary and include the same result in the audit artifact",
 );
 assertFileIncludesInOrder(

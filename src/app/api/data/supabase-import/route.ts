@@ -425,20 +425,20 @@ export async function POST(request: Request) {
         });
       }
 
-      const adapter = createSupabaseRestImportAdapter({
+      const supabaseImportAdapter = createSupabaseRestImportAdapter({
         serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
         supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
       });
-      const executionResult = await runSupabaseImportExecutionPlan(
+      const importExecutionResult = await runSupabaseImportExecutionPlan(
         importPlan,
-        adapter,
+        supabaseImportAdapter,
       );
-      const executionResultSummary: SupabaseImportRouteResultSummary = {
-        completedRows: executionResult.completedRows,
-        failedTable: executionResult.failedTable,
-        status: executionResult.status,
-        tableResults: executionResult.tableResults,
-        totalRows: executionResult.totalRows,
+      const importExecutionSummary: SupabaseImportRouteResultSummary = {
+        completedRows: importExecutionResult.completedRows,
+        failedTable: importExecutionResult.failedTable,
+        status: importExecutionResult.status,
+        tableResults: importExecutionResult.tableResults,
+        totalRows: importExecutionResult.totalRows,
       };
 
       return NextResponse.json({
@@ -449,13 +449,13 @@ export async function POST(request: Request) {
           executeRequested,
           insertOrder: operatorInsertOrder,
           requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-          result: executionResultSummary,
-          status: executionResult.status,
+          result: importExecutionSummary,
+          status: importExecutionResult.status,
           validation: planValidation,
         }),
         environment: importEnvironmentStatus,
-        result: executionResultSummary,
-        status: executionResult.status,
+        result: importExecutionSummary,
+        status: importExecutionResult.status,
         validation: planValidation,
       });
     }

@@ -2774,7 +2774,7 @@ assertFileIncludesInOrder(
     "  environment: SupabaseImportEnvironmentStatus;",
     "  insertOrder: SupabaseImportInsertOrder;",
     "  validation: SupabaseImportPlanValidation;",
-    "  environmentStatus: SupabaseImportEnvironmentStatus;",
+    "  importEnvironmentStatus: SupabaseImportEnvironmentStatus;",
     "  insertOrder: SupabaseImportInsertOrder;",
     "  validation: SupabaseImportPlanValidation;",
   ],
@@ -2878,7 +2878,8 @@ assertFileIncludesInOrder(
     "    const checkedAt = new Date().toISOString();",
     "    const executeRequested = requestBody.execute === true;",
     "    const includePayloadPreview = requestBody.includePayload === true;",
-    "    const environmentStatus = getSupabaseRestImportEnvironmentStatus();",
+    "    const importEnvironmentStatus =",
+    "      getSupabaseRestImportEnvironmentStatus();",
     "    const workspaceId = parseStringField(",
     "      requestBody.workspaceId,",
     "      \"workspaceId\",",
@@ -2933,14 +2934,14 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /if \(executeRequested\) \{[\s\S]*?if \(!environmentStatus\.executionEnabled\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 403[\s\S]*?status: "execution-disabled"[\s\S]*?if \(requestBody\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 400[\s\S]*?status: "confirmation-required"[\s\S]*?if \([\s\S]*?!environmentStatus\.supabaseUrlConfigured[\s\S]*?!environmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 503[\s\S]*?status: "environment-incomplete"[\s\S]*?if \(!planValidation\.ok\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 422[\s\S]*?status: "validation-blocked"[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
+  /if \(executeRequested\) \{[\s\S]*?if \(!importEnvironmentStatus\.executionEnabled\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 403[\s\S]*?status: "execution-disabled"[\s\S]*?if \(requestBody\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 400[\s\S]*?status: "confirmation-required"[\s\S]*?if \([\s\S]*?!importEnvironmentStatus\.supabaseUrlConfigured[\s\S]*?!importEnvironmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 503[\s\S]*?status: "environment-incomplete"[\s\S]*?if \(!planValidation\.ok\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 422[\s\S]*?status: "validation-blocked"[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
   "Supabase import route should check execution enabled, confirmation, env readiness, and validation before constructing the write adapter",
 );
 assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
     "    if (executeRequested) {",
-    "      if (!environmentStatus.executionEnabled) {",
+    "      if (!importEnvironmentStatus.executionEnabled) {",
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 403,",
     '          status: "execution-disabled",',
@@ -2948,8 +2949,8 @@ assertFileIncludesInOrder(
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 400,",
     '          status: "confirmation-required",',
-    "        !environmentStatus.supabaseUrlConfigured ||",
-    "        !environmentStatus.serviceRoleKeyConfigured",
+    "        !importEnvironmentStatus.supabaseUrlConfigured ||",
+    "        !importEnvironmentStatus.serviceRoleKeyConfigured",
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 503,",
     '          status: "environment-incomplete",',
@@ -2971,7 +2972,7 @@ assertFileIncludesInOrder(
     "function createSupabaseImportBlockedResponse({",
     "  adapterContractText,",
     "  checkedAt,",
-    "  environmentStatus,",
+    "  importEnvironmentStatus,",
     "  error,",
     "  executeRequested,",
     "  httpStatus,",
@@ -2983,7 +2984,7 @@ assertFileIncludesInOrder(
     "      adapterContractText,",
     "      auditArtifactText: buildSupabaseImportRouteAuditArtifactText({",
     "        checkedAt,",
-    "        environment: environmentStatus,",
+    "        environment: importEnvironmentStatus,",
     "        error,",
     "        executeRequested,",
     "        insertOrder,",
@@ -2991,7 +2992,7 @@ assertFileIncludesInOrder(
     "        status,",
     "        validation,",
     "      }),",
-    "      environment: environmentStatus,",
+    "      environment: importEnvironmentStatus,",
     "      error,",
     "      insertOrder,",
     "      requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
@@ -3004,7 +3005,7 @@ assertFileIncludesInOrder(
 );
 const supabaseImportRouteExecuteBlockerResponses = [
   {
-    branch: "      if (!environmentStatus.executionEnabled) {",
+    branch: "      if (!importEnvironmentStatus.executionEnabled) {",
     httpStatus: "          httpStatus: 403,",
     status: '          status: "execution-disabled",',
   },
@@ -3014,7 +3015,7 @@ const supabaseImportRouteExecuteBlockerResponses = [
     status: '          status: "confirmation-required",',
   },
   {
-    branch: "        !environmentStatus.supabaseUrlConfigured ||",
+    branch: "        !importEnvironmentStatus.supabaseUrlConfigured ||",
     httpStatus: "          httpStatus: 503,",
     status: '          status: "environment-incomplete",',
   },
@@ -3033,7 +3034,7 @@ for (const response of supabaseImportRouteExecuteBlockerResponses) {
       "        return createSupabaseImportBlockedResponse({",
       "          adapterContractText,",
       "          checkedAt,",
-      "          environmentStatus,",
+      "          importEnvironmentStatus,",
       "          error,",
       "          executeRequested,",
       response.httpStatus,
@@ -3146,7 +3147,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /const executionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*adapter,[\s\S]*\);[\s\S]*const executionResultSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: executionResult\.completedRows[\s\S]*failedTable: executionResult\.failedTable[\s\S]*status: executionResult\.status[\s\S]*tableResults: executionResult\.tableResults[\s\S]*totalRows: executionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: executionResultSummary[\s\S]*status: executionResult\.status[\s\S]*environment: environmentStatus[\s\S]*result: executionResultSummary[\s\S]*status: executionResult\.status[\s\S]*validation/,
+  /const executionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*adapter,[\s\S]*\);[\s\S]*const executionResultSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: executionResult\.completedRows[\s\S]*failedTable: executionResult\.failedTable[\s\S]*status: executionResult\.status[\s\S]*tableResults: executionResult\.tableResults[\s\S]*totalRows: executionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: executionResultSummary[\s\S]*status: executionResult\.status[\s\S]*environment: importEnvironmentStatus[\s\S]*result: executionResultSummary[\s\S]*status: executionResult\.status[\s\S]*validation/,
   "Supabase import route should return the execute result summary and include the same result in the audit artifact",
 );
 assertFileIncludesInOrder(
@@ -3170,7 +3171,7 @@ assertFileIncludesInOrder(
     "      adapterContractText,",
     "      auditArtifactText: buildSupabaseImportRouteAuditArtifactText({",
     "        checkedAt,",
-    "        environment: environmentStatus,",
+    "        environment: importEnvironmentStatus,",
     "        executeRequested,",
     "        insertOrder: preflightInsertOrder,",
     "        requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",

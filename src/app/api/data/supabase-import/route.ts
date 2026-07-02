@@ -205,9 +205,9 @@ function buildSupabaseImportRouteAuditArtifactText({
   environment,
   error,
   executeRequested,
+  executionSummary,
   insertOrder,
   requiredConfirmation,
-  result,
   routeStatus,
   validation,
 }: {
@@ -215,9 +215,9 @@ function buildSupabaseImportRouteAuditArtifactText({
   environment: SupabaseImportEnvironmentStatus;
   error?: string;
   executeRequested: boolean;
+  executionSummary?: SupabaseImportRouteResultSummary;
   insertOrder: SupabaseImportInsertOrder;
   requiredConfirmation: string;
-  result?: SupabaseImportRouteResultSummary;
   routeStatus: string;
   validation: SupabaseImportPlanValidation;
 }) {
@@ -242,15 +242,17 @@ function buildSupabaseImportRouteAuditArtifactText({
     insertOrder.length > 0
       ? insertOrder.map(formatSupabaseImportRouteInsertOrderItem)
       : ["- none"];
-  const executionResultLines = result
+  const executionResultLines = executionSummary
     ? [
-        `- status: ${result.status}`,
-        `- completedRows: ${result.completedRows}`,
-        `- totalRows: ${result.totalRows}`,
-        `- failedTable: ${result.failedTable || "none"}`,
+        `- status: ${executionSummary.status}`,
+        `- completedRows: ${executionSummary.completedRows}`,
+        `- totalRows: ${executionSummary.totalRows}`,
+        `- failedTable: ${executionSummary.failedTable || "none"}`,
         "",
         "### Table results",
-        ...result.tableResults.map(formatSupabaseImportRouteTableResult),
+        ...executionSummary.tableResults.map(
+          formatSupabaseImportRouteTableResult,
+        ),
       ]
     : ["- not executed"];
 
@@ -449,7 +451,7 @@ export async function POST(request: Request) {
           executeRequested,
           insertOrder: operatorInsertOrder,
           requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-          result: importExecutionSummary,
+          executionSummary: importExecutionSummary,
           routeStatus: importExecutionResult.status,
           validation: planValidation,
         }),

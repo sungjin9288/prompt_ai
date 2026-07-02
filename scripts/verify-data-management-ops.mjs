@@ -3106,7 +3106,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /function formatSupabaseImportRouteTableResult[\s\S]*tableResult\.table[\s\S]*tableResult\.status[\s\S]*tableResult\.insertedRows[\s\S]*tableResult\.expectedRows[\s\S]*const executionResultLines = result[\s\S]*status: \$\{result\.status\}[\s\S]*completedRows: \$\{result\.completedRows\}[\s\S]*totalRows: \$\{result\.totalRows\}[\s\S]*failedTable: \$\{result\.failedTable \|\| "none"\}[\s\S]*Table results[\s\S]*result\.tableResults\.map\(formatSupabaseImportRouteTableResult\)[\s\S]*## Execution result[\s\S]*\.\.\.executionResultLines/,
+  /function formatSupabaseImportRouteTableResult[\s\S]*tableResult\.table[\s\S]*tableResult\.status[\s\S]*tableResult\.insertedRows[\s\S]*tableResult\.expectedRows[\s\S]*const executionResultLines = executionSummary[\s\S]*status: \$\{executionSummary\.status\}[\s\S]*completedRows: \$\{executionSummary\.completedRows\}[\s\S]*totalRows: \$\{executionSummary\.totalRows\}[\s\S]*failedTable: \$\{executionSummary\.failedTable \|\| "none"\}[\s\S]*Table results[\s\S]*executionSummary\.tableResults\.map\([\s\S]*formatSupabaseImportRouteTableResult[\s\S]*\)[\s\S]*## Execution result[\s\S]*\.\.\.executionResultLines/,
   "Supabase import route audit artifact should include execution result details when a write runs",
 );
 assertFileIncludesInOrder(
@@ -3131,15 +3131,16 @@ assertFileIncludesInOrder(
     "  const note = tableResult.note ? ` / ${tableResult.note}` : \"\";",
     "  return `- ${tableResult.order}. ${tableResult.table}: ${tableResult.status} / inserted ${tableResult.insertedRows}/${tableResult.expectedRows}${note}`;",
     "function buildSupabaseImportRouteAuditArtifactText({",
-    "  result,",
-    "  result?: SupabaseImportRouteResultSummary;",
-    "  const executionResultLines = result",
-    "`- status: ${result.status}`",
-    "`- completedRows: ${result.completedRows}`",
-    "`- totalRows: ${result.totalRows}`",
-    '`- failedTable: ${result.failedTable || "none"}`',
+    "  executionSummary,",
+    "  executionSummary?: SupabaseImportRouteResultSummary;",
+    "  const executionResultLines = executionSummary",
+    "`- status: ${executionSummary.status}`",
+    "`- completedRows: ${executionSummary.completedRows}`",
+    "`- totalRows: ${executionSummary.totalRows}`",
+    '`- failedTable: ${executionSummary.failedTable || "none"}`',
     '"### Table results"',
-    "        ...result.tableResults.map(formatSupabaseImportRouteTableResult),",
+    "        ...executionSummary.tableResults.map(",
+    "          formatSupabaseImportRouteTableResult,",
     '    "## Execution result",',
     "    ...executionResultLines,",
   ],
@@ -3147,7 +3148,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /const importExecutionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*supabaseImportAdapter,[\s\S]*\);[\s\S]*const importExecutionSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: importExecutionResult\.completedRows[\s\S]*failedTable: importExecutionResult\.failedTable[\s\S]*status: importExecutionResult\.status[\s\S]*tableResults: importExecutionResult\.tableResults[\s\S]*totalRows: importExecutionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: importExecutionSummary[\s\S]*routeStatus: importExecutionResult\.status[\s\S]*environment: importEnvironmentStatus[\s\S]*result: importExecutionSummary[\s\S]*status: importExecutionResult\.status[\s\S]*validation/,
+  /const importExecutionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*supabaseImportAdapter,[\s\S]*\);[\s\S]*const importExecutionSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: importExecutionResult\.completedRows[\s\S]*failedTable: importExecutionResult\.failedTable[\s\S]*status: importExecutionResult\.status[\s\S]*tableResults: importExecutionResult\.tableResults[\s\S]*totalRows: importExecutionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*executionSummary: importExecutionSummary[\s\S]*routeStatus: importExecutionResult\.status[\s\S]*environment: importEnvironmentStatus[\s\S]*result: importExecutionSummary[\s\S]*status: importExecutionResult\.status[\s\S]*validation/,
   "Supabase import route should return the execute result summary and include the same result in the audit artifact",
 );
 assertFileIncludesInOrder(

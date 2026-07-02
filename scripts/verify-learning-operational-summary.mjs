@@ -73,7 +73,16 @@ const promptTypes = readFileSync("src/lib/prompt/types.ts", "utf8");
 const draftVariants = readFileSync("src/lib/studio/draft-variants.ts", "utf8");
 const draftDisplay = readFileSync("src/lib/studio/draft-display.ts", "utf8");
 const sourceRegistry = readFileSync("src/lib/studio/source-registry.ts", "utf8");
-const libraryView = readFileSync("src/components/library/library-view.tsx", "utf8");
+const libraryView = [
+  "src/components/library/library-view.tsx",
+  "src/lib/library/labels.ts",
+  "src/lib/library/hrefs.ts",
+  "src/lib/library/prompt-metrics.ts",
+  "src/lib/library/report-text.ts",
+  "src/lib/library/report-notes.ts",
+]
+  .map((path) => readFileSync(path, "utf8"))
+  .join("\n");
 const readme = readFileSync("README.md", "utf8");
 const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
 const devBrief = readFileSync("docs/codex-development-brief.md", "utf8");

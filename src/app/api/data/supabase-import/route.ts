@@ -148,12 +148,12 @@ function summarizeInsertRequests(
   insertRequests: SupabaseImportInsertRequests,
   includeRows: boolean,
 ) {
-  return insertRequests.map((request) => ({
-    dependency: request.dependency,
-    order: request.order,
-    rows: includeRows ? request.rows : undefined,
-    rowCount: request.rows.length,
-    table: request.table,
+  return insertRequests.map((insertRequest) => ({
+    dependency: insertRequest.dependency,
+    order: insertRequest.order,
+    rows: includeRows ? insertRequest.rows : undefined,
+    rowCount: insertRequest.rows.length,
+    table: insertRequest.table,
   }));
 }
 

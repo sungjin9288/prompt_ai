@@ -376,7 +376,7 @@ assertMatches(
   "Library list items should copy and open sourceVariant-aware operation cohort filter links",
 );
 assertMatches(
-  /manualCopy\?\.targetId === prompt\.id[\s\S]*?manualCopy\.id === "list-studio-source-link"[\s\S]*?manualCopy\.id === "list-studio-source-original-link"[\s\S]*?manualCopy\.id === "list-studio-persistence-link"[\s\S]*?manualCopy\.id ===[\s\S]*?"list-studio-operational-group-link"[\s\S]*?LibraryManualCopyPanel/,
+  /manualCopy\?\.targetId === prompt\.id[\s\S]*?manualCopy\.id === "list-studio-source-link"[\s\S]*?manualCopy\.id === "list-studio-source-original-link"[\s\S]*?manualCopy\.id === "list-studio-persistence-link"[\s\S]*?manualCopy\.id ===[\s\S]*?"list-studio-operational-group-link"[\s\S]*?ManualCopyPanel/,
   "Library list item operation filter and original source copy actions should expose a local fallback panel",
 );
 assertMatches(
@@ -440,7 +440,7 @@ assertMatches(
   "Library selected operational summary should copy a storage-mode link",
 );
 assertMatches(
-  /data-testid="library-selected-operational-summary"[\s\S]*?library-selected-operational-summary-report-copy[\s\S]*?운영 요약 복사[\s\S]*?library-selected-operational-summary-studio[\s\S]*?요약 Studio로[\s\S]*?library-selected-operational-group-link-copy[\s\S]*?selectedStudioOperationalGroupLinkCopyLabel[\s\S]*?library-selected-operational-source-link-copy[\s\S]*?selectedStudioSourceLinkCopyLabel[\s\S]*?library-selected-operational-persistence-link-copy[\s\S]*?저장 방식 링크 복사[\s\S]*?manualCopy\.id === "selected-operational-group-link"[\s\S]*?manualCopy\.id === "selected-operational-source-link"[\s\S]*?manualCopy\.id ===[\s\S]*?"selected-operational-persistence-link"[\s\S]*?manualCopy\.id ===[\s\S]*?"selected-operational-summary-report"[\s\S]*?LibraryManualCopyPanel/,
+  /data-testid="library-selected-operational-summary"[\s\S]*?library-selected-operational-summary-report-copy[\s\S]*?운영 요약 복사[\s\S]*?library-selected-operational-summary-studio[\s\S]*?요약 Studio로[\s\S]*?library-selected-operational-group-link-copy[\s\S]*?selectedStudioOperationalGroupLinkCopyLabel[\s\S]*?library-selected-operational-source-link-copy[\s\S]*?selectedStudioSourceLinkCopyLabel[\s\S]*?library-selected-operational-persistence-link-copy[\s\S]*?저장 방식 링크 복사[\s\S]*?manualCopy\.id === "selected-operational-group-link"[\s\S]*?manualCopy\.id === "selected-operational-source-link"[\s\S]*?manualCopy\.id ===[\s\S]*?"selected-operational-persistence-link"[\s\S]*?manualCopy\.id ===[\s\S]*?"selected-operational-summary-report"[\s\S]*?ManualCopyPanel/,
   "Library selected operational summary should expose sourceVariant-aware shareable operation, source, and persistence links with local fallback",
 );
 assertMatches(
@@ -468,7 +468,7 @@ assertMatches(
   "Library source-health candidates should keep manual fallback when draft storage fails",
 );
 assertMatches(
-  /data-testid="library-source-reason-action"[\s\S]*?출처 사유 조치[\s\S]*?현재[\s\S]*?Library 결과 \{filtered\.length\}개를 복원\/백업 확인 리포트로[\s\S]*?library-source-reason-action-link[\s\S]*?출처 사유 링크 복사[\s\S]*?조치 리포트 복사[\s\S]*?Studio로 보내기[\s\S]*?data-testid="library-source-reason-candidates"[\s\S]*?href=\{candidate\.detailHref\}[\s\S]*?보기[\s\S]*?data-testid="library-source-reason-candidate-link"[\s\S]*?상세 링크 복사됨[\s\S]*?상세 링크 복사[\s\S]*?manualCopy\?\.id === "source-health-filter-link"[\s\S]*?LibraryManualCopyPanel/,
+  /data-testid="library-source-reason-action"[\s\S]*?출처 사유 조치[\s\S]*?현재[\s\S]*?Library 결과 \{filtered\.length\}개를 복원\/백업 확인 리포트로[\s\S]*?library-source-reason-action-link[\s\S]*?출처 사유 링크 복사[\s\S]*?조치 리포트 복사[\s\S]*?Studio로 보내기[\s\S]*?data-testid="library-source-reason-candidates"[\s\S]*?href=\{candidate\.detailHref\}[\s\S]*?보기[\s\S]*?data-testid="library-source-reason-candidate-link"[\s\S]*?상세 링크 복사됨[\s\S]*?상세 링크 복사[\s\S]*?manualCopy\?\.id === "source-health-filter-link"[\s\S]*?ManualCopyPanel/,
   "Library source-health action panel should show source-reason link copy, candidate detail navigation/link copy, fallback, report, and Studio actions",
 );
 assertFileIncludes(
@@ -506,7 +506,7 @@ assertMatches(
   "Library no-source-meta/detail storage-mode filter link should copy with prompt, saved-source, source-title, sourceVariant, and condition fallback metadata",
 );
 assertMatches(
-  /저장 출처 메타 없음[\s\S]*?저장 출처 없음 메모 복사[\s\S]*?Studio로 보내기[\s\S]*?selectedStudioPersistenceFilterHref[\s\S]*?library-no-source-meta-persistence-link[\s\S]*?저장 방식 링크 복사[\s\S]*?같은 저장 방식 보기[\s\S]*?manualCopy\?\.id ===[\s\S]*?"selected-studio-persistence-link"[\s\S]*?LibraryManualCopyPanel/,
+  /저장 출처 메타 없음[\s\S]*?저장 출처 없음 메모 복사[\s\S]*?Studio로 보내기[\s\S]*?selectedStudioPersistenceFilterHref[\s\S]*?library-no-source-meta-persistence-link[\s\S]*?저장 방식 링크 복사[\s\S]*?같은 저장 방식 보기[\s\S]*?manualCopy\?\.id ===[\s\S]*?"selected-studio-persistence-link"[\s\S]*?ManualCopyPanel/,
   "Library no-source-meta detail card should expose saved-source metadata wording, storage-mode link copy, fallback, and navigation actions",
 );
 assertMatches(
@@ -518,7 +518,7 @@ assertMatches(
   "Library selected Studio source detail card should copy the selected prompt's sourceVariant-aware saved-source filter link with prompt, saved-source, source-title, sourceVariant, and condition fallback metadata",
 );
 assertMatches(
-  /selectedStudioSource && selectedStudioSourceLabel[\s\S]*?Studio 저장 출처[\s\S]*?library-selected-studio-source-link-copy[\s\S]*?selectedStudioSourceLinkCopiedLabel[\s\S]*?selectedStudioSourceLinkFailedLabel[\s\S]*?selectedStudioSourceLinkCopyLabel[\s\S]*?selectedStudioSourceLinkOpenLabel[\s\S]*?manualCopy\?\.id === "selected-studio-source-link"[\s\S]*?LibraryManualCopyPanel/,
+  /selectedStudioSource && selectedStudioSourceLabel[\s\S]*?Studio 저장 출처[\s\S]*?library-selected-studio-source-link-copy[\s\S]*?selectedStudioSourceLinkCopiedLabel[\s\S]*?selectedStudioSourceLinkFailedLabel[\s\S]*?selectedStudioSourceLinkCopyLabel[\s\S]*?selectedStudioSourceLinkOpenLabel[\s\S]*?manualCopy\?\.id === "selected-studio-source-link"[\s\S]*?ManualCopyPanel/,
   "Library selected Studio source detail card should expose sourceVariant-aware saved-source link copy, fallback, and navigation actions",
 );
 assertMatches(
@@ -526,11 +526,11 @@ assertMatches(
   "Library selected Studio source detail card should copy the original sourceHref as an absolute URL with fallback metadata",
 );
 assertMatches(
-  /selectedStudioSourceHref[\s\S]*?원본 경로 · \{selectedStudioSourceHref\}[\s\S]*?library-selected-studio-source-original-link-copy[\s\S]*?원본 링크 복사됨[\s\S]*?원본 링크 복사 실패[\s\S]*?원본 링크 복사[\s\S]*?href=\{selectedStudioSourceHref\}[\s\S]*?\{selectedStudioSourceLabel\.actionLabel\}[\s\S]*?manualCopy\?\.id ===[\s\S]*?"selected-studio-source-original-link"[\s\S]*?LibraryManualCopyPanel/,
+  /selectedStudioSourceHref[\s\S]*?원본 경로 · \{selectedStudioSourceHref\}[\s\S]*?library-selected-studio-source-original-link-copy[\s\S]*?원본 링크 복사됨[\s\S]*?원본 링크 복사 실패[\s\S]*?원본 링크 복사[\s\S]*?href=\{selectedStudioSourceHref\}[\s\S]*?\{selectedStudioSourceLabel\.actionLabel\}[\s\S]*?manualCopy\?\.id ===[\s\S]*?"selected-studio-source-original-link"[\s\S]*?ManualCopyPanel/,
   "Library selected Studio source detail card should show the original sourceHref, copy it, navigate to it, and expose fallback UI",
 );
 assertMatches(
-  /selectedStudioSource && selectedStudioSourceLabel[\s\S]*?Studio 저장 출처[\s\S]*?library-selected-studio-persistence-link-copy[\s\S]*?저장 방식 링크 복사[\s\S]*?같은 저장 방식 보기[\s\S]*?manualCopy\?\.id ===[\s\S]*?"selected-studio-persistence-link"[\s\S]*?LibraryManualCopyPanel/,
+  /selectedStudioSource && selectedStudioSourceLabel[\s\S]*?Studio 저장 출처[\s\S]*?library-selected-studio-persistence-link-copy[\s\S]*?저장 방식 링크 복사[\s\S]*?같은 저장 방식 보기[\s\S]*?manualCopy\?\.id ===[\s\S]*?"selected-studio-persistence-link"[\s\S]*?ManualCopyPanel/,
   "Library selected Studio source detail card should expose storage-mode link copy, fallback, and navigation actions",
 );
 assertMatches(
@@ -625,7 +625,7 @@ assertMatches(
   "Library Studio persistence action panel should copy a shareable storage-mode condition link and queue link for missing saved-source metadata",
 );
 assertMatches(
-  /data-testid="library-studio-persistence-action"[\s\S]*?저장 출처 메타 없음 큐[\s\S]*?Studio 저장 방식 조치[\s\S]*?현재 Library 결과 \$\{filtered\.length\}개를 저장 출처 메타 없음 큐로 정리합니다\.[\s\S]*?현재 Library 결과 \$\{filtered\.length\}개를 저장 방식 리포트로 정리합니다\.[\s\S]*?renderStudioVariantSummaryLinks\([\s\S]*?studioPersistenceVariantSummaryLinks[\s\S]*?library-studio-persistence-action-link[\s\S]*?큐 링크 복사[\s\S]*?저장 방식 링크 복사[\s\S]*?큐 리포트 복사[\s\S]*?저장 방식 리포트 복사[\s\S]*?Studio로 보내기[\s\S]*?manualCopy\?\.id === "studio-persistence-link"[\s\S]*?LibraryManualCopyPanel/,
+  /data-testid="library-studio-persistence-action"[\s\S]*?저장 출처 메타 없음 큐[\s\S]*?Studio 저장 방식 조치[\s\S]*?현재 Library 결과 \$\{filtered\.length\}개를 저장 출처 메타 없음 큐로 정리합니다\.[\s\S]*?현재 Library 결과 \$\{filtered\.length\}개를 저장 방식 리포트로 정리합니다\.[\s\S]*?renderStudioVariantSummaryLinks\([\s\S]*?studioPersistenceVariantSummaryLinks[\s\S]*?library-studio-persistence-action-link[\s\S]*?큐 링크 복사[\s\S]*?저장 방식 링크 복사[\s\S]*?큐 리포트 복사[\s\S]*?저장 방식 리포트 복사[\s\S]*?Studio로 보내기[\s\S]*?manualCopy\?\.id === "studio-persistence-link"[\s\S]*?ManualCopyPanel/,
   "Library Studio persistence action panel should clearly describe missing saved-source metadata queue, storage-mode variant summary links, link, report, fallback, and Studio actions",
 );
 assertMatches(
@@ -673,7 +673,7 @@ assertMatches(
   "Library Studio source candidates should keep manual fallback when draft storage fails",
 );
 assertMatches(
-  /data-testid="library-studio-source-action"[\s\S]*?Studio 저장 출처 조치[\s\S]*?현재[\s\S]*?Library 결과 \{filtered\.length\}개를 저장 출처 리포트로[\s\S]*?renderStudioVariantSummaryLinks\(studioSourceVariantSummaryLinks\)[\s\S]*?library-studio-source-action-link[\s\S]*?저장 출처 링크 복사[\s\S]*?저장 출처 리포트 복사[\s\S]*?Studio로 보내기[\s\S]*?manualCopy\?\.id === "studio-source-link"[\s\S]*?LibraryManualCopyPanel/,
+  /data-testid="library-studio-source-action"[\s\S]*?Studio 저장 출처 조치[\s\S]*?현재[\s\S]*?Library 결과 \{filtered\.length\}개를 저장 출처 리포트로[\s\S]*?renderStudioVariantSummaryLinks\(studioSourceVariantSummaryLinks\)[\s\S]*?library-studio-source-action-link[\s\S]*?저장 출처 링크 복사[\s\S]*?저장 출처 리포트 복사[\s\S]*?Studio로 보내기[\s\S]*?manualCopy\?\.id === "studio-source-link"[\s\S]*?ManualCopyPanel/,
   "Library Studio source action panel should clearly describe saved-source link, variant summary links, report, fallback, and Studio actions",
 );
 assertMatches(
@@ -701,7 +701,7 @@ assertMatches(
   "Library combined operation cohort panel should copy a shareable filter link without binding a selected prompt",
 );
 assertMatches(
-  /data-testid="library-studio-operational-group-action"[\s\S]*?Studio 운영 묶음 조치[\s\S]*?조건이 함께[\s\S]*?운영 묶음[\s\S]*?리포트로 정리합니다[\s\S]*?renderStudioVariantSummaryLinks\(studioSourceVariantSummaryLinks\)[\s\S]*?library-studio-operational-group-action-link[\s\S]*?운영 묶음 링크 복사[\s\S]*?운영 묶음 리포트 복사[\s\S]*?Studio로 보내기[\s\S]*?manualCopy\?\.id === "studio-operational-group-link"[\s\S]*?LibraryManualCopyPanel/,
+  /data-testid="library-studio-operational-group-action"[\s\S]*?Studio 운영 묶음 조치[\s\S]*?조건이 함께[\s\S]*?운영 묶음[\s\S]*?리포트로 정리합니다[\s\S]*?renderStudioVariantSummaryLinks\(studioSourceVariantSummaryLinks\)[\s\S]*?library-studio-operational-group-action-link[\s\S]*?운영 묶음 링크 복사[\s\S]*?운영 묶음 리포트 복사[\s\S]*?Studio로 보내기[\s\S]*?manualCopy\?\.id === "studio-operational-group-link"[\s\S]*?ManualCopyPanel/,
   "Library should show combined operation cohort variant summary links, link copy, local fallback, report copy, and Studio actions when source and persistence filters are both active",
 );
 assertMatches(
@@ -717,7 +717,7 @@ assertMatches(
   "Library sourceVariant summary links should copy absolute URLs with manual fallback metadata",
 );
 assertMatches(
-  /function renderStudioVariantSummaryLinks\([\s\S]*?세부 초안 유형[\s\S]*?href=\{variant\.href\}[\s\S]*?\{variant\.label\} \{variant\.count\}개[\s\S]*?data-testid="library-studio-variant-filter-link-copy"[\s\S]*?copyStudioVariantFilterLink\(variant\)[\s\S]*?복사됨[\s\S]*?실패[\s\S]*?manualCopy\?\.id === "studio-variant-link"[\s\S]*?LibraryManualCopyPanel/,
+  /function renderStudioVariantSummaryLinks\([\s\S]*?세부 초안 유형[\s\S]*?href=\{variant\.href\}[\s\S]*?\{variant\.label\} \{variant\.count\}개[\s\S]*?data-testid="library-studio-variant-filter-link-copy"[\s\S]*?copyStudioVariantFilterLink\(variant\)[\s\S]*?복사됨[\s\S]*?실패[\s\S]*?manualCopy\?\.id === "studio-variant-link"[\s\S]*?ManualCopyPanel/,
   "Library action panels should render sourceVariant summary links with per-variant copy actions and fallback UI",
 );
 assertMatches(

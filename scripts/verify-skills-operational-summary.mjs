@@ -3,6 +3,10 @@ import { readFileSync } from "node:fs";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
 
 const source = readFileSync("src/components/skills/skills-view.tsx", "utf8");
+const manualCopyPanelSource = readFileSync(
+  "src/components/common/manual-copy-panel.tsx",
+  "utf8",
+);
 const readme = readFileSync("README.md", "utf8");
 const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
 const promptTypes = readFileSync("src/lib/prompt/types.ts", "utf8");
@@ -224,27 +228,32 @@ assertMatches(
   "Skills operational summary should open a dedicated Studio draft and keep manual fallback when draft storage fails",
 );
 assertMatches(
-  /type SkillManualCopy = \{[\s\S]*?reason\?: string[\s\S]*?copy\.reason \?\? `\$\{copy\.title\} 복사가 차단됐습니다\.`/,
-  "Skills manual copy panel should show a precise reason for copy or Studio draft fallback",
+  /type SkillManualCopy = \{[\s\S]*?reason\?: string/,
+  "Skills manual copy state should carry a precise reason for copy or Studio draft fallback",
+);
+assert.match(
+  manualCopyPanelSource,
+  /copy\.reason \?\? `\$\{copy\.title\} 복사가 차단됐습니다\.`/,
+  "Shared manual copy panel should show a precise reason for copy or Studio draft fallback",
 );
 assertMatches(
-  /스킬 운영 요약[\s\S]*?copySkillsOperationalSummaryReport[\s\S]*?운영 리포트 복사됨[\s\S]*?운영 리포트 복사 실패[\s\S]*?운영 리포트 복사[\s\S]*?openSkillsOperationalSummaryInStudio[\s\S]*?리포트 Studio로 보내기[\s\S]*?manualCopy\?\.id === "operations-report"[\s\S]*?SkillManualCopyPanel[\s\S]*?최근 실행[\s\S]*?skillRunStats\.latestRun\.sourceSkillName[\s\S]*?스킬 · \{skillRunStats\.latestRun\.sourceSkillName\}[\s\S]*?최근 실행 Library 보기[\s\S]*?data-testid="skills-latest-run-link-copy"[\s\S]*?최근 실행 링크 복사됨[\s\S]*?최근 실행 링크 복사 실패[\s\S]*?최근 실행 링크 복사[\s\S]*?manualCopy\?\.id === "latest-run-link"[\s\S]*?SkillManualCopyPanel/,
+  /스킬 운영 요약[\s\S]*?copySkillsOperationalSummaryReport[\s\S]*?운영 리포트 복사됨[\s\S]*?운영 리포트 복사 실패[\s\S]*?운영 리포트 복사[\s\S]*?openSkillsOperationalSummaryInStudio[\s\S]*?리포트 Studio로 보내기[\s\S]*?manualCopy\?\.id === "operations-report"[\s\S]*?ManualCopyPanel[\s\S]*?최근 실행[\s\S]*?skillRunStats\.latestRun\.sourceSkillName[\s\S]*?스킬 · \{skillRunStats\.latestRun\.sourceSkillName\}[\s\S]*?최근 실행 Library 보기[\s\S]*?data-testid="skills-latest-run-link-copy"[\s\S]*?최근 실행 링크 복사됨[\s\S]*?최근 실행 링크 복사 실패[\s\S]*?최근 실행 링크 복사[\s\S]*?manualCopy\?\.id === "latest-run-link"[\s\S]*?ManualCopyPanel/,
   "Skills operational summary should expose report copy, Studio handoff, latest-run skill name, Library navigation, link copy, and fallback",
 );
 assertMatches(
-  /selectedSkillRuns\.map\(\(prompt\) =>[\s\S]*?prompt\.sourceSkillName[\s\S]*?스킬 · \{prompt\.sourceSkillName\}[\s\S]*?openSkillRunInLibrary\(prompt\)[\s\S]*?Library 보기[\s\S]*?copySkillRunHistoryLibraryLink\(prompt\)[\s\S]*?data-testid=\{`skills-run-history-link-copy-\$\{prompt\.id\}`\}[\s\S]*?링크 복사됨[\s\S]*?링크 복사 실패[\s\S]*?manualCopy\?\.id === "run-history-link"[\s\S]*?manualCopy\.targetId === prompt\.id[\s\S]*?SkillManualCopyPanel/,
+  /selectedSkillRuns\.map\(\(prompt\) =>[\s\S]*?prompt\.sourceSkillName[\s\S]*?스킬 · \{prompt\.sourceSkillName\}[\s\S]*?openSkillRunInLibrary\(prompt\)[\s\S]*?Library 보기[\s\S]*?copySkillRunHistoryLibraryLink\(prompt\)[\s\S]*?data-testid=\{`skills-run-history-link-copy-\$\{prompt\.id\}`\}[\s\S]*?링크 복사됨[\s\S]*?링크 복사 실패[\s\S]*?manualCopy\?\.id === "run-history-link"[\s\S]*?manualCopy\.targetId === prompt\.id[\s\S]*?ManualCopyPanel/,
   "Skills run history should expose per-run skill name, Library navigation, link copy, and fallback",
 );
 assertMatches(
-  /실행 저장 완료[\s\S]*?savedRunPrompt\.title[\s\S]*?스킬 · \{savedRunPrompt\.sourceSkillName \?\? draft\.name\}[\s\S]*?Library 실행 보기[\s\S]*?copySavedRunLibraryLink[\s\S]*?실행 링크 복사됨[\s\S]*?실행 링크 복사 실패[\s\S]*?manualCopy\?\.id === "run-link"[\s\S]*?SkillManualCopyPanel/,
+  /실행 저장 완료[\s\S]*?savedRunPrompt\.title[\s\S]*?스킬 · \{savedRunPrompt\.sourceSkillName \?\? draft\.name\}[\s\S]*?Library 실행 보기[\s\S]*?copySavedRunLibraryLink[\s\S]*?실행 링크 복사됨[\s\S]*?실행 링크 복사 실패[\s\S]*?manualCopy\?\.id === "run-link"[\s\S]*?ManualCopyPanel/,
   "Skills saved run card should show the skill name and expose saved-run Library navigation, link copy, and fallback",
 );
 assertMatches(
-  /원본 Library 프롬프트[\s\S]*?selectedPromptStudioSourceDisplay[\s\S]*?Studio 저장 출처 ·[\s\S]*?selectedPromptStudioSourceDisplay\.label[\s\S]*?세부 초안 유형[\s\S]*?selectedPromptStudioSourceDisplay\.sourceVariantLabel[\s\S]*?출처 제목 · \{selectedPromptStudioSourceDisplay\.sourceTitle\}[\s\S]*?onClick=\{copySelectedPromptLibraryLink\}[\s\S]*?원본 링크 복사됨[\s\S]*?원본 링크 복사 실패[\s\S]*?manualCopy\?\.id === "source-link"[\s\S]*?SkillManualCopyPanel/,
+  /원본 Library 프롬프트[\s\S]*?selectedPromptStudioSourceDisplay[\s\S]*?Studio 저장 출처 ·[\s\S]*?selectedPromptStudioSourceDisplay\.label[\s\S]*?세부 초안 유형[\s\S]*?selectedPromptStudioSourceDisplay\.sourceVariantLabel[\s\S]*?출처 제목 · \{selectedPromptStudioSourceDisplay\.sourceTitle\}[\s\S]*?onClick=\{copySelectedPromptLibraryLink\}[\s\S]*?원본 링크 복사됨[\s\S]*?원본 링크 복사 실패[\s\S]*?manualCopy\?\.id === "source-link"[\s\S]*?ManualCopyPanel/,
   "Skills selected source prompt card should show Studio saved-source/sourceVariant/source-title labels and expose source link copy fallback",
 );
 assertMatches(
-  /성과와 개선 추천[\s\S]*?반영 예정 변경[\s\S]*?copyImprovementPlan[\s\S]*?개선 계획 복사됨[\s\S]*?개선 계획 복사 실패[\s\S]*?개선 계획 복사[\s\S]*?openImprovementPlanInStudio[\s\S]*?Studio로 보내기[\s\S]*?applyImprovementPlan[\s\S]*?manualCopy\?\.id === "improvement-plan"[\s\S]*?SkillManualCopyPanel/,
+  /성과와 개선 추천[\s\S]*?반영 예정 변경[\s\S]*?copyImprovementPlan[\s\S]*?개선 계획 복사됨[\s\S]*?개선 계획 복사 실패[\s\S]*?개선 계획 복사[\s\S]*?openImprovementPlanInStudio[\s\S]*?Studio로 보내기[\s\S]*?applyImprovementPlan[\s\S]*?manualCopy\?\.id === "improvement-plan"[\s\S]*?ManualCopyPanel/,
   "Skills improvement recommendation card should expose improvement plan copy, Studio handoff, apply, and manual fallback",
 );
 assertFileIncludes(

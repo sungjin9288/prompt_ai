@@ -23,6 +23,7 @@ import {
   ContextOperatingFlow,
   type ContextOperatingFlowItem,
 } from "@/components/context/context-operating-flow";
+import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import { copyTextToClipboard } from "@/lib/browser/clipboard";
 import {
   useCompanyProfileStore,
@@ -5793,43 +5794,6 @@ function getManualCopyTitle(successNotice: string) {
     .trim();
 }
 
-function DataManualCopyPanel({
-  copy,
-  onClose,
-}: {
-  copy: DataManualCopy;
-  onClose: () => void;
-}) {
-  return (
-    <div
-      className="rounded-md border border-line bg-surface px-3 py-3"
-      data-testid={copy.id ? `data-manual-copy-${copy.id}` : undefined}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold text-soft">수동 복사 필요</p>
-          <p className="mt-1 text-xs leading-5 text-muted">
-            {copy.title} 복사가 차단됐습니다.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-xs font-semibold text-accent transition hover:text-soft"
-        >
-          닫기
-        </button>
-      </div>
-      <textarea
-        readOnly
-        value={copy.body}
-        className={`${textareaClass} mt-3 h-52 font-mono text-xs leading-5`}
-        aria-label={`수동 복사용 ${copy.title}`}
-      />
-    </div>
-  );
-}
-
 export function DataManagementView() {
   const router = useRouter();
   const [userProfile] = useUserProfileStore();
@@ -7882,9 +7846,13 @@ export function DataManagementView() {
         ) : null}
 
         {manualCopy ? (
-          <DataManualCopyPanel
+          <ManualCopyPanel
             copy={manualCopy}
             onClose={() => setManualCopy(null)}
+            testId={
+              manualCopy.id ? `data-manual-copy-${manualCopy.id}` : undefined
+            }
+            textareaClassName={`${textareaClass} mt-3 h-52 font-mono text-xs leading-5`}
           />
         ) : null}
 

@@ -49,6 +49,10 @@ const sourceRegistrySource = readFileSync(
   "src/lib/studio/source-registry.ts",
   "utf8",
 );
+const manualCopyPanelSource = readFileSync(
+  "src/components/common/manual-copy-panel.tsx",
+  "utf8",
+);
 
 const {
   buildSupabaseImportExecutionPacketManifestText,
@@ -380,9 +384,14 @@ assertDataMatches(
   /interface DataManualCopy \{[\s\S]*?id\?: string;[\s\S]*?title: string;[\s\S]*?body: string;[\s\S]*?\}/,
   "Data manual copy state should allow source-specific IDs for regression-safe fallback panels",
 );
+assert.match(
+  manualCopyPanelSource,
+  /export function ManualCopyPanel\(\{[\s\S]*?data-testid=\{testId\}[\s\S]*?aria-label=\{ariaLabel \?\? `수동 복사용 \$\{copy\.title\}`\}/,
+  "Shared manual copy panel should expose a stable optional test ID while preserving the manual copy textarea label",
+);
 assertDataMatches(
-  /function DataManualCopyPanel\(\{[\s\S]*?data-testid=\{copy\.id \? `data-manual-copy-\$\{copy\.id\}` : undefined\}[\s\S]*?aria-label=\{`수동 복사용 \$\{copy\.title\}`\}/,
-  "Data manual copy panel should expose a stable optional test ID while preserving the manual copy textarea label",
+  /<ManualCopyPanel[\s\S]*?copy=\{manualCopy\}[\s\S]*?testId=\{[\s\S]*?manualCopy\.id \? `data-manual-copy-\$\{manualCopy\.id\}` : undefined[\s\S]*?\}/,
+  "Data manual copy panel usage should keep the source-specific data-manual-copy test ID mapping",
 );
 assertDataMatches(
   /function handleOpenDocumentRagInStudio\(\)[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setManualCopy\(\{[\s\S]*?id: "document-rag-studio"[\s\S]*?title: `문서\/RAG Studio 초안 · \$\{sourceName\}`[\s\S]*?body: rawInput[\s\S]*?\}\);[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=data-document-rag"\)/,

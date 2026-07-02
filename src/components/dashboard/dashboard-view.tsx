@@ -14,6 +14,7 @@ import {
   ContextOperatingFlow,
   type ContextOperatingFlowItem,
 } from "@/components/context/context-operating-flow";
+import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import {
   languageStrategyLabels,
   modelLabels,
@@ -5051,31 +5052,12 @@ export function DashboardView() {
         </div>
         {dashboardNextActionQueueManualCopy ? (
           <div className="border-t border-line px-5 py-4">
-            <div className="rounded-md border border-line bg-surface px-3 py-3">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold text-soft">
-                    수동 복사 필요
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-muted">
-                    {dashboardNextActionQueueManualCopy.title} 복사가 차단됐습니다.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setDashboardNextActionQueueManualCopy(null)}
-                  className="text-xs font-semibold text-accent transition hover:text-soft"
-                >
-                  닫기
-                </button>
-              </div>
-              <textarea
-                readOnly
-                value={dashboardNextActionQueueManualCopy.body}
-                className="mt-3 h-36 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                aria-label="수동 복사용 Dashboard 다음 실행 큐 리포트"
-              />
-            </div>
+            <ManualCopyPanel
+              copy={dashboardNextActionQueueManualCopy}
+              onClose={() => setDashboardNextActionQueueManualCopy(null)}
+              height="h-36"
+              ariaLabel="수동 복사용 Dashboard 다음 실행 큐 리포트"
+            />
           </div>
         ) : null}
       </Panel>
@@ -5342,31 +5324,12 @@ export function DashboardView() {
               리포트 Studio로 보내기
             </button>
             {learningOpsManualCopy ? (
-              <div className="mt-4 rounded-md border border-line bg-surface px-3 py-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold text-soft">
-                      수동 복사 필요
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-muted">
-                      {learningOpsManualCopy.title} 복사가 차단됐습니다.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setLearningOpsManualCopy(null)}
-                    className="text-xs font-semibold text-accent transition hover:text-soft"
-                  >
-                    닫기
-                  </button>
-                </div>
-                <textarea
-                  readOnly
-                  value={learningOpsManualCopy.body}
-                  className="mt-3 h-40 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                  aria-label="수동 복사용 Learning 운영 리포트"
-                />
-              </div>
+              <ManualCopyPanel
+                copy={learningOpsManualCopy}
+                onClose={() => setLearningOpsManualCopy(null)}
+                className="mt-4 bg-surface"
+                ariaLabel="수동 복사용 Learning 운영 리포트"
+              />
             ) : null}
             <div className="mt-5 border-t border-line pt-4">
               <p className="text-sm font-semibold">운영 점검 큐</p>
@@ -5749,27 +5712,14 @@ export function DashboardView() {
                 </button>
               </div>
               {missingSourceMetadataQueueManualCopy ? (
-                <div className="mt-3 rounded-md border border-line bg-surface px-3 py-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="text-xs leading-5 text-muted">
-                      {missingSourceMetadataQueueManualCopy.title} 복사가
-                      차단됐습니다.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setMissingSourceMetadataQueueManualCopy(null)}
-                      className="text-xs font-semibold text-accent transition hover:text-soft"
-                    >
-                      닫기
-                    </button>
-                  </div>
-                  <textarea
-                    readOnly
-                    value={missingSourceMetadataQueueManualCopy.body}
-                    className="mt-3 h-32 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                    aria-label="수동 복사용 저장 출처 메타 없음 큐 운영 프롬프트"
-                  />
-                </div>
+                <ManualCopyPanel
+                  copy={missingSourceMetadataQueueManualCopy}
+                  onClose={() => setMissingSourceMetadataQueueManualCopy(null)}
+                  className="mt-3 bg-surface"
+                  showHeading={false}
+                  height="h-32"
+                  ariaLabel="수동 복사용 저장 출처 메타 없음 큐 운영 프롬프트"
+                />
               ) : null}
               <div className="mt-3 grid gap-2 text-[11px]">
                 {studioPersistenceSummary.map((item) => (
@@ -5817,26 +5767,14 @@ export function DashboardView() {
                 ))}
               </div>
               {studioPersistenceManualCopy ? (
-                <div className="mt-3 rounded-md border border-line bg-surface px-3 py-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="text-xs leading-5 text-muted">
-                      {studioPersistenceManualCopy.title} 복사가 차단됐습니다.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setStudioPersistenceManualCopy(null)}
-                      className="text-xs font-semibold text-accent transition hover:text-soft"
-                    >
-                      닫기
-                    </button>
-                  </div>
-                  <textarea
-                    readOnly
-                    value={studioPersistenceManualCopy.body}
-                    className="mt-3 h-24 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                    aria-label="수동 복사용 Studio 저장 방식 링크"
-                  />
-                </div>
+                <ManualCopyPanel
+                  copy={studioPersistenceManualCopy}
+                  onClose={() => setStudioPersistenceManualCopy(null)}
+                  className="mt-3 bg-surface"
+                  showHeading={false}
+                  height="h-24"
+                  ariaLabel="수동 복사용 Studio 저장 방식 링크"
+                />
               ) : null}
               <div className="mt-3 border-t border-line pt-3">
                 <div className="flex items-center justify-between gap-3">
@@ -6070,70 +6008,34 @@ export function DashboardView() {
                   </p>
                 )}
                 {studioSourceOpsManualCopy ? (
-                  <div className="mt-3 rounded-md border border-line bg-surface px-3 py-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-xs leading-5 text-muted">
-                        {studioSourceOpsManualCopy.title} 복사가 차단됐습니다.
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setStudioSourceOpsManualCopy(null)}
-                        className="text-xs font-semibold text-accent transition hover:text-soft"
-                      >
-                        닫기
-                      </button>
-                    </div>
-                    <textarea
-                      readOnly
-                      value={studioSourceOpsManualCopy.body}
-                      className="mt-3 h-36 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                      aria-label="수동 복사용 Studio 저장 출처 운영 리포트"
-                    />
-                  </div>
+                  <ManualCopyPanel
+                    copy={studioSourceOpsManualCopy}
+                    onClose={() => setStudioSourceOpsManualCopy(null)}
+                    className="mt-3 bg-surface"
+                    showHeading={false}
+                    height="h-36"
+                    ariaLabel="수동 복사용 Studio 저장 출처 운영 리포트"
+                  />
                 ) : null}
                 {studioSourceExampleManualCopy ? (
-                  <div className="mt-3 rounded-md border border-line bg-surface px-3 py-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-xs leading-5 text-muted">
-                        {studioSourceExampleManualCopy.title} 복사가 차단됐습니다.
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setStudioSourceExampleManualCopy(null)}
-                        className="text-xs font-semibold text-accent transition hover:text-soft"
-                      >
-                        닫기
-                      </button>
-                    </div>
-                    <textarea
-                      readOnly
-                      value={studioSourceExampleManualCopy.body}
-                      className="mt-3 h-24 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                      aria-label="수동 복사용 대표 저장본 링크"
-                    />
-                  </div>
+                  <ManualCopyPanel
+                    copy={studioSourceExampleManualCopy}
+                    onClose={() => setStudioSourceExampleManualCopy(null)}
+                    className="mt-3 bg-surface"
+                    showHeading={false}
+                    height="h-24"
+                    ariaLabel="수동 복사용 대표 저장본 링크"
+                  />
                 ) : null}
                 {studioSourceFilterManualCopy ? (
-                  <div className="mt-3 rounded-md border border-line bg-surface px-3 py-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-xs leading-5 text-muted">
-                        {studioSourceFilterManualCopy.title} 복사가 차단됐습니다.
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setStudioSourceFilterManualCopy(null)}
-                        className="text-xs font-semibold text-accent transition hover:text-soft"
-                      >
-                        닫기
-                      </button>
-                    </div>
-                    <textarea
-                      readOnly
-                      value={studioSourceFilterManualCopy.body}
-                      className="mt-3 h-24 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                      aria-label="수동 복사용 Studio 저장 출처 필터 링크"
-                    />
-                  </div>
+                  <ManualCopyPanel
+                    copy={studioSourceFilterManualCopy}
+                    onClose={() => setStudioSourceFilterManualCopy(null)}
+                    className="mt-3 bg-surface"
+                    showHeading={false}
+                    height="h-24"
+                    ariaLabel="수동 복사용 Studio 저장 출처 필터 링크"
+                  />
                 ) : null}
               </div>
             </div>
@@ -6374,26 +6276,14 @@ export function DashboardView() {
                 </button>
               </div>
               {sourceHealthManualCopy ? (
-                <div className="mt-3 rounded-md border border-line bg-surface px-3 py-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="text-xs leading-5 text-muted">
-                      {sourceHealthManualCopy.title} 복사가 차단됐습니다.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setSourceHealthManualCopy(null)}
-                      className="text-xs font-semibold text-accent transition hover:text-soft"
-                    >
-                      닫기
-                    </button>
-                  </div>
-                  <textarea
-                    readOnly
-                    value={sourceHealthManualCopy.body}
-                    className="mt-3 h-36 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                    aria-label="수동 복사용 개선 출처 상태 조치 계획 또는 링크"
-                  />
-                </div>
+                <ManualCopyPanel
+                  copy={sourceHealthManualCopy}
+                  onClose={() => setSourceHealthManualCopy(null)}
+                  className="mt-3 bg-surface"
+                  showHeading={false}
+                  height="h-36"
+                  ariaLabel="수동 복사용 개선 출처 상태 조치 계획 또는 링크"
+                />
               ) : null}
             </div>
             <p className="mt-4 text-sm leading-6 text-muted">
@@ -6850,32 +6740,12 @@ export function DashboardView() {
             </div>
           ) : null}
           {feedbackImprovementOpsManualCopy ? (
-            <div className="mb-4 rounded-md border border-line bg-surface px-3 py-3">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold text-soft">
-                    수동 복사 필요
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-muted">
-                    {feedbackImprovementOpsManualCopy.title} 복사가
-                    차단됐습니다.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setFeedbackImprovementOpsManualCopy(null)}
-                  className="text-xs font-semibold text-accent transition hover:text-soft"
-                >
-                  닫기
-                </button>
-              </div>
-              <textarea
-                readOnly
-                value={feedbackImprovementOpsManualCopy.body}
-                className="mt-3 h-40 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                aria-label="수동 복사용 피드백 반영 개선 리포트"
-              />
-            </div>
+            <ManualCopyPanel
+              copy={feedbackImprovementOpsManualCopy}
+              onClose={() => setFeedbackImprovementOpsManualCopy(null)}
+              className="mb-4 bg-surface"
+              ariaLabel="수동 복사용 피드백 반영 개선 리포트"
+            />
           ) : null}
           <div className="grid gap-3 lg:grid-cols-3">
             {feedbackBasedImprovementRecords.slice(0, 3).map((record) => (
@@ -7206,31 +7076,14 @@ export function DashboardView() {
                   리포트 Studio로 보내기
                 </button>
                 {personalizationManualCopy ? (
-                  <div className="mt-4 rounded-md border border-line bg-panel px-3 py-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-xs font-semibold text-soft">
-                          수동 복사 필요
-                        </p>
-                        <p className="mt-1 text-xs leading-5 text-muted">
-                          {personalizationManualCopy.title} 복사가 차단됐습니다.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setPersonalizationManualCopy(null)}
-                        className="text-xs font-semibold text-accent transition hover:text-soft"
-                      >
-                        닫기
-                      </button>
-                    </div>
-                    <textarea
-                      readOnly
-                      value={personalizationManualCopy.body}
-                      className="mt-3 h-36 w-full resize-y rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                      aria-label="수동 복사용 개인화 기준 리포트"
-                    />
-                  </div>
+                  <ManualCopyPanel
+                    copy={personalizationManualCopy}
+                    onClose={() => setPersonalizationManualCopy(null)}
+                    className="mt-4 bg-panel"
+                    height="h-36"
+                    textareaBackground="bg-surface"
+                    ariaLabel="수동 복사용 개인화 기준 리포트"
+                  />
                 ) : null}
               </div>
 
@@ -7472,31 +7325,11 @@ export function DashboardView() {
               </div>
 
               {skillOpsManualCopy ? (
-                <div className="rounded-md border border-line bg-surface px-3 py-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-semibold text-soft">
-                        수동 복사 필요
-                      </p>
-                      <p className="mt-1 text-xs leading-5 text-muted">
-                        {skillOpsManualCopy.title} 복사가 차단됐습니다.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setSkillOpsManualCopy(null)}
-                      className="text-xs font-semibold text-accent transition hover:text-soft"
-                    >
-                      닫기
-                    </button>
-                  </div>
-                  <textarea
-                    readOnly
-                    value={skillOpsManualCopy.body}
-                    className="mt-3 h-40 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-                    aria-label="수동 복사용 스킬 운영 리포트 또는 링크"
-                  />
-                </div>
+                <ManualCopyPanel
+                  copy={skillOpsManualCopy}
+                  onClose={() => setSkillOpsManualCopy(null)}
+                  ariaLabel="수동 복사용 스킬 운영 리포트 또는 링크"
+                />
               ) : null}
             </div>
           </Panel>

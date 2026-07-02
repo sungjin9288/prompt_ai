@@ -18,6 +18,7 @@ import {
   ContextOperatingFlow,
   type ContextOperatingFlowItem,
 } from "@/components/context/context-operating-flow";
+import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import type { LearningMemory, MemoryScope } from "@/lib/prompt";
 import { useLearningMemoriesStore } from "@/lib/data/workspace-store";
 import {
@@ -141,40 +142,6 @@ function findDuplicateMemory(
       memory.id !== exceptId &&
       memory.scope === scope &&
       normalizeMemoryContent(memory.content) === normalized,
-  );
-}
-
-function LearningManualCopyPanel({
-  copy,
-  onClose,
-}: {
-  copy: LearningManualCopy;
-  onClose: () => void;
-}) {
-  return (
-    <div className="rounded-md border border-line bg-surface px-3 py-3">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold text-soft">수동 복사 필요</p>
-          <p className="mt-1 text-xs leading-5 text-muted">
-            {copy.reason ?? `${copy.title} 복사가 차단됐습니다.`}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-xs font-semibold text-accent transition hover:text-soft"
-        >
-          닫기
-        </button>
-      </div>
-      <textarea
-        readOnly
-        value={copy.body}
-        className="mt-3 h-40 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-        aria-label={`수동 복사용 ${copy.title}`}
-      />
-    </div>
   );
 }
 
@@ -1971,7 +1938,7 @@ export function LearningView({
             </div>
             {learningManualCopy?.id === "readiness-report" ? (
               <div className="mt-4">
-                <LearningManualCopyPanel
+                <ManualCopyPanel
                   copy={learningManualCopy}
                   onClose={() => setLearningManualCopy(null)}
                 />
@@ -2152,7 +2119,7 @@ export function LearningView({
               className="mt-4"
               data-testid="learning-feedback-improvement-queue-manual-copy"
             >
-              <LearningManualCopyPanel
+              <ManualCopyPanel
                 copy={learningManualCopy}
                 onClose={() => setLearningManualCopy(null)}
               />
@@ -2275,7 +2242,7 @@ export function LearningView({
             {!feedbackImprovementFilterActive &&
             (learningManualCopy?.id === "filter-link" ||
               learningManualCopy?.id === "filtered-report") ? (
-              <LearningManualCopyPanel
+              <ManualCopyPanel
                 copy={learningManualCopy}
                 onClose={() => setLearningManualCopy(null)}
               />
@@ -2643,7 +2610,7 @@ export function LearningView({
                 </div>
                 {learningManualCopy?.id === `memory:${memory.id}` ? (
                   <div className="lg:col-span-2">
-                    <LearningManualCopyPanel
+                    <ManualCopyPanel
                       copy={learningManualCopy}
                       onClose={() => setLearningManualCopy(null)}
                     />

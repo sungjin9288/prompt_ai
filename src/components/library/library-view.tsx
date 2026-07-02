@@ -15,6 +15,7 @@ import {
   selectClass,
   textareaClass,
 } from "@/components/ui";
+import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import {
   ContextOperatingFlow,
   type ContextOperatingFlowItem,
@@ -161,40 +162,6 @@ type LibraryManualCopy = {
   title: string;
   body: string;
 };
-
-function LibraryManualCopyPanel({
-  copy,
-  onClose,
-}: {
-  copy: LibraryManualCopy;
-  onClose: () => void;
-}) {
-  return (
-    <div className="rounded-md border border-line bg-surface px-3 py-3">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold text-soft">수동 복사 필요</p>
-          <p className="mt-1 text-xs leading-5 text-muted">
-            {copy.title} 복사가 차단됐습니다.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-xs font-semibold text-accent transition hover:text-soft"
-        >
-          닫기
-        </button>
-      </div>
-      <textarea
-        readOnly
-        value={copy.body}
-        className="mt-3 h-40 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-        aria-label={`수동 복사용 ${copy.title}`}
-      />
-    </div>
-  );
-}
 
 const librarySortModes: LibrarySortMode[] = [
   "recent",
@@ -5656,7 +5623,7 @@ export function LibraryView({
           </div>
           {manualCopy?.id === "filter-link" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -5798,7 +5765,7 @@ export function LibraryView({
           </div>
           {manualCopy?.id === "source-health-filter-link" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -5806,7 +5773,7 @@ export function LibraryView({
           ) : null}
           {manualCopy?.id === "source-health-filter-report" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -5814,7 +5781,7 @@ export function LibraryView({
           ) : null}
           {manualCopy?.id === "source-health-candidate-note" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -5882,7 +5849,7 @@ export function LibraryView({
           </div>
           {manualCopy?.id === "studio-operational-group-link" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -5890,7 +5857,7 @@ export function LibraryView({
           ) : null}
           {manualCopy?.id === "studio-operational-group-report" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -6057,7 +6024,7 @@ export function LibraryView({
           </div>
           {manualCopy?.id === "studio-persistence-link" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -6065,7 +6032,7 @@ export function LibraryView({
           ) : null}
           {manualCopy?.id === "studio-persistence-report" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -6073,7 +6040,7 @@ export function LibraryView({
           ) : null}
           {manualCopy?.id === "studio-persistence-candidate-note" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -6214,7 +6181,7 @@ export function LibraryView({
           </div>
           {manualCopy?.id === "studio-source-link" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -6222,7 +6189,7 @@ export function LibraryView({
           ) : null}
           {manualCopy?.id === "studio-source-report" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -6230,7 +6197,7 @@ export function LibraryView({
           ) : null}
           {manualCopy?.id === "studio-source-candidate-note" ? (
             <div className="mt-3">
-              <LibraryManualCopyPanel
+              <ManualCopyPanel
                 copy={manualCopy}
                 onClose={() => setManualCopy(null)}
               />
@@ -6241,7 +6208,7 @@ export function LibraryView({
 
       {manualCopy?.id === "studio-variant-link" ? (
         <div className="mb-5">
-          <LibraryManualCopyPanel
+          <ManualCopyPanel
             copy={manualCopy}
             onClose={() => setManualCopy(null)}
           />
@@ -7050,7 +7017,7 @@ export function LibraryView({
                     manualCopy.id ===
                       "list-studio-operational-group-link") ? (
                     <div className="px-4 pb-4">
-                      <LibraryManualCopyPanel
+                      <ManualCopyPanel
                         copy={manualCopy}
                         onClose={() => setManualCopy(null)}
                       />
@@ -7462,7 +7429,7 @@ export function LibraryView({
                     manualCopy?.id === "detail-link" ||
                     manualCopy?.id === "comparison-brief" ? (
                       <div className="mt-4">
-                        <LibraryManualCopyPanel
+                        <ManualCopyPanel
                           copy={manualCopy}
                           onClose={() => setManualCopy(null)}
                         />
@@ -7656,7 +7623,7 @@ export function LibraryView({
                         manualCopy.id ===
                           "selected-operational-summary-report") ? (
                         <div className="mt-3">
-                          <LibraryManualCopyPanel
+                          <ManualCopyPanel
                             copy={manualCopy}
                             onClose={() => setManualCopy(null)}
                           />
@@ -7810,7 +7777,7 @@ export function LibraryView({
                     </div>
                     {manualCopy?.id === "learning-report" ? (
                       <div className="mt-3">
-                        <LibraryManualCopyPanel
+                        <ManualCopyPanel
                           copy={manualCopy}
                           onClose={() => setManualCopy(null)}
                         />
@@ -7914,7 +7881,7 @@ export function LibraryView({
 	                      {manualCopy?.id === "selected-studio-source-link" &&
 	                      manualCopy.targetId === selected.id ? (
 	                        <div className="mt-3">
-	                          <LibraryManualCopyPanel
+	                          <ManualCopyPanel
 	                            copy={manualCopy}
 	                            onClose={() => setManualCopy(null)}
 	                          />
@@ -7924,7 +7891,7 @@ export function LibraryView({
 	                        "selected-studio-persistence-link" &&
 	                      manualCopy.targetId === selected.id ? (
 	                        <div className="mt-3">
-	                          <LibraryManualCopyPanel
+	                          <ManualCopyPanel
 	                            copy={manualCopy}
 	                            onClose={() => setManualCopy(null)}
 	                          />
@@ -7968,7 +7935,7 @@ export function LibraryView({
 	                            "selected-studio-source-original-link" &&
 	                          manualCopy.targetId === selected.id ? (
 	                            <div className="mt-3">
-	                              <LibraryManualCopyPanel
+	                              <ManualCopyPanel
 	                                copy={manualCopy}
 	                                onClose={() => setManualCopy(null)}
 	                              />
@@ -8041,7 +8008,7 @@ export function LibraryView({
 	                      {manualCopy?.id === "no-source-meta-note" &&
 	                      manualCopy.targetId === selected.id ? (
 	                        <div className="mt-3">
-	                          <LibraryManualCopyPanel
+	                          <ManualCopyPanel
 	                            copy={manualCopy}
 	                            onClose={() => setManualCopy(null)}
 	                          />
@@ -8076,7 +8043,7 @@ export function LibraryView({
 	                        "selected-studio-persistence-link" &&
 	                      manualCopy.targetId === selected.id ? (
 	                        <div className="mt-3">
-	                          <LibraryManualCopyPanel
+	                          <ManualCopyPanel
 	                            copy={manualCopy}
 	                            onClose={() => setManualCopy(null)}
 	                          />
@@ -8788,7 +8755,7 @@ export function LibraryView({
                             </button>
                             {manualCopy?.id === "missing-context" ? (
                               <div className="sm:col-span-2 xl:col-span-1">
-                                <LibraryManualCopyPanel
+                                <ManualCopyPanel
                                   copy={manualCopy}
                                   onClose={() => setManualCopy(null)}
                                 />
@@ -8856,7 +8823,7 @@ export function LibraryView({
                     </div>
                     {manualCopy?.id === "improvement-brief" ? (
                       <div className="mt-3">
-                        <LibraryManualCopyPanel
+                        <ManualCopyPanel
                           copy={manualCopy}
                           onClose={() => setManualCopy(null)}
                         />

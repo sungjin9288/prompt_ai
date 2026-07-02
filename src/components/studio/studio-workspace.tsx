@@ -17,6 +17,7 @@ import {
   ContextOperatingFlow,
   type ContextOperatingFlowItem,
 } from "@/components/context/context-operating-flow";
+import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import {
   TargetAiHandoffPreviewPanel,
   type HandoffPreviewMode,
@@ -936,40 +937,6 @@ function buildStudioLearningContextReportText(prompt: PromptAsset) {
       ? context.appliedMemoryTitles.map((title) => `- ${title}`).join("\n")
       : "- 적용 메모리 없음",
   ].join("\n");
-}
-
-function StudioManualCopyPanel({
-  copy,
-  onClose,
-}: {
-  copy: StudioManualCopy;
-  onClose: () => void;
-}) {
-  return (
-    <div className="mt-4 rounded-md border border-line bg-surface px-3 py-3">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold text-soft">수동 복사 필요</p>
-          <p className="mt-1 text-xs leading-5 text-muted">
-            {copy.title} 복사가 차단됐습니다.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-xs font-semibold text-accent transition hover:text-soft"
-        >
-          닫기
-        </button>
-      </div>
-      <textarea
-        readOnly
-        value={copy.body}
-        className="mt-3 h-40 w-full resize-y rounded-md border border-line bg-panel px-3 py-2 font-mono text-xs leading-5 text-soft outline-none"
-        aria-label={`수동 복사용 ${copy.title}`}
-      />
-    </div>
-  );
 }
 
 export function StudioWorkspace({
@@ -3111,7 +3078,7 @@ export function StudioWorkspace({
                 </button>
               </div>
               {studioManualCopy?.id === "input-analysis" ? (
-                <StudioManualCopyPanel
+                <ManualCopyPanel className="mt-4 bg-surface"
                   copy={studioManualCopy}
                   onClose={() => setStudioManualCopy(null)}
                 />
@@ -3287,7 +3254,7 @@ export function StudioWorkspace({
                   </div>
                 </div>
                 {studioManualCopy?.id === "source-link" ? (
-                  <StudioManualCopyPanel
+                  <ManualCopyPanel className="mt-4 bg-surface"
                     copy={studioManualCopy}
                     onClose={() => setStudioManualCopy(null)}
                   />
@@ -4576,7 +4543,7 @@ export function StudioWorkspace({
                     />
                   ) : null}
                   {studioManualCopy && studioManualCopy.id !== "input-analysis" ? (
-                    <StudioManualCopyPanel
+                    <ManualCopyPanel className="mt-4 bg-surface"
                       copy={studioManualCopy}
                       onClose={() => setStudioManualCopy(null)}
                     />

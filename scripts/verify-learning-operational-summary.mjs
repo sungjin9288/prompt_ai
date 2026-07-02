@@ -65,6 +65,10 @@ function writeLearningFeedbackEvidence(outputPath, evidenceText) {
 const outputPath = getOutputPath(process.argv.slice(2));
 
 const source = readFileSync("src/components/learning/learning-view.tsx", "utf8");
+const manualCopyPanelSource = readFileSync(
+  "src/components/common/manual-copy-panel.tsx",
+  "utf8",
+);
 const promptTypes = readFileSync("src/lib/prompt/types.ts", "utf8");
 const draftVariants = readFileSync("src/lib/studio/draft-variants.ts", "utf8");
 const draftDisplay = readFileSync("src/lib/studio/draft-display.ts", "utf8");
@@ -119,8 +123,13 @@ assertMatches(
   "Learning operating flow should point to stable readiness, feedback queue, filter, and manual-memory anchors",
 );
 assertMatches(
-  /type LearningManualCopy = \{[\s\S]*?id: string;[\s\S]*?title: string;[\s\S]*?body: string;[\s\S]*?reason\?: string;[\s\S]*?\};[\s\S]*?copy\.reason \?\? `\$\{copy\.title\} 복사가 차단됐습니다\.`/,
-  "Learning manual copy panel should support explicit fallback reasons for blocked Studio drafts",
+  /type LearningManualCopy = \{[\s\S]*?id: string;[\s\S]*?title: string;[\s\S]*?body: string;[\s\S]*?reason\?: string;[\s\S]*?\};/,
+  "Learning manual copy state should support explicit fallback reasons for blocked Studio drafts",
+);
+assert.match(
+  manualCopyPanelSource,
+  /copy\.reason \?\? `\$\{copy\.title\} 복사가 차단됐습니다\.`/,
+  "Shared manual copy panel should render explicit fallback reasons when provided",
 );
 
 assertMatches(
@@ -212,7 +221,7 @@ assertMatches(
   "Learning memory cards should expose edit and delete actions only for manual memories",
 );
 assertMatches(
-  /data-testid="learning-feedback-improvement-queue"[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-low-confidence-link"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-release-gate"[\s\S]*?data-testid="learning-feedback-improvement-queue-manual-copy"[\s\S]*?LearningManualCopyPanel[\s\S]*?!feedbackImprovementFilterActive &&[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?LearningManualCopyPanel/,
+  /data-testid="learning-feedback-improvement-queue"[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-low-confidence-link"[\s\S]*?learningManualCopy\?\.id ===[\s\S]*?"feedback-improvement-release-gate"[\s\S]*?data-testid="learning-feedback-improvement-queue-manual-copy"[\s\S]*?ManualCopyPanel[\s\S]*?!feedbackImprovementFilterActive &&[\s\S]*?learningManualCopy\?\.id === "filter-link"[\s\S]*?learningManualCopy\?\.id === "filtered-report"[\s\S]*?ManualCopyPanel/,
   "Learning feedback-improvement queue should show copy fallback inside the queue and avoid duplicate filter-panel fallback",
 );
 assertMatches(

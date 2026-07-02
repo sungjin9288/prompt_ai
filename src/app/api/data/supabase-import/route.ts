@@ -201,8 +201,8 @@ function formatSupabaseImportRouteValidationBlocker(blocker: string) {
 }
 
 function buildSupabaseImportRouteAuditArtifactText({
+  blockerMessage,
   checkedAt,
-  error,
   executeRequested,
   executionSummary,
   importEnvironmentStatus,
@@ -211,8 +211,8 @@ function buildSupabaseImportRouteAuditArtifactText({
   routeStatus,
   planValidation,
 }: {
+  blockerMessage?: string;
   checkedAt: string;
-  error?: string;
   executeRequested: boolean;
   executionSummary?: SupabaseImportRouteResultSummary;
   importEnvironmentStatus: SupabaseImportEnvironmentStatus;
@@ -232,7 +232,7 @@ function buildSupabaseImportRouteAuditArtifactText({
     `- supabaseUrlConfigured: ${importEnvironmentStatus.supabaseUrlConfigured}`,
     `- serviceRoleKeyConfigured: ${importEnvironmentStatus.serviceRoleKeyConfigured}`,
     `- requiredConfirmation: ${requiredConfirmation}`,
-    ...(error ? [`- error: ${error}`] : []),
+    ...(blockerMessage ? [`- error: ${blockerMessage}`] : []),
   ];
   const validationBlockerLines =
     planValidation.blockers.length > 0
@@ -301,8 +301,8 @@ function createSupabaseImportBlockedResponse({
     {
       adapterContractText,
       auditArtifactText: buildSupabaseImportRouteAuditArtifactText({
+        blockerMessage,
         checkedAt,
-        error: blockerMessage,
         executeRequested,
         importEnvironmentStatus,
         insertOrder,

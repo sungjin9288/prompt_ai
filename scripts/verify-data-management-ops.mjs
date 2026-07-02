@@ -3064,7 +3064,9 @@ assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
     "function buildSupabaseImportRouteAuditArtifactText({",
+    '  const planValidationStatus = planValidation.ok ? "ok" : "blocked";',
     "  const routeSummaryLines = [",
+    "`- validation: ${planValidationStatus}`",
     "`- executionEnabled: ${importEnvironmentStatus.executionEnabled}`",
     "`- supabaseUrlConfigured: ${importEnvironmentStatus.supabaseUrlConfigured}`",
     "`- serviceRoleKeyConfigured: ${importEnvironmentStatus.serviceRoleKeyConfigured}`",

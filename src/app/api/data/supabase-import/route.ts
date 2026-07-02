@@ -221,13 +221,13 @@ function buildSupabaseImportRouteAuditArtifactText({
   routeStatus: string;
   planValidation: SupabaseImportPlanValidation;
 }) {
-  const validationStatus = planValidation.ok ? "ok" : "blocked";
+  const planValidationStatus = planValidation.ok ? "ok" : "blocked";
   const routeSummaryLines = [
     `- checkedAt: ${checkedAt}`,
     `- route: POST /api/data/supabase-import`,
     `- executeRequested: ${executeRequested ? "true" : "false"}`,
     `- status: ${routeStatus}`,
-    `- validation: ${validationStatus}`,
+    `- validation: ${planValidationStatus}`,
     `- executionEnabled: ${importEnvironmentStatus.executionEnabled}`,
     `- supabaseUrlConfigured: ${importEnvironmentStatus.supabaseUrlConfigured}`,
     `- serviceRoleKeyConfigured: ${importEnvironmentStatus.serviceRoleKeyConfigured}`,

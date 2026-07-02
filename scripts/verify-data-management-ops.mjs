@@ -2934,7 +2934,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /if \(executeRequested\) \{[\s\S]*?if \(!importEnvironmentStatus\.executionEnabled\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 403[\s\S]*?status: "execution-disabled"[\s\S]*?if \(requestBody\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 400[\s\S]*?status: "confirmation-required"[\s\S]*?if \([\s\S]*?!importEnvironmentStatus\.supabaseUrlConfigured[\s\S]*?!importEnvironmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 503[\s\S]*?status: "environment-incomplete"[\s\S]*?if \(!planValidation\.ok\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 422[\s\S]*?status: "validation-blocked"[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
+  /if \(executeRequested\) \{[\s\S]*?if \(!importEnvironmentStatus\.executionEnabled\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 403[\s\S]*?routeStatus: "execution-disabled"[\s\S]*?if \(requestBody\.confirmation !== SUPABASE_IMPORT_CONFIRMATION\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 400[\s\S]*?routeStatus: "confirmation-required"[\s\S]*?if \([\s\S]*?!importEnvironmentStatus\.supabaseUrlConfigured[\s\S]*?!importEnvironmentStatus\.serviceRoleKeyConfigured[\s\S]*?\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 503[\s\S]*?routeStatus: "environment-incomplete"[\s\S]*?if \(!planValidation\.ok\) \{[\s\S]*?createSupabaseImportBlockedResponse\(\{[\s\S]*?httpStatus: 422[\s\S]*?routeStatus: "validation-blocked"[\s\S]*?createSupabaseRestImportAdapter[\s\S]*?runSupabaseImportExecutionPlan/,
   "Supabase import route should check execution enabled, confirmation, env readiness, and validation before constructing the write adapter",
 );
 assertFileIncludesInOrder(
@@ -2944,20 +2944,20 @@ assertFileIncludesInOrder(
     "      if (!importEnvironmentStatus.executionEnabled) {",
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 403,",
-    '          status: "execution-disabled",',
+    '          routeStatus: "execution-disabled",',
     "      if (requestBody.confirmation !== SUPABASE_IMPORT_CONFIRMATION) {",
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 400,",
-    '          status: "confirmation-required",',
+    '          routeStatus: "confirmation-required",',
     "        !importEnvironmentStatus.supabaseUrlConfigured ||",
     "        !importEnvironmentStatus.serviceRoleKeyConfigured",
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 503,",
-    '          status: "environment-incomplete",',
+    '          routeStatus: "environment-incomplete",',
     "      if (!planValidation.ok) {",
     "        return createSupabaseImportBlockedResponse({",
     "          httpStatus: 422,",
-    '          status: "validation-blocked",',
+    '          routeStatus: "validation-blocked",',
     "      const supabaseImportAdapter = createSupabaseRestImportAdapter({",
     "      const importExecutionResult = await runSupabaseImportExecutionPlan(",
     "        importPlan,",
@@ -2977,7 +2977,7 @@ assertFileIncludesInOrder(
     "  executeRequested,",
     "  httpStatus,",
     "  insertOrder,",
-    "  status,",
+    "  routeStatus,",
     "  validation,",
     "  return NextResponse.json(",
     "    {",
@@ -2989,14 +2989,14 @@ assertFileIncludesInOrder(
     "        executeRequested,",
     "        insertOrder,",
     "        requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
-    "        status,",
+    "        routeStatus,",
     "        validation,",
     "      }),",
     "      environment: importEnvironmentStatus,",
     "      error: blockerMessage,",
     "      insertOrder,",
     "      requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
-    "      status,",
+    "      status: routeStatus,",
     "      validation,",
     "    },",
     "    { status: httpStatus },",
@@ -3007,22 +3007,22 @@ const supabaseImportRouteExecuteBlockerResponses = [
   {
     branch: "      if (!importEnvironmentStatus.executionEnabled) {",
     httpStatus: "          httpStatus: 403,",
-    status: '          status: "execution-disabled",',
+    status: '          routeStatus: "execution-disabled",',
   },
   {
     branch: "      if (requestBody.confirmation !== SUPABASE_IMPORT_CONFIRMATION) {",
     httpStatus: "          httpStatus: 400,",
-    status: '          status: "confirmation-required",',
+    status: '          routeStatus: "confirmation-required",',
   },
   {
     branch: "        !importEnvironmentStatus.supabaseUrlConfigured ||",
     httpStatus: "          httpStatus: 503,",
-    status: '          status: "environment-incomplete",',
+    status: '          routeStatus: "environment-incomplete",',
   },
   {
     branch: "      if (!planValidation.ok) {",
     httpStatus: "          httpStatus: 422,",
-    status: '          status: "validation-blocked",',
+    status: '          routeStatus: "validation-blocked",',
   },
 ];
 
@@ -3047,12 +3047,12 @@ for (const response of supabaseImportRouteExecuteBlockerResponses) {
 }
 assert.match(
   supabaseImportRouteSource,
-  /status: "environment-incomplete"[\s\S]*?requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION[\s\S]*?validation/,
+  /routeStatus: "environment-incomplete"[\s\S]*?requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION[\s\S]*?validation/,
   "Supabase import route should return the required confirmation string with environment-incomplete execute responses",
 );
 assert.match(
   supabaseImportRouteSource,
-  /status: "validation-blocked"[\s\S]*?requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION[\s\S]*?validation/,
+  /routeStatus: "validation-blocked"[\s\S]*?requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION[\s\S]*?validation/,
   "Supabase import route should return the required confirmation string with validation-blocked execute responses",
 );
 assert.match(
@@ -3147,7 +3147,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /const importExecutionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*supabaseImportAdapter,[\s\S]*\);[\s\S]*const importExecutionSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: importExecutionResult\.completedRows[\s\S]*failedTable: importExecutionResult\.failedTable[\s\S]*status: importExecutionResult\.status[\s\S]*tableResults: importExecutionResult\.tableResults[\s\S]*totalRows: importExecutionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: importExecutionSummary[\s\S]*status: importExecutionResult\.status[\s\S]*environment: importEnvironmentStatus[\s\S]*result: importExecutionSummary[\s\S]*status: importExecutionResult\.status[\s\S]*validation/,
+  /const importExecutionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*supabaseImportAdapter,[\s\S]*\);[\s\S]*const importExecutionSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: importExecutionResult\.completedRows[\s\S]*failedTable: importExecutionResult\.failedTable[\s\S]*status: importExecutionResult\.status[\s\S]*tableResults: importExecutionResult\.tableResults[\s\S]*totalRows: importExecutionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*result: importExecutionSummary[\s\S]*routeStatus: importExecutionResult\.status[\s\S]*environment: importEnvironmentStatus[\s\S]*result: importExecutionSummary[\s\S]*status: importExecutionResult\.status[\s\S]*validation/,
   "Supabase import route should return the execute result summary and include the same result in the audit artifact",
 );
 assertFileIncludesInOrder(
@@ -3175,7 +3175,7 @@ assertFileIncludesInOrder(
     "        executeRequested,",
     "        insertOrder: preflightInsertOrder,",
     "        requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
-    "        status: preflightStatus,",
+    "        routeStatus: preflightStatus,",
     "        validation: planValidation,",
     "      }),",
     "      dryRun: preflightDryRunResponse,",

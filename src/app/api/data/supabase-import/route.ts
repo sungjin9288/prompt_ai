@@ -208,7 +208,7 @@ function buildSupabaseImportRouteAuditArtifactText({
   insertOrder,
   requiredConfirmation,
   result,
-  status,
+  routeStatus,
   validation,
 }: {
   checkedAt: string;
@@ -218,7 +218,7 @@ function buildSupabaseImportRouteAuditArtifactText({
   insertOrder: SupabaseImportInsertOrder;
   requiredConfirmation: string;
   result?: SupabaseImportRouteResultSummary;
-  status: string;
+  routeStatus: string;
   validation: SupabaseImportPlanValidation;
 }) {
   const validationStatus = validation.ok ? "ok" : "blocked";
@@ -226,7 +226,7 @@ function buildSupabaseImportRouteAuditArtifactText({
     `- checkedAt: ${checkedAt}`,
     `- route: POST /api/data/supabase-import`,
     `- executeRequested: ${executeRequested ? "true" : "false"}`,
-    `- status: ${status}`,
+    `- status: ${routeStatus}`,
     `- validation: ${validationStatus}`,
     `- executionEnabled: ${environment.executionEnabled}`,
     `- supabaseUrlConfigured: ${environment.supabaseUrlConfigured}`,
@@ -282,7 +282,7 @@ function createSupabaseImportBlockedResponse({
   executeRequested,
   httpStatus,
   insertOrder,
-  status,
+  routeStatus,
   validation,
 }: {
   adapterContractText: string;
@@ -292,7 +292,7 @@ function createSupabaseImportBlockedResponse({
   executeRequested: boolean;
   httpStatus: number;
   insertOrder: SupabaseImportInsertOrder;
-  status: string;
+  routeStatus: string;
   validation: SupabaseImportPlanValidation;
 }) {
   return NextResponse.json(
@@ -305,14 +305,14 @@ function createSupabaseImportBlockedResponse({
         executeRequested,
         insertOrder,
         requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-        status,
+        routeStatus,
         validation,
       }),
       environment: importEnvironmentStatus,
       error: blockerMessage,
       insertOrder,
       requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-      status,
+      status: routeStatus,
       validation,
     },
     { status: httpStatus },
@@ -367,7 +367,7 @@ export async function POST(request: Request) {
           executeRequested,
           httpStatus: 403,
           insertOrder: operatorInsertOrder,
-          status: "execution-disabled",
+          routeStatus: "execution-disabled",
           validation: planValidation,
         });
       }
@@ -383,7 +383,7 @@ export async function POST(request: Request) {
           executeRequested,
           httpStatus: 400,
           insertOrder: operatorInsertOrder,
-          status: "confirmation-required",
+          routeStatus: "confirmation-required",
           validation: planValidation,
         });
       }
@@ -403,7 +403,7 @@ export async function POST(request: Request) {
           executeRequested,
           httpStatus: 503,
           insertOrder: operatorInsertOrder,
-          status: "environment-incomplete",
+          routeStatus: "environment-incomplete",
           validation: planValidation,
         });
       }
@@ -420,7 +420,7 @@ export async function POST(request: Request) {
           executeRequested,
           httpStatus: 422,
           insertOrder: operatorInsertOrder,
-          status: "validation-blocked",
+          routeStatus: "validation-blocked",
           validation: planValidation,
         });
       }
@@ -450,7 +450,7 @@ export async function POST(request: Request) {
           insertOrder: operatorInsertOrder,
           requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
           result: importExecutionSummary,
-          status: importExecutionResult.status,
+          routeStatus: importExecutionResult.status,
           validation: planValidation,
         }),
         environment: importEnvironmentStatus,
@@ -483,7 +483,7 @@ export async function POST(request: Request) {
         executeRequested,
         insertOrder: preflightInsertOrder,
         requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-        status: preflightStatus,
+        routeStatus: preflightStatus,
         validation: planValidation,
       }),
       dryRun: preflightDryRunResponse,

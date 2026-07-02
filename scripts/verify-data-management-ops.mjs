@@ -2784,8 +2784,8 @@ assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
     "function countNestedArrayRows(",
-    "  rows: unknown[],",
-    '  field: "feedback" | "versions",',
+    "  backupRows: unknown[],",
+    '  nestedArrayField: "feedback" | "versions",',
     "function normalizeBackupCounts(",
     '  backupData: WorkspaceBackup["data"],',
     "    deletedPrompts: backupData.deletedPrompts.length,",

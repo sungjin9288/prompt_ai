@@ -114,17 +114,17 @@ function parseStringField(value: unknown, label: string) {
 }
 
 function countNestedArrayRows(
-  rows: unknown[],
-  field: "feedback" | "versions",
+  backupRows: unknown[],
+  nestedArrayField: "feedback" | "versions",
 ) {
   let count = 0;
 
-  rows.forEach((row) => {
-    if (!isRecord(row) || !Array.isArray(row[field])) {
+  backupRows.forEach((backupRow) => {
+    if (!isRecord(backupRow) || !Array.isArray(backupRow[nestedArrayField])) {
       return;
     }
 
-    count += row[field].length;
+    count += backupRow[nestedArrayField].length;
   });
 
   return count;

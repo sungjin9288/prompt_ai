@@ -191,13 +191,15 @@ function formatSupabaseImportRouteTableResult(
 }
 
 function formatSupabaseImportRouteInsertOrderItem(
-  item: SupabaseImportRouteInsertOrderItem,
+  insertOrderItem: SupabaseImportRouteInsertOrderItem,
 ) {
-  return `- ${item.order}. ${item.table}: ${item.rowCount} rows / dependency: ${item.dependency}`;
+  return `- ${insertOrderItem.order}. ${insertOrderItem.table}: ${insertOrderItem.rowCount} rows / dependency: ${insertOrderItem.dependency}`;
 }
 
-function formatSupabaseImportRouteValidationBlocker(blocker: string) {
-  return `- ${blocker}`;
+function formatSupabaseImportRouteValidationBlocker(
+  validationBlocker: string,
+) {
+  return `- ${validationBlocker}`;
 }
 
 function buildSupabaseImportRouteAuditArtifactText({

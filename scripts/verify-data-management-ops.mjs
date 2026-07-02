@@ -3083,8 +3083,9 @@ assertFileIncludesInOrder(
 assertFileIncludesInOrder(
   supabaseImportRouteSource,
   [
-    "function formatSupabaseImportRouteValidationBlocker(blocker: string) {",
-    "  return `- ${blocker}`;",
+    "function formatSupabaseImportRouteValidationBlocker(",
+    "  validationBlocker: string,",
+    "  return `- ${validationBlocker}`;",
     "  const validationBlockerLines =",
     "      ? planValidation.blockers.map(formatSupabaseImportRouteValidationBlocker)",
     '"## Validation blockers"',
@@ -3098,8 +3099,8 @@ assertFileIncludesInOrder(
     "type SupabaseImportInsertOrder = ReturnType<typeof summarizeInsertRequests>;",
     "type SupabaseImportRouteInsertOrderItem = SupabaseImportInsertOrder[number];",
     "function formatSupabaseImportRouteInsertOrderItem(",
-    "  item: SupabaseImportRouteInsertOrderItem,",
-    "  return `- ${item.order}. ${item.table}: ${item.rowCount} rows / dependency: ${item.dependency}`;",
+    "  insertOrderItem: SupabaseImportRouteInsertOrderItem,",
+    "  return `- ${insertOrderItem.order}. ${insertOrderItem.table}: ${insertOrderItem.rowCount} rows / dependency: ${insertOrderItem.dependency}`;",
     "  const insertOrderLines =",
     "      ? insertOrder.map(formatSupabaseImportRouteInsertOrderItem)",
     '"## Insert order"',

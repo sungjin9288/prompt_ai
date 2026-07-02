@@ -75,6 +75,8 @@ const draftDisplay = readFileSync("src/lib/studio/draft-display.ts", "utf8");
 const sourceRegistry = readFileSync("src/lib/studio/source-registry.ts", "utf8");
 const libraryView = [
   "src/components/library/library-view.tsx",
+  "src/components/library/library-filters-panel.tsx",
+  "src/components/library/library-detail-workspace.tsx",
   "src/lib/library/labels.ts",
   "src/lib/library/hrefs.ts",
   "src/lib/library/prompt-metrics.ts",

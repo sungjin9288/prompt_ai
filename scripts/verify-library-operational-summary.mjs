@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 
 const source = [
   "src/components/library/library-view.tsx",
+  "src/components/library/library-filters-panel.tsx",
+  "src/components/library/library-detail-workspace.tsx",
   "src/lib/library/labels.ts",
   "src/lib/library/hrefs.ts",
   "src/lib/library/prompt-metrics.ts",

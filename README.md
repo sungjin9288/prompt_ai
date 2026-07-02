@@ -291,7 +291,7 @@ APP_STORAGE_MODE=local
 ```
 
 `OPENAI_API_KEY`가 비어 있으면 앱은 외부 API 없이 로컬 규칙 기반 생성으로 동작합니다. Studio의 생성 엔진 상태에서 현재 OpenAI 보강 가능 여부를 확인할 수 있습니다.
-Supabase 변수는 아직 저장소 연결 코드가 아닌 전환 준비용입니다. `/data`의 운영 환경 readiness에서 server-only 값과 browser-public 값을 구분해 확인하고 템플릿을 복사할 수 있습니다.
+Supabase 변수는 `/data`의 운영 환경 readiness와 server-only import route gate에서 함께 사용합니다. `/data`에서는 server-only 값과 browser-public 값을 구분해 확인하고 템플릿을 복사할 수 있습니다.
 `/api/system/readiness`는 실제 비밀값을 반환하지 않고 설정 여부, 생성 모드, storage mode, Supabase 전환 준비 상태만 반환합니다.
 `/data`에서는 이 응답을 JSON 그대로 복사하거나, 운영 공유용 Markdown 진단 리포트로 복사할 수 있습니다.
 같은 응답의 release gate는 현재 로컬 MVP 운영 가능 여부와 Supabase migration 가능 여부를 분리해 보여줍니다.
@@ -517,6 +517,10 @@ helper so their operator payload cannot drift across branches.
 For execute=false preflight responses, it checks that dry-run metrics, insert
 order, plan identity, required confirmation, route audit artifact, adapter
 contract, status, and validation stay in the same no-write response.
+The route preflight summary is intentionally split into `dryRun` and `plan`
+blocks: `dryRun` carries batch, row, and warning counts, while `plan` carries
+workspace/owner identity, generated UUID count, archive trace fields, and
+unresolved pending references.
 For invalid import requests, it checks that the route returns only a bounded
 error, `invalid-request` status, and HTTP 400 without preflight or write
 payload fields.

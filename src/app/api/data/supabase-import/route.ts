@@ -465,12 +465,12 @@ export async function POST(request: Request) {
     }
 
     const preflightStatus = planValidation.ok ? "ready" : "blocked";
-    const preflightDryRunResponse = {
+    const preflightDryRunSummary = {
       batches: importDryRun.batches.length,
       totalRows: importDryRun.totalRows,
       warnings: importDryRun.warningItems,
     };
-    const preflightPlanResponse = {
+    const preflightPlanSummary = {
       archiveTraceFields: importPlan.archiveTraceFields.length,
       generatedUuidCount: importPlan.generatedUuidCount,
       ownerUserId: importPlan.ownerUserId,
@@ -490,10 +490,10 @@ export async function POST(request: Request) {
         routeStatus: preflightStatus,
         planValidation,
       }),
-      dryRun: preflightDryRunResponse,
+      dryRun: preflightDryRunSummary,
       insertOrder: preflightInsertOrder,
       requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,
-      plan: preflightPlanResponse,
+      plan: preflightPlanSummary,
       status: preflightStatus,
       validation: planValidation,
     });

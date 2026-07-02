@@ -180,6 +180,16 @@ assert.match(
 );
 assert.match(
   readme,
+  /Supabase 변수는 `\/data`의 운영 환경 readiness와 server-only import route gate에서 함께 사용합니다/,
+  "README should describe current Supabase env usage for readiness and import route gates",
+);
+assert.doesNotMatch(
+  readme,
+  /Supabase 변수는 아직 저장소 연결 코드가 아닌 전환 준비용입니다/,
+  "README should not describe Supabase env vars as only future migration prep",
+);
+assert.match(
+  readme,
   /verify:scope` checks Supabase preflight scope drift for backup\s+fingerprint, workspace_id, and owner_user_id changes/,
   "README should document the Supabase preflight scope verification scope",
 );
@@ -242,6 +252,11 @@ assert.match(
   readme,
   /For execute=false preflight responses, it checks that dry-run metrics, insert\s+order, plan identity, required confirmation, route audit artifact, adapter\s+contract, status, and validation stay in the same no-write response/,
   "README should document the data-management Supabase no-write preflight response payload scope",
+);
+assert.match(
+  readme,
+  /route preflight summary is intentionally split into `dryRun` and `plan`\s+blocks: `dryRun` carries batch, row, and warning counts, while `plan` carries\s+workspace\/owner identity, generated UUID count, archive trace fields, and\s+unresolved pending references/,
+  "README should document the Supabase import route preflight summary shape",
 );
 assert.match(
   readme,

@@ -2771,7 +2771,7 @@ assertFileIncludesInOrder(
     "type SupabaseImportInsertOrder = ReturnType<typeof summarizeInsertRequests>;",
     "type SupabaseImportPlanValidation = ReturnType<",
     "  typeof validateSupabaseImportExecutionPlan",
-    "  environment: SupabaseImportEnvironmentStatus;",
+    "  importEnvironmentStatus: SupabaseImportEnvironmentStatus;",
     "  insertOrder: SupabaseImportInsertOrder;",
     "  validation: SupabaseImportPlanValidation;",
     "  importEnvironmentStatus: SupabaseImportEnvironmentStatus;",
@@ -2984,9 +2984,9 @@ assertFileIncludesInOrder(
     "      adapterContractText,",
     "      auditArtifactText: buildSupabaseImportRouteAuditArtifactText({",
     "        checkedAt,",
-    "        environment: importEnvironmentStatus,",
     "        error: blockerMessage,",
     "        executeRequested,",
+    "        importEnvironmentStatus,",
     "        insertOrder,",
     "        requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
     "        routeStatus,",
@@ -3057,7 +3057,7 @@ assert.match(
 );
 assert.match(
   supabaseImportRouteSource,
-  /- executionEnabled: \$\{environment\.executionEnabled\}[\s\S]*?- supabaseUrlConfigured: \$\{environment\.supabaseUrlConfigured\}[\s\S]*?- serviceRoleKeyConfigured: \$\{environment\.serviceRoleKeyConfigured\}[\s\S]*?This artifact intentionally contains only configuration booleans/,
+  /- executionEnabled: \$\{importEnvironmentStatus\.executionEnabled\}[\s\S]*?- supabaseUrlConfigured: \$\{importEnvironmentStatus\.supabaseUrlConfigured\}[\s\S]*?- serviceRoleKeyConfigured: \$\{importEnvironmentStatus\.serviceRoleKeyConfigured\}[\s\S]*?This artifact intentionally contains only configuration booleans/,
   "Supabase import route audit artifact should expose only gate booleans, not secret values",
 );
 assertFileIncludesInOrder(
@@ -3065,9 +3065,9 @@ assertFileIncludesInOrder(
   [
     "function buildSupabaseImportRouteAuditArtifactText({",
     "  const routeSummaryLines = [",
-    "`- executionEnabled: ${environment.executionEnabled}`",
-    "`- supabaseUrlConfigured: ${environment.supabaseUrlConfigured}`",
-    "`- serviceRoleKeyConfigured: ${environment.serviceRoleKeyConfigured}`",
+    "`- executionEnabled: ${importEnvironmentStatus.executionEnabled}`",
+    "`- supabaseUrlConfigured: ${importEnvironmentStatus.supabaseUrlConfigured}`",
+    "`- serviceRoleKeyConfigured: ${importEnvironmentStatus.serviceRoleKeyConfigured}`",
     "`- requiredConfirmation: ${requiredConfirmation}`",
     "# Prompt AI Studio Supabase Import Route Audit",
     "    ...routeSummaryLines,",
@@ -3148,7 +3148,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /const importExecutionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*supabaseImportAdapter,[\s\S]*\);[\s\S]*const importExecutionSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: importExecutionResult\.completedRows[\s\S]*failedTable: importExecutionResult\.failedTable[\s\S]*status: importExecutionResult\.status[\s\S]*tableResults: importExecutionResult\.tableResults[\s\S]*totalRows: importExecutionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*executionSummary: importExecutionSummary[\s\S]*routeStatus: importExecutionResult\.status[\s\S]*environment: importEnvironmentStatus[\s\S]*result: importExecutionSummary[\s\S]*status: importExecutionResult\.status[\s\S]*validation/,
+  /const importExecutionResult = await runSupabaseImportExecutionPlan\([\s\S]*importPlan,[\s\S]*supabaseImportAdapter,[\s\S]*\);[\s\S]*const importExecutionSummary: SupabaseImportRouteResultSummary = \{[\s\S]*completedRows: importExecutionResult\.completedRows[\s\S]*failedTable: importExecutionResult\.failedTable[\s\S]*status: importExecutionResult\.status[\s\S]*tableResults: importExecutionResult\.tableResults[\s\S]*totalRows: importExecutionResult\.totalRows[\s\S]*return NextResponse\.json\(\{[\s\S]*auditArtifactText: buildSupabaseImportRouteAuditArtifactText\(\{[\s\S]*importEnvironmentStatus[\s\S]*executionSummary: importExecutionSummary[\s\S]*routeStatus: importExecutionResult\.status[\s\S]*environment: importEnvironmentStatus[\s\S]*result: importExecutionSummary[\s\S]*status: importExecutionResult\.status[\s\S]*validation/,
   "Supabase import route should return the execute result summary and include the same result in the audit artifact",
 );
 assertFileIncludesInOrder(
@@ -3172,8 +3172,8 @@ assertFileIncludesInOrder(
     "      adapterContractText,",
     "      auditArtifactText: buildSupabaseImportRouteAuditArtifactText({",
     "        checkedAt,",
-    "        environment: importEnvironmentStatus,",
     "        executeRequested,",
+    "        importEnvironmentStatus,",
     "        insertOrder: preflightInsertOrder,",
     "        requiredConfirmation: SUPABASE_IMPORT_CONFIRMATION,",
     "        routeStatus: preflightStatus,",

@@ -45,19 +45,13 @@ import {
   outputLanguages,
   targetModels,
   type LearningMemory,
-  type PromptQualityComparison,
   type PromptImprovementSource,
   type PromptLearningContextMeta,
   type PromptOutputLanguage,
   type PromptAsset,
-  type PromptVersion,
   type TargetAiHandoffReadinessStatus,
   type TargetModel,
 } from "@/lib/prompt";
-import {
-  formatMemoriesForPrompt,
-  stripMemoryReferenceLinks,
-} from "@/lib/learning/memory";
 import {
   defaultStudioMemoryScopeSelection,
   useCompanyProfileStore,
@@ -67,28 +61,78 @@ import {
   useStudioMemoryScopeStore,
   useUserProfileStore,
 } from "@/lib/data/workspace-store";
-import {
-  formatAbsoluteInternalHref,
-  normalizeInternalHref,
-} from "@/lib/navigation/href";
+import { formatAbsoluteInternalHref } from "@/lib/navigation/href";
 import {
   getRecommendedOutputLanguage,
   summarizeOutputLanguagePerformance,
 } from "@/lib/analytics/output-language";
-import { generationEngineLabels } from "@/lib/analytics/generation-engine";
 import {
   clearStudioDraft,
   createImprovementSourceFromDraft,
   readStudioDraft,
-  type StudioDraft,
 } from "@/lib/studio/draft";
-import {
-  buildStudioDraftLoadedNotice,
-  getStudioDraftDisplaySourceLabel,
-} from "@/lib/studio/draft-display";
-import { createPromptStudioSourceMeta } from "@/lib/studio/source-meta";
-import { getPromptStudioSourceStudioLabel } from "@/lib/studio/source-registry";
+import { buildStudioDraftLoadedNotice, getStudioDraftDisplaySourceLabel } from "@/lib/studio/draft-display";
 import { copyTextToClipboard } from "@/lib/browser/clipboard";
+import {
+  buildSavedPromptLibraryHref,
+  buildSavedPromptSkillHref,
+  buildSavedPromptStudioOperationalGroupHref,
+  buildSavedPromptStudioPersistenceHref,
+  buildSavedPromptStudioSourceHref,
+  buildStudioDraftSourceHref,
+  removeCompanyUpdatedSignalFromCurrentPath,
+  removeProfileUpdatedSignalFromCurrentPath,
+  replaceCurrentPathWithoutDraftRequest,
+} from "@/lib/studio-view/hrefs";
+import {
+  feedbackTypeLabels,
+  focusRawInput,
+  formatInputReadinessLabel,
+  getDraftPersistenceMeta,
+  getDraftSourceKindMeta,
+  getLoadedDraftSourceLabel,
+  summarizeDraftInput,
+  type LoadedStudioDraftSummary,
+} from "@/lib/studio-view/draft-summary";
+import {
+  collectLearningContext,
+  collectRecentFeedback,
+  disabledMemoryScopeSelection,
+  filterLearningMemories,
+  getDisabledMemoryScopeLabels,
+  getEnabledMemoryScopeLabels,
+  getMemoryPreview,
+  getPrioritizedLearningMemories,
+  memoryScopeLabels,
+  memoryScopeOptions,
+} from "@/lib/studio-view/learning-memory";
+import {
+  attachImprovementSource,
+  attachLearningContextMeta,
+  attachStudioSourceMeta,
+  formatCountDelta,
+  formatImprovementDepthLabel,
+  formatModelLabels,
+  formatScoreDelta,
+  getDraftQualityImprovementBaseline,
+  getImprovementTitleDepth,
+  getNextImprovementDepth,
+  getSelectOptions,
+  sameTargetModels,
+  type QualityImprovementBaseline,
+} from "@/lib/studio-view/generation";
+import {
+  buildRegenerationSaveDecisionReportSection,
+  buildStudioLearningContextReportText,
+  buildTargetAiReadinessComparisonReportSection,
+  getRegenerationSaveDecision,
+  regenerationSaveDecisionClassNames,
+  summarizeTargetAiReadinessItems,
+  targetAiReadinessStatusClassNames,
+  targetAiReadinessStatusLabels,
+  targetAiReadinessStatusOrder,
+  type TargetAiReadinessComparison,
+} from "@/lib/studio-view/reports";
 
 interface GeneratePromptResponse {
   prompt?: PromptAsset;
@@ -103,12 +147,6 @@ interface GenerationEngineStatus {
   mode: "local" | "openai";
 }
 
-interface QualityImprovementBaseline {
-  appliedAt: string;
-  prompt: PromptAsset;
-  version: PromptVersion;
-}
-
 interface PendingRegenerationRecovery {
   activeModel: TargetModel;
   domain: string;
@@ -120,18 +158,6 @@ interface PendingRegenerationRecovery {
   savedCurrent: boolean;
   targetAiPackagePreviewKey: string;
   targetAiPackagePreviewMode: HandoffPreviewMode;
-}
-
-interface LoadedStudioDraftSummary {
-  source: StudioDraft["source"];
-  sourceVariant?: StudioDraft["sourceVariant"];
-  sourceFeedback?: StudioDraft["sourceFeedback"];
-  href: string;
-  inputCharCount: number;
-  inputLineCount: number;
-  inputPreview: string;
-  title?: string;
-  createdAt: string;
 }
 
 type StudioManualCopy = {
@@ -157,787 +183,6 @@ type StudioManualCopy = {
 const initialRawInput =
   "내가 만든 앱 아이디어를 투자자에게 설명할 수 있게 정리하고, 나중에 Codex로 개발할 수 있도록 기능 범위도 나눠줘.";
 const qualityImprovementGoal = "프롬프트 개선";
-
-const feedbackTypeLabels: Record<
-  NonNullable<StudioDraft["sourceFeedback"]>["feedbackType"],
-  string
-> = {
-  accuracy: "정확성",
-  company_rule: "회사 기준",
-  context: "맥락",
-  format: "출력 형식",
-  other: "기타",
-  tone: "톤",
-};
-
-function summarizeDraftInput(value: string) {
-  const trimmed = value.trim();
-  const firstMeaningfulLine = trimmed
-    .split("\n")
-    .map((line) => line.trim())
-    .find(Boolean);
-  const inputPreview =
-    firstMeaningfulLine && firstMeaningfulLine.length > 140
-      ? `${firstMeaningfulLine.slice(0, 140)}...`
-      : firstMeaningfulLine || "입력 내용 없음";
-
-  return {
-    inputCharCount: trimmed.length,
-    inputLineCount: trimmed ? trimmed.split("\n").length : 0,
-    inputPreview,
-  };
-}
-
-function formatInputReadinessLabel({
-  missingQuestionCount,
-  score,
-  statusLabel,
-}: {
-  missingQuestionCount: number;
-  score: number;
-  statusLabel: string;
-}) {
-  return `${statusLabel} · ${score}/100${
-    missingQuestionCount ? ` · 남은 ${missingQuestionCount}개` : ""
-  }`;
-}
-
-function focusRawInput() {
-  window.requestAnimationFrame(() => {
-    const rawInputElement = document.getElementById("studio-raw-input");
-
-    rawInputElement?.scrollIntoView({ block: "center", behavior: "smooth" });
-    rawInputElement?.focus();
-
-    if (rawInputElement instanceof HTMLTextAreaElement) {
-      const inputEnd = rawInputElement.value.length;
-
-      rawInputElement.setSelectionRange(inputEnd, inputEnd);
-    }
-  });
-}
-
-function getLoadedDraftSourceLabel(summary: LoadedStudioDraftSummary) {
-  return getStudioDraftDisplaySourceLabel({
-    source: summary.source,
-    sourceFeedback: summary.sourceFeedback,
-    sourceTitle: summary.title,
-    sourceVariant: summary.sourceVariant,
-  });
-}
-
-function getDraftPersistenceMeta(source: StudioDraft["source"]) {
-  return source === "library-improvement"
-    ? {
-        label: "개선 체인",
-        description: "저장 시 원본 Library 프롬프트의 개선본으로 연결됩니다.",
-      }
-    : {
-        label: "운영 출처",
-        description: "저장 시 개선 체인이 아니라 Studio 저장 출처 메타로만 보존됩니다.",
-      };
-}
-
-function getDraftSourceKindMeta(source: StudioDraft["source"]) {
-  const sourceLabel = getPromptStudioSourceStudioLabel(source);
-  const missingSourceMetadataDescription =
-    source === "library-missing-source-metadata-queue"
-      ? "저장하면 Library 저장 출처 메타 없음 큐 결과로 분리되어 Dashboard와 Library의 저장 출처 breakdown에서 추적됩니다."
-      : source === "library-missing-source-metadata-candidate"
-        ? "저장하면 Library 저장 출처 메타 없음 후보 결과로 분리되어 일반 저장 방식 후보와 별도로 추적됩니다."
-        : null;
-
-  return {
-    label: sourceLabel.label,
-    description:
-      missingSourceMetadataDescription ??
-      (source === "library-improvement"
-        ? "Library 개선 체인으로 저장되어 품질 비교와 재개선 판단에 사용됩니다."
-        : "Library와 Dashboard의 Studio 저장 출처 breakdown에서 별도 항목으로 추적됩니다."),
-  };
-}
-
-function buildLibraryHref(params: URLSearchParams) {
-  const query = params.toString();
-  const href = query ? `/library?${query}` : "/library";
-
-  return normalizeInternalHref(href) ?? "/library";
-}
-
-function buildLibraryStudioSourceHref({
-  promptId,
-  source,
-  sourceVariant,
-  studioPersistence,
-}: {
-  promptId?: string;
-  source: StudioDraft["source"];
-  sourceVariant?: StudioDraft["sourceVariant"];
-  studioPersistence?: "chain" | "ops";
-}) {
-  const params = new URLSearchParams({ studioSource: source });
-
-  if (studioPersistence) {
-    params.set("studio", studioPersistence);
-  }
-
-  if (promptId) {
-    params.set("prompt", promptId);
-  }
-
-  if (sourceVariant) {
-    params.set("studioVariant", sourceVariant);
-  }
-
-  return buildLibraryHref(params);
-}
-
-function buildStudioDraftSourceHref(draft: StudioDraft) {
-  const sourceHref = normalizeInternalHref(draft.sourceHref);
-
-  if (sourceHref) {
-    return sourceHref;
-  }
-
-  if (draft.source.startsWith("dashboard-")) {
-    return "/";
-  }
-
-  if (draft.source === "library-improvement") {
-    const params = new URLSearchParams();
-
-    if (draft.sourcePromptId) {
-      params.set("prompt", draft.sourcePromptId);
-    }
-
-    if (draft.sourceVersionModel) {
-      params.set("version", draft.sourceVersionModel);
-    }
-
-    return buildLibraryHref(params);
-  }
-
-  if (draft.source === "learning-memory" && draft.sourceTitle) {
-    const params = new URLSearchParams({ q: draft.sourceTitle });
-
-    return normalizeInternalHref(`/learning?${params.toString()}`) ?? "/learning";
-  }
-
-  if (draft.source.startsWith("library-")) {
-    return buildLibraryStudioSourceHref({
-      source: draft.source,
-      sourceVariant: draft.sourceVariant,
-    });
-  }
-
-  if (draft.source.startsWith("skills-")) {
-    return "/skills";
-  }
-
-  if (draft.source.startsWith("profile-")) {
-    return "/profile";
-  }
-
-  if (draft.source.startsWith("company-")) {
-    return "/company";
-  }
-
-  return "/learning";
-}
-
-function buildSavedPromptLibraryHref(prompt: PromptAsset, version?: TargetModel) {
-  const params = new URLSearchParams({ prompt: prompt.id });
-
-  if (version) {
-    params.set("version", version);
-  }
-
-  return buildLibraryHref(params);
-}
-
-function buildSavedPromptSkillHref(prompt: PromptAsset) {
-  const params = new URLSearchParams({ prompt: prompt.id });
-
-  return normalizeInternalHref(`/skills?${params.toString()}`) ?? "/skills";
-}
-
-function buildSavedPromptStudioSourceHref(prompt: PromptAsset) {
-  if (!prompt.studioSource) {
-    return null;
-  }
-
-  return buildLibraryStudioSourceHref({
-    promptId: prompt.id,
-    source: prompt.studioSource.source,
-    sourceVariant: prompt.studioSource.sourceVariant,
-  });
-}
-
-function getSavedPromptStudioPersistenceFilter(prompt: PromptAsset) {
-  if (!prompt.studioSource) {
-    return null;
-  }
-
-  return prompt.studioSource.source === "library-improvement"
-    ? "chain"
-    : "ops";
-}
-
-function buildSavedPromptStudioPersistenceHref(prompt: PromptAsset) {
-  const studioPersistence = getSavedPromptStudioPersistenceFilter(prompt);
-
-  if (!studioPersistence) {
-    return null;
-  }
-
-  const params = new URLSearchParams({
-    studio: studioPersistence,
-    prompt: prompt.id,
-  });
-
-  return buildLibraryHref(params);
-}
-
-function buildSavedPromptStudioOperationalGroupHref(prompt: PromptAsset) {
-  if (!prompt.studioSource) {
-    return null;
-  }
-
-  const studioPersistence = getSavedPromptStudioPersistenceFilter(prompt);
-
-  if (!studioPersistence) {
-    return null;
-  }
-
-  return buildLibraryStudioSourceHref({
-    promptId: prompt.id,
-    source: prompt.studioSource.source,
-    sourceVariant: prompt.studioSource.sourceVariant,
-    studioPersistence,
-  });
-}
-
-function collectRecentFeedback(prompts: PromptAsset[]) {
-  return prompts
-    .flatMap((prompt) => prompt.feedback)
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .slice(0, 8)
-    .map(
-      (feedback) =>
-        `${feedback.feedbackType}: ${feedback.rating}/5 - ${feedback.comment}`,
-    )
-    .filter((item) => item.trim().length > 0);
-}
-
-function collectLearningContext(prompts: PromptAsset[], memories: LearningMemory[]) {
-  return [...formatMemoriesForPrompt(memories), ...collectRecentFeedback(prompts)];
-}
-
-const memoryScopeLabels: Record<LearningMemory["scope"], string> = {
-  user: "사용자",
-  company: "회사",
-  domain: "분야",
-  skill: "스킬",
-};
-
-const memoryScopeOptions: Array<{
-  scope: LearningMemory["scope"];
-  label: string;
-  description: string;
-}> = [
-  {
-    scope: "company",
-    label: "회사",
-    description: "브랜드 톤, 제품, 고객군",
-  },
-  {
-    scope: "user",
-    label: "사용자",
-    description: "개인 선호와 업무 방식",
-  },
-  {
-    scope: "domain",
-    label: "분야",
-    description: "산업/업무별 기준",
-  },
-  {
-    scope: "skill",
-    label: "스킬",
-    description: "반복 업무 패턴",
-  },
-];
-
-const disabledMemoryScopeSelection: Record<LearningMemory["scope"], boolean> = {
-  user: false,
-  company: false,
-  domain: false,
-  skill: false,
-};
-
-function filterLearningMemories(
-  memories: LearningMemory[],
-  enabledScopes: Record<LearningMemory["scope"], boolean>,
-) {
-  return memories.filter((memory) => enabledScopes[memory.scope]);
-}
-
-function getPrioritizedLearningMemories(memories: LearningMemory[], limit = 4) {
-  return memories
-    .slice()
-    .sort((a, b) => {
-      if (b.confidence === a.confidence) {
-        return b.updatedAt.localeCompare(a.updatedAt);
-      }
-
-      return b.confidence - a.confidence;
-    })
-    .slice(0, limit);
-}
-
-function getMemoryPreview(content: string) {
-  const normalized = stripMemoryReferenceLinks(content)
-    .replace(/\s+/g, " ")
-    .trim();
-
-  return normalized.length > 128
-    ? `${normalized.slice(0, 128).trim()}...`
-    : normalized;
-}
-
-function getEnabledMemoryScopeLabels(
-  enabledScopes: Record<LearningMemory["scope"], boolean>,
-) {
-  return memoryScopeOptions
-    .filter((item) => enabledScopes[item.scope])
-    .map((item) => item.label);
-}
-
-function getDisabledMemoryScopeLabels(
-  enabledScopes: Record<LearningMemory["scope"], boolean>,
-) {
-  return memoryScopeOptions
-    .filter((item) => !enabledScopes[item.scope])
-    .map((item) => item.label);
-}
-
-function sameTargetModels(first: TargetModel[], second: TargetModel[]) {
-  return (
-    first.length === second.length &&
-    first.every((model) => second.includes(model))
-  );
-}
-
-function formatModelLabels(models: TargetModel[]) {
-  return models.map((model) => modelLabels[model]).join(", ");
-}
-
-function getSelectOptions(options: string[], currentValue: string) {
-  return currentValue && !options.includes(currentValue)
-    ? [currentValue, ...options]
-    : options;
-}
-
-function stripImprovementTitlePrefix(title: string) {
-  let normalized = title.trim();
-  const improvementPrefixPattern = /^(?:(\d+)차\s*)?개선본\s*·\s*/;
-
-  while (improvementPrefixPattern.test(normalized)) {
-    normalized = normalized.replace(improvementPrefixPattern, "").trim();
-  }
-
-  return normalized || "원본 프롬프트";
-}
-
-function getImprovementTitleDepth(title: string) {
-  const numberedMatch = title.trim().match(/^(\d+)차\s*개선본\s*·/);
-
-  if (numberedMatch) {
-    return Number(numberedMatch[1]);
-  }
-
-  return title.trim().startsWith("개선본 ·") ? 1 : 0;
-}
-
-function getSourceImprovementDepth(
-  improvementSource: PromptImprovementSource,
-  prompts: PromptAsset[],
-) {
-  const sourcePrompt = prompts.find(
-    (prompt) => prompt.id === improvementSource.sourcePromptId,
-  );
-
-  if (!sourcePrompt) {
-    return getImprovementTitleDepth(improvementSource.sourcePromptTitle);
-  }
-
-  const visited = new Set<string>();
-  let current: PromptAsset | undefined = sourcePrompt;
-  let depth = 0;
-
-  while (current?.improvementSource && !visited.has(current.id)) {
-    visited.add(current.id);
-    depth += 1;
-    const sourcePromptId: string | undefined =
-      current.improvementSource.sourcePromptId;
-
-    current = prompts.find(
-      (prompt) => prompt.id === sourcePromptId,
-    );
-  }
-
-  return depth;
-}
-
-function getNextImprovementDepth(
-  improvementSource: PromptImprovementSource | null,
-  prompts: PromptAsset[],
-) {
-  return improvementSource
-    ? getSourceImprovementDepth(improvementSource, prompts) + 1
-    : 0;
-}
-
-function buildImprovementPromptTitle(
-  improvementSource: PromptImprovementSource,
-  prompts: PromptAsset[],
-) {
-  const sourcePrompt = prompts.find(
-    (prompt) => prompt.id === improvementSource.sourcePromptId,
-  );
-  const baseTitle = stripImprovementTitlePrefix(
-    sourcePrompt?.title ?? improvementSource.sourcePromptTitle,
-  );
-  const nextDepth = getNextImprovementDepth(improvementSource, prompts);
-
-  return `${nextDepth}차 개선본 · ${baseTitle}`;
-}
-
-function attachImprovementSource(
-  prompt: PromptAsset,
-  improvementSource: PromptImprovementSource | null,
-  prompts: PromptAsset[],
-) {
-  if (!improvementSource) {
-    return prompt;
-  }
-
-  return {
-    ...prompt,
-    title: buildImprovementPromptTitle(improvementSource, prompts),
-    improvementSource,
-  };
-}
-
-function getDraftQualityImprovementBaseline(
-  draft: StudioDraft,
-  prompts: PromptAsset[],
-): QualityImprovementBaseline | null {
-  if (
-    draft.source !== "library-improvement" ||
-    !draft.sourcePromptId ||
-    !draft.sourceVersionId
-  ) {
-    return null;
-  }
-
-  const sourcePrompt = prompts.find(
-    (prompt) => prompt.id === draft.sourcePromptId,
-  );
-  const sourceVersion = sourcePrompt?.versions.find(
-    (version) => version.id === draft.sourceVersionId,
-  );
-
-  if (!sourcePrompt || !sourceVersion) {
-    return null;
-  }
-
-  return {
-    appliedAt: draft.createdAt,
-    prompt: sourcePrompt,
-    version: sourceVersion,
-  };
-}
-
-function attachLearningContextMeta(
-  prompt: PromptAsset,
-  learningContext: PromptLearningContextMeta,
-) {
-  return {
-    ...prompt,
-    learningContext,
-  };
-}
-
-function attachStudioSourceMeta(
-  prompt: PromptAsset,
-  source: LoadedStudioDraftSummary | null,
-): PromptAsset {
-  if (!source) {
-    return prompt;
-  }
-
-  const studioSource = createPromptStudioSourceMeta({
-    source: source.source,
-    sourceHref: source.href,
-    sourceFeedback: source.sourceFeedback,
-    sourceTitle: source.title,
-    sourceVariant: source.sourceVariant,
-    inputPreview: source.inputPreview,
-    inputLineCount: source.inputLineCount,
-    inputCharCount: source.inputCharCount,
-    createdAt: source.createdAt,
-  });
-
-  return {
-    ...prompt,
-    studioSource,
-  };
-}
-
-function formatImprovementDepthLabel(depth: number) {
-  if (depth <= 1) {
-    return "1차 개선본";
-  }
-
-  return `${depth}차 개선본`;
-}
-
-function formatScoreDelta(delta: number) {
-  return `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}`;
-}
-
-function formatCountDelta(delta: number) {
-  return `${delta >= 0 ? "+" : ""}${delta}`;
-}
-
-const targetAiReadinessStatusLabels: Record<
-  TargetAiHandoffReadinessStatus,
-  string
-> = {
-  blocked: "보강 필요",
-  ready: "전달 가능",
-  review: "검토 필요",
-};
-
-const targetAiReadinessStatusClassNames: Record<
-  TargetAiHandoffReadinessStatus,
-  string
-> = {
-  blocked: "text-danger",
-  ready: "text-success",
-  review: "text-accent",
-};
-
-const targetAiReadinessStatusOrder: TargetAiHandoffReadinessStatus[] = [
-  "ready",
-  "review",
-  "blocked",
-];
-
-function summarizeTargetAiReadinessItems(
-  items: ReturnType<typeof buildTargetAiHandoffReadinessItems>,
-) {
-  return items.reduce<Record<TargetAiHandoffReadinessStatus, number>>(
-    (summary, item) => ({
-      ...summary,
-      [item.status]: summary[item.status] + 1,
-    }),
-    {
-      blocked: 0,
-      ready: 0,
-      review: 0,
-    },
-  );
-}
-
-type TargetAiReadinessSummary = ReturnType<
-  typeof summarizeTargetAiReadinessItems
->;
-
-interface TargetAiReadinessComparison {
-  current: TargetAiReadinessSummary;
-  deltas: TargetAiReadinessSummary;
-  previous: TargetAiReadinessSummary;
-}
-
-type RegenerationSaveDecisionStatus = "hold" | "review" | "save";
-
-const regenerationSaveDecisionClassNames: Record<
-  RegenerationSaveDecisionStatus,
-  string
-> = {
-  hold: "border-danger/50 bg-danger/10 text-danger",
-  review: "border-accent/40 bg-accent/10 text-accent",
-  save: "border-success/40 bg-success/10 text-success",
-};
-
-function getRegenerationSaveDecision({
-  qualityComparison,
-  readinessComparison,
-}: {
-  qualityComparison: PromptQualityComparison;
-  readinessComparison: TargetAiReadinessComparison | null;
-}) {
-  const readiness = readinessComparison?.current;
-  const readinessDeltas = readinessComparison?.deltas;
-
-  if (readiness && readiness.blocked > 0) {
-    return {
-      detail:
-        "보강 필요 항목이 남아 있습니다. 외부 AI에 전달하기 전에 한 번 더 보강하세요.",
-      label: "보류 권장",
-      status: "hold" as const,
-    };
-  }
-
-  if (qualityComparison.scoreDelta < 0 || qualityComparison.regressedCount > 2) {
-    return {
-      detail:
-        "전체 점수나 다수 품질 항목이 하락했습니다. 원본과 본문을 비교한 뒤 저장 여부를 판단하세요.",
-      label: "보류 권장",
-      status: "hold" as const,
-    };
-  }
-
-  if (readinessDeltas && readinessDeltas.blocked > 0) {
-    return {
-      detail:
-        "이번 재생성에서 보강 필요 항목이 늘었습니다. 전달 준비 상태를 먼저 안정화하세요.",
-      label: "보류 권장",
-      status: "hold" as const,
-    };
-  }
-
-  if (
-    qualityComparison.scoreDelta === 0 ||
-    qualityComparison.regressedCount > 0 ||
-    (readiness && readiness.review > 0)
-  ) {
-    return {
-      detail:
-        "저장은 가능하지만 하락 항목이나 검토 필요 항목을 확인한 뒤 저장하세요.",
-      label: "검토 후 저장",
-      status: "review" as const,
-    };
-  }
-
-  return {
-    detail:
-      "점수와 전달 준비 상태가 모두 저장 기준을 충족합니다. 저장 후보로 적합합니다.",
-    label: "저장 권장",
-    status: "save" as const,
-  };
-}
-
-function buildRegenerationSaveDecisionReportSection({
-  decision,
-}: {
-  decision: ReturnType<typeof getRegenerationSaveDecision>;
-}) {
-  return [
-    "",
-    "## Studio save recommendation",
-    `- Decision: ${decision.label}`,
-    `- Rationale: ${decision.detail}`,
-  ].join("\n");
-}
-
-function buildTargetAiReadinessComparisonReportSection({
-  current,
-  deltas,
-  previous,
-}: TargetAiReadinessComparison) {
-  return [
-    "",
-    "## Target AI handoff readiness",
-    ...targetAiReadinessStatusOrder.map((status) => {
-      const delta = deltas[status];
-
-      return `- ${targetAiReadinessStatusLabels[status]}: ${previous[status]} -> ${
-        current[status]
-      } (${formatCountDelta(delta)})`;
-    }),
-    "",
-    "## Handoff decision",
-    current.blocked > 0
-      ? "- Current version still has blocking handoff items. Improve before sending to the target AI."
-      : current.review > 0
-        ? "- Current version can be tested, but review flagged handoff items before production use."
-        : "- Current version has no handoff readiness blockers or review items.",
-  ].join("\n");
-}
-
-function removeCompanyUpdatedSignalFromCurrentPath() {
-  const url = new URL(window.location.href);
-
-  url.searchParams.delete("companyUpdated");
-
-  return `${url.pathname}${url.search}${url.hash}`;
-}
-
-function removeProfileUpdatedSignalFromCurrentPath() {
-  const url = new URL(window.location.href);
-
-  url.searchParams.delete("profileUpdated");
-
-  return `${url.pathname}${url.search}${url.hash}`;
-}
-
-function removeDraftRequestFromCurrentPath() {
-  const url = new URL(window.location.href);
-
-  url.searchParams.delete("draft");
-
-  return `${url.pathname}${url.search}${url.hash}`;
-}
-
-function replaceCurrentPathWithoutDraftRequest() {
-  window.history.replaceState(null, "", removeDraftRequestFromCurrentPath());
-}
-
-function buildStudioLearningContextReportText(prompt: PromptAsset) {
-  const context = prompt.learningContext;
-
-  if (!context) {
-    return [
-      `# 학습 반영 리포트 · ${prompt.title}`,
-      "",
-      "- 상태: 학습 컨텍스트 메타 없음",
-      "- 설명: 이 결과는 학습 컨텍스트 메타 저장 기능 도입 전 생성됐습니다.",
-      `- 생성 엔진: ${generationEngineLabels[prompt.source]}${
-        prompt.modelUsed ? ` ${prompt.modelUsed}` : ""
-      }`,
-      `- 분야: ${prompt.domain}`,
-      `- 목표: ${prompt.goal}`,
-    ].join("\n");
-  }
-
-  const enabledScopes = getEnabledMemoryScopeLabels(context.enabledScopes);
-  const disabledScopes = getDisabledMemoryScopeLabels(context.enabledScopes);
-
-  return [
-    `# 학습 반영 리포트 · ${prompt.title}`,
-    "",
-    `- 생성 엔진: ${generationEngineLabels[prompt.source]}${
-      prompt.modelUsed ? ` ${prompt.modelUsed}` : ""
-    }`,
-    `- 분야: ${prompt.domain}`,
-    `- 목표: ${prompt.goal}`,
-    `- Enabled scope: ${
-      enabledScopes.length ? enabledScopes.join(", ") : "학습 메모리 제외"
-    }`,
-    `- Disabled scope: ${
-      disabledScopes.length ? disabledScopes.join(", ") : "없음"
-    }`,
-    `- 적용 학습 메모리: ${context.appliedMemoryCount}개`,
-    `- 최근 피드백: ${context.recentFeedbackCount}개`,
-    "",
-    "## 적용 메모리",
-    context.appliedMemoryTitles.length
-      ? context.appliedMemoryTitles.map((title) => `- ${title}`).join("\n")
-      : "- 적용 메모리 없음",
-  ].join("\n");
-}
 
 export function StudioWorkspace({
   companyUpdated = false,

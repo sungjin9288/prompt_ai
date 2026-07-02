@@ -2,7 +2,20 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
 
-const source = readFileSync("src/components/studio/studio-workspace.tsx", "utf8");
+const studioWorkspaceSource = readFileSync(
+  "src/components/studio/studio-workspace.tsx",
+  "utf8",
+);
+const source = [
+  "src/lib/studio-view/hrefs.ts",
+  "src/lib/studio-view/draft-summary.ts",
+  "src/lib/studio-view/learning-memory.ts",
+  "src/lib/studio-view/generation.ts",
+  "src/lib/studio-view/reports.ts",
+]
+  .map((path) => readFileSync(path, "utf8"))
+  .concat(studioWorkspaceSource)
+  .join("\n");
 const inputAnalysis = readFileSync("src/lib/prompt/input-analysis.ts", "utf8");
 const readme = readFileSync("README.md", "utf8");
 const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");

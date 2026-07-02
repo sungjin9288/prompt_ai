@@ -5,6 +5,12 @@ const dashboardViewSource = readFileSync(
   "src/components/dashboard/dashboard-view.tsx",
   "utf8",
 );
+const dashboardPanelSources = [
+  "src/components/dashboard/dashboard-next-action-queue-panel.tsx",
+  "src/components/dashboard/dashboard-improvement-panel.tsx",
+  "src/components/dashboard/dashboard-personalization-panel.tsx",
+  "src/components/dashboard/dashboard-skill-ops-panel.tsx",
+].map((path) => readFileSync(path, "utf8"));
 const dashboardSource = [
   "src/lib/dashboard/shared.ts",
   "src/lib/dashboard/hrefs.ts",
@@ -15,6 +21,7 @@ const dashboardSource = [
 ]
   .map((path) => readFileSync(path, "utf8"))
   .concat(dashboardViewSource)
+  .concat(dashboardPanelSources)
   .join("\n");
 const sourceRegistrySource = readFileSync(
   "src/lib/studio/source-registry.ts",

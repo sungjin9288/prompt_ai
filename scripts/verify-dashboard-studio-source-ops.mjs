@@ -1,10 +1,21 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const dashboardSource = readFileSync(
+const dashboardViewSource = readFileSync(
   "src/components/dashboard/dashboard-view.tsx",
   "utf8",
 );
+const dashboardSource = [
+  "src/lib/dashboard/shared.ts",
+  "src/lib/dashboard/hrefs.ts",
+  "src/lib/dashboard/learning-memory.ts",
+  "src/lib/dashboard/next-action-queue.ts",
+  "src/lib/dashboard/personalization-reports.ts",
+  "src/lib/dashboard/source-reports.ts",
+]
+  .map((path) => readFileSync(path, "utf8"))
+  .concat(dashboardViewSource)
+  .join("\n");
 const sourceRegistrySource = readFileSync(
   "src/lib/studio/source-registry.ts",
   "utf8",

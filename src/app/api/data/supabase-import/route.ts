@@ -185,9 +185,9 @@ type SupabaseImportRouteTableResult =
 function formatSupabaseImportRouteTableResult(
   tableResult: SupabaseImportRouteTableResult,
 ) {
-  const note = tableResult.note ? ` / ${tableResult.note}` : "";
+  const tableResultNote = tableResult.note ? ` / ${tableResult.note}` : "";
 
-  return `- ${tableResult.order}. ${tableResult.table}: ${tableResult.status} / inserted ${tableResult.insertedRows}/${tableResult.expectedRows}${note}`;
+  return `- ${tableResult.order}. ${tableResult.table}: ${tableResult.status} / inserted ${tableResult.insertedRows}/${tableResult.expectedRows}${tableResultNote}`;
 }
 
 function formatSupabaseImportRouteInsertOrderItem(

@@ -423,6 +423,7 @@ npm run verify:skills-summary
 npm run verify:studio-safety
 npm run verify:terminology
 npm run lint
+npm run test
 npm run build
 ```
 

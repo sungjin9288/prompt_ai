@@ -168,6 +168,12 @@ export const verificationChecks = [
     scriptName: "lint",
   },
   {
+    args: ["run", "test"],
+    command: "npm",
+    label: "Vitest unit tests",
+    scriptName: "test",
+  },
+  {
     args: ["run", "build"],
     command: "npm",
     label: "Next.js production build",

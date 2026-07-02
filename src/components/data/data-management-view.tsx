@@ -76,21 +76,27 @@ import {
   getSupabaseImportPreflightScopeStatus,
 } from "@/lib/data/supabase-import-preflight-scope";
 import {
-  buildSupabaseImportPendingIdAuditSql,
-  buildSupabaseImportReferenceReplacementGuideText,
-  buildSupabaseImportRelationshipVerificationSql,
-  buildSupabaseImportRlsAccessAuditSql,
-  buildSupabaseImportVerificationReportText,
-  buildSupabaseImportVerificationSql,
-  buildSupabaseMigrationHandoffPackageText,
-  buildSupabaseRlsPolicyDraftSql,
-  buildSupabaseRlsSmokeTestChecklistText,
   buildSupabaseImportDryRunText,
   createSupabaseImportDryRun,
-  getSupabaseImportVerificationCheckCounts,
   isSupabaseWorkspaceUuid,
   type SupabaseImportDryRun,
 } from "@/lib/data/supabase-import-dry-run";
+import {
+  buildSupabaseImportPendingIdAuditSql,
+  buildSupabaseImportReferenceReplacementGuideText,
+  buildSupabaseImportRelationshipVerificationSql,
+  buildSupabaseImportVerificationSql,
+} from "@/lib/data/supabase-import-verification-sql";
+import {
+  buildSupabaseImportRlsAccessAuditSql,
+  buildSupabaseRlsPolicyDraftSql,
+  buildSupabaseRlsSmokeTestChecklistText,
+} from "@/lib/data/supabase-import-rls-sql";
+import {
+  buildSupabaseImportVerificationReportText,
+  buildSupabaseMigrationHandoffPackageText,
+  getSupabaseImportVerificationCheckCounts,
+} from "@/lib/data/supabase-import-report-text";
 import {
   createWorkspaceBackup,
   createWorkspaceBackupMeta,

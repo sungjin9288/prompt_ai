@@ -22,10 +22,14 @@ const supabaseImportRouteSource = readFileSync(
   "src/app/api/data/supabase-import/route.ts",
   "utf8",
 );
-const supabaseImportDryRunSource = readFileSync(
+const supabaseImportDryRunSource = [
   "src/lib/data/supabase-import-dry-run.ts",
-  "utf8",
-);
+  "src/lib/data/supabase-import-verification-sql.ts",
+  "src/lib/data/supabase-import-rls-sql.ts",
+  "src/lib/data/supabase-import-report-text.ts",
+]
+  .map((path) => readFileSync(path, "utf8"))
+  .join("\n");
 const supabaseImportExecutionPlanSource = readFileSync(
   "src/lib/data/supabase-import-execution-plan.ts",
   "utf8",

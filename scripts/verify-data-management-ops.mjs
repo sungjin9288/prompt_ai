@@ -3110,7 +3110,7 @@ assertFileIncludesInOrder(
 );
 assert.match(
   supabaseImportRouteSource,
-  /function formatSupabaseImportRouteTableResult[\s\S]*tableResult\.table[\s\S]*tableResult\.status[\s\S]*tableResult\.insertedRows[\s\S]*tableResult\.expectedRows[\s\S]*const executionResultLines = executionSummary[\s\S]*status: \$\{executionSummary\.status\}[\s\S]*completedRows: \$\{executionSummary\.completedRows\}[\s\S]*totalRows: \$\{executionSummary\.totalRows\}[\s\S]*failedTable: \$\{executionSummary\.failedTable \|\| "none"\}[\s\S]*Table results[\s\S]*executionSummary\.tableResults\.map\([\s\S]*formatSupabaseImportRouteTableResult[\s\S]*\)[\s\S]*## Execution result[\s\S]*\.\.\.executionResultLines/,
+  /function formatSupabaseImportRouteTableResult[\s\S]*tableResult\.table[\s\S]*tableResult\.status[\s\S]*tableResult\.insertedRows[\s\S]*tableResult\.expectedRows[\s\S]*const executionSummaryLines = executionSummary[\s\S]*status: \$\{executionSummary\.status\}[\s\S]*completedRows: \$\{executionSummary\.completedRows\}[\s\S]*totalRows: \$\{executionSummary\.totalRows\}[\s\S]*failedTable: \$\{executionSummary\.failedTable \|\| "none"\}[\s\S]*Table results[\s\S]*executionSummary\.tableResults\.map\([\s\S]*formatSupabaseImportRouteTableResult[\s\S]*\)[\s\S]*## Execution result[\s\S]*\.\.\.executionSummaryLines/,
   "Supabase import route audit artifact should include execution result details when a write runs",
 );
 assertFileIncludesInOrder(
@@ -3137,7 +3137,7 @@ assertFileIncludesInOrder(
     "function buildSupabaseImportRouteAuditArtifactText({",
     "  executionSummary,",
     "  executionSummary?: SupabaseImportRouteResultSummary;",
-    "  const executionResultLines = executionSummary",
+    "  const executionSummaryLines = executionSummary",
     "`- status: ${executionSummary.status}`",
     "`- completedRows: ${executionSummary.completedRows}`",
     "`- totalRows: ${executionSummary.totalRows}`",
@@ -3146,7 +3146,7 @@ assertFileIncludesInOrder(
     "        ...executionSummary.tableResults.map(",
     "          formatSupabaseImportRouteTableResult,",
     '    "## Execution result",',
-    "    ...executionResultLines,",
+    "    ...executionSummaryLines,",
   ],
   "Supabase import route audit artifact should keep execute result status, row totals, failed table, and per-table inserted/expected rows together",
 );

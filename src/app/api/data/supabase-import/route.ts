@@ -244,7 +244,7 @@ function buildSupabaseImportRouteAuditArtifactText({
     insertOrder.length > 0
       ? insertOrder.map(formatSupabaseImportRouteInsertOrderItem)
       : ["- none"];
-  const executionResultLines = executionSummary
+  const executionSummaryLines = executionSummary
     ? [
         `- status: ${executionSummary.status}`,
         `- completedRows: ${executionSummary.completedRows}`,
@@ -270,7 +270,7 @@ function buildSupabaseImportRouteAuditArtifactText({
     ...insertOrderLines,
     "",
     "## Execution result",
-    ...executionResultLines,
+    ...executionSummaryLines,
     "",
     "## Secret handling",
     "- This artifact intentionally contains only configuration booleans, not Supabase keys or raw secret values.",

@@ -3,13 +3,31 @@ import { readFileSync } from "node:fs";
 import ts from "typescript";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
 
-const dataSource = readFileSync(
+const dataViewSource = readFileSync(
   "src/components/data/data-management-view.tsx",
   "utf8",
 );
+const dataSource = [
+  "src/components/data/data-view-shared.ts",
+  "src/components/data/supabase-preflight-report-text.ts",
+  "src/components/data/supabase-rehearsal-report-text.ts",
+  "src/components/data/supabase-execution-packet-text.ts",
+  "src/components/data/environment-report-text.ts",
+  "src/components/data/backup-summaries.tsx",
+  "src/components/data/migration-summaries.tsx",
+  "src/components/data/supabase-dry-run-summaries.tsx",
+  "src/components/data/supabase-execution-plan-summary.tsx",
+  "src/components/data/supabase-sql-summaries.tsx",
+  "src/components/data/supabase-rls-summaries.tsx",
+  "src/components/data/document-rag-summaries.tsx",
+  "src/components/data/readiness-summaries.tsx",
+]
+  .map((path) => readFileSync(path, "utf8"))
+  .concat(dataViewSource)
+  .join("\n");
 const dataSourceFile = ts.createSourceFile(
   "src/components/data/data-management-view.tsx",
-  dataSource,
+  dataViewSource,
   ts.ScriptTarget.Latest,
   true,
   ts.ScriptKind.TSX,

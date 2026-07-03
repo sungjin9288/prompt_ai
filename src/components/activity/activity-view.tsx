@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { PageHeader, Panel } from "@/components/ui";
 import { EmptyState } from "@/components/common/empty-state";
@@ -9,22 +10,23 @@ import {
   usePromptSkillsStore,
 } from "@/lib/data/workspace-store";
 import {
+  ACTIVITY_TYPE_FILTER_LABELS,
+  ACTIVITY_TYPE_ORDER,
   buildActivityTimeline,
+  countActivityEventsByType,
+  filterActivityEvents,
   groupActivityEventsByDay,
   type ActivityEvent,
   type ActivityType,
+  type ActivityTypeFilter,
 } from "@/lib/activity/timeline";
 
 const ACTIVITY_EVENT_LIMIT = 60;
 
-const activityTypeLabels: Record<ActivityType, string> = {
-  "prompt-created": "생성",
-  "prompt-improved": "개선",
-  "skill-run": "스킬 실행",
-  feedback: "피드백",
-  "memory-added": "메모리",
-  "skill-created": "스킬 생성",
-};
+const activityFilterOptions: ActivityTypeFilter[] = [
+  "all",
+  ...ACTIVITY_TYPE_ORDER,
+];
 
 function formatDayLabel(dayKey: string, todayKey: string, yesterdayKey: string) {
   if (dayKey === todayKey) {
@@ -76,7 +78,7 @@ function ActivityEventRow({ event }: { event: ActivityEvent }) {
       >
         <div className="flex min-w-0 items-start gap-3">
           <span className="mt-0.5 inline-flex shrink-0 items-center rounded-full border border-line bg-surface px-2 py-0.5 text-xs font-medium text-soft">
-            {activityTypeLabels[event.type]}
+            {ACTIVITY_TYPE_FILTER_LABELS[event.type]}
           </span>
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-foreground">
@@ -98,18 +100,65 @@ function ActivityEventRow({ event }: { event: ActivityEvent }) {
   );
 }
 
+function ActivityFilterRow({
+  filter,
+  counts,
+  totalCount,
+  onChange,
+}: {
+  filter: ActivityTypeFilter;
+  counts: Record<ActivityType, number>;
+  totalCount: number;
+  onChange: (next: ActivityTypeFilter) => void;
+}) {
+  return (
+    <div
+      role="radiogroup"
+      aria-label="활동 유형 필터"
+      className="flex flex-wrap gap-2"
+    >
+      {activityFilterOptions.map((option) => {
+        const isActive = option === filter;
+        const count = option === "all" ? totalCount : counts[option];
+
+        return (
+          <button
+            key={option}
+            type="button"
+            aria-pressed={isActive}
+            onClick={() => onChange(option)}
+            className={`rounded-full border px-3 py-1.5 text-xs transition ${
+              isActive
+                ? "border-accent bg-accent/10 font-semibold text-accent"
+                : "border-line bg-surface font-medium text-soft hover:bg-panel-strong"
+            }`}
+          >
+            {ACTIVITY_TYPE_FILTER_LABELS[option]} {count}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function ActivityView() {
   const [prompts] = usePromptAssetsStore();
   const [skills] = usePromptSkillsStore();
   const [memories] = useLearningMemoriesStore();
+  const [filter, setFilter] = useState<ActivityTypeFilter>("all");
 
   const events = buildActivityTimeline({ prompts, skills, memories });
-  const isTruncated = events.length > ACTIVITY_EVENT_LIMIT;
-  const visibleEvents = events.slice(0, ACTIVITY_EVENT_LIMIT);
+  const counts = countActivityEventsByType(events);
+  const filteredEvents = filterActivityEvents(events, filter);
+  const isTruncated = filteredEvents.length > ACTIVITY_EVENT_LIMIT;
+  const visibleEvents = filteredEvents.slice(0, ACTIVITY_EVENT_LIMIT);
   const groups = groupActivityEventsByDay(visibleEvents);
 
   const todayKey = new Date().toISOString().slice(0, 10);
   const yesterdayKey = shiftDayKey(todayKey, -1);
+
+  const isWorkspaceEmpty = events.length === 0;
+  const hasNoEventsForFilter = !isWorkspaceEmpty && visibleEvents.length === 0;
 
   return (
     <div>
@@ -117,7 +166,7 @@ export function ActivityView() {
         title="최근 활동"
         description="생성, 개선, 스킬 실행, 피드백, 메모리 추가 이력을 최신순으로 확인합니다."
       />
-      {visibleEvents.length === 0 ? (
+      {isWorkspaceEmpty ? (
         <Panel>
           <EmptyState
             title="아직 활동이 없어요"
@@ -127,25 +176,41 @@ export function ActivityView() {
         </Panel>
       ) : (
         <div className="flex flex-col gap-6">
-          {isTruncated ? (
-            <p className="text-xs text-muted">
-              최근 {ACTIVITY_EVENT_LIMIT}개 표시
-            </p>
-          ) : null}
-          {groups.map((group) => (
-            <Panel key={group.dayKey}>
-              <div className="border-b border-line px-5 py-3">
-                <h2 className="text-sm font-semibold text-soft">
-                  {formatDayLabel(group.dayKey, todayKey, yesterdayKey)}
-                </h2>
-              </div>
-              <ol className="divide-y divide-line">
-                {group.events.map((event) => (
-                  <ActivityEventRow key={event.id} event={event} />
-                ))}
-              </ol>
+          <ActivityFilterRow
+            filter={filter}
+            counts={counts}
+            totalCount={events.length}
+            onChange={setFilter}
+          />
+          {hasNoEventsForFilter ? (
+            <Panel>
+              <p className="px-5 py-6 text-center text-sm text-muted">
+                이 유형의 활동이 없어요
+              </p>
             </Panel>
-          ))}
+          ) : (
+            <>
+              {isTruncated ? (
+                <p className="text-xs text-muted">
+                  최근 {ACTIVITY_EVENT_LIMIT}개 표시
+                </p>
+              ) : null}
+              {groups.map((group) => (
+                <Panel key={group.dayKey}>
+                  <div className="border-b border-line px-5 py-3">
+                    <h2 className="text-sm font-semibold text-soft">
+                      {formatDayLabel(group.dayKey, todayKey, yesterdayKey)}
+                    </h2>
+                  </div>
+                  <ol className="divide-y divide-line">
+                    {group.events.map((event) => (
+                      <ActivityEventRow key={event.id} event={event} />
+                    ))}
+                  </ol>
+                </Panel>
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>

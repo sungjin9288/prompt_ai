@@ -24,6 +24,27 @@ export interface ActivityDayGroup {
   events: ActivityEvent[];
 }
 
+export type ActivityTypeFilter = ActivityType | "all";
+
+export const ACTIVITY_TYPE_ORDER: ActivityType[] = [
+  "prompt-created",
+  "prompt-improved",
+  "skill-run",
+  "feedback",
+  "memory-added",
+  "skill-created",
+];
+
+export const ACTIVITY_TYPE_FILTER_LABELS: Record<ActivityTypeFilter, string> = {
+  all: "전체",
+  "prompt-created": "생성",
+  "prompt-improved": "개선",
+  "skill-run": "스킬 실행",
+  feedback: "피드백",
+  "memory-added": "메모리",
+  "skill-created": "스킬 생성",
+};
+
 interface BuildActivityTimelineInput {
   prompts: PromptAsset[];
   skills: PromptSkill[];
@@ -150,4 +171,32 @@ export function groupActivityEventsByDay(
   }
 
   return groups;
+}
+
+export function filterActivityEvents(
+  events: ActivityEvent[],
+  filter: ActivityTypeFilter,
+): ActivityEvent[] {
+  if (filter === "all") {
+    return events;
+  }
+
+  return events.filter((event) => event.type === filter);
+}
+
+export function countActivityEventsByType(
+  events: ActivityEvent[],
+): Record<ActivityType, number> {
+  const counts = ACTIVITY_TYPE_ORDER.reduce(
+    (accumulator, type) => ({ ...accumulator, [type]: 0 }),
+    {} as Record<ActivityType, number>,
+  );
+
+  return events.reduce(
+    (accumulator, event) => ({
+      ...accumulator,
+      [event.type]: accumulator[event.type] + 1,
+    }),
+    counts,
+  );
 }

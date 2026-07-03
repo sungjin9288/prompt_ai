@@ -2,9 +2,14 @@ import { describe, expect, it } from "vitest";
 
 import type { LearningMemory, PromptAsset, PromptSkill } from "@/lib/prompt";
 import {
+  ACTIVITY_TYPE_FILTER_LABELS,
+  ACTIVITY_TYPE_ORDER,
   buildActivityTimeline,
+  countActivityEventsByType,
+  filterActivityEvents,
   getActivityDayKey,
   groupActivityEventsByDay,
+  type ActivityEvent,
 } from "@/lib/activity/timeline";
 
 function makePrompt(overrides: Partial<PromptAsset> = {}): PromptAsset {
@@ -272,5 +277,163 @@ describe("groupActivityEventsByDay", () => {
 
   it("returns an empty array when there are no events", () => {
     expect(groupActivityEventsByDay([])).toEqual([]);
+  });
+});
+
+function makeEvent(overrides: Partial<ActivityEvent> = {}): ActivityEvent {
+  return {
+    id: "event-1",
+    timestamp: "2026-07-01T00:00:00.000Z",
+    type: "prompt-created",
+    title: "이벤트",
+    href: "/",
+    ...overrides,
+  };
+}
+
+describe("filterActivityEvents", () => {
+  it("returns all events unchanged when filter is all", () => {
+    const events = [
+      makeEvent({ id: "a", type: "prompt-created" }),
+      makeEvent({ id: "b", type: "feedback" }),
+    ];
+
+    expect(filterActivityEvents(events, "all")).toEqual(events);
+  });
+
+  it("returns only prompt-created events when filtered", () => {
+    const events = [
+      makeEvent({ id: "a", type: "prompt-created" }),
+      makeEvent({ id: "b", type: "feedback" }),
+    ];
+
+    expect(filterActivityEvents(events, "prompt-created")).toEqual([events[0]]);
+  });
+
+  it("returns only prompt-improved events when filtered", () => {
+    const events = [
+      makeEvent({ id: "a", type: "prompt-improved" }),
+      makeEvent({ id: "b", type: "feedback" }),
+    ];
+
+    expect(filterActivityEvents(events, "prompt-improved")).toEqual([events[0]]);
+  });
+
+  it("returns only skill-run events when filtered", () => {
+    const events = [
+      makeEvent({ id: "a", type: "skill-run" }),
+      makeEvent({ id: "b", type: "feedback" }),
+    ];
+
+    expect(filterActivityEvents(events, "skill-run")).toEqual([events[0]]);
+  });
+
+  it("returns only feedback events when filtered", () => {
+    const events = [
+      makeEvent({ id: "a", type: "feedback" }),
+      makeEvent({ id: "b", type: "skill-run" }),
+    ];
+
+    expect(filterActivityEvents(events, "feedback")).toEqual([events[0]]);
+  });
+
+  it("returns only memory-added events when filtered", () => {
+    const events = [
+      makeEvent({ id: "a", type: "memory-added" }),
+      makeEvent({ id: "b", type: "skill-run" }),
+    ];
+
+    expect(filterActivityEvents(events, "memory-added")).toEqual([events[0]]);
+  });
+
+  it("returns only skill-created events when filtered", () => {
+    const events = [
+      makeEvent({ id: "a", type: "skill-created" }),
+      makeEvent({ id: "b", type: "skill-run" }),
+    ];
+
+    expect(filterActivityEvents(events, "skill-created")).toEqual([events[0]]);
+  });
+
+  it("preserves original order when filtering", () => {
+    const events = [
+      makeEvent({ id: "a", type: "feedback" }),
+      makeEvent({ id: "b", type: "feedback" }),
+      makeEvent({ id: "c", type: "feedback" }),
+    ];
+
+    expect(filterActivityEvents(events, "feedback").map((event) => event.id)).toEqual(
+      ["a", "b", "c"],
+    );
+  });
+
+  it("returns an empty array when no events match the filter", () => {
+    const events = [makeEvent({ id: "a", type: "prompt-created" })];
+
+    expect(filterActivityEvents(events, "memory-added")).toEqual([]);
+  });
+
+  it("returns an empty array when the input is empty", () => {
+    expect(filterActivityEvents([], "all")).toEqual([]);
+  });
+});
+
+describe("countActivityEventsByType", () => {
+  it("counts events per type with all types present", () => {
+    const events = [
+      makeEvent({ id: "a", type: "prompt-created" }),
+      makeEvent({ id: "b", type: "prompt-created" }),
+      makeEvent({ id: "c", type: "feedback" }),
+    ];
+
+    expect(countActivityEventsByType(events)).toEqual({
+      "prompt-created": 2,
+      "prompt-improved": 0,
+      "skill-run": 0,
+      feedback: 1,
+      "memory-added": 0,
+      "skill-created": 0,
+    });
+  });
+
+  it("returns zero for every type when there are no events", () => {
+    expect(countActivityEventsByType([])).toEqual({
+      "prompt-created": 0,
+      "prompt-improved": 0,
+      "skill-run": 0,
+      feedback: 0,
+      "memory-added": 0,
+      "skill-created": 0,
+    });
+  });
+
+  it("counts every type when all types are represented", () => {
+    const events = ACTIVITY_TYPE_ORDER.map((type, index) =>
+      makeEvent({ id: `event-${index}`, type }),
+    );
+
+    const counts = countActivityEventsByType(events);
+
+    for (const type of ACTIVITY_TYPE_ORDER) {
+      expect(counts[type]).toBe(1);
+    }
+  });
+});
+
+describe("ACTIVITY_TYPE_FILTER_LABELS", () => {
+  it("has a Korean label for every activity type and the all filter", () => {
+    expect(ACTIVITY_TYPE_FILTER_LABELS.all).toBe("전체");
+
+    for (const type of ACTIVITY_TYPE_ORDER) {
+      expect(typeof ACTIVITY_TYPE_FILTER_LABELS[type]).toBe("string");
+      expect(ACTIVITY_TYPE_FILTER_LABELS[type].length).toBeGreaterThan(0);
+    }
+  });
+
+  it("covers exactly the activity types plus all with no extras", () => {
+    const keys = Object.keys(ACTIVITY_TYPE_FILTER_LABELS).sort();
+    const expectedKeys = [...ACTIVITY_TYPE_ORDER, "all"].sort();
+
+    expect(keys).toEqual(expectedKeys);
   });
 });

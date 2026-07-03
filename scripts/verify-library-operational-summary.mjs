@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readConcatenatedSources, readSource } from "./lib/read-source.mjs";
 
-const source = [
+const source = readConcatenatedSources([
   "src/components/library/library-view.tsx",
   "src/components/library/library-filters-panel.tsx",
   "src/components/library/library-detail-workspace.tsx",
@@ -10,22 +10,14 @@ const source = [
   "src/lib/library/prompt-metrics.ts",
   "src/lib/library/report-text.ts",
   "src/lib/library/report-notes.ts",
-]
-  .map((path) => readFileSync(path, "utf8"))
-  .join("\n");
-const libraryPageSource = readFileSync("src/app/library/page.tsx", "utf8");
-const promptTypesSource = readFileSync("src/lib/prompt/types.ts", "utf8");
-const sourceRegistrySource = readFileSync(
-  "src/lib/studio/source-registry.ts",
-  "utf8",
-);
-const draftDisplaySource = readFileSync(
-  "src/lib/studio/draft-display.ts",
-  "utf8",
-);
-const readme = readFileSync("README.md", "utf8");
-const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
-const developmentBrief = readFileSync("docs/codex-development-brief.md", "utf8");
+]);
+const libraryPageSource = readSource("src/app/library/page.tsx");
+const promptTypesSource = readSource("src/lib/prompt/types.ts");
+const sourceRegistrySource = readSource("src/lib/studio/source-registry.ts");
+const draftDisplaySource = readSource("src/lib/studio/draft-display.ts");
+const readme = readSource("README.md");
+const prd = readSource("docs/personalized-prompt-ai-prd.md");
+const developmentBrief = readSource("docs/codex-development-brief.md");
 
 function assertIncludes(text, message) {
   assert.ok(source.includes(text), message);

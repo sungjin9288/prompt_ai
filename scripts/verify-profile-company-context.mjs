@@ -1,29 +1,16 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readSource } from "./lib/read-source.mjs";
 
-const profileSource = readFileSync(
-  "src/components/profile/profile-editor.tsx",
-  "utf8",
-);
-const companySource = readFileSync(
-  "src/components/company/company-editor.tsx",
-  "utf8",
-);
-const sharedFlowSource = readFileSync(
+const profileSource = readSource("src/components/profile/profile-editor.tsx");
+const companySource = readSource("src/components/company/company-editor.tsx");
+const sharedFlowSource = readSource(
   "src/components/context/context-operating-flow.tsx",
-  "utf8",
 );
-const readme = readFileSync("README.md", "utf8");
-const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
-const developmentBrief = readFileSync(
-  "docs/codex-development-brief.md",
-  "utf8",
-);
-const promptTypesSource = readFileSync("src/lib/prompt/types.ts", "utf8");
-const sourceRegistrySource = readFileSync(
-  "src/lib/studio/source-registry.ts",
-  "utf8",
-);
+const readme = readSource("README.md");
+const prd = readSource("docs/personalized-prompt-ai-prd.md");
+const developmentBrief = readSource("docs/codex-development-brief.md");
+const promptTypesSource = readSource("src/lib/prompt/types.ts");
+const sourceRegistrySource = readSource("src/lib/studio/source-registry.ts");
 
 function assertSharedMatches(pattern, message) {
   assert.match(sharedFlowSource, pattern, message);

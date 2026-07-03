@@ -1,30 +1,29 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import ts from "typescript";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
+import { readConcatenatedSources, readSource } from "./lib/read-source.mjs";
 
-const dataViewSource = readFileSync(
+const dataViewSource = readSource(
   "src/components/data/data-management-view.tsx",
-  "utf8",
 );
 const dataSource = [
-  "src/components/data/data-view-shared.ts",
-  "src/components/data/supabase-preflight-report-text.ts",
-  "src/components/data/supabase-rehearsal-report-text.ts",
-  "src/components/data/supabase-execution-packet-text.ts",
-  "src/components/data/environment-report-text.ts",
-  "src/components/data/backup-summaries.tsx",
-  "src/components/data/migration-summaries.tsx",
-  "src/components/data/supabase-dry-run-summaries.tsx",
-  "src/components/data/supabase-execution-plan-summary.tsx",
-  "src/components/data/supabase-sql-summaries.tsx",
-  "src/components/data/supabase-rls-summaries.tsx",
-  "src/components/data/document-rag-summaries.tsx",
-  "src/components/data/readiness-summaries.tsx",
-]
-  .map((path) => readFileSync(path, "utf8"))
-  .concat(dataViewSource)
-  .join("\n");
+  readConcatenatedSources([
+    "src/components/data/data-view-shared.ts",
+    "src/components/data/supabase-preflight-report-text.ts",
+    "src/components/data/supabase-rehearsal-report-text.ts",
+    "src/components/data/supabase-execution-packet-text.ts",
+    "src/components/data/environment-report-text.ts",
+    "src/components/data/backup-summaries.tsx",
+    "src/components/data/migration-summaries.tsx",
+    "src/components/data/supabase-dry-run-summaries.tsx",
+    "src/components/data/supabase-execution-plan-summary.tsx",
+    "src/components/data/supabase-sql-summaries.tsx",
+    "src/components/data/supabase-rls-summaries.tsx",
+    "src/components/data/document-rag-summaries.tsx",
+    "src/components/data/readiness-summaries.tsx",
+  ]),
+  dataViewSource,
+].join("\n");
 const dataSourceFile = ts.createSourceFile(
   "src/components/data/data-management-view.tsx",
   dataViewSource,
@@ -32,48 +31,30 @@ const dataSourceFile = ts.createSourceFile(
   true,
   ts.ScriptKind.TSX,
 );
-const manifestSource = readFileSync(
+const manifestSource = readSource(
   "src/lib/data/supabase-import-execution-packet-manifest.ts",
-  "utf8",
 );
-const supabaseImportRouteSource = readFileSync(
+const supabaseImportRouteSource = readSource(
   "src/app/api/data/supabase-import/route.ts",
-  "utf8",
 );
-const supabaseImportDryRunSource = [
+const supabaseImportDryRunSource = readConcatenatedSources([
   "src/lib/data/supabase-import-dry-run.ts",
   "src/lib/data/supabase-import-verification-sql.ts",
   "src/lib/data/supabase-import-rls-sql.ts",
   "src/lib/data/supabase-import-report-text.ts",
-]
-  .map((path) => readFileSync(path, "utf8"))
-  .join("\n");
-const supabaseImportExecutionPlanSource = readFileSync(
+]);
+const supabaseImportExecutionPlanSource = readSource(
   "src/lib/data/supabase-import-execution-plan.ts",
-  "utf8",
 );
-const supabaseImporterSource = readFileSync(
-  "src/lib/data/supabase-importer.ts",
-  "utf8",
-);
-const readme = readFileSync("README.md", "utf8");
-const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
-const developmentBrief = readFileSync(
-  "docs/codex-development-brief.md",
-  "utf8",
-);
-const storageArchitecture = readFileSync(
-  "docs/storage-architecture.md",
-  "utf8",
-);
-const promptTypesSource = readFileSync("src/lib/prompt/types.ts", "utf8");
-const sourceRegistrySource = readFileSync(
-  "src/lib/studio/source-registry.ts",
-  "utf8",
-);
-const manualCopyPanelSource = readFileSync(
+const supabaseImporterSource = readSource("src/lib/data/supabase-importer.ts");
+const readme = readSource("README.md");
+const prd = readSource("docs/personalized-prompt-ai-prd.md");
+const developmentBrief = readSource("docs/codex-development-brief.md");
+const storageArchitecture = readSource("docs/storage-architecture.md");
+const promptTypesSource = readSource("src/lib/prompt/types.ts");
+const sourceRegistrySource = readSource("src/lib/studio/source-registry.ts");
+const manualCopyPanelSource = readSource(
   "src/components/common/manual-copy-panel.tsx",
-  "utf8",
 );
 
 const {

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { readdirSync } from "node:fs";
 import { join } from "node:path";
+import { readSource } from "./lib/read-source.mjs";
 
 const smokeDir = "output/smoke";
 const smokeReadmeName = "README.md";
@@ -110,7 +111,7 @@ assert.deepEqual(
   "output/smoke should contain its README and exactly the committed local smoke evidence packets",
 );
 
-const smokeReadme = readFileSync(join(smokeDir, smokeReadmeName), "utf8");
+const smokeReadme = readSource(join(smokeDir, smokeReadmeName));
 const smokeReadmePatterns = [
   /# Local Smoke Evidence/,
   /checked without external AI access/,
@@ -145,7 +146,7 @@ for (const pattern of smokeReadmePatterns) {
 }
 
 for (const file of expectedSmokeFiles) {
-  const content = readFileSync(join(smokeDir, file.name), "utf8");
+  const content = readSource(join(smokeDir, file.name));
 
   for (const pattern of file.patterns) {
     assert.match(content, pattern, `${file.name} is missing ${pattern}`);
@@ -153,7 +154,7 @@ for (const file of expectedSmokeFiles) {
 }
 
 const smokeProvenance = expectedSmokeFiles.map((file) => {
-  const content = readFileSync(join(smokeDir, file.name), "utf8");
+  const content = readSource(join(smokeDir, file.name));
 
   return {
     fileName: file.name,

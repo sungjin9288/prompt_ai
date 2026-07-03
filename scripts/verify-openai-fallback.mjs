@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
+import { readSource } from "./lib/read-source.mjs";
 
 const savedApiKey = process.env["OPENAI_API_KEY"];
 const savedModel = process.env["OPENAI_MODEL"];
@@ -23,15 +23,13 @@ try {
   const { enhancePromptWithOpenAI } = loadTypescriptModule(
     "src/lib/openai/prompt-optimizer.ts",
   );
-  const statusRoute = readFileSync(
+  const statusRoute = readSource(
     "src/app/api/generate-prompt/status/route.ts",
-    "utf8",
   );
-  const envExample = readFileSync(".env.example", "utf8");
-  const readme = readFileSync("README.md", "utf8");
-  const environmentReadiness = readFileSync(
+  const envExample = readSource(".env.example");
+  const readme = readSource("README.md");
+  const environmentReadiness = readSource(
     "src/lib/data/environment-readiness.ts",
-    "utf8",
   );
   const localPrompt = {
     createdAt: "2026-06-29T00:00:00.000Z",

@@ -1,21 +1,17 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
+import { readSource } from "./lib/read-source.mjs";
 
 const {
   buildTargetAiHandoffImprovementBriefText,
   buildTargetAiHandoffPackageText,
 } = loadTypescriptModule("src/lib/prompt/handoff-package.ts");
-const handoffPreviewSource = readFileSync(
+const handoffPreviewSource = readSource(
   "src/components/prompt/target-ai-handoff-preview-panel.tsx",
-  "utf8",
 );
-const readme = readFileSync("README.md", "utf8");
-const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
-const developmentBrief = readFileSync(
-  "docs/codex-development-brief.md",
-  "utf8",
-);
+const readme = readSource("README.md");
+const prd = readSource("docs/personalized-prompt-ai-prd.md");
+const developmentBrief = readSource("docs/codex-development-brief.md");
 
 function assertFileIncludes(fileSource, text, message) {
   assert.ok(fileSource.includes(text), message);

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readSource } from "./lib/read-source.mjs";
 
-const source = readFileSync("src/components/studio/studio-workspace.tsx", "utf8");
+const source = readSource("src/components/studio/studio-workspace.tsx");
 
 function assertIncludes(text, message) {
   assert.ok(source.includes(text), message);

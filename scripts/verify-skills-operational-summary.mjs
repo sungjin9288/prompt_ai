@@ -1,20 +1,16 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
+import { readSource } from "./lib/read-source.mjs";
 
-const source = readFileSync("src/components/skills/skills-view.tsx", "utf8");
-const manualCopyPanelSource = readFileSync(
+const source = readSource("src/components/skills/skills-view.tsx");
+const manualCopyPanelSource = readSource(
   "src/components/common/manual-copy-panel.tsx",
-  "utf8",
 );
-const readme = readFileSync("README.md", "utf8");
-const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
-const promptTypes = readFileSync("src/lib/prompt/types.ts", "utf8");
-const sourceRegistry = readFileSync("src/lib/studio/source-registry.ts", "utf8");
-const developmentBrief = readFileSync(
-  "docs/codex-development-brief.md",
-  "utf8",
-);
+const readme = readSource("README.md");
+const prd = readSource("docs/personalized-prompt-ai-prd.md");
+const promptTypes = readSource("src/lib/prompt/types.ts");
+const sourceRegistry = readSource("src/lib/studio/source-registry.ts");
+const developmentBrief = readSource("docs/codex-development-brief.md");
 const { createSkillFromPrompt, getBestVersion } = loadTypescriptModule(
   "src/lib/skills/skill-builder.ts",
 );

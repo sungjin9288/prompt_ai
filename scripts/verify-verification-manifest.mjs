@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { releaseCandidateChecks } from "./lib/release-candidate-checks.mjs";
+import { readSource } from "./lib/read-source.mjs";
 import { verificationChecks } from "./lib/verification-checks.mjs";
 
-const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
+const packageJson = JSON.parse(readSource("package.json"));
 const scripts = packageJson.scripts || {};
 const releaseCandidateScripts = [
   "verify:repo-boundary",

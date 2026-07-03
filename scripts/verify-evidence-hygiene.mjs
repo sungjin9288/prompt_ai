@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { readSource } from "./lib/read-source.mjs";
 import { verificationChecks } from "./lib/verification-checks.mjs";
 
 const evidenceDir = "docs/evidence";
@@ -11,7 +12,7 @@ const requiredScripts = verificationChecks.map((check) => check.scriptName);
 
 assert.ok(existsSync(readmePath), "docs/evidence/README.md should exist.");
 
-const readme = readFileSync(readmePath, "utf8");
+const readme = readSource(readmePath);
 
 assert.match(
   readme,
@@ -55,7 +56,7 @@ assert.ok(
 
 for (const fileName of evidenceFiles) {
   const filePath = join(evidenceDir, fileName);
-  const evidence = readFileSync(filePath, "utf8");
+  const evidence = readSource(filePath);
 
   assert.match(evidence, /- status: pass/, `${fileName} should have pass status.`);
   assert.match(

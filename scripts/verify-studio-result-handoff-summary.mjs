@@ -1,23 +1,22 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readConcatenatedSources, readSource } from "./lib/read-source.mjs";
 
-const studioWorkspaceSource = readFileSync(
+const studioWorkspaceSource = readSource(
   "src/components/studio/studio-workspace.tsx",
-  "utf8",
 );
 const source = [
-  "src/lib/studio-view/hrefs.ts",
-  "src/lib/studio-view/draft-summary.ts",
-  "src/lib/studio-view/learning-memory.ts",
-  "src/lib/studio-view/generation.ts",
-  "src/lib/studio-view/reports.ts",
-]
-  .map((path) => readFileSync(path, "utf8"))
-  .concat(studioWorkspaceSource)
-  .join("\n");
-const readme = readFileSync("README.md", "utf8");
-const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
-const developmentBrief = readFileSync("docs/codex-development-brief.md", "utf8");
+  readConcatenatedSources([
+    "src/lib/studio-view/hrefs.ts",
+    "src/lib/studio-view/draft-summary.ts",
+    "src/lib/studio-view/learning-memory.ts",
+    "src/lib/studio-view/generation.ts",
+    "src/lib/studio-view/reports.ts",
+  ]),
+  studioWorkspaceSource,
+].join("\n");
+const readme = readSource("README.md");
+const prd = readSource("docs/personalized-prompt-ai-prd.md");
+const developmentBrief = readSource("docs/codex-development-brief.md");
 
 function assertIncludes(text, message) {
   assert.ok(source.includes(text), message);

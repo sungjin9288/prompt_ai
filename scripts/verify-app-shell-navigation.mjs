@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readSource } from "./lib/read-source.mjs";
 
-const source = readFileSync("src/components/app-shell.tsx", "utf8");
-const readme = readFileSync("README.md", "utf8");
+const source = readSource("src/components/app-shell.tsx");
+const readme = readSource("README.md");
 
 const navItemMatches = [...source.matchAll(/href: "([^"]+)",[\s\S]*?label: "([^"]+)",[\s\S]*?nextAction: "([^"]+)",[\s\S]*?summary: "([^"]+)"/g)];
 const navGroupMatches = [...source.matchAll(/group: "([^"]+)"/g)];

@@ -1,47 +1,34 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readConcatenatedSources, readSource } from "./lib/read-source.mjs";
 
-const dashboardViewSource = readFileSync(
+const dashboardViewSource = readSource(
   "src/components/dashboard/dashboard-view.tsx",
-  "utf8",
 );
 const dashboardPanelSources = [
   "src/components/dashboard/dashboard-next-action-queue-panel.tsx",
   "src/components/dashboard/dashboard-improvement-panel.tsx",
   "src/components/dashboard/dashboard-personalization-panel.tsx",
   "src/components/dashboard/dashboard-skill-ops-panel.tsx",
-].map((path) => readFileSync(path, "utf8"));
+].map((path) => readSource(path));
 const dashboardSource = [
-  "src/lib/dashboard/shared.ts",
-  "src/lib/dashboard/hrefs.ts",
-  "src/lib/dashboard/learning-memory.ts",
-  "src/lib/dashboard/next-action-queue.ts",
-  "src/lib/dashboard/personalization-reports.ts",
-  "src/lib/dashboard/source-reports.ts",
-]
-  .map((path) => readFileSync(path, "utf8"))
-  .concat(dashboardViewSource)
-  .concat(dashboardPanelSources)
-  .join("\n");
-const sourceRegistrySource = readFileSync(
-  "src/lib/studio/source-registry.ts",
-  "utf8",
-);
-const promptTypesSource = readFileSync("src/lib/prompt/types.ts", "utf8");
-const draftVariantsSource = readFileSync(
-  "src/lib/studio/draft-variants.ts",
-  "utf8",
-);
-const draftDisplaySource = readFileSync(
-  "src/lib/studio/draft-display.ts",
-  "utf8",
-);
-const readme = readFileSync("README.md", "utf8");
-const prdSource = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
-const developmentBrief = readFileSync(
-  "docs/codex-development-brief.md",
-  "utf8",
-);
+  readConcatenatedSources([
+    "src/lib/dashboard/shared.ts",
+    "src/lib/dashboard/hrefs.ts",
+    "src/lib/dashboard/learning-memory.ts",
+    "src/lib/dashboard/next-action-queue.ts",
+    "src/lib/dashboard/personalization-reports.ts",
+    "src/lib/dashboard/source-reports.ts",
+  ]),
+  dashboardViewSource,
+  ...dashboardPanelSources,
+].join("\n");
+const sourceRegistrySource = readSource("src/lib/studio/source-registry.ts");
+const promptTypesSource = readSource("src/lib/prompt/types.ts");
+const draftVariantsSource = readSource("src/lib/studio/draft-variants.ts");
+const draftDisplaySource = readSource("src/lib/studio/draft-display.ts");
+const readme = readSource("README.md");
+const prdSource = readSource("docs/personalized-prompt-ai-prd.md");
+const developmentBrief = readSource("docs/codex-development-brief.md");
 
 function assertDashboardMatches(pattern, message) {
   assert.match(dashboardSource, pattern, message);

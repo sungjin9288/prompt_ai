@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { collectFiles, readSource } from "./lib/read-source.mjs";
 
 const scanRoots = ["src", "next.config.ts"];
-const scannedExtensions = new Set([".css", ".ts", ".tsx"]);
+const scannedExtensions = [".css", ".ts", ".tsx"];
 const blockedPatterns = [
   {
     label: "network Google font dependency",
@@ -15,31 +14,11 @@ const blockedPatterns = [
   },
 ];
 
-function getExtension(filePath) {
-  const lastDot = filePath.lastIndexOf(".");
-
-  return lastDot === -1 ? "" : filePath.slice(lastDot);
-}
-
-function collectFiles(entryPath) {
-  const stats = statSync(entryPath);
-
-  if (stats.isFile()) {
-    return scannedExtensions.has(getExtension(entryPath)) ? [entryPath] : [];
-  }
-
-  if (!stats.isDirectory()) {
-    return [];
-  }
-
-  return readdirSync(entryPath).flatMap((name) => collectFiles(join(entryPath, name)));
-}
-
-const files = scanRoots.flatMap(collectFiles);
+const files = collectFiles(scanRoots, { extensions: scannedExtensions });
 const findings = [];
 
 for (const filePath of files) {
-  const source = readFileSync(filePath, "utf8");
+  const source = readSource(filePath);
 
   for (const blockedPattern of blockedPatterns) {
     const match = source.match(blockedPattern.pattern);
@@ -59,7 +38,7 @@ assert.deepEqual(
   `Build stability violations found:\n${findings.join("\n")}`,
 );
 
-const globalsCss = readFileSync("src/app/globals.css", "utf8");
+const globalsCss = readSource("src/app/globals.css");
 
 assert.match(
   globalsCss,

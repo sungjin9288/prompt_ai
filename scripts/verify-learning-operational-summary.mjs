@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import {
   buildGitProvenance,
   buildGitProvenanceLines,
 } from "./lib/git-provenance.mjs";
+import { readConcatenatedSources, readSource } from "./lib/read-source.mjs";
 
 function getOutputPath(args) {
   const outIndex = args.indexOf("--out");
@@ -64,16 +65,15 @@ function writeLearningFeedbackEvidence(outputPath, evidenceText) {
 
 const outputPath = getOutputPath(process.argv.slice(2));
 
-const source = readFileSync("src/components/learning/learning-view.tsx", "utf8");
-const manualCopyPanelSource = readFileSync(
+const source = readSource("src/components/learning/learning-view.tsx");
+const manualCopyPanelSource = readSource(
   "src/components/common/manual-copy-panel.tsx",
-  "utf8",
 );
-const promptTypes = readFileSync("src/lib/prompt/types.ts", "utf8");
-const draftVariants = readFileSync("src/lib/studio/draft-variants.ts", "utf8");
-const draftDisplay = readFileSync("src/lib/studio/draft-display.ts", "utf8");
-const sourceRegistry = readFileSync("src/lib/studio/source-registry.ts", "utf8");
-const libraryView = [
+const promptTypes = readSource("src/lib/prompt/types.ts");
+const draftVariants = readSource("src/lib/studio/draft-variants.ts");
+const draftDisplay = readSource("src/lib/studio/draft-display.ts");
+const sourceRegistry = readSource("src/lib/studio/source-registry.ts");
+const libraryView = readConcatenatedSources([
   "src/components/library/library-view.tsx",
   "src/components/library/library-filters-panel.tsx",
   "src/components/library/library-detail-workspace.tsx",
@@ -82,12 +82,10 @@ const libraryView = [
   "src/lib/library/prompt-metrics.ts",
   "src/lib/library/report-text.ts",
   "src/lib/library/report-notes.ts",
-]
-  .map((path) => readFileSync(path, "utf8"))
-  .join("\n");
-const readme = readFileSync("README.md", "utf8");
-const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
-const devBrief = readFileSync("docs/codex-development-brief.md", "utf8");
+]);
+const readme = readSource("README.md");
+const prd = readSource("docs/personalized-prompt-ai-prd.md");
+const devBrief = readSource("docs/codex-development-brief.md");
 
 function assertMatches(pattern, message) {
   assert.match(source, pattern, message);

@@ -1,46 +1,28 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { collectFiles, escapeRegExp, readSource } from "./lib/read-source.mjs";
 
 const scanRoots = ["README.md", "docs", "src", "scripts"];
-const scannedExtensions = new Set([
+const scannedExtensions = [
   ".js",
   ".md",
   ".mjs",
   ".ts",
   ".tsx",
-]);
-const skippedDirectories = new Set([
+];
+const skippedDirectories = [
   ".git",
   ".next",
   "node_modules",
-]);
+];
 
 function phrase(parts) {
   return parts.join(" ");
 }
 
-function escapeRegExp(text) {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function collectFiles(path) {
-  const stats = statSync(path);
-
-  if (stats.isFile()) {
-    return scannedExtensions.has(path.slice(path.lastIndexOf("."))) ? [path] : [];
-  }
-
-  return readdirSync(path).flatMap((entry) => {
-    if (skippedDirectories.has(entry)) {
-      return [];
-    }
-
-    return collectFiles(join(path, entry));
-  });
-}
-
-const files = scanRoots.flatMap(collectFiles);
+const files = collectFiles(scanRoots, {
+  extensions: scannedExtensions,
+  skipDirectories: skippedDirectories,
+});
 const legacyPatterns = [
   {
     label: "old Studio source-kind wording",
@@ -73,7 +55,7 @@ const legacyPatterns = [
 const violations = [];
 
 for (const file of files) {
-  const source = readFileSync(file, "utf8");
+  const source = readSource(file);
 
   for (const { label, pattern } of legacyPatterns) {
     const match = source.match(pattern);
@@ -93,8 +75,8 @@ assert.deepEqual(
   `Legacy terminology found:\n${violations.join("\n")}`,
 );
 
-const readme = readFileSync("README.md", "utf8");
-const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
+const readme = readSource("README.md");
+const prd = readSource("docs/personalized-prompt-ai-prd.md");
 
 assert.match(
   readme,

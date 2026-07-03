@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import ts from "typescript";
+import { readSource } from "./lib/read-source.mjs";
 
 const sourceRoots = ["src/app", "src/components"];
 
@@ -146,7 +147,7 @@ function verifyWriteStudioDraftCall(sourceFile, callExpression) {
 }
 
 function verifySourceFile(filePath) {
-  const source = readFileSync(filePath, "utf8");
+  const source = readSource(filePath);
   const sourceFile = ts.createSourceFile(
     filePath,
     source,

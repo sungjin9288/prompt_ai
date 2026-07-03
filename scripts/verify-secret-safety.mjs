@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { collectFiles, readSource } from "./lib/read-source.mjs";
 
 const scanRoots = [
   "README.md",
@@ -56,28 +55,6 @@ const sensitiveEnvKeys = [
   "SUPABASE_SERVICE_ROLE_KEY",
 ];
 
-function getFileExtension(filePath) {
-  const lastDot = filePath.lastIndexOf(".");
-
-  return lastDot === -1 ? "" : filePath.slice(lastDot);
-}
-
-function collectFiles(entryPath) {
-  const stats = statSync(entryPath);
-
-  if (stats.isFile()) {
-    return textFileExtensions.has(getFileExtension(entryPath)) ? [entryPath] : [];
-  }
-
-  if (!stats.isDirectory()) {
-    return [];
-  }
-
-  return readdirSync(entryPath)
-    .filter((name) => !name.startsWith("."))
-    .flatMap((name) => collectFiles(join(entryPath, name)));
-}
-
 function normalizeEnvValue(value) {
   return value.trim().replace(/^["'`/]/, "").replace(/["'`/,;}]+$/, "");
 }
@@ -122,9 +99,12 @@ function getPatternFindings(filePath, content) {
   });
 }
 
-const files = scanRoots.flatMap(collectFiles);
+const files = collectFiles(scanRoots, {
+  extensions: textFileExtensions,
+  skipHidden: true,
+});
 const findings = files.flatMap((filePath) => {
-  const content = readFileSync(filePath, "utf8");
+  const content = readSource(filePath);
 
   return [
     ...getPatternFindings(filePath, content),

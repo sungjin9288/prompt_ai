@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readSource } from "./lib/read-source.mjs";
 
-const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
-const readme = readFileSync("README.md", "utf8");
-const evidenceReadme = readFileSync("docs/evidence/README.md", "utf8");
+const packageJson = JSON.parse(readSource("package.json"));
+const readme = readSource("README.md");
+const evidenceReadme = readSource("docs/evidence/README.md");
 const scriptsBlockMatch = readme.match(/## Scripts\s+```bash\n([\s\S]*?)```/);
 
 assert.ok(scriptsBlockMatch, "README.md should contain a Scripts bash block");

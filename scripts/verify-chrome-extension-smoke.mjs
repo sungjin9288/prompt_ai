@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import {
   buildGitProvenance,
   buildGitProvenanceLines,
 } from "./lib/git-provenance.mjs";
+import { readSource } from "./lib/read-source.mjs";
 
 function getOutputPath(args) {
   const outIndex = args.indexOf("--out");
@@ -27,14 +28,12 @@ function getOutputPath(args) {
 
 const outputPath = getOutputPath(process.argv.slice(2));
 
-const manifest = JSON.parse(
-  readFileSync("extensions/chrome/manifest.json", "utf8"),
-);
-const background = readFileSync("extensions/chrome/background.js", "utf8");
-const popupHtml = readFileSync("extensions/chrome/popup.html", "utf8");
-const popupJs = readFileSync("extensions/chrome/popup.js", "utf8");
-const popupCss = readFileSync("extensions/chrome/popup.css", "utf8");
-const chromeReadme = readFileSync("extensions/chrome/README.md", "utf8");
+const manifest = JSON.parse(readSource("extensions/chrome/manifest.json"));
+const background = readSource("extensions/chrome/background.js");
+const popupHtml = readSource("extensions/chrome/popup.html");
+const popupJs = readSource("extensions/chrome/popup.js");
+const popupCss = readSource("extensions/chrome/popup.css");
+const chromeReadme = readSource("extensions/chrome/README.md");
 
 function assertIncludes(source, text, message) {
   assert.ok(source.includes(text), message);

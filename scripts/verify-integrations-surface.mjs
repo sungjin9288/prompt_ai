@@ -4,71 +4,58 @@ import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
+import { readSource } from "./lib/read-source.mjs";
 
-const appShell = readFileSync("src/components/app-shell.tsx", "utf8");
-const page = readFileSync("src/app/integrations/page.tsx", "utf8");
-const route = readFileSync("src/app/api/integrations/refine/route.ts", "utf8");
-const mcpFeedbackRoute = readFileSync(
+const appShell = readSource("src/components/app-shell.tsx");
+const page = readSource("src/app/integrations/page.tsx");
+const route = readSource("src/app/api/integrations/refine/route.ts");
+const mcpFeedbackRoute = readSource(
   "src/app/api/integrations/mcp-feedback/route.ts",
-  "utf8",
 );
-const refineContract = readFileSync("src/lib/integrations/refine.ts", "utf8");
-const mcpFeedbackInbox = readFileSync(
+const refineContract = readSource("src/lib/integrations/refine.ts");
+const mcpFeedbackInbox = readSource(
   "src/lib/integrations/mcp-feedback-inbox.ts",
-  "utf8",
 );
-const promptTypes = readFileSync("src/lib/prompt/types.ts", "utf8");
-const sourceRegistry = readFileSync("src/lib/studio/source-registry.ts", "utf8");
-const refineTester = readFileSync(
+const promptTypes = readSource("src/lib/prompt/types.ts");
+const sourceRegistry = readSource("src/lib/studio/source-registry.ts");
+const refineTester = readSource(
   "src/components/integrations/integration-refine-tester.tsx",
-  "utf8",
 );
-const mcpFeedbackInboxPanel = readFileSync(
+const mcpFeedbackInboxPanel = readSource(
   "src/components/integrations/mcp-feedback-inbox-panel.tsx",
-  "utf8",
 );
-const mcpConnectionPanel = readFileSync(
+const mcpConnectionPanel = readSource(
   "src/components/integrations/mcp-connection-panel.tsx",
-  "utf8",
 );
-const connectionReadinessPanel = readFileSync(
+const connectionReadinessPanel = readSource(
   "src/components/integrations/connection-readiness-panel.tsx",
-  "utf8",
 );
-const environmentPlaybookPanel = readFileSync(
+const environmentPlaybookPanel = readSource(
   "src/components/integrations/environment-playbook-panel.tsx",
-  "utf8",
 );
-const operatorNextActionsPanel = readFileSync(
+const operatorNextActionsPanel = readSource(
   "src/components/integrations/operator-next-actions-panel.tsx",
-  "utf8",
 );
-const externalAiOperatorGuidePanel = readFileSync(
+const externalAiOperatorGuidePanel = readSource(
   "src/components/integrations/external-ai-operator-guide-panel.tsx",
-  "utf8",
 );
-const view = readFileSync(
+const view = readSource(
   "src/components/integrations/integrations-view.tsx",
-  "utf8",
 );
-const readme = readFileSync("README.md", "utf8");
-const prd = readFileSync("docs/personalized-prompt-ai-prd.md", "utf8");
-const developmentBrief = readFileSync(
-  "docs/codex-development-brief.md",
-  "utf8",
-);
-const externalAiOperatorGuide = readFileSync(
+const readme = readSource("README.md");
+const prd = readSource("docs/personalized-prompt-ai-prd.md");
+const developmentBrief = readSource("docs/codex-development-brief.md");
+const externalAiOperatorGuide = readSource(
   "docs/external-ai-operator-guide.md",
-  "utf8",
 );
-const chromeBackgroundJs = readFileSync("extensions/chrome/background.js", "utf8");
-const chromeManifest = readFileSync("extensions/chrome/manifest.json", "utf8");
-const chromePopupHtml = readFileSync("extensions/chrome/popup.html", "utf8");
-const chromePopupCss = readFileSync("extensions/chrome/popup.css", "utf8");
-const chromePopupJs = readFileSync("extensions/chrome/popup.js", "utf8");
-const chromeReadme = readFileSync("extensions/chrome/README.md", "utf8");
-const mcpBridge = readFileSync("mcp/prompt-ai-studio.mjs", "utf8");
-const mcpReadme = readFileSync("mcp/README.md", "utf8");
+const chromeBackgroundJs = readSource("extensions/chrome/background.js");
+const chromeManifest = readSource("extensions/chrome/manifest.json");
+const chromePopupHtml = readSource("extensions/chrome/popup.html");
+const chromePopupCss = readSource("extensions/chrome/popup.css");
+const chromePopupJs = readSource("extensions/chrome/popup.js");
+const chromeReadme = readSource("extensions/chrome/README.md");
+const mcpBridge = readSource("mcp/prompt-ai-studio.mjs");
+const mcpReadme = readSource("mcp/README.md");
 
 function assertIncludes(source, text, message) {
   assert.ok(source.includes(text), message);

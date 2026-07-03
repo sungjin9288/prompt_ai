@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readSource } from "./lib/read-source.mjs";
 
-const source = readFileSync("src/lib/navigation/href.ts", "utf8");
-const readme = readFileSync("README.md", "utf8");
-const brief = readFileSync("docs/codex-development-brief.md", "utf8");
+const source = readSource("src/lib/navigation/href.ts");
+const readme = readSource("README.md");
+const brief = readSource("docs/codex-development-brief.md");
 
 function assertContract(text, pattern, message) {
   assert.match(text, pattern, message);

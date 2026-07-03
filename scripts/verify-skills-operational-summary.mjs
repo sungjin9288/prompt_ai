@@ -1,8 +1,18 @@
 import assert from "node:assert/strict";
 import { loadTypescriptModule } from "./lib/load-typescript-module.mjs";
-import { readSource } from "./lib/read-source.mjs";
+import { readConcatenatedSources, readSource } from "./lib/read-source.mjs";
 
-const source = readSource("src/components/skills/skills-view.tsx");
+const source = readConcatenatedSources([
+  "src/lib/skills-view/labels.ts",
+  "src/lib/skills-view/hrefs.ts",
+  "src/lib/skills-view/report-text.ts",
+  "src/components/skills/skills-view-types.ts",
+  "src/components/skills/skills-view.tsx",
+  "src/components/skills/skills-candidates-panel.tsx",
+  "src/components/skills/skills-operations-panel.tsx",
+  "src/components/skills/skills-saved-list-panel.tsx",
+  "src/components/skills/skills-template-panel.tsx",
+]);
 const manualCopyPanelSource = readSource(
   "src/components/common/manual-copy-panel.tsx",
 );

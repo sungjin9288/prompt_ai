@@ -65,7 +65,20 @@ function writeLearningFeedbackEvidence(outputPath, evidenceText) {
 
 const outputPath = getOutputPath(process.argv.slice(2));
 
-const source = readSource("src/components/learning/learning-view.tsx");
+const source = readConcatenatedSources([
+  "src/lib/learning-view/labels.ts",
+  "src/lib/learning-view/hrefs.ts",
+  "src/lib/learning-view/readiness.ts",
+  "src/lib/learning-view/report-text.ts",
+  "src/lib/learning-view/studio-drafts.ts",
+  "src/components/learning/learning-view-types.ts",
+  "src/components/learning/learning-view.tsx",
+  "src/components/learning/learning-readiness-panel.tsx",
+  "src/components/learning/learning-feedback-improvement-queue-panel.tsx",
+  "src/components/learning/learning-filter-panel.tsx",
+  "src/components/learning/learning-manual-memory-panel.tsx",
+  "src/components/learning/learning-memory-list-panel.tsx",
+]);
 const manualCopyPanelSource = readSource(
   "src/components/common/manual-copy-panel.tsx",
 );

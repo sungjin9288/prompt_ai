@@ -1,831 +1,60 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import {
-  PageHeader,
-  Panel,
-  PanelHeader,
-  ScoreBar,
-  inputClass,
-  primaryButtonClass,
-  secondaryButtonClass,
-  selectClass,
-  textareaClass,
-} from "@/components/ui";
-import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
-import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
+import { type ContextOperatingFlowItem } from "@/components/context/context-operating-flow";
 import type { LearningMemory, MemoryScope } from "@/lib/prompt";
 import { useLearningMemoriesStore } from "@/lib/data/workspace-store";
-import {
-  formatAbsoluteInternalHref,
-  normalizeInternalHref,
-} from "@/lib/navigation/href";
-import {
-  splitMemoryContentDisplay,
-  stripMemoryReferenceLinks,
-} from "@/lib/learning/memory";
+import { formatAbsoluteInternalHref } from "@/lib/navigation/href";
 import { writeStudioDraft } from "@/lib/studio/draft";
 import { copyTextToClipboard } from "@/lib/browser/clipboard";
+import {
+  compareMemories,
+  findDuplicateMemory,
+  makeId,
+  matchesReviewFilter,
+  parseTags,
+  reviewFilters,
+  scopeLabels,
+  scopes,
+  trackedScopes,
+  type LearningReviewFilter,
+  type LearningScopeFilter,
+  type LearningSortMode,
+} from "@/lib/learning-view/labels";
+import {
+  feedbackImprovementReleaseGateCommand,
+  getLearningHref,
+  learningReadinessHref,
+} from "@/lib/learning-view/hrefs";
+import { getLearningReadiness } from "@/lib/learning-view/readiness";
+import {
+  buildFeedbackImprovementQueueReportText,
+  buildFilteredMemoryReportText,
+  buildLearningReadinessReportText,
+  buildSingleMemoryReportText,
+} from "@/lib/learning-view/report-text";
+import {
+  buildFeedbackImprovementLowConfidenceStudioDraftInput,
+  buildFeedbackImprovementQueueStudioDraftInput,
+  buildFilteredMemoriesStudioDraftInput,
+  buildLearningReadinessStudioDraftInput,
+  buildMemoryStudioDraftInput,
+  formatLearningFilterSourceTitle,
+} from "@/lib/learning-view/studio-drafts";
 
-export type LearningScopeFilter = MemoryScope | "all";
-export type LearningReviewFilter =
-  | "all"
-  | "low-confidence"
-  | "manual"
-  | "generated";
-export type LearningSortMode =
-  | "confidence-desc"
-  | "confidence-asc"
-  | "updated-desc"
-  | "updated-asc";
-type LearningManualCopy = {
-  id: string;
-  title: string;
-  body: string;
-  reason?: string;
-};
+import { LearningReadinessPanel } from "./learning-readiness-panel";
+import { LearningFeedbackImprovementQueuePanel } from "./learning-feedback-improvement-queue-panel";
+import { LearningFilterPanel } from "./learning-filter-panel";
+import { LearningManualMemoryPanel } from "./learning-manual-memory-panel";
+import { LearningMemoryListPanel } from "./learning-memory-list-panel";
+import type { LearningManualCopy } from "./learning-view-types";
 
-const scopeLabels: Record<LearningScopeFilter, string> = {
-  all: "전체",
-  user: "사용자",
-  company: "회사",
-  domain: "분야",
-  skill: "스킬",
-};
-
-const scopes: LearningScopeFilter[] = [
-  "all",
-  "user",
-  "company",
-  "domain",
-  "skill",
-];
-const trackedScopes: MemoryScope[] = ["user", "company", "domain", "skill"];
-const confidenceOptions = [
-  { label: "높음", value: 0.85 },
-  { label: "보통", value: 0.65 },
-  { label: "낮음", value: 0.45 },
-];
-const reviewFilterLabels: Record<LearningReviewFilter, string> = {
-  all: "전체",
-  "low-confidence": "낮은 신뢰도",
-  manual: "수동 메모리",
-  generated: "자동 생성",
-};
-const reviewFilters: LearningReviewFilter[] = [
-  "all",
-  "low-confidence",
-  "manual",
-  "generated",
-];
-const sortLabels: Record<LearningSortMode, string> = {
-  "confidence-desc": "신뢰도 높은순",
-  "confidence-asc": "신뢰도 낮은순",
-  "updated-desc": "최근 업데이트순",
-  "updated-asc": "오래된 업데이트순",
-};
-const learningReadinessHref = "/learning#readiness";
-const feedbackImprovementValidationLibraryHref =
-  normalizeInternalHref(
-    "/library?studioSource=learning-feedback-improvement&studioVariant=learning-low-confidence-validation",
-  ) ?? "/library";
-const feedbackImprovementReleaseGateCommand =
-  "npm run verify:evidence -- --out-dir docs/evidence\nnpm run verify:release-candidate";
-const sortModes: LearningSortMode[] = [
-  "confidence-desc",
-  "confidence-asc",
-  "updated-desc",
-  "updated-asc",
-];
-const sourceTypeLabels: Record<LearningMemory["sourceType"], string> = {
-  feedback: "피드백",
-  profile: "프로필",
-  company: "회사 기준",
-  manual: "수동",
-};
-
-function makeId(prefix: string) {
-  const random =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : Math.random().toString(36).slice(2);
-
-  return `${prefix}_${random}`;
-}
-
-function parseTags(value: string) {
-  return value
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-}
-
-function normalizeMemoryContent(value: string) {
-  return value.replace(/\s+/g, " ").trim().toLowerCase();
-}
-
-function findDuplicateMemory(
-  memories: LearningMemory[],
-  scope: MemoryScope,
-  content: string,
-  exceptId?: string,
-) {
-  const normalized = normalizeMemoryContent(content);
-
-  return memories.find(
-    (memory) =>
-      memory.id !== exceptId &&
-      memory.scope === scope &&
-      normalizeMemoryContent(memory.content) === normalized,
-  );
-}
-
-function matchesReviewFilter(
-  memory: LearningMemory,
-  reviewFilter: LearningReviewFilter,
-) {
-  if (reviewFilter === "low-confidence") {
-    return memory.confidence < 0.5;
-  }
-
-  if (reviewFilter === "manual") {
-    return memory.sourceType === "manual";
-  }
-
-  if (reviewFilter === "generated") {
-    return memory.sourceType !== "manual";
-  }
-
-  return true;
-}
-
-function compareMemories(
-  first: LearningMemory,
-  second: LearningMemory,
-  sortMode: LearningSortMode,
-) {
-  if (sortMode === "confidence-asc") {
-    if (first.confidence === second.confidence) {
-      return second.updatedAt.localeCompare(first.updatedAt);
-    }
-
-    return first.confidence - second.confidence;
-  }
-
-  if (sortMode === "updated-desc") {
-    if (second.updatedAt === first.updatedAt) {
-      return second.confidence - first.confidence;
-    }
-
-    return second.updatedAt.localeCompare(first.updatedAt);
-  }
-
-  if (sortMode === "updated-asc") {
-    if (first.updatedAt === second.updatedAt) {
-      return second.confidence - first.confidence;
-    }
-
-    return first.updatedAt.localeCompare(second.updatedAt);
-  }
-
-  if (second.confidence === first.confidence) {
-    return second.updatedAt.localeCompare(first.updatedAt);
-  }
-
-  return second.confidence - first.confidence;
-}
-
-function formatDate(value: string) {
-  try {
-    return new Intl.DateTimeFormat("ko-KR", {
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(value));
-  } catch {
-    return value;
-  }
-}
-
-function getLatestMemoryDate(memories: LearningMemory[]) {
-  return memories
-    .map((memory) => memory.updatedAt)
-    .sort((a, b) => b.localeCompare(a))[0];
-}
-
-function getLearningReadiness(memories: LearningMemory[]) {
-  const scopeCounts = trackedScopes.reduce(
-    (result, scope) => ({
-      ...result,
-      [scope]: memories.filter((memory) => memory.scope === scope).length,
-    }),
-    {} as Record<MemoryScope, number>,
-  );
-  const coveredScopes = trackedScopes.filter((scope) => scopeCounts[scope] > 0);
-  const missingScopes = trackedScopes.filter((scope) => scopeCounts[scope] === 0);
-  const averageConfidence =
-    memories.length === 0
-      ? 0
-      : memories.reduce((sum, memory) => sum + memory.confidence, 0) /
-        memories.length;
-  const lowConfidenceCount = memories.filter(
-    (memory) => memory.confidence < 0.5,
-  ).length;
-  const highConfidenceCount = memories.filter(
-    (memory) => memory.confidence >= 0.75,
-  ).length;
-  const score = Math.round(
-    Math.min(
-      100,
-      memories.length * 8 +
-        coveredScopes.length * 14 +
-        averageConfidence * 28 -
-        lowConfidenceCount * 4,
-    ),
-  );
-
-  let label = "학습 시작 필요";
-  let description =
-    "아직 생성에 반영할 학습 메모리가 충분하지 않습니다.";
-  let tone = "border-danger/40 text-danger";
-
-  if (score >= 75 && coveredScopes.length >= 3) {
-    label = "운영 준비 양호";
-    description =
-      "대부분의 핵심 scope에 생성 기준이 쌓여 있어 Studio 반영 품질을 확인할 수 있습니다.";
-    tone = "border-success/50 text-success";
-  } else if (score >= 45 || coveredScopes.length >= 2) {
-    label = "학습 확장 중";
-    description =
-      "일부 scope는 준비됐지만 반복 사용을 위해 추가 피드백과 기준 보강이 필요합니다.";
-    tone = "border-attention/50 text-attention";
-  } else if (memories.length > 0) {
-    label = "보강 필요";
-    description =
-      "학습 메모리는 있지만 scope 커버리지나 신뢰도가 아직 낮습니다.";
-    tone = "border-attention/50 text-attention";
-  }
-
-  const actions = [
-    memories.length === 0
-      ? "Library에서 실제 생성 결과에 피드백을 남겨 첫 학습 메모리를 만듭니다."
-      : "",
-    missingScopes.includes("company")
-      ? "회사 기준 화면에서 브랜드 톤, 제품, 고객군을 저장합니다."
-      : "",
-    missingScopes.includes("user")
-      ? "사용자 선호가 드러나는 피드백을 tone 또는 other 유형으로 남깁니다."
-      : "",
-    missingScopes.includes("domain")
-      ? "분야별 정확성/맥락 피드백을 남겨 domain 기준을 늘립니다."
-      : "",
-    missingScopes.includes("skill")
-      ? "반복 업무의 출력 형식 피드백을 남겨 skill 패턴을 만듭니다."
-      : "",
-    lowConfidenceCount > 0
-      ? "낮은 신뢰도 메모리는 같은 기준의 추가 피드백으로 보강합니다."
-      : "",
-  ].filter(Boolean);
-
-  return {
-    actions: actions.length
-      ? actions.slice(0, 4)
-      : ["Studio에서 새 프롬프트를 생성하고 결과 품질을 비교합니다."],
-    averageConfidence,
-    coveredScopes,
-    highConfidenceCount,
-    label,
-    latestMemoryDate: getLatestMemoryDate(memories),
-    lowConfidenceCount,
-    missingScopes,
-    score,
-    scopeCounts,
-    tone,
-    description,
-  };
-}
-
-function buildLearningReadinessReportText({
-  baseUrl,
-  memories,
-  readiness,
-}: {
-  baseUrl?: string;
-  memories: LearningMemory[];
-  readiness: ReturnType<typeof getLearningReadiness>;
-}) {
-  const formatLearningHref = (href: string) =>
-    formatAbsoluteInternalHref(href, baseUrl) ?? href;
-
-  return [
-    "# 학습 준비도 리포트",
-    "",
-    `- 상태: ${readiness.label}`,
-    `- 준비도 점수: ${readiness.score}/100`,
-    `- 전체 메모리: ${memories.length}개`,
-    `- 평균 신뢰도: ${
-      memories.length ? readiness.averageConfidence.toFixed(2) : "-"
-    }`,
-    `- Scope 커버리지: ${readiness.coveredScopes.length}/4`,
-    `- Covered scope: ${
-      readiness.coveredScopes.length
-        ? readiness.coveredScopes.map((scope) => scopeLabels[scope]).join(", ")
-        : "없음"
-    }`,
-    `- Missing scope: ${
-      readiness.missingScopes.length
-        ? readiness.missingScopes.map((scope) => scopeLabels[scope]).join(", ")
-        : "없음"
-    }`,
-    `- 높은 신뢰도 메모리: ${readiness.highConfidenceCount}개`,
-    `- 낮은 신뢰도 메모리: ${readiness.lowConfidenceCount}개`,
-    `- 최근 업데이트: ${
-      readiness.latestMemoryDate ? formatDate(readiness.latestMemoryDate) : "-"
-    }`,
-    "",
-    "## 다음 액션",
-    readiness.actions.map((action) => `- ${action}`).join("\n"),
-    "",
-    "## 점검 링크",
-    `- 준비도 화면: ${formatLearningHref(learningReadinessHref)}`,
-    `- 전체 학습 메모리: ${formatLearningHref(
-      getLearningHref({
-        query: "",
-        reviewFilter: "all",
-        scope: "all",
-        sortMode: "confidence-desc",
-      }),
-    )}`,
-    `- 낮은 신뢰도: ${formatLearningHref(
-      getLearningHref({
-        query: "",
-        reviewFilter: "low-confidence",
-        scope: "all",
-        sortMode: "confidence-asc",
-      }),
-    )}`,
-    `- 최근 업데이트: ${formatLearningHref(
-      getLearningHref({
-        query: "",
-        reviewFilter: "all",
-        scope: "all",
-        sortMode: "updated-desc",
-      }),
-    )}`,
-    "",
-    "## Scope별 메모리",
-    trackedScopes
-      .map(
-        (scope) =>
-          `- ${scopeLabels[scope]}: ${readiness.scopeCounts[scope]}개 · ${formatLearningHref(
-            getLearningHref({
-              query: "",
-              reviewFilter: "all",
-              scope,
-              sortMode: "confidence-desc",
-            }),
-          )}`,
-      )
-      .join("\n"),
-  ].join("\n");
-}
-
-function buildFilteredMemoryReportText({
-  baseUrl,
-  filteredMemories,
-  query,
-  reviewFilter,
-  scope,
-  sortMode,
-  totalMemories,
-}: {
-  baseUrl?: string;
-  filteredMemories: LearningMemory[];
-  query: string;
-  reviewFilter: LearningReviewFilter;
-  scope: LearningScopeFilter;
-  sortMode: LearningSortMode;
-  totalMemories: number;
-}) {
-  const filterHref = getLearningHref({ query, reviewFilter, scope, sortMode });
-  const absoluteFilterHref =
-    formatAbsoluteInternalHref(filterHref, baseUrl) ?? filterHref;
-
-  return [
-    "# 학습 메모리 필터 결과",
-    "",
-    "## 조건",
-    `- 조건 링크: ${absoluteFilterHref}`,
-    `- 범위: ${scopeLabels[scope]}`,
-    `- 검토 기준: ${reviewFilterLabels[reviewFilter]}`,
-    `- 정렬: ${sortLabels[sortMode]}`,
-    `- 검색어: ${query.trim() || "-"}`,
-    `- 결과: ${filteredMemories.length}/${totalMemories}개`,
-    "",
-    "## 메모리",
-    filteredMemories.length
-      ? filteredMemories
-          .map((memory, index) =>
-            [
-              `### ${index + 1}. ${memory.title}`,
-              `- Scope: ${scopeLabels[memory.scope]}`,
-              `- Source: ${sourceTypeLabels[memory.sourceType]}`,
-              `- Confidence: ${memory.confidence.toFixed(2)}`,
-              `- Updated: ${formatDate(memory.updatedAt)}`,
-              `- Tags: ${memory.tags.length ? memory.tags.join(", ") : "-"}`,
-              "",
-              memory.content,
-            ].join("\n"),
-          )
-          .join("\n\n")
-      : "현재 조건에 맞는 학습 메모리가 없습니다.",
-  ].join("\n");
-}
-
-function buildFeedbackImprovementQueueReportText({
-  baseUrl,
-  filteredMemories,
-  query,
-  reviewFilter,
-  scope,
-  sortMode,
-  totalMemories,
-}: {
-  baseUrl?: string;
-  filteredMemories: LearningMemory[];
-  query: string;
-  reviewFilter: LearningReviewFilter;
-  scope: LearningScopeFilter;
-  sortMode: LearningSortMode;
-  totalMemories: number;
-}) {
-  const filterHref = getLearningHref({ query, reviewFilter, scope, sortMode });
-  const absoluteFilterHref =
-    formatAbsoluteInternalHref(filterHref, baseUrl) ?? filterHref;
-  const lowConfidenceHref = getLearningHref({
-    query: "feedback-improvement",
-    reviewFilter: "low-confidence",
-    scope,
-    sortMode: "confidence-asc",
-  });
-  const absoluteLowConfidenceHref =
-    formatAbsoluteInternalHref(lowConfidenceHref, baseUrl) ?? lowConfidenceHref;
-  const absoluteValidationLibraryHref =
-    formatAbsoluteInternalHref(
-      feedbackImprovementValidationLibraryHref,
-      baseUrl,
-    ) ?? feedbackImprovementValidationLibraryHref;
-  const lowConfidenceCount = filteredMemories.filter(
-    (memory) => memory.confidence < 0.5,
-  ).length;
-  const coveredScopeLabels = trackedScopes
-    .filter((item) => filteredMemories.some((memory) => memory.scope === item))
-    .map((item) => scopeLabels[item]);
-
-  return [
-    "# 피드백 개선 메모리 큐 리포트",
-    "",
-    "## 큐 조건",
-    `- 조건 링크: ${absoluteFilterHref}`,
-    `- 낮은 신뢰도 큐: ${absoluteLowConfidenceHref}`,
-    `- 저신뢰도 검증 저장본: ${absoluteValidationLibraryHref}`,
-    `- 범위: ${scopeLabels[scope]}`,
-    `- 검토 기준: ${reviewFilterLabels[reviewFilter]}`,
-    `- 정렬: ${sortLabels[sortMode]}`,
-    `- 검색어: ${query.trim() || "-"}`,
-    `- 결과: ${filteredMemories.length}/${totalMemories}개`,
-    "",
-    "## 큐 지표",
-    `- 낮은 신뢰도: ${lowConfidenceCount}개`,
-    `- 포함 scope: ${coveredScopeLabels.length ? coveredScopeLabels.join(", ") : "-"}`,
-    "",
-    "## 운영 액션",
-    "- 높은 신뢰도 규칙은 Studio 템플릿과 외부 AI handoff 체크리스트에 반영합니다.",
-    "- 낮은 신뢰도 규칙은 Library 피드백을 추가 수집한 뒤 재저장합니다.",
-    "- 충돌하는 규칙은 scope와 적용 업무를 좁혀 별도 Learning memory로 분리합니다.",
-    "- 큐 반영 후 release evidence를 새로 만들고 release-candidate gate를 확인합니다.",
-    "",
-    "## 검증 명령",
-    feedbackImprovementReleaseGateCommand,
-    "",
-    "## 메모리",
-    filteredMemories.length
-      ? filteredMemories
-          .map((memory, index) =>
-            [
-              `### ${index + 1}. ${memory.title}`,
-              `- Scope: ${scopeLabels[memory.scope]}`,
-              `- Source: ${sourceTypeLabels[memory.sourceType]}`,
-              `- Confidence: ${memory.confidence.toFixed(2)}`,
-              `- Updated: ${formatDate(memory.updatedAt)}`,
-              `- Tags: ${memory.tags.length ? memory.tags.join(", ") : "-"}`,
-              "",
-              memory.content,
-            ].join("\n"),
-          )
-          .join("\n\n")
-      : "현재 피드백 개선 큐에 포함된 학습 메모리가 없습니다.",
-  ].join("\n");
-}
-
-function buildSingleMemoryReportText(memory: LearningMemory) {
-  return [
-    "# 학습 메모리",
-    "",
-    `## ${memory.title}`,
-    `- Scope: ${scopeLabels[memory.scope]}`,
-    `- Source: ${sourceTypeLabels[memory.sourceType]}`,
-    `- Confidence: ${memory.confidence.toFixed(2)}`,
-    `- Updated: ${formatDate(memory.updatedAt)}`,
-    `- Tags: ${memory.tags.length ? memory.tags.join(", ") : "-"}`,
-    "",
-    "## Content",
-    memory.content,
-  ].join("\n");
-}
-
-function buildMemoryStudioDraftInput(memory: LearningMemory) {
-  const memoryContent = stripMemoryReferenceLinks(memory.content);
-
-  return [
-    "다음 학습 메모리를 반드시 반영해서 새 프롬프트를 설계해줘.",
-    "",
-    "## Learning memory",
-    `- Title: ${memory.title}`,
-    `- Scope: ${scopeLabels[memory.scope]}`,
-    `- Source: ${sourceTypeLabels[memory.sourceType]}`,
-    `- Confidence: ${memory.confidence.toFixed(2)}`,
-    `- Tags: ${memory.tags.length ? memory.tags.join(", ") : "-"}`,
-    "",
-    "## Memory content",
-    memoryContent,
-    "",
-    "## Task",
-    "이 기준을 반영해 GPT, Claude, Codex, Gemini 등에 전달할 수 있는 전문 프롬프트를 만들어줘.",
-    "아직 실제 업무 입력이 부족하면, 사용자가 채워야 할 source input과 변수 슬롯을 명확히 분리해줘.",
-  ].join("\n");
-}
-
-function buildFilteredMemoriesStudioDraftInput({
-  filteredMemories,
-  query,
-  reviewFilter,
-  scope,
-  sortMode,
-  totalMemories,
-}: {
-  filteredMemories: LearningMemory[];
-  query: string;
-  reviewFilter: LearningReviewFilter;
-  scope: LearningScopeFilter;
-  sortMode: LearningSortMode;
-  totalMemories: number;
-}) {
-  return [
-    "다음 학습 메모리 묶음을 반드시 반영해서 새 프롬프트를 설계해줘.",
-    "",
-    "## Learning filter",
-    `- Scope: ${scopeLabels[scope]}`,
-    `- Review filter: ${reviewFilterLabels[reviewFilter]}`,
-    `- Sort: ${sortLabels[sortMode]}`,
-    `- Query: ${query.trim() || "-"}`,
-    `- Selected memories: ${filteredMemories.length}/${totalMemories}`,
-    "",
-    "## Learning memories",
-    filteredMemories
-      .map((memory, index) =>
-        [
-          `### ${index + 1}. ${memory.title}`,
-          `- Scope: ${scopeLabels[memory.scope]}`,
-          `- Source: ${sourceTypeLabels[memory.sourceType]}`,
-          `- Confidence: ${memory.confidence.toFixed(2)}`,
-          `- Tags: ${memory.tags.length ? memory.tags.join(", ") : "-"}`,
-          "",
-          stripMemoryReferenceLinks(memory.content),
-        ].join("\n"),
-      )
-      .join("\n\n"),
-    "",
-    "## Task",
-    "위 학습 기준들을 함께 반영해 GPT, Claude, Codex, Gemini 등에 전달할 수 있는 전문 프롬프트를 만들어줘.",
-    "기준끼리 충돌하는 부분이 있으면 충돌 항목과 우선순위 제안을 분리해줘.",
-    "아직 실제 업무 입력이 부족하면, 사용자가 채워야 할 source input과 변수 슬롯을 명확히 분리해줘.",
-  ].join("\n");
-}
-
-function buildFeedbackImprovementQueueStudioDraftInput({
-  filteredMemories,
-  query,
-  reviewFilter,
-  scope,
-  sortMode,
-  totalMemories,
-}: {
-  filteredMemories: LearningMemory[];
-  query: string;
-  reviewFilter: LearningReviewFilter;
-  scope: LearningScopeFilter;
-  sortMode: LearningSortMode;
-  totalMemories: number;
-}) {
-  return [
-    "Role:",
-    "You are a senior prompt quality operator converting repeated feedback into reusable prompt rules.",
-    "",
-    "Objective:",
-    "Use the feedback-improvement Learning memory queue below to create a practical prompt improvement plan.",
-    "",
-    "Instructions:",
-    "- Treat each memory as an evidence-backed feedback rule, not as a generic note.",
-    "- Extract reusable prompting rules for GPT, Claude, Codex, Gemini, and MCP-assisted workflows.",
-    "- Separate rules by output format, context completeness, accuracy checks, tone, company criteria, and task workflow when relevant.",
-    "- Identify low-confidence or conflicting rules that need more evidence before broad reuse.",
-    "- Return Korean operating notes, but write reusable AI instructions in English or Korean-English hybrid when that improves model output.",
-    "- Do not invent missing user, company, customer, or domain facts.",
-    "",
-    "## Feedback improvement queue",
-    `- Scope: ${scopeLabels[scope]}`,
-    `- Review filter: ${reviewFilterLabels[reviewFilter]}`,
-    `- Sort: ${sortLabels[sortMode]}`,
-    `- Query: ${query.trim() || "-"}`,
-    `- Selected memories: ${filteredMemories.length}/${totalMemories}`,
-    "",
-    "## Required output",
-    "1. Priority prompt rules to reuse immediately",
-    "2. Rules that need more feedback evidence",
-    "3. Suggested Studio prompt template updates",
-    "4. External AI handoff checklist for GPT/Claude/Codex/Gemini",
-    "5. Next Learning memory cleanup or merge actions",
-    "",
-    "## Learning memories",
-    filteredMemories
-      .map((memory, index) =>
-        [
-          `### ${index + 1}. ${memory.title}`,
-          `- Scope: ${scopeLabels[memory.scope]}`,
-          `- Source: ${sourceTypeLabels[memory.sourceType]}`,
-          `- Confidence: ${memory.confidence.toFixed(2)}`,
-          `- Tags: ${memory.tags.length ? memory.tags.join(", ") : "-"}`,
-          "",
-          stripMemoryReferenceLinks(memory.content),
-        ].join("\n"),
-      )
-      .join("\n\n"),
-  ].join("\n");
-}
-
-function buildFeedbackImprovementLowConfidenceStudioDraftInput({
-  filteredMemories,
-  scope,
-  totalMemories,
-}: {
-  filteredMemories: LearningMemory[];
-  scope: LearningScopeFilter;
-  totalMemories: number;
-}) {
-  return [
-    "Role:",
-    "You are a senior prompt quality operator auditing low-confidence feedback rules before they are reused in production prompts.",
-    "",
-    "Objective:",
-    "Use the low-confidence feedback-improvement Learning memory subset below to decide what needs more evidence, what should be narrowed, and what should be merged or removed.",
-    "",
-    "Instructions:",
-    "- Treat every memory as provisional until enough execution feedback supports it.",
-    "- Do not turn low-confidence memories into reusable prompt rules without a validation plan.",
-    "- Separate evidence gaps from rule conflicts, vague wording, duplicated guidance, and scope mismatch.",
-    "- For each memory, propose the smallest next action: collect more feedback, narrow scope, merge with a stronger rule, rewrite, or remove.",
-    "- Return Korean operating notes, but write validation questions and future AI instructions in English or Korean-English hybrid when that improves model output.",
-    "- Do not invent missing user, company, customer, or domain facts.",
-    "",
-    "## Low-confidence feedback improvement queue",
-    `- Scope: ${scopeLabels[scope]}`,
-    "- Review filter: 낮은 신뢰도",
-    "- Sort: 신뢰도 낮은순",
-    "- Query: feedback-improvement",
-    `- Selected low-confidence memories: ${filteredMemories.length}/${totalMemories}`,
-    "",
-    "## Required output",
-    "1. Evidence gaps to resolve before reuse",
-    "2. Validation questions to collect from Library feedback or external AI runs",
-    "3. Rules to narrow by scope, workflow, output format, or target model",
-    "4. Merge/rewrite/remove recommendations",
-    "5. Updated Learning memory candidates ready to save after validation",
-    "",
-    "## Low-confidence memories",
-    filteredMemories
-      .map((memory, index) =>
-        [
-          `### ${index + 1}. ${memory.title}`,
-          `- Scope: ${scopeLabels[memory.scope]}`,
-          `- Source: ${sourceTypeLabels[memory.sourceType]}`,
-          `- Confidence: ${memory.confidence.toFixed(2)}`,
-          `- Tags: ${memory.tags.length ? memory.tags.join(", ") : "-"}`,
-          "",
-          stripMemoryReferenceLinks(memory.content),
-        ].join("\n"),
-      )
-      .join("\n\n"),
-  ].join("\n");
-}
-
-function buildLearningReadinessStudioDraftInput({
-  baseUrl,
-  memories,
-  readiness,
-}: {
-  baseUrl?: string;
-  memories: LearningMemory[];
-  readiness: ReturnType<typeof getLearningReadiness>;
-}) {
-  return [
-    "Role:",
-    "You are a senior prompt operations strategist improving a personalized AI learning memory system.",
-    "",
-    "Objective:",
-    "Use the Learning readiness report below to create an execution-ready plan that improves personalization coverage and prompt quality.",
-    "",
-    "Instructions:",
-    "- Prioritize missing scopes, low-confidence memories, and stale learning context.",
-    "- Separate actions for user, company, domain, and skill memory coverage.",
-    "- Use the review links in the report as operating queues.",
-    "- Do not invent missing user, company, customer, or domain facts.",
-    "- Return the plan in Korean, but write reusable AI prompt instructions in English when useful.",
-    "",
-    "Learning readiness report:",
-    buildLearningReadinessReportText({ baseUrl, memories, readiness }),
-  ].join("\n");
-}
-
-function formatLearningFilterSourceTitle({
-  count,
-  query,
-  reviewFilter,
-  scope,
-  sortMode,
-}: {
-  count: number;
-  query: string;
-  reviewFilter: LearningReviewFilter;
-  scope: LearningScopeFilter;
-  sortMode: LearningSortMode;
-}) {
-  const parts = [
-    scopeLabels[scope],
-    reviewFilter !== "all" ? reviewFilterLabels[reviewFilter] : undefined,
-    query.trim() ? `검색 ${query.trim()}` : undefined,
-    sortMode !== "confidence-desc" ? sortLabels[sortMode] : undefined,
-    `${count}개`,
-  ].filter(Boolean);
-
-  return parts.join(" · ");
-}
-
-function buildLearningHref(params: URLSearchParams) {
-  const queryString = params.toString();
-  const href = queryString ? `/learning?${queryString}` : "/learning";
-
-  return normalizeInternalHref(href) ?? "/learning";
-}
-
-function getLearningHref({
-  query,
-  reviewFilter,
-  scope,
-  sortMode,
-}: {
-  query: string;
-  reviewFilter: LearningReviewFilter;
-  scope: LearningScopeFilter;
-  sortMode: LearningSortMode;
-}) {
-  const params = new URLSearchParams();
-  const trimmedQuery = query.trim();
-
-  if (scope !== "all") {
-    params.set("scope", scope);
-  }
-
-  if (reviewFilter !== "all") {
-    params.set("review", reviewFilter);
-  }
-
-  if (sortMode !== "confidence-desc") {
-    params.set("sort", sortMode);
-  }
-
-  if (trimmedQuery) {
-    params.set("q", trimmedQuery);
-  }
-
-  return buildLearningHref(params);
-}
+export type {
+  LearningReviewFilter,
+  LearningScopeFilter,
+  LearningSortMode,
+} from "@/lib/learning-view/labels";
 
 export function LearningView({
   initialQuery = "",
@@ -1725,908 +954,138 @@ export function LearningView({
 
   return (
     <>
-      <PageHeader
-        title="학습 메모리"
-        description="피드백에서 추출된 사용자, 회사, 분야, 스킬 기준을 확인합니다. 이 메모리는 다음 프롬프트 생성에 함께 반영됩니다."
+      <LearningReadinessPanel
+        learningReadiness={learningReadiness}
+        learningOperatingFlowItems={learningOperatingFlowItems}
+        memories={memories}
+        scopeCounts={scopeCounts}
+        averageConfidence={averageConfidence}
+        learningNextActionGuide={learningNextActionGuide}
+        scope={scope}
+        applyReadinessShortcut={applyReadinessShortcut}
+        updateScopeFilter={updateScopeFilter}
+        copyReadinessReport={copyReadinessReport}
+        readinessReportCopied={readinessReportCopied}
+        readinessReportCopyFailed={readinessReportCopyFailed}
+        openReadinessReportInStudio={openReadinessReportInStudio}
+        learningManualCopy={learningManualCopy}
+        setLearningManualCopy={setLearningManualCopy}
       />
 
-      <ContextOperatingFlow
-        badge={learningReadiness.label}
-        description="Learning은 저장된 기준을 바로 재사용하지 않고 준비도, 낮은 신뢰도, 수동 보강, Studio 전송 순서로 점검합니다."
-        items={learningOperatingFlowItems}
-        testId="learning-operating-flow"
-        title="Learning 운영 흐름"
+      <LearningFeedbackImprovementQueuePanel
+        feedbackImprovementFilterActive={feedbackImprovementFilterActive}
+        filtered={filtered}
+        feedbackImprovementQueueLowConfidenceCount={
+          feedbackImprovementQueueLowConfidenceCount
+        }
+        feedbackImprovementQueueScopeCount={feedbackImprovementQueueScopeCount}
+        feedbackImprovementQueueWorkflowSteps={
+          feedbackImprovementQueueWorkflowSteps
+        }
+        feedbackImprovementLowConfidenceHref={
+          feedbackImprovementLowConfidenceHref
+        }
+        copyFeedbackImprovementLowConfidenceLink={
+          copyFeedbackImprovementLowConfidenceLink
+        }
+        feedbackImprovementLowConfidenceLinkCopied={
+          feedbackImprovementLowConfidenceLinkCopied
+        }
+        feedbackImprovementLowConfidenceLinkCopyFailed={
+          feedbackImprovementLowConfidenceLinkCopyFailed
+        }
+        copyFilterLink={copyFilterLink}
+        filterLinkCopied={filterLinkCopied}
+        filterLinkCopyFailed={filterLinkCopyFailed}
+        openFeedbackImprovementLowConfidenceInStudio={
+          openFeedbackImprovementLowConfidenceInStudio
+        }
+        openFilteredMemoriesInStudio={openFilteredMemoriesInStudio}
+        copyFilteredMemoryReport={copyFilteredMemoryReport}
+        filteredReportCopied={filteredReportCopied}
+        filteredReportCopyFailed={filteredReportCopyFailed}
+        copyFeedbackImprovementReleaseGate={copyFeedbackImprovementReleaseGate}
+        releaseGateCopied={releaseGateCopied}
+        releaseGateCopyFailed={releaseGateCopyFailed}
+        learningManualCopy={learningManualCopy}
+        setLearningManualCopy={setLearningManualCopy}
       />
-
-      <div
-        data-testid="learning-summary-metrics"
-        className="mt-4 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4"
-      >
-        {[
-          ["전체 메모리", memories.length.toString()],
-          ["사용자", scopeCounts.user.toString()],
-          ["회사", scopeCounts.company.toString()],
-          ["평균 신뢰도", memories.length ? averageConfidence.toFixed(2) : "-"],
-        ].map(([label, value]) => (
-          <Panel key={label} className="min-w-0 px-4 py-3 sm:px-5 sm:py-4">
-            <p className="break-words text-xs leading-4 text-muted sm:text-sm">
-              {label}
-            </p>
-            <p className="mt-2 font-mono text-2xl font-semibold sm:text-3xl">
-              {value}
-            </p>
-          </Panel>
-        ))}
-      </div>
-
-      <Panel
-        data-testid="learning-next-action-guide"
-        className="mt-4 px-4 py-4 sm:px-5"
-      >
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-xs font-semibold uppercase text-muted">
-                Next learning action
-              </p>
-              <span className="rounded-md border border-accent/40 bg-accent/10 px-2 py-1 text-xs font-semibold text-accent">
-                {learningNextActionGuide.status}
-              </span>
-            </div>
-            <h2 className="mt-2 break-words text-base font-semibold text-soft">
-              {learningNextActionGuide.title}
-            </h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
-              {learningNextActionGuide.detail}
-            </p>
-          </div>
-          <div className="grid shrink-0 gap-2 sm:grid-cols-2 md:w-[360px]">
-            <Link
-              href={learningNextActionGuide.primaryHref}
-              className={`${primaryButtonClass} justify-center text-center`}
-            >
-              {learningNextActionGuide.primaryLabel}
-            </Link>
-            <Link
-              href={learningNextActionGuide.secondaryHref}
-              className={`${secondaryButtonClass} justify-center text-center`}
-            >
-              {learningNextActionGuide.secondaryLabel}
-            </Link>
-          </div>
-        </div>
-      </Panel>
-
-      <Panel id="readiness" className="mt-4 scroll-mt-6 px-5 py-4">
-        <div className="grid gap-5 lg:grid-cols-[1fr_280px]">
-          <div className="min-w-0">
-            <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-semibold text-soft">학습 준비도</p>
-                  <span
-                    className={`rounded-md border px-2 py-1 text-xs font-semibold ${learningReadiness.tone}`}
-                  >
-                    {learningReadiness.label}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm leading-6 text-muted">
-                  {learningReadiness.description}
-                </p>
-              </div>
-              <span className="shrink-0 rounded-md border border-line bg-surface px-3 py-2 font-mono text-sm font-semibold text-soft">
-                {learningReadiness.score}/100
-              </span>
-            </div>
-
-            <div
-              data-testid="learning-readiness-metrics"
-              className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4"
-            >
-              <div className="rounded-md border border-line bg-surface px-3 py-3">
-                <p className="text-xs text-muted">Scope 커버리지</p>
-                <p className="mt-1 font-mono text-2xl font-semibold text-soft">
-                  {learningReadiness.coveredScopes.length}/4
-                </p>
-              </div>
-              <button
-                type="button"
-                className="rounded-md border border-line bg-surface px-3 py-3 text-left transition hover:border-accent/50 hover:bg-accent/5"
-                onClick={() =>
-                  applyReadinessShortcut({
-                    nextReviewFilter: "all",
-                    nextSortMode: "confidence-desc",
-                  })
-                }
-              >
-                <p className="text-xs text-muted">높은 신뢰도</p>
-                <p className="mt-1 font-mono text-2xl font-semibold text-soft">
-                  {learningReadiness.highConfidenceCount}
-                </p>
-              </button>
-              <button
-                type="button"
-                className="rounded-md border border-line bg-surface px-3 py-3 text-left transition hover:border-attention/50 hover:bg-attention/5"
-                onClick={() =>
-                  applyReadinessShortcut({
-                    nextReviewFilter: "low-confidence",
-                    nextSortMode: "confidence-asc",
-                  })
-                }
-              >
-                <p className="text-xs text-muted">낮은 신뢰도</p>
-                <p className="mt-1 font-mono text-2xl font-semibold text-soft">
-                  {learningReadiness.lowConfidenceCount}
-                </p>
-              </button>
-              <button
-                type="button"
-                className="rounded-md border border-line bg-surface px-3 py-3 text-left transition hover:border-accent/50 hover:bg-accent/5"
-                onClick={() =>
-                  applyReadinessShortcut({
-                    nextReviewFilter: "all",
-                    nextSortMode: "updated-desc",
-                  })
-                }
-              >
-                <p className="text-xs text-muted">최근 업데이트</p>
-                <p className="mt-1 break-words text-sm font-semibold text-soft">
-                  {learningReadiness.latestMemoryDate
-                    ? formatDate(learningReadiness.latestMemoryDate)
-                    : "-"}
-                </p>
-              </button>
-            </div>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {trackedScopes.map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  className={`rounded-md border px-2 py-1 text-xs font-semibold transition ${
-                    scope === item
-                      ? "border-accent bg-accent/10 text-accent"
-                      : learningReadiness.scopeCounts[item] > 0
-                        ? "border-accent/40 bg-accent/10 text-accent hover:border-accent"
-                        : "border-line bg-surface text-muted hover:text-foreground"
-                  }`}
-                  onClick={() => updateScopeFilter(item)}
-                >
-                  {scopeLabels[item]} {learningReadiness.scopeCounts[item]}
-                </button>
-              ))}
-              {scope !== "all" ? (
-                <button
-                  type="button"
-                  className="rounded-md border border-line bg-surface px-2 py-1 text-xs font-semibold text-muted transition hover:text-foreground"
-                  onClick={() => updateScopeFilter("all")}
-                >
-                  전체 보기
-                </button>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="min-w-0 rounded-md border border-line bg-surface px-4 py-3">
-            <p className="text-sm font-semibold text-soft">다음 보강 액션</p>
-            <ul className="mt-3 space-y-2 text-xs leading-5 text-muted">
-              {learningReadiness.actions.map((action) => (
-                <li key={action} className="break-words">
-                  - {action}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4 grid gap-2">
-              <button
-                type="button"
-                className={`${secondaryButtonClass} w-full`}
-                onClick={copyReadinessReport}
-              >
-                {readinessReportCopied
-                  ? "운영 리포트 복사됨"
-                  : readinessReportCopyFailed
-                    ? "운영 리포트 복사 실패"
-                  : "운영 리포트 복사"}
-              </button>
-              <button
-                type="button"
-                className={`${secondaryButtonClass} w-full`}
-                onClick={openReadinessReportInStudio}
-              >
-                준비도 Studio로 보내기
-              </button>
-            </div>
-            {learningManualCopy?.id === "readiness-report" ? (
-              <div className="mt-4">
-                <ManualCopyPanel
-                  copy={learningManualCopy}
-                  onClose={() => setLearningManualCopy(null)}
-                />
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </Panel>
-
-      {feedbackImprovementFilterActive ? (
-        <Panel
-          id="learning-feedback-improvement-queue"
-          className="mt-4 px-5 py-4"
-          data-testid="learning-feedback-improvement-queue"
-        >
-          <div className="grid gap-4 lg:grid-cols-[1fr_260px] lg:items-start">
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-soft">
-                피드백 개선 메모리 큐
-              </p>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                Dashboard에서 저장한 피드백 개선 규칙을 현재 Learning 조건으로
-                점검합니다. 반복 피드백을 Studio 생성 기준으로 승격하기 전에
-                scope, 신뢰도, 원본 링크를 확인하세요.
-              </p>
-              <div
-                data-testid="learning-feedback-improvement-queue-metrics"
-                className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3"
-              >
-                <div className="rounded-md border border-line bg-surface px-3 py-3">
-                  <p className="text-xs text-muted">현재 큐</p>
-                  <p className="mt-1 font-mono text-2xl font-semibold text-soft">
-                    {filtered.length}
-                  </p>
-                </div>
-                <div className="rounded-md border border-line bg-surface px-3 py-3">
-                  <p className="text-xs text-muted">낮은 신뢰도</p>
-                  <p className="mt-1 font-mono text-2xl font-semibold text-soft">
-                    {feedbackImprovementQueueLowConfidenceCount}
-                  </p>
-                </div>
-                <div className="rounded-md border border-line bg-surface px-3 py-3">
-                  <p className="text-xs text-muted">포함 scope</p>
-                  <p className="mt-1 font-mono text-2xl font-semibold text-soft">
-                    {feedbackImprovementQueueScopeCount}/4
-                  </p>
-                </div>
-              </div>
-              <div
-                data-testid="learning-feedback-improvement-workflow"
-                className="mt-4 grid gap-3 md:grid-cols-3"
-              >
-                {feedbackImprovementQueueWorkflowSteps.map((item) => (
-                  <div
-                    key={item.step}
-                    className="min-w-0 rounded-md border border-line bg-surface px-3 py-3"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-md border border-accent/40 bg-accent/10 px-2 py-1 font-mono text-[11px] font-semibold text-accent">
-                        {item.step}
-                      </span>
-                      <p className="text-xs font-semibold text-muted">
-                        {item.label}
-                      </p>
-                    </div>
-                    <p className="mt-3 break-words text-sm font-semibold text-soft">
-                      {item.title}
-                    </p>
-                    <p className="mt-2 text-xs leading-5 text-muted">
-                      {item.detail}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="grid gap-4">
-              <div>
-                <p className="mb-2 text-xs font-semibold text-muted">검토</p>
-                <div className="grid gap-2">
-                  <Link
-                    href={feedbackImprovementLowConfidenceHref}
-                    className={`${secondaryButtonClass} w-full`}
-                  >
-                    낮은 신뢰도만 보기
-                  </Link>
-                  <button
-                    type="button"
-                    className={`${secondaryButtonClass} w-full`}
-                    onClick={copyFeedbackImprovementLowConfidenceLink}
-                  >
-                    {feedbackImprovementLowConfidenceLinkCopied
-                      ? "낮은 신뢰도 링크 복사됨"
-                      : feedbackImprovementLowConfidenceLinkCopyFailed
-                        ? "낮은 신뢰도 링크 복사 실패"
-                        : "낮은 신뢰도 링크 복사"}
-                  </button>
-                  <button
-                    type="button"
-                    className={`${secondaryButtonClass} w-full`}
-                    onClick={copyFilterLink}
-                  >
-                    {filterLinkCopied
-                      ? "큐 조건 링크 복사됨"
-                      : filterLinkCopyFailed
-                        ? "큐 조건 링크 복사 실패"
-                        : "큐 조건 링크 복사"}
-                  </button>
-                </div>
-              </div>
-              <div className="border-t border-line pt-3">
-                <p className="mb-2 text-xs font-semibold text-muted">Studio</p>
-                <div className="grid gap-2">
-                  <button
-                    type="button"
-                    className={`${primaryButtonClass} w-full`}
-                    onClick={openFeedbackImprovementLowConfidenceInStudio}
-                    disabled={feedbackImprovementQueueLowConfidenceCount === 0}
-                  >
-                    낮은 신뢰도 Studio로
-                  </button>
-                  <button
-                    type="button"
-                    className={`${secondaryButtonClass} w-full`}
-                    onClick={openFilteredMemoriesInStudio}
-                    disabled={filtered.length === 0}
-                  >
-                    큐 Studio로 보내기
-                  </button>
-                </div>
-              </div>
-              <div className="border-t border-line pt-3">
-                <p className="mb-2 text-xs font-semibold text-muted">기록</p>
-                <div className="grid gap-2">
-                  <button
-                    type="button"
-                    className={`${secondaryButtonClass} w-full`}
-                    onClick={copyFilteredMemoryReport}
-                  >
-                    {filteredReportCopied
-                      ? "큐 리포트 복사됨"
-                      : filteredReportCopyFailed
-                        ? "큐 리포트 복사 실패"
-                        : "큐 리포트 복사"}
-                  </button>
-                  <Link
-                    href={feedbackImprovementValidationLibraryHref}
-                    className={`${secondaryButtonClass} w-full`}
-                  >
-                    검증 저장본 보기
-                  </Link>
-                  <button
-                    type="button"
-                    className={`${secondaryButtonClass} w-full`}
-                    onClick={copyFeedbackImprovementReleaseGate}
-                  >
-                    {releaseGateCopied
-                      ? "Release gate 복사됨"
-                      : releaseGateCopyFailed
-                        ? "Release gate 복사 실패"
-                        : "Release gate 복사"}
-                  </button>
-                  <Link href="/" className={`${secondaryButtonClass} w-full`}>
-                    Dashboard로 돌아가기
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-          {learningManualCopy?.id === "filter-link" ||
-          learningManualCopy?.id === "filtered-report" ||
-          learningManualCopy?.id ===
-            "feedback-improvement-low-confidence-link" ||
-          learningManualCopy?.id ===
-            "feedback-improvement-release-gate" ||
-          learningManualCopy?.id ===
-            "feedback-improvement-low-confidence-studio" ? (
-            <div
-              className="mt-4"
-              data-testid="learning-feedback-improvement-queue-manual-copy"
-            >
-              <ManualCopyPanel
-                copy={learningManualCopy}
-                onClose={() => setLearningManualCopy(null)}
-              />
-            </div>
-          ) : null}
-        </Panel>
-      ) : null}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
-        <Panel id="learning-filter-panel" className="scroll-mt-6">
-          <PanelHeader
-            title="필터"
-            description="메모리 범위, 검토 기준, 정렬로 학습 데이터를 좁혀봅니다."
-          />
-          <div className="space-y-4 p-5">
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-soft">범위</span>
-              <select
-                className={selectClass}
-                value={scope}
-                onChange={(event) =>
-                  updateScopeFilter(event.target.value as LearningScopeFilter)
-                }
-              >
-                {scopes.map((item) => (
-                  <option key={item} value={item}>
-                    {scopeLabels[item]} ({scopeCounts[item]})
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-soft">
-                검토 기준
-              </span>
-              <select
-                className={selectClass}
-                value={reviewFilter}
-                onChange={(event) =>
-                  updateReviewFilter(event.target.value as LearningReviewFilter)
-                }
-              >
-                {reviewFilters.map((item) => (
-                  <option key={item} value={item}>
-                    {reviewFilterLabels[item]} ({reviewCounts[item]})
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-soft">정렬</span>
-              <select
-                className={selectClass}
-                value={sortMode}
-                onChange={(event) =>
-                  updateSortMode(event.target.value as LearningSortMode)
-                }
-              >
-                {sortModes.map((item) => (
-                  <option key={item} value={item}>
-                    {sortLabels[item]}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-soft">검색</span>
-              <input
-                className={inputClass}
-                value={query}
-                onChange={(event) => updateQuery(event.target.value)}
-                placeholder="톤, 회사 기준, Codex 등"
-              />
-            </label>
-            <div className="rounded-md border border-line bg-surface px-3 py-3 text-xs leading-5 text-muted">
-              현재 조건 {filtered.length}개 · 낮은 신뢰도{" "}
-              {reviewCounts["low-confidence"]}개 · 수동 {reviewCounts.manual}개
-            </div>
-            <div className="grid gap-2">
-              <button
-                type="button"
-                className={`${secondaryButtonClass} w-full`}
-                onClick={copyFilterLink}
-              >
-                {filterLinkCopied
-                  ? "조건 링크 복사됨"
-                  : filterLinkCopyFailed
-                    ? "조건 링크 복사 실패"
-                    : "현재 조건 링크 복사"}
-              </button>
-              <button
-                type="button"
-                className={`${secondaryButtonClass} w-full`}
-                onClick={copyFilteredMemoryReport}
-              >
-                {filteredReportCopied
-                  ? "필터 결과 복사됨"
-                  : filteredReportCopyFailed
-                    ? "필터 결과 복사 실패"
-                  : "필터 결과 복사"}
-              </button>
-              <button
-                type="button"
-                className={`${secondaryButtonClass} w-full`}
-                onClick={openFilteredMemoriesInStudio}
-                disabled={filtered.length === 0}
-              >
-                필터 결과 Studio로 보내기
-              </button>
-              {hasActiveLearningFilters ? (
-                <button
-                  type="button"
-                  className={`${secondaryButtonClass} w-full`}
-                  onClick={resetLearningFilters}
-                >
-                  조건 초기화
-                </button>
-              ) : null}
-            </div>
-            {!feedbackImprovementFilterActive &&
-            (learningManualCopy?.id === "filter-link" ||
-              learningManualCopy?.id === "filtered-report") ? (
-              <ManualCopyPanel
-                copy={learningManualCopy}
-                onClose={() => setLearningManualCopy(null)}
-              />
-            ) : null}
-          </div>
-        </Panel>
+        <LearningFilterPanel
+          scope={scope}
+          updateScopeFilter={updateScopeFilter}
+          scopeCounts={scopeCounts}
+          reviewFilter={reviewFilter}
+          updateReviewFilter={updateReviewFilter}
+          reviewCounts={reviewCounts}
+          sortMode={sortMode}
+          updateSortMode={updateSortMode}
+          query={query}
+          updateQuery={updateQuery}
+          filtered={filtered}
+          copyFilterLink={copyFilterLink}
+          filterLinkCopied={filterLinkCopied}
+          filterLinkCopyFailed={filterLinkCopyFailed}
+          copyFilteredMemoryReport={copyFilteredMemoryReport}
+          filteredReportCopied={filteredReportCopied}
+          filteredReportCopyFailed={filteredReportCopyFailed}
+          openFilteredMemoriesInStudio={openFilteredMemoriesInStudio}
+          hasActiveLearningFilters={hasActiveLearningFilters}
+          resetLearningFilters={resetLearningFilters}
+          feedbackImprovementFilterActive={feedbackImprovementFilterActive}
+          learningManualCopy={learningManualCopy}
+          setLearningManualCopy={setLearningManualCopy}
+        />
 
-        <Panel
-          id="learning-manual-memory"
-          className="scroll-mt-64 lg:col-start-1 lg:scroll-mt-6"
-        >
-          <PanelHeader
-            title="수동 메모리 추가"
-            description="회사 기준, 개인 선호, 분야 규칙, 반복 업무 패턴을 직접 학습 메모리로 저장합니다."
-          />
-          <div className="space-y-4 p-5">
-            <div
-              data-testid="learning-manual-memory-workflow"
-              className="grid gap-3"
-            >
-              {manualMemoryWorkflowSteps.map((item) => (
-                <div
-                  key={item.step}
-                  className="min-w-0 rounded-md border border-line bg-surface px-3 py-3"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-md border border-accent/40 bg-accent/10 px-2 py-1 font-mono text-[11px] font-semibold text-accent">
-                      {item.step}
-                    </span>
-                    <p className="text-xs font-semibold text-muted">
-                      {item.label}
-                    </p>
-                  </div>
-                  <p className="mt-3 break-words text-sm font-semibold text-soft">
-                    {item.title}
-                  </p>
-                  <p className="mt-2 text-xs leading-5 text-muted">
-                    {item.detail}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-soft">범위</span>
-              <select
-                className={selectClass}
-                value={manualScope}
-                onChange={(event) => {
-                  setManualScope(event.target.value as MemoryScope);
-                  setManualValidationMessage("");
-                  setManualSaved(false);
-                }}
-              >
-                {trackedScopes.map((item) => (
-                  <option key={item} value={item}>
-                    {scopeLabels[item]}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-soft">제목</span>
-              <input
-                className={inputClass}
-                value={manualTitle}
-                onChange={(event) => {
-                  setManualTitle(event.target.value);
-                  setManualSaved(false);
-                  setManualValidationMessage("");
-                }}
-                placeholder="예: 투자자 문서 회사 기준"
-              />
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-soft">내용</span>
-              <textarea
-                className={`${textareaClass} min-h-28`}
-                value={manualContent}
-                onChange={(event) => {
-                  setManualContent(event.target.value);
-                  setManualSaved(false);
-                  setManualValidationMessage("");
-                }}
-                placeholder="다음 생성에 반영할 구체적인 기준을 적어주세요."
-              />
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-soft">태그</span>
-              <input
-                className={inputClass}
-                value={manualTags}
-                onChange={(event) => {
-                  setManualTags(event.target.value);
-                  setManualSaved(false);
-                  setManualValidationMessage("");
-                }}
-                placeholder="기획, 투자자, Codex"
-              />
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-soft">
-                신뢰도
-              </span>
-              <select
-                className={selectClass}
-                value={manualConfidence}
-                onChange={(event) => {
-                  setManualConfidence(Number(event.target.value));
-                  setManualSaved(false);
-                  setManualValidationMessage("");
-                }}
-              >
-                {confidenceOptions.map((item) => (
-                  <option key={item.value} value={item.value}>
-                    {item.label} ({item.value.toFixed(2)})
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button
-              type="button"
-              className={`${primaryButtonClass} w-full`}
-              onClick={saveManualMemory}
-              disabled={!manualTitle.trim() || !manualContent.trim()}
-            >
-              {manualSaved ? "저장됨" : "학습 메모리 저장"}
-            </button>
-            {manualValidationMessage ? (
-              <p className="rounded-md border border-attention/40 bg-surface px-3 py-2 text-xs leading-5 text-attention">
-                {manualValidationMessage}
-              </p>
-            ) : null}
-          </div>
-        </Panel>
+        <LearningManualMemoryPanel
+          manualMemoryWorkflowSteps={manualMemoryWorkflowSteps}
+          manualScope={manualScope}
+          setManualScope={setManualScope}
+          setManualValidationMessage={setManualValidationMessage}
+          setManualSaved={setManualSaved}
+          manualTitle={manualTitle}
+          setManualTitle={setManualTitle}
+          manualContent={manualContent}
+          setManualContent={setManualContent}
+          manualTags={manualTags}
+          setManualTags={setManualTags}
+          manualConfidence={manualConfidence}
+          setManualConfidence={setManualConfidence}
+          saveManualMemory={saveManualMemory}
+          manualSaved={manualSaved}
+          manualValidationMessage={manualValidationMessage}
+        />
 
-        <Panel>
-          <PanelHeader
-            title="축적된 메모리"
-            description={`${reviewFilterLabels[reviewFilter]} 기준 · ${sortLabels[sortMode]}`}
-          />
-          {deletedManualMemoryTitle ? (
-            <div className="border-b border-line bg-surface px-5 py-3">
-              <p className="text-xs leading-5 text-muted">
-                수동 메모리 삭제됨 · {deletedManualMemoryTitle}
-              </p>
-            </div>
-          ) : null}
-          <div className="divide-y divide-line">
-            {filtered.map((memory) => {
-              const memoryContentDisplay = splitMemoryContentDisplay(
-                memory.content,
-              );
-
-              return (
-              <article
-                key={memory.id}
-                className="grid gap-4 px-5 py-4 lg:grid-cols-[1fr_180px]"
-              >
-                <div className="min-w-0">
-                  {editingMemoryId === memory.id ? (
-                    <div className="space-y-3 rounded-md border border-line bg-surface px-3 py-3">
-                      <label className="block">
-                        <span className="mb-2 block text-xs font-medium text-soft">
-                          범위
-                        </span>
-                        <select
-                          className={selectClass}
-                          value={editScope}
-                          onChange={(event) => {
-                            setEditScope(event.target.value as MemoryScope);
-                            setEditValidationMessage("");
-                          }}
-                        >
-                          {trackedScopes.map((item) => (
-                            <option key={item} value={item}>
-                              {scopeLabels[item]}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label className="block">
-                        <span className="mb-2 block text-xs font-medium text-soft">
-                          제목
-                        </span>
-                        <input
-                          className={inputClass}
-                          value={editTitle}
-                          onChange={(event) => {
-                            setEditTitle(event.target.value);
-                            setEditValidationMessage("");
-                          }}
-                        />
-                      </label>
-                      <label className="block">
-                        <span className="mb-2 block text-xs font-medium text-soft">
-                          내용
-                        </span>
-                        <textarea
-                          className={`${textareaClass} min-h-28`}
-                          value={editContent}
-                          onChange={(event) => {
-                            setEditContent(event.target.value);
-                            setEditValidationMessage("");
-                          }}
-                        />
-                      </label>
-                      <label className="block">
-                        <span className="mb-2 block text-xs font-medium text-soft">
-                          태그
-                        </span>
-                        <input
-                          className={inputClass}
-                          value={editTags}
-                          onChange={(event) => {
-                            setEditTags(event.target.value);
-                            setEditValidationMessage("");
-                          }}
-                        />
-                      </label>
-                      <label className="block">
-                        <span className="mb-2 block text-xs font-medium text-soft">
-                          신뢰도
-                        </span>
-                        <select
-                          className={selectClass}
-                          value={editConfidence}
-                          onChange={(event) => {
-                            setEditConfidence(Number(event.target.value));
-                            setEditValidationMessage("");
-                          }}
-                        >
-                          {confidenceOptions.map((item) => (
-                            <option key={item.value} value={item.value}>
-                              {item.label} ({item.value.toFixed(2)})
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      {editValidationMessage ? (
-                        <p className="rounded-md border border-attention/40 bg-background px-3 py-2 text-xs leading-5 text-attention">
-                          {editValidationMessage}
-                        </p>
-                      ) : null}
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-md bg-accent/10 px-2 py-1 text-xs font-semibold text-accent">
-                          {scopeLabels[memory.scope]}
-                        </span>
-                        <span className="text-xs text-muted">
-                          {sourceTypeLabels[memory.sourceType]} ·{" "}
-                          {formatDate(memory.updatedAt)}
-                        </span>
-                      </div>
-                      <h2 className="mt-3 text-sm font-semibold">{memory.title}</h2>
-                      {memoryContentDisplay.body ? (
-                        <p className="mt-2 whitespace-pre-line text-sm leading-6 text-soft">
-                          {memoryContentDisplay.body}
-                        </p>
-                      ) : null}
-                      {memoryContentDisplay.links.length > 0 ? (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {memoryContentDisplay.links.map((link) => (
-                            <Link
-                              key={`${memory.id}:${link.label}:${link.href}`}
-                              href={link.href}
-                              className="rounded-md border border-line bg-surface px-2 py-1 text-xs font-semibold text-accent transition hover:border-accent hover:bg-panel-strong"
-                            >
-                              {link.label}
-                            </Link>
-                          ))}
-                        </div>
-                      ) : null}
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {memory.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-md border border-line px-2 py-1 text-xs text-muted"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-                <div className="self-center">
-                  <ScoreBar label="신뢰도" value={memory.confidence * 5} />
-                  {editingMemoryId === memory.id ? (
-                    <div className="mt-3 grid gap-2">
-                      <button
-                        type="button"
-                        className={`${primaryButtonClass} w-full min-h-9 px-3 py-1.5 text-xs`}
-                        onClick={() => saveEditedManualMemory(memory.id)}
-                        disabled={!editTitle.trim() || !editContent.trim()}
-                      >
-                        수정 저장
-                      </button>
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} w-full min-h-9 px-3 py-1.5 text-xs`}
-                        onClick={cancelEditingManualMemory}
-                      >
-                        취소
-                      </button>
-                    </div>
-                  ) : memory.sourceType === "manual" ? (
-                    <div className="mt-3 grid gap-2">
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} w-full min-h-9 px-3 py-1.5 text-xs`}
-                        onClick={() => copyMemoryReport(memory)}
-                      >
-                        {copiedMemoryId === memory.id
-                          ? "메모리 복사됨"
-                          : failedMemoryCopyId === memory.id
-                            ? "메모리 복사 실패"
-                            : "메모리 복사"}
-                      </button>
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} w-full min-h-9 px-3 py-1.5 text-xs`}
-                        onClick={() => openMemoryInStudio(memory)}
-                      >
-                        Studio로 보내기
-                      </button>
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} w-full min-h-9 px-3 py-1.5 text-xs`}
-                        onClick={() => startEditingManualMemory(memory)}
-                      >
-                        수동 메모리 편집
-                      </button>
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} w-full min-h-9 px-3 py-1.5 text-xs`}
-                        onClick={() => deleteManualMemory(memory)}
-                      >
-                        수동 메모리 삭제
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="mt-3 grid gap-2">
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} w-full min-h-9 px-3 py-1.5 text-xs`}
-                        onClick={() => copyMemoryReport(memory)}
-                      >
-                        {copiedMemoryId === memory.id
-                          ? "메모리 복사됨"
-                          : failedMemoryCopyId === memory.id
-                            ? "메모리 복사 실패"
-                            : "메모리 복사"}
-                      </button>
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} w-full min-h-9 px-3 py-1.5 text-xs`}
-                        onClick={() => openMemoryInStudio(memory)}
-                      >
-                        Studio로 보내기
-                      </button>
-                    </div>
-                  )}
-                </div>
-                {learningManualCopy?.id === `memory:${memory.id}` ? (
-                  <div className="lg:col-span-2">
-                    <ManualCopyPanel
-                      copy={learningManualCopy}
-                      onClose={() => setLearningManualCopy(null)}
-                    />
-                  </div>
-                ) : null}
-              </article>
-              );
-            })}
-
-            {filtered.length === 0 ? (
-              <div className="px-5 py-12 text-sm text-muted">
-                아직 학습 메모리가 없습니다. Library에서 프롬프트에 피드백을 남기면 자동으로 생성됩니다.
-              </div>
-            ) : null}
-          </div>
-        </Panel>
+        <LearningMemoryListPanel
+          reviewFilter={reviewFilter}
+          sortMode={sortMode}
+          deletedManualMemoryTitle={deletedManualMemoryTitle}
+          filtered={filtered}
+          editingMemoryId={editingMemoryId}
+          editScope={editScope}
+          setEditScope={setEditScope}
+          setEditValidationMessage={setEditValidationMessage}
+          editTitle={editTitle}
+          setEditTitle={setEditTitle}
+          editContent={editContent}
+          setEditContent={setEditContent}
+          editTags={editTags}
+          setEditTags={setEditTags}
+          editConfidence={editConfidence}
+          setEditConfidence={setEditConfidence}
+          editValidationMessage={editValidationMessage}
+          saveEditedManualMemory={saveEditedManualMemory}
+          cancelEditingManualMemory={cancelEditingManualMemory}
+          copyMemoryReport={copyMemoryReport}
+          copiedMemoryId={copiedMemoryId}
+          failedMemoryCopyId={failedMemoryCopyId}
+          openMemoryInStudio={openMemoryInStudio}
+          startEditingManualMemory={startEditingManualMemory}
+          deleteManualMemory={deleteManualMemory}
+          learningManualCopy={learningManualCopy}
+          setLearningManualCopy={setLearningManualCopy}
+        />
       </div>
     </>
   );

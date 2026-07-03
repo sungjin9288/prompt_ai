@@ -54,6 +54,13 @@ const navItems = [
     summary: "개인화 기준과 피드백 규칙 관리",
   },
   {
+    group: "운영",
+    href: "/activity",
+    label: "활동",
+    nextAction: "이력 확인",
+    summary: "생성·개선·실행 이력을 시간순으로 확인",
+  },
+  {
     group: "작업",
     href: "/skills",
     label: "스킬",

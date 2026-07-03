@@ -31,6 +31,7 @@ const quickNavItems: CommandItem[] = [
   { id: "nav-studio", group: "이동", label: "작성", href: "/studio" },
   { id: "nav-library", group: "이동", label: "라이브러리", href: "/library" },
   { id: "nav-learning", group: "이동", label: "학습", href: "/learning" },
+  { id: "nav-activity", group: "이동", label: "활동", href: "/activity" },
   { id: "nav-skills", group: "이동", label: "스킬", href: "/skills" },
   { id: "nav-integrations", group: "이동", label: "연결", href: "/integrations" },
   { id: "nav-profile", group: "이동", label: "개인", href: "/profile" },

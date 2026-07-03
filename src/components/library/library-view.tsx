@@ -1097,12 +1097,12 @@ export function LibraryView({
         <span className="min-w-0 break-words">{item.label}</span>
         <button
           type="button"
-          className="-mr-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-muted transition hover:bg-surface hover:text-foreground"
+          className="-mr-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted transition hover:bg-surface hover:text-foreground"
           aria-label={item.removeLabel}
           title={item.removeLabel}
           onClick={() => removeFilterItem(item.id)}
         >
-          x
+          <span aria-hidden="true">×</span>
         </button>
       </span>
     );

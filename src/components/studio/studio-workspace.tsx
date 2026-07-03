@@ -2322,7 +2322,11 @@ export function StudioWorkspace({
               </div>
             </div>
             {generationNotice ? (
-              <p className="rounded-md border border-line bg-surface px-3 py-2 text-xs leading-5 text-muted">
+              <p
+                role="status"
+                aria-live="polite"
+                className="rounded-md border border-line bg-surface px-3 py-2 text-xs leading-5 text-muted"
+              >
                 {generationNotice}
               </p>
             ) : null}

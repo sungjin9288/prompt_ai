@@ -73,6 +73,7 @@ import {
   getPromptStudioPersistenceFilter,
   getPromptStudioSourceHref,
 } from "@/lib/library/hrefs";
+import { isPromptPinned } from "@/lib/library/pins";
 import type {
   ActiveFilterItem,
   LibraryManualCopy,
@@ -888,6 +889,14 @@ export function LibraryFiltersPanel({
                           <p className="line-clamp-2 min-w-0 break-words text-sm font-semibold leading-5">
                             {prompt.title}
                           </p>
+                          {isPromptPinned(prompt) ? (
+                            <span
+                              data-testid="library-pin-indicator"
+                              className="shrink-0 rounded border border-accent/40 bg-accent/10 px-1.5 py-0.5 text-[11px] font-semibold text-accent"
+                            >
+                              고정됨
+                            </span>
+                          ) : null}
                           {prompt.improvementSource ? (
                             <span className="shrink-0 rounded border border-line bg-surface px-1.5 py-0.5 text-[11px] font-semibold text-accent">
                               {formatPromptImprovementDepth(improvementDepth)}

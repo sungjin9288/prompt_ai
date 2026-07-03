@@ -12,6 +12,7 @@ import { buildPromptLibraryHref, buildSkillHref } from "@/lib/skills-view/hrefs"
 import { getLearningHref } from "@/lib/learning-view/hrefs";
 import { setCommandPaletteOpenListener } from "@/lib/browser/command-palette-bus";
 import { openKeyboardHelp } from "@/lib/browser/keyboard-help-bus";
+import { sortPinnedFirst } from "@/lib/library/pins";
 
 interface CommandItem {
   id: string;
@@ -76,7 +77,7 @@ export function CommandPalette() {
   const [memories] = useLearningMemoriesStore();
 
   const allItems = useMemo<CommandItem[]>(() => {
-    const promptItems: CommandItem[] = prompts.map((prompt) => ({
+    const promptItems: CommandItem[] = sortPinnedFirst(prompts).map((prompt) => ({
       id: `prompt-${prompt.id}`,
       group: "프롬프트",
       label:

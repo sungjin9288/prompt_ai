@@ -122,6 +122,11 @@ import {
   removeTagFromPrompt,
 } from "@/lib/library/tags";
 import {
+  isPromptPinned,
+  setPromptPinned,
+  sortPinnedFirst,
+} from "@/lib/library/pins";
+import {
   buildImprovementBrief,
   buildLearningContextReportText,
   buildLearningContextStudioDraftText,
@@ -1292,7 +1297,7 @@ export function LibraryView({
       );
     });
 
-    return matches.sort((left, right) => {
+    const sorted = matches.sort((left, right) => {
       if (sortMode === "quality") {
         return (
           getPromptBestQuality(right) - getPromptBestQuality(left) ||
@@ -1337,6 +1342,8 @@ export function LibraryView({
 
       return getPromptTimestamp(right) - getPromptTimestamp(left);
     });
+
+    return sortPinnedFirst(sorted);
   }, [
     languageFilter,
     learningScopeFilter,
@@ -2426,6 +2433,18 @@ export function LibraryView({
         prompt.id === promptId ? removeTagFromPrompt(prompt, tag) : prompt,
       ),
     );
+  }
+
+  function togglePromptPin(promptId: string) {
+    setPrompts((current) => {
+      const target = current.find((prompt) => prompt.id === promptId);
+
+      if (!target) {
+        return current;
+      }
+
+      return setPromptPinned(current, promptId, !isPromptPinned(target));
+    });
   }
 
   async function copyLibraryText(copy: LibraryManualCopy) {
@@ -4667,6 +4686,8 @@ export function LibraryView({
           removePromptTag={removePromptTag}
           newTagInput={newTagInput}
           setNewTagInput={setNewTagInput}
+          isSelectedPinned={selected ? isPromptPinned(selected) : false}
+          togglePromptPin={togglePromptPin}
           cancelPromptDelete={cancelPromptDelete}
           comment={comment}
           companyContextHref={companyContextHref}

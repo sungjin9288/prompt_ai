@@ -184,6 +184,8 @@ export interface LibraryDetailWorkspaceProps {
   removePromptTag: (promptId: string, tag: string) => void;
   newTagInput: string;
   setNewTagInput: React.Dispatch<React.SetStateAction<string>>;
+  isSelectedPinned: boolean;
+  togglePromptPin: (promptId: string) => void;
   requestSelectedPromptDelete: () => void;
   confirmPromptDelete: () => void;
   cancelPromptDelete: () => void;
@@ -302,6 +304,8 @@ export function LibraryDetailWorkspace({
   removePromptTag,
   newTagInput,
   setNewTagInput,
+  isSelectedPinned,
+  togglePromptPin,
   requestSelectedPromptDelete,
   confirmPromptDelete,
   cancelPromptDelete,
@@ -328,6 +332,20 @@ export function LibraryDetailWorkspace({
                 data-testid="library-detail-tags"
                 className="flex flex-wrap items-center gap-2 border-b border-line px-5 py-3"
               >
+                <button
+                  type="button"
+                  data-testid="library-detail-pin-toggle"
+                  aria-pressed={isSelectedPinned}
+                  className={`inline-flex h-7 min-w-[64px] items-center justify-center gap-1 rounded-md border px-2 text-xs transition ${
+                    isSelectedPinned
+                      ? "border-accent bg-accent/10 text-accent"
+                      : "border-line bg-panel text-muted hover:bg-surface hover:text-foreground"
+                  }`}
+                  onClick={() => togglePromptPin(selected.id)}
+                >
+                  <span aria-hidden="true">{isSelectedPinned ? "★" : "☆"}</span>
+                  <span>{isSelectedPinned ? "고정 해제" : "고정"}</span>
+                </button>
                 {(selected.tags ?? []).map((tag) => (
                   <span
                     key={tag}

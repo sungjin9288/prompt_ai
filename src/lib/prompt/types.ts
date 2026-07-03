@@ -244,6 +244,7 @@ export interface PromptAsset {
   studioSource?: PromptStudioSourceMeta;
   learningContext?: PromptLearningContextMeta;
   tags?: string[];
+  pinned?: boolean;
   rawInput: string;
   goal: string;
   domain: string;

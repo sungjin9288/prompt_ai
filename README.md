@@ -242,6 +242,10 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 기획 기준 문서는 `docs/`에 있습니다.
 
+아키텍처와 기여 가이드:
+
+- `docs/architecture.md`
+
 외부 AI 연결 운영 가이드:
 
 - `docs/external-ai-operator-guide.md`

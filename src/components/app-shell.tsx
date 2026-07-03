@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { LiveAnnouncer } from "@/components/common/live-announcer";
+import { CommandPalette } from "@/components/common/command-palette";
+import { openCommandPalette } from "@/lib/browser/command-palette-bus";
 
 type NavGroup = "운영" | "작업" | "기준" | "시스템";
 
@@ -112,19 +114,31 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-30 border-b border-line bg-background/92 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <Link href="/" className="flex min-w-0 items-center gap-3">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-accent text-sm font-black text-background">
-              PA
-            </span>
-            <span className="min-w-0">
-              <span className="block text-base font-semibold tracking-normal">
-                Prompt AI Studio
+          <div className="flex min-w-0 items-center gap-3">
+            <Link href="/" className="flex min-w-0 items-center gap-3">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-accent text-sm font-black text-background">
+                PA
               </span>
-              <span className="block truncate text-xs text-muted">
-                개인화 프롬프트 운영 워크스페이스
+              <span className="min-w-0">
+                <span className="block text-base font-semibold tracking-normal">
+                  Prompt AI Studio
+                </span>
+                <span className="block truncate text-xs text-muted">
+                  개인화 프롬프트 운영 워크스페이스
+                </span>
               </span>
-            </span>
-          </Link>
+            </Link>
+            <button
+              type="button"
+              onClick={() => openCommandPalette()}
+              className="hidden shrink-0 items-center gap-2 rounded-md border border-line bg-panel px-2.5 py-1.5 text-xs text-muted transition hover:bg-surface hover:text-foreground md:flex"
+            >
+              <span>검색</span>
+              <span className="rounded border border-control-border px-1.5 py-0.5 font-mono text-[10px]">
+                ⌘K
+              </span>
+            </button>
+          </div>
 
           <div className="flex min-w-0 flex-col gap-2 lg:flex-1 lg:items-end">
             <label className="md:hidden">
@@ -232,6 +246,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </main>
       <LiveAnnouncer />
+      <CommandPalette />
     </div>
   );
 }

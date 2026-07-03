@@ -8,15 +8,17 @@ test("opens with a keyboard shortcut and navigates to a search result", async ({
   page,
 }) => {
   await page.goto("/");
-
-  // Control+K is used on Linux/Windows CI runners; Cmd+K is the Mac
-  // equivalent. Both are bound to the same open/close toggle, so only one
-  // should be pressed per open — pressing both would toggle the palette
-  // open then immediately closed again.
-  await page.keyboard.press("Control+k");
+  await page.getByRole("navigation", { name: "주요 메뉴" }).waitFor();
 
   const dialog = page.getByRole("dialog", { name: "워크스페이스 검색" });
-  await expect(dialog).toBeVisible();
+
+  // Control+K is used on Linux/Windows CI runners; Cmd+K is the Mac
+  // equivalent. The keydown listener attaches in a post-hydration effect, so
+  // retry the open until it takes.
+  await expect(async () => {
+    await page.keyboard.press("Control+k");
+    await expect(dialog).toBeVisible({ timeout: 800 });
+  }).toPass({ timeout: 6000, intervals: [900] });
 
   const input = page.getByRole("combobox", {
     name: "저장본, 스킬, 메모리 검색 또는 이동",
@@ -36,11 +38,14 @@ test("opens with a keyboard shortcut and navigates to a search result", async ({
 
 test("closes with Escape and restores focus", async ({ page }) => {
   await page.goto("/");
-
-  await page.keyboard.press("Control+k");
+  await page.getByRole("navigation", { name: "주요 메뉴" }).waitFor();
 
   const dialog = page.getByRole("dialog", { name: "워크스페이스 검색" });
-  await expect(dialog).toBeVisible();
+
+  await expect(async () => {
+    await page.keyboard.press("Control+k");
+    await expect(dialog).toBeVisible({ timeout: 800 });
+  }).toPass({ timeout: 6000, intervals: [900] });
 
   await page.keyboard.press("Escape");
 

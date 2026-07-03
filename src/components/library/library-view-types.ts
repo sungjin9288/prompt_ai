@@ -9,6 +9,7 @@ export type ActiveFilterId =
   | "studio-persistence"
   | "studio-source"
   | "studio-variant"
+  | "tag"
   | "query"
   | "sort";
 

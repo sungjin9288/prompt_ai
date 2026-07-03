@@ -17,6 +17,7 @@ interface CommandItem {
   group: string;
   label: string;
   sublabel?: string;
+  searchText?: string;
   href: string;
 }
 
@@ -46,7 +47,9 @@ function truncate(text: string, maxLength: number) {
 }
 
 function matchesQuery(item: CommandItem, query: string) {
-  const haystack = `${item.label} ${item.sublabel ?? ""}`.toLowerCase();
+  const haystack = `${item.label} ${item.sublabel ?? ""} ${
+    item.searchText ?? ""
+  }`.toLowerCase();
 
   return haystack.includes(query);
 }
@@ -72,6 +75,7 @@ export function CommandPalette() {
           ? prompt.title
           : truncate(prompt.rawInput, PROMPT_LABEL_PREVIEW_LENGTH),
       sublabel: prompt.domain,
+      searchText: (prompt.tags ?? []).join(" "),
       href: buildPromptLibraryHref(prompt.id, prompt.versions[0]?.targetModel),
     }));
 

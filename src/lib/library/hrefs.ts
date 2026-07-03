@@ -61,6 +61,7 @@ export function buildLibraryFilterHref({
   studioPersistence = "all",
   studioSource = "all",
   studioVariant = "all",
+  tag = "all",
   promptId,
   version,
   detailMode,
@@ -79,6 +80,7 @@ export function buildLibraryFilterHref({
   studioPersistence?: StudioPersistenceFilter;
   studioSource?: StudioSourceFilter;
   studioVariant?: StudioSourceVariantFilter;
+  tag?: string;
   promptId?: string;
   version?: TargetModel;
   detailMode?: PromptDetailMode;
@@ -135,6 +137,10 @@ export function buildLibraryFilterHref({
 
   if (studioVariant !== "all") {
     params.set("studioVariant", studioVariant);
+  }
+
+  if (tag !== "all") {
+    params.set("tag", tag);
   }
 
   if (trimmedPromptId) {

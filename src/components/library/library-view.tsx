@@ -81,6 +81,7 @@ import {
   type StudioPersistenceFilter,
   type StudioSourceFilter,
   type StudioSourceVariantFilter,
+  type TagFilter,
   type TargetModelFilter,
 } from "@/lib/library/labels";
 import {
@@ -113,6 +114,13 @@ import {
   formatLearningContextCount,
   promptMatchesLearningScope,
 } from "@/lib/library/prompt-metrics";
+import {
+  addTagToPrompt,
+  collectAllTags,
+  getPromptTags,
+  promptHasTag,
+  removeTagFromPrompt,
+} from "@/lib/library/tags";
 import {
   buildImprovementBrief,
   buildLearningContextReportText,
@@ -152,6 +160,7 @@ export function LibraryView({
   initialStudioPersistenceFilter,
   initialStudioSourceFilter,
   initialStudioSourceVariantFilter,
+  initialTagFilter,
   initialPromptDetailMode,
   initialGenerationEngine,
   initialLearningScope,
@@ -172,6 +181,7 @@ export function LibraryView({
   initialStudioPersistenceFilter?: Exclude<StudioPersistenceFilter, "all">;
   initialStudioSourceFilter?: Exclude<StudioSourceFilter, "all">;
   initialStudioSourceVariantFilter?: Exclude<StudioSourceVariantFilter, "all">;
+  initialTagFilter?: TagFilter;
   initialPromptDetailMode?: PromptDetailMode;
   initialGenerationEngine?: PromptAsset["source"];
   initialLearningScope?: Exclude<LearningScopeFilter, "all">;
@@ -211,6 +221,10 @@ export function LibraryView({
     useState<StudioSourceVariantFilter>(
       initialStudioSourceVariantFilter ?? "all",
     );
+  const [tagFilter, setTagFilter] = useState<TagFilter>(
+    initialTagFilter ?? "all",
+  );
+  const [newTagInput, setNewTagInput] = useState("");
   const [selectedId, setSelectedId] = useState<string>(initialPromptId ?? "");
   const [activeModel, setActiveModel] = useState<TargetModel>(
     initialActiveModel ?? initialTargetModel ?? "gpt",
@@ -568,6 +582,14 @@ export function LibraryView({
       });
     }
 
+    if (tagFilter !== "all") {
+      items.push({
+        id: "tag",
+        label: `태그 ${tagFilter}`,
+        removeLabel: "태그 필터 해제",
+      });
+    }
+
     if (trimmedQuery) {
       items.push({
         id: "query",
@@ -597,6 +619,7 @@ export function LibraryView({
     studioSourceVariantFilter,
     studioPersistenceFilter,
     sortMode,
+    tagFilter,
     targetModelFilter,
   ]);
   const hasActiveFilters = activeFilterItems.length > 0;
@@ -615,6 +638,7 @@ export function LibraryView({
         studioPersistence: studioPersistenceFilter,
         studioSource: studioSourceFilter,
         studioVariant: studioSourceVariantFilter,
+        tag: tagFilter,
         promptId: selectedId,
         version: activeModel,
         detailMode: promptDetailMode,
@@ -635,6 +659,7 @@ export function LibraryView({
       studioPersistenceFilter,
       studioSourceFilter,
       studioSourceVariantFilter,
+      tagFilter,
       targetModelFilter,
     ],
   );
@@ -652,6 +677,7 @@ export function LibraryView({
     studioPersistence = studioPersistenceFilter,
     studioSource = studioSourceFilter,
     studioVariant = studioSourceVariantFilter,
+    tag = tagFilter,
     promptId = selectedId,
     version = activeModel,
     detailMode = promptDetailMode,
@@ -669,6 +695,7 @@ export function LibraryView({
     studioPersistence?: StudioPersistenceFilter;
     studioSource?: StudioSourceFilter;
     studioVariant?: StudioSourceVariantFilter;
+    tag?: TagFilter;
     promptId?: string;
     version?: TargetModel;
     detailMode?: PromptDetailMode;
@@ -687,6 +714,7 @@ export function LibraryView({
       studioPersistence,
       studioSource,
       studioVariant,
+      tag,
       promptId,
       version,
       detailMode,
@@ -723,6 +751,8 @@ export function LibraryView({
     setStudioPersistenceFilter("all");
     setStudioSourceFilter("all");
     setStudioSourceVariantFilter("all");
+    setTagFilter("all");
+    setNewTagInput("");
     setSelectedId("");
     setActiveModel("gpt");
     setCopied(false);
@@ -741,6 +771,31 @@ export function LibraryView({
     setManualCopy(null);
     setPromptDetailMode("current");
     router.replace("/library", { scroll: false });
+  }
+
+  function handleTagFilterChange(nextTagFilter: TagFilter) {
+    setTagFilter(nextTagFilter);
+    setSelectedId("");
+    setCopied(false);
+    setFilterLinkCopied(false);
+    setDetailLinkCopied(false);
+    setImprovementBriefCopied(false);
+    setComparisonBriefCopied(false);
+    setSourceHealthReportCopied(false);
+    setStudioPersistenceReportCopied(false);
+    setStudioPersistenceCandidateCopiedId("");
+    setStudioSourceReportCopied(false);
+    setStudioOperationalGroupReportCopied(false);
+    setStudioSourceCandidateCopiedId("");
+    setContextQuestionsCopied(false);
+    setManualCopy(null);
+    setPromptDetailMode("current");
+    syncFilterUrl({
+      tag: nextTagFilter,
+      promptId: "",
+      version: undefined,
+      detailMode: "current",
+    });
   }
 
   function handleQueryChange(nextQuery: string) {
@@ -1056,6 +1111,17 @@ export function LibraryView({
       return;
     }
 
+    if (filterId === "tag") {
+      setTagFilter("all");
+      syncFilterUrl({
+        tag: "all",
+        promptId: "",
+        version: undefined,
+        detailMode: "current",
+      });
+      return;
+    }
+
     if (filterId === "engine") {
       setGenerationEngineFilter("all");
       syncFilterUrl({
@@ -1150,6 +1216,8 @@ export function LibraryView({
       const matchesStudioSourceVariant =
         studioSourceVariantFilter === "all" ||
         prompt.studioSource?.sourceVariant === studioSourceVariantFilter;
+      const matchesTag =
+        tagFilter === "all" || promptHasTag(prompt, tagFilter);
       const matchesQuery =
         !needle ||
         [
@@ -1157,6 +1225,7 @@ export function LibraryView({
           prompt.rawInput,
           prompt.goal,
           prompt.domain,
+          getPromptTags(prompt).join(" "),
           languageStrategyLabels[getLanguageStrategy(prompt)],
           prompt.languageDecision?.reason,
           prompt.languageDecision?.signals?.join(" "),
@@ -1218,6 +1287,7 @@ export function LibraryView({
         matchesStudioPersistence &&
         matchesStudioSource &&
         matchesStudioSourceVariant &&
+        matchesTag &&
         matchesQuery
       );
     });
@@ -1281,6 +1351,7 @@ export function LibraryView({
     studioPersistenceFilter,
     studioSourceFilter,
     studioSourceVariantFilter,
+    tagFilter,
     targetModelFilter,
   ]);
   const sourceReasonActionCandidates = useMemo(() => {
@@ -1466,6 +1537,8 @@ export function LibraryView({
       studioPersistenceFilter,
     ],
   );
+
+  const allTags = useMemo(() => collectAllTags(prompts), [prompts]);
 
   const selected = useMemo(() => {
     const fallback = filtered[0];
@@ -2336,6 +2409,23 @@ export function LibraryView({
     setComment("");
     setLatestFeedbackId(feedback.id);
     setHighlightedFeedbackId(feedback.id);
+  }
+
+  function addPromptTag(promptId: string, tag: string) {
+    setPrompts((current) =>
+      current.map((prompt) =>
+        prompt.id === promptId ? addTagToPrompt(prompt, tag) : prompt,
+      ),
+    );
+    setNewTagInput("");
+  }
+
+  function removePromptTag(promptId: string, tag: string) {
+    setPrompts((current) =>
+      current.map((prompt) =>
+        prompt.id === promptId ? removeTagFromPrompt(prompt, tag) : prompt,
+      ),
+    );
   }
 
   async function copyLibraryText(copy: LibraryManualCopy) {
@@ -4481,6 +4571,9 @@ export function LibraryView({
       <div className="grid min-w-0 gap-6 xl:grid-cols-[380px_1fr]">
         <LibraryFiltersPanel
           activeFilterItems={activeFilterItems}
+          allTags={allTags}
+          handleTagFilterChange={handleTagFilterChange}
+          tagFilter={tagFilter}
           cancelDeletedPromptRemove={cancelDeletedPromptRemove}
           confirmDeletedPromptRemove={confirmDeletedPromptRemove}
           copyFilterLink={copyFilterLink}
@@ -4570,6 +4663,10 @@ export function LibraryView({
           activeTargetAiPackageCopyKey={activeTargetAiPackageCopyKey}
           activeVersion={activeVersion}
           addFeedback={addFeedback}
+          addPromptTag={addPromptTag}
+          removePromptTag={removePromptTag}
+          newTagInput={newTagInput}
+          setNewTagInput={setNewTagInput}
           cancelPromptDelete={cancelPromptDelete}
           comment={comment}
           companyContextHref={companyContextHref}

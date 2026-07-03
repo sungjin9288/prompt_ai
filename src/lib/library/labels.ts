@@ -40,6 +40,7 @@ export type StudioSourceFilter = PromptStudioSourceMeta["source"] | "all";
 export type StudioSourceVariantFilter = PromptStudioDraftSourceVariant | "all";
 export type GenerationEngineFilter = PromptAsset["source"] | "all";
 export type LearningScopeFilter = MemoryScope | "untracked" | "all";
+export type TagFilter = string;
 
 export const librarySortModes: LibrarySortMode[] = [
   "recent",

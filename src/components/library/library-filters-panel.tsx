@@ -48,6 +48,7 @@ import {
   type StudioPersistenceFilter,
   type StudioSourceFilter,
   type StudioSourceVariantFilter,
+  type TagFilter,
   type TargetModelFilter,
 } from "@/lib/library/labels";
 import {
@@ -94,6 +95,8 @@ export interface LibraryFiltersPanelProps {
   studioPersistenceFilter: StudioPersistenceFilter;
   studioSourceFilter: StudioSourceFilter;
   studioSourceVariantFilter: StudioSourceVariantFilter;
+  tagFilter: TagFilter;
+  allTags: string[];
   improvementFilterCounts: Record<ImprovementFilter, number>;
   sourceReasonFilterCounts: Record<SourceReasonFilter, number>;
   studioPersistenceFilterCounts: Record<StudioPersistenceFilter, number>;
@@ -135,6 +138,7 @@ export interface LibraryFiltersPanelProps {
   handleStudioSourceVariantFilterChange: (
     nextStudioSourceVariantFilter: StudioSourceVariantFilter,
   ) => void;
+  handleTagFilterChange: (nextTagFilter: TagFilter) => void;
   handlePromptSelect: (prompt: PromptAsset) => void;
   resetFilters: () => void;
   copyFilterLink: () => Promise<void>;
@@ -200,6 +204,7 @@ export interface LibraryFiltersPanelProps {
     studioPersistence?: StudioPersistenceFilter;
     studioSource?: StudioSourceFilter;
     studioVariant?: StudioSourceVariantFilter;
+    tag?: TagFilter;
     promptId?: string;
     version?: TargetModel;
     detailMode?: PromptDetailMode;
@@ -224,6 +229,8 @@ export function LibraryFiltersPanel({
   studioPersistenceFilter,
   studioSourceFilter,
   studioSourceVariantFilter,
+  tagFilter,
+  allTags,
   improvementFilterCounts,
   sourceReasonFilterCounts,
   studioPersistenceFilterCounts,
@@ -257,6 +264,7 @@ export function LibraryFiltersPanel({
   handleStudioPersistenceFilterChange,
   handleStudioSourceFilterChange,
   handleStudioSourceVariantFilterChange,
+  handleTagFilterChange,
   handlePromptSelect,
   resetFilters,
   copyFilterLink,
@@ -709,6 +717,24 @@ export function LibraryFiltersPanel({
                 ))}
               </select>
             </Field>
+            {allTags.length > 0 ? (
+              <Field label="태그 필터">
+                <select
+                  className={selectClass}
+                  value={tagFilter}
+                  onChange={(event) => {
+                    handleTagFilterChange(event.target.value);
+                  }}
+                >
+                  <option value="all">전체 태그</option>
+                  {allTags.map((tag) => (
+                    <option key={tag} value={tag}>
+                      {tag}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            ) : null}
             {hasActiveFilters ? (
               <div className="rounded-md border border-line bg-surface px-3 py-3">
                 <div className="flex flex-col gap-3">

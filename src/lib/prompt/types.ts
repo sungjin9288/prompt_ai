@@ -243,6 +243,7 @@ export interface PromptAsset {
   improvementSource?: PromptImprovementSource;
   studioSource?: PromptStudioSourceMeta;
   learningContext?: PromptLearningContextMeta;
+  tags?: string[];
   rawInput: string;
   goal: string;
   domain: string;

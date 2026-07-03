@@ -180,6 +180,10 @@ export interface LibraryDetailWorkspaceProps {
   openSelectedOperationalSummaryReportInStudio: () => void;
   openTargetAiHandoffImprovementInStudio: () => void;
   addFeedback: () => void;
+  addPromptTag: (promptId: string, tag: string) => void;
+  removePromptTag: (promptId: string, tag: string) => void;
+  newTagInput: string;
+  setNewTagInput: React.Dispatch<React.SetStateAction<string>>;
   requestSelectedPromptDelete: () => void;
   confirmPromptDelete: () => void;
   cancelPromptDelete: () => void;
@@ -294,6 +298,10 @@ export function LibraryDetailWorkspace({
   openSelectedOperationalSummaryReportInStudio,
   openTargetAiHandoffImprovementInStudio,
   addFeedback,
+  addPromptTag,
+  removePromptTag,
+  newTagInput,
+  setNewTagInput,
   requestSelectedPromptDelete,
   confirmPromptDelete,
   cancelPromptDelete,
@@ -315,6 +323,43 @@ export function LibraryDetailWorkspace({
                   languageStrategyLabels[getLanguageStrategy(selected)]
                 } · 답변 ${outputLanguageLabels[getOutputLanguage(selected)]}`}
               />
+
+              <div
+                data-testid="library-detail-tags"
+                className="flex flex-wrap items-center gap-2 border-b border-line px-5 py-3"
+              >
+                {(selected.tags ?? []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 rounded-md border border-line bg-panel px-2 py-1 text-xs text-muted"
+                  >
+                    <span>{tag}</span>
+                    <button
+                      type="button"
+                      className="-mr-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted transition hover:bg-surface hover:text-foreground"
+                      aria-label={`${tag} 태그 삭제`}
+                      title={`${tag} 태그 삭제`}
+                      onClick={() => removePromptTag(selected.id, tag)}
+                    >
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </span>
+                ))}
+                <input
+                  type="text"
+                  value={newTagInput}
+                  onChange={(event) => setNewTagInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && newTagInput.trim()) {
+                      event.preventDefault();
+                      addPromptTag(selected.id, newTagInput);
+                    }
+                  }}
+                  placeholder="태그 추가"
+                  aria-label="태그 추가"
+                  className="min-h-8 w-32 rounded-md border border-line bg-panel px-2 py-1 text-xs text-foreground placeholder:text-muted focus:outline-none"
+                />
+              </div>
 
               <div className="grid min-h-[640px] min-w-0 gap-0 xl:grid-cols-[1fr_300px]">
                 <div className="min-w-0 border-b border-line xl:border-b-0 xl:border-r">

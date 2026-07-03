@@ -203,6 +203,13 @@ function normalizeLibraryFocus(
     : undefined;
 }
 
+function normalizeTagFilter(value: string | string[] | undefined) {
+  const candidate = Array.isArray(value) ? value[0] : value;
+  const tag = candidate?.trim();
+
+  return tag ? tag : undefined;
+}
+
 export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   const params = await searchParams;
   const initialQuery = normalizeQuery(params.q);
@@ -230,6 +237,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   const initialLearningScope = normalizeLearningScope(params.learn);
   const initialFocusTarget = normalizeLibraryFocus(params.focus);
   const initialFeedbackId = normalizeFeedbackId(params.feedback);
+  const initialTagFilter = normalizeTagFilter(params.tag);
   const initialCompanyUpdated = Array.isArray(params.companyUpdated)
     ? params.companyUpdated[0] === "1"
     : params.companyUpdated === "1";
@@ -257,7 +265,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
         initialCompanyUpdated ? "company-updated" : "clean"
       }:${initialProfileUpdated ? "profile-updated" : "clean"}:${
         initialFocusTarget ?? "none"
-      }:${initialFeedbackId ?? "none"}`}
+      }:${initialFeedbackId ?? "none"}:${initialTagFilter ?? "all"}`}
       initialQuery={initialQuery}
       initialSortMode={initialSortMode}
       initialPromptId={initialPromptId}
@@ -277,6 +285,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
       initialProfileUpdated={initialProfileUpdated}
       initialFocusTarget={initialFocusTarget}
       initialFeedbackId={initialFeedbackId}
+      initialTagFilter={initialTagFilter}
     />
   );
 }

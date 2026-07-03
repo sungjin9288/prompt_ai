@@ -11,6 +11,7 @@ import { scopeLabels } from "@/lib/learning-view/labels";
 import { buildPromptLibraryHref, buildSkillHref } from "@/lib/skills-view/hrefs";
 import { getLearningHref } from "@/lib/learning-view/hrefs";
 import { setCommandPaletteOpenListener } from "@/lib/browser/command-palette-bus";
+import { openKeyboardHelp } from "@/lib/browser/keyboard-help-bus";
 
 interface CommandItem {
   id: string;
@@ -18,7 +19,8 @@ interface CommandItem {
   label: string;
   sublabel?: string;
   searchText?: string;
-  href: string;
+  href?: string;
+  onSelect?: () => void;
 }
 
 const MAX_RESULTS = 9;
@@ -37,6 +39,12 @@ const quickNavItems: CommandItem[] = [
   { id: "nav-profile", group: "이동", label: "개인", href: "/profile" },
   { id: "nav-company", group: "이동", label: "회사", href: "/company" },
   { id: "nav-data", group: "이동", label: "데이터", href: "/data" },
+  {
+    id: "action-keyboard-shortcuts",
+    group: "일반",
+    label: "키보드 단축키",
+    onSelect: () => openKeyboardHelp(),
+  },
 ];
 
 function truncate(text: string, maxLength: number) {
@@ -151,10 +159,19 @@ export function CommandPalette() {
     setIsOpen(true);
   }, []);
 
-  const navigateTo = useCallback(
-    (href: string) => {
-      router.push(href);
+  const selectItem = useCallback(
+    (item: CommandItem) => {
       closePalette();
+
+      if (item.onSelect) {
+        item.onSelect();
+
+        return;
+      }
+
+      if (item.href) {
+        router.push(item.href);
+      }
     },
     [router, closePalette],
   );
@@ -254,11 +271,11 @@ export function CommandPalette() {
         const activeItem = results[clampedActiveIndex];
 
         if (activeItem) {
-          navigateTo(activeItem.href);
+          selectItem(activeItem);
         }
       }
     },
-    [results, clampedActiveIndex, navigateTo],
+    [results, clampedActiveIndex, selectItem],
   );
 
   if (!isOpen) {
@@ -333,7 +350,7 @@ export function CommandPalette() {
                     aria-selected={isActive}
                     type="button"
                     onMouseEnter={() => setActiveIndex(index)}
-                    onClick={() => navigateTo(item.href)}
+                    onClick={() => selectItem(item)}
                     className={`flex w-full min-w-0 items-center justify-between gap-3 rounded px-2 py-2 text-left text-sm transition ${
                       isActive
                         ? "bg-panel-strong text-foreground"

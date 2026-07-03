@@ -7,10 +7,8 @@ import {
   PageHeader,
   Panel,
   PanelHeader,
-  ScoreBar,
   primaryButtonClass,
   secondaryButtonClass,
-  selectClass,
   textareaClass,
 } from "@/components/ui";
 import {
@@ -18,6 +16,11 @@ import {
   type ContextOperatingFlowItem,
 } from "@/components/context/context-operating-flow";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
+import { StudioInputAnalysisPanel } from "@/components/studio/studio-input-analysis-panel";
+import { StudioLoadedDraftPanel } from "@/components/studio/studio-loaded-draft-panel";
+import { StudioDecisionControlsPanel } from "@/components/studio/studio-decision-controls-panel";
+import { StudioResultInsightsPanel } from "@/components/studio/studio-result-insights-panel";
+import type { StudioManualCopy } from "@/components/studio/studio-view-types";
 import {
   TargetAiHandoffPreviewPanel,
   type HandoffPreviewMode,
@@ -39,11 +42,8 @@ import {
   defaultDomains,
   defaultGoals,
   getPromptQualityInsights,
-  languageStrategyLabels,
   modelLabels,
   outputLanguageLabels,
-  outputLanguages,
-  targetModels,
   type LearningMemory,
   type PromptImprovementSource,
   type PromptLearningContextMeta,
@@ -85,7 +85,6 @@ import {
   replaceCurrentPathWithoutDraftRequest,
 } from "@/lib/studio-view/hrefs";
 import {
-  feedbackTypeLabels,
   focusRawInput,
   formatInputReadinessLabel,
   getDraftPersistenceMeta,
@@ -101,16 +100,13 @@ import {
   filterLearningMemories,
   getDisabledMemoryScopeLabels,
   getEnabledMemoryScopeLabels,
-  getMemoryPreview,
   getPrioritizedLearningMemories,
-  memoryScopeLabels,
   memoryScopeOptions,
 } from "@/lib/studio-view/learning-memory";
 import {
   attachImprovementSource,
   attachLearningContextMeta,
   attachStudioSourceMeta,
-  formatCountDelta,
   formatImprovementDepthLabel,
   formatModelLabels,
   formatScoreDelta,
@@ -159,26 +155,6 @@ interface PendingRegenerationRecovery {
   targetAiPackagePreviewKey: string;
   targetAiPackagePreviewMode: HandoffPreviewMode;
 }
-
-type StudioManualCopy = {
-  id:
-    | "prompt"
-    | "quality-report"
-    | "target-ai-package"
-    | "target-ai-improvement-brief"
-    | "learning-report"
-    | "missing-context"
-    | "quality-comparison"
-    | "input-analysis"
-    | "source-link"
-    | "saved-library-link"
-    | "saved-skill-link"
-    | "saved-studio-source-link"
-    | "saved-studio-persistence-link"
-    | "saved-studio-operational-group-link";
-  title: string;
-  body: string;
-};
 
 const initialRawInput =
   "내가 만든 앱 아이디어를 투자자에게 설명할 수 있게 정리하고, 나중에 Codex로 개발할 수 있도록 기능 범위도 나눠줘.";
@@ -2211,300 +2187,44 @@ export function StudioWorkspace({
                 }}
               />
             </Field>
-            <div
-              className="rounded-md border border-line bg-surface px-3 py-3"
-              data-testid="studio-input-readiness-summary"
-            >
-              <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold text-soft">생성 준비</p>
-                  <p className="mt-1 text-xs leading-5 text-muted">
-                    입력, 언어, 대상 AI, 학습 반영, 저장 흐름을 생성 전에
-                    확인합니다.
-                  </p>
-                </div>
-                <span className="shrink-0 rounded-md border border-line bg-panel px-3 py-2 text-xs font-semibold text-soft">
-                  {rawInput.trim() ? inputReadinessLabel : "원문 필요"}
-                </span>
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                {studioPreparationSteps.map((step) => (
-                  <div
-                    key={step.label}
-                    className="min-w-0 rounded-md border border-line bg-panel px-3 py-2"
-                  >
-                    <p className="text-[11px] text-muted">{step.label}</p>
-                    <p className="mt-1 break-words text-xs font-semibold text-soft">
-                      {step.value}
-                    </p>
-                    <p className="mt-1 break-words text-[11px] leading-4 text-muted">
-                      {step.detail}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div
-              className="rounded-md border border-line bg-surface px-3 py-3"
-              data-testid="studio-input-analysis-preflight"
-            >
-              <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold text-soft">입력 분석</p>
-                  <p className="mt-1 text-xs leading-5 text-muted">
-                    목적, 맥락, 제약, 출력 형식을 생성 전에 점검합니다.
-                  </p>
-                </div>
-                <span className="shrink-0 rounded-md border border-line bg-panel px-3 py-2 text-xs font-semibold text-soft">
-                  {inputReadinessLabel}
-                </span>
-              </div>
-              <p className="mt-3 text-xs leading-5 text-muted">
-                {inputReadinessAnalysis.summary}
-              </p>
-              <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
-                {inputReadinessAnalysis.items.map((item) => (
-                  <div
-                    key={item.label}
-                    className="min-w-0 rounded-md border border-line bg-panel px-3 py-2"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-[11px] text-muted">{item.label}</p>
-                      <span className="rounded-md border border-line bg-surface px-1.5 py-0.5 text-[10px] font-semibold text-soft">
-                        {item.value}
-                      </span>
-                    </div>
-                    <p className="mt-2 break-words text-[11px] leading-4 text-muted">
-                      {item.detail}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              {inputReadinessAnalysis.missingQuestions.length ? (
-                <div className="mt-3 rounded-md border border-line bg-panel px-3 py-2">
-                  <p className="text-[11px] font-semibold text-soft">
-                    보강 질문 {missingQuestionCount}개
-                  </p>
-                  <ul className="mt-1 space-y-1 text-[11px] leading-5 text-muted">
-                    {inputReadinessAnalysis.missingQuestions.map((question) => (
-                      <li key={question}>- {question}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <p className="mt-3 rounded-md border border-line bg-panel px-3 py-2 text-[11px] leading-5 text-muted">
-                  {inputReadinessAnalysis.action}
-                </p>
-              )}
-              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                <button
-                  type="button"
-                  className={`${secondaryButtonClass} w-full sm:w-auto`}
-                  onClick={copyInputReadinessReport}
-                  data-testid="studio-input-analysis-copy"
-                >
-                  {inputAnalysisCopied
-                    ? "분석 리포트 복사됨"
-                    : studioManualCopy?.id === "input-analysis"
-                      ? "분석 리포트 복사 실패"
-                      : "분석 리포트 복사"}
-                </button>
-                <button
-                  type="button"
-                  className={`${secondaryButtonClass} w-full sm:w-auto`}
-                  onClick={applyInputReadinessQuestions}
-                  disabled={!inputReadinessAnalysis.missingQuestions.length}
-                  data-testid="studio-input-analysis-apply"
-                >
-                  {inputReadinessQuestionBlockApplied
-                    ? "보강 질문 확인"
-                    : "보강 질문 원문에 추가"}
-                </button>
-              </div>
-              {studioManualCopy?.id === "input-analysis" ? (
-                <ManualCopyPanel className="mt-4 bg-surface"
-                  copy={studioManualCopy}
-                  onClose={() => setStudioManualCopy(null)}
-                />
-              ) : null}
-            </div>
+            <StudioInputAnalysisPanel
+              rawInput={rawInput}
+              inputReadinessLabel={inputReadinessLabel}
+              studioPreparationSteps={studioPreparationSteps}
+              inputReadinessAnalysis={inputReadinessAnalysis}
+              missingQuestionCount={missingQuestionCount}
+              inputAnalysisCopied={inputAnalysisCopied}
+              inputReadinessQuestionBlockApplied={
+                inputReadinessQuestionBlockApplied
+              }
+              studioManualCopy={studioManualCopy}
+              copyInputReadinessReport={copyInputReadinessReport}
+              applyInputReadinessQuestions={applyInputReadinessQuestions}
+              onCloseManualCopy={() => setStudioManualCopy(null)}
+            />
 
             {loadedDraftSummary && loadedDraftSource ? (
-              <div className="rounded-md border border-accent/40 bg-accent/10 px-3 py-3">
-                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold text-accent">
-                      불러온 초안 · {loadedDraftSource.label}
-                    </p>
-                    <p className="mt-1 break-words text-sm font-semibold text-soft">
-                      {loadedDraftSummary.title ?? "실행 계획 초안"}
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-muted">
-                      {loadedDraftSource.nextAction}
-                    </p>
-                    {loadedDraftOperationalSummary ? (
-                      <div
-                        className="mt-3 rounded-md border border-accent/20 bg-panel/70 px-3 py-3"
-                        data-testid="studio-loaded-draft-operational-summary"
-                      >
-                        <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-3">
-                          <div className="min-w-0 border-r border-line pr-2">
-                            <p className="text-muted">저장 방식</p>
-                            <p className="mt-1 break-words font-semibold text-soft">
-                              {loadedDraftOperationalSummary.persistenceLabel}
-                            </p>
-                          </div>
-                          <div className="min-w-0 sm:border-r sm:border-line sm:pr-2">
-                            <p className="text-muted">저장 출처</p>
-                            <p className="mt-1 break-words font-semibold text-soft">
-                              {loadedDraftOperationalSummary.sourceLabel}
-                            </p>
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-muted">저장 예정</p>
-                            <p className="mt-1 break-words font-semibold text-soft">
-                              {loadedDraftOperationalSummary.chainLabel}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="mt-3 space-y-1 border-t border-line pt-3 text-xs leading-5 text-muted">
-                          <p>{loadedDraftOperationalSummary.saveExpectation}</p>
-                          <p>{loadedDraftOperationalSummary.sourceNextAction}</p>
-                        </div>
-                        {loadedDraftOperationalSummary.sourceVariantLabel ? (
-                          <div className="mt-3 rounded-md border border-line bg-surface px-3 py-2 text-xs leading-5">
-                            <p className="text-muted">세부 초안 유형</p>
-                            <p className="mt-1 break-words font-semibold text-soft">
-                              {
-                                loadedDraftOperationalSummary.sourceVariantLabel
-                              }
-                            </p>
-                          </div>
-                        ) : null}
-                        <div className="mt-3 border-t border-line pt-3">
-                          <button
-                            type="button"
-                            className={`${primaryButtonClass} min-h-9 w-full whitespace-nowrap px-3 py-1.5 text-xs sm:w-auto`}
-                            onClick={generatePrompt}
-                            disabled={!rawInput.trim() || isGenerating}
-                          >
-                            {isGenerating
-                              ? "생성 중"
-                              : loadedDraftOperationalSummary.actionLabel}
-                          </button>
-                        </div>
-                      </div>
-                    ) : null}
-                    {loadedDraftSummary.sourceFeedback ? (
-                      <div className="mt-2 border-l border-accent/50 pl-3">
-                        <p className="text-[11px] font-semibold text-accent">
-                          반영 피드백 ·{" "}
-                          {loadedDraftSummary.sourceFeedback.rating.toFixed(0)}/5 ·{" "}
-                          {
-                            feedbackTypeLabels[
-                              loadedDraftSummary.sourceFeedback.feedbackType
-                            ]
-                          }
-                        </p>
-                        <p className="mt-1 break-words text-xs leading-5 text-muted">
-                          {loadedDraftSummary.sourceFeedback.comment}
-                        </p>
-                      </div>
-                    ) : null}
-                    <p className="mt-1 font-mono text-xs text-muted">
-                      {new Date(loadedDraftSummary.createdAt).toLocaleString("ko-KR")}
-                    </p>
-                    <p className="mt-1 break-all font-mono text-[11px] leading-5 text-muted">
-                      원본 경로 · {loadedDraftSummary.href}
-                    </p>
-                    <p className="mt-1 text-[11px] leading-5 text-muted">
-                      원본 링크 복사는 현재 도메인을 포함한 절대 URL로
-                      제공됩니다.
-                    </p>
-                    <div className="mt-3 rounded-md border border-accent/20 bg-panel/70 px-3 py-2">
-                      <p className="text-[11px] font-semibold text-accent">
-                        초안 입력 요약 · {loadedDraftSummary.inputLineCount}줄 ·{" "}
-                        {loadedDraftSummary.inputCharCount}자
-                      </p>
-                      <p className="mt-1 break-words text-xs leading-5 text-muted">
-                        {loadedDraftSummary.inputPreview}
-                      </p>
-                    </div>
-                    {loadedDraftPersistence ? (
-                      <div className="mt-3 rounded-md border border-line bg-surface px-3 py-2">
-                        <p className="text-[11px] font-semibold text-soft">
-                          저장 방식 · {loadedDraftPersistence.label}
-                        </p>
-                        <p className="mt-1 text-xs leading-5 text-muted">
-                          {loadedDraftPersistence.description}
-                        </p>
-                      </div>
-                    ) : null}
-                    {loadedDraftSourceKind ? (
-                      <div className="mt-3 rounded-md border border-line bg-surface px-3 py-2">
-                        <p className="text-[11px] font-semibold text-soft">
-                          Studio 저장 출처 · {loadedDraftSourceKind.label}
-                        </p>
-                        <p className="mt-1 text-xs leading-5 text-muted">
-                          {loadedDraftSourceKind.description}
-                        </p>
-                        {loadedDraftOperationalSummary?.sourceVariantLabel ? (
-                          <p className="mt-2 break-words text-xs leading-5 text-muted">
-                            세부 초안 유형 ·{" "}
-                            {
-                              loadedDraftOperationalSummary.sourceVariantLabel
-                            }
-                          </p>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </div>
-                  <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                    <a
-                      className={secondaryButtonClass}
-                      href={loadedDraftSummary.href}
-                      data-testid="studio-loaded-draft-source-action"
-                    >
-                      {loadedDraftSource.sourceActionLabel}
-                    </a>
-                    <button
-                      type="button"
-                      className={secondaryButtonClass}
-                      onClick={copyLoadedDraftSourceLink}
-                      data-testid="studio-loaded-draft-source-link-copy"
-                    >
-                      {sourceLinkCopied
-                        ? (loadedDraftOperationalSummary?.sourceLinkCopiedLabel ??
-                          "원본 링크 복사됨")
-                        : studioManualCopy?.id === "source-link"
-                          ? (loadedDraftOperationalSummary?.sourceLinkFailedLabel ??
-                            "원본 링크 복사 실패")
-                          : (loadedDraftOperationalSummary?.sourceLinkCopyLabel ??
-                            "원본 링크 복사")}
-                    </button>
-                    <button
-                      type="button"
-                      className={secondaryButtonClass}
-                      onClick={() => {
-                        setLoadedDraftSummary(null);
-                        setSourceLinkCopied(false);
-                        setStudioManualCopy((current) =>
-                          current?.id === "source-link" ? null : current,
-                        );
-                      }}
-                    >
-                      안내 닫기
-                    </button>
-                  </div>
-                </div>
-                {studioManualCopy?.id === "source-link" ? (
-                  <ManualCopyPanel className="mt-4 bg-surface"
-                    copy={studioManualCopy}
-                    onClose={() => setStudioManualCopy(null)}
-                  />
-                ) : null}
-              </div>
+              <StudioLoadedDraftPanel
+                loadedDraftSummary={loadedDraftSummary}
+                loadedDraftSource={loadedDraftSource}
+                loadedDraftOperationalSummary={loadedDraftOperationalSummary}
+                loadedDraftPersistence={loadedDraftPersistence}
+                loadedDraftSourceKind={loadedDraftSourceKind}
+                rawInput={rawInput}
+                isGenerating={isGenerating}
+                sourceLinkCopied={sourceLinkCopied}
+                studioManualCopy={studioManualCopy}
+                generatePrompt={generatePrompt}
+                copyLoadedDraftSourceLink={copyLoadedDraftSourceLink}
+                onDismiss={() => {
+                  setLoadedDraftSummary(null);
+                  setSourceLinkCopied(false);
+                  setStudioManualCopy((current) =>
+                    current?.id === "source-link" ? null : current,
+                  );
+                }}
+                onCloseManualCopy={() => setStudioManualCopy(null)}
+              />
             ) : null}
 
             {improvementSource ? (
@@ -2539,462 +2259,51 @@ export function StudioWorkspace({
               </div>
             ) : null}
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="목표">
-                <select
-                  className={selectClass}
-                  value={goal}
-                  onChange={(event) => {
-                    setGoal(event.target.value);
-                    setInputAnalysisCopied(false);
-                  }}
-                >
-                  {goalOptions.map((item) => (
-                    <option key={item}>{item}</option>
-                  ))}
-                </select>
-              </Field>
-
-              <Field label="분야">
-                <select
-                  className={selectClass}
-                  value={domain}
-                  onChange={(event) => {
-                    setDomain(event.target.value);
-                    setInputAnalysisCopied(false);
-                  }}
-                >
-                  {domainOptions.map((item) => (
-                    <option key={item}>{item}</option>
-                  ))}
-                </select>
-              </Field>
-            </div>
-
-            <div id="studio-decision-controls">
-              <p className="mb-3 text-sm font-medium text-soft">프롬프트 언어</p>
-              <div className="rounded-md border border-line bg-surface px-3 py-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="text-xs font-semibold text-accent">
-                      AI 판단 · {promptLanguageDecision.label}
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-muted">
-                      {promptLanguageDecision.reason}
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-md border border-line bg-panel px-3 py-2 text-xs font-semibold text-soft">
-                    사용자 선택 없음
-                  </span>
-                </div>
-                <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                  {languageDecisionSummaryItems.map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-md border border-line bg-panel px-3 py-2"
-                    >
-                      <p className="text-[11px] text-muted">{item.label}</p>
-                      <p className="mt-1 break-words text-xs font-semibold text-soft">
-                        {item.value}
-                      </p>
-                      <p className="mt-1 break-words text-[11px] leading-4 text-muted">
-                        {item.detail}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {promptLanguageDecision.signals.map((signal) => (
-                    <span
-                      key={signal}
-                      className="rounded-md border border-line bg-panel px-2 py-1 text-xs text-muted"
-                    >
-                      {signal}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <p className="mb-3 text-sm font-medium text-soft">최종 답변 언어</p>
-              <p className="-mt-2 mb-3 text-xs leading-5 text-muted">
-                프롬프트 작성 언어는 위에서 자동 적용하고, 여기서는 대상 AI의
-                최종 답변 언어만 정합니다.
-              </p>
-              <div className="grid gap-2 sm:grid-cols-3">
-                {outputLanguages.map((item) => (
-                  <label
-                    key={item}
-                    className={`flex min-h-11 cursor-pointer items-center justify-center rounded-md border px-3 text-sm transition ${
-                      outputLanguage === item
-                        ? "border-accent bg-accent/10 text-accent"
-                        : "border-line bg-surface text-muted hover:text-foreground"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      className="sr-only"
-                      checked={outputLanguage === item}
-                      onChange={() => setOutputLanguage(item)}
-                    />
-                    {outputLanguageLabels[item]}
-                  </label>
-                ))}
-              </div>
-              <div className="mt-3 rounded-md border border-line bg-surface px-3 py-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="text-xs font-semibold text-accent">
-                      추천 답변 언어 · {recommendedOutputLanguage.label}
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-muted">
-                      {recommendedOutputLanguage.reason}
-                    </p>
-                  </div>
-                  {recommendedOutputLanguage.outputLanguage !== outputLanguage ? (
-                    <button
-                      type="button"
-                      className={`${secondaryButtonClass} shrink-0`}
-                      onClick={() =>
-                        setOutputLanguage(recommendedOutputLanguage.outputLanguage)
-                      }
-                    >
-                      추천 적용
-                    </button>
-                  ) : (
-                    <span className="shrink-0 rounded-md border border-line bg-panel px-3 py-2 text-xs font-semibold text-soft">
-                      적용됨
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <p className="mb-3 text-sm font-medium text-soft">대상 AI 도구</p>
-              <div className="mb-3 rounded-md border border-line bg-surface px-3 py-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="text-xs font-semibold text-accent">
-                      AI 추천 · {formatModelLabels(recommendedTargetModels)}
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-muted">
-                      {targetModelDecision.reason}
-                    </p>
-                  </div>
-                  {targetModelRecommendationApplied ? (
-                    <span className="shrink-0 rounded-md border border-line bg-panel px-3 py-2 text-xs font-semibold text-soft">
-                      {modelsTouched ? "추천과 동일" : "자동 적용"}
-                    </span>
-                  ) : (
-                    <button
-                      type="button"
-                      className={`${secondaryButtonClass} shrink-0`}
-                      onClick={() => {
-                        setManualSelectedModels(null);
-                      }}
-                    >
-                      추천 적용
-                    </button>
-                  )}
-                </div>
-                <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                  {targetModelSelectionSummaryItems.map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-md border border-line bg-panel px-3 py-2"
-                    >
-                      <p className="text-[11px] text-muted">{item.label}</p>
-                      <p className="mt-1 break-words text-xs font-semibold text-soft">
-                        {item.value}
-                      </p>
-                      <p className="mt-1 break-words text-[11px] leading-4 text-muted">
-                        {item.detail}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {targetModelDecision.signals.map((signal) => (
-                    <span
-                      key={signal}
-                      className="rounded-md border border-line bg-panel px-2 py-1 text-xs text-muted"
-                    >
-                      {signal}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="grid gap-2 sm:grid-cols-5">
-                {targetModels.map((model) => (
-                  <label
-                    key={model}
-                    className={`flex min-h-11 cursor-pointer items-center justify-center rounded-md border px-3 text-sm transition ${
-                      selectedModels.includes(model)
-                        ? "border-accent bg-accent/10 text-accent"
-                        : "border-line bg-surface text-muted hover:text-foreground"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      className="sr-only"
-                      checked={selectedModels.includes(model)}
-                      onChange={() => toggleModel(model)}
-                    />
-                    {modelLabels[model]}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div
-              id="studio-next-generation-action"
-              className="rounded-md border border-accent/30 bg-accent/10 px-3 py-3"
-              data-testid="studio-next-generation-summary"
-            >
-              <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-semibold text-accent">
-                      다음 실행
-                    </p>
-                    <span className="rounded-md border border-accent/40 bg-panel px-2 py-1 text-[11px] font-semibold text-accent">
-                      {nextGenerationSummary.status}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm font-semibold text-soft">
-                    {nextGenerationSummary.title}
-                  </p>
-                  <p className="mt-1 break-words text-xs leading-5 text-muted">
-                    {nextGenerationSummary.detail}
-                  </p>
-                  <p className="mt-1 break-words text-[11px] leading-5 text-muted">
-                    {nextGenerationSummary.evidence} · 출처{" "}
-                    {nextGenerationSummary.source}
-                  </p>
-                  <div
-                    className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-5"
-                    data-testid="studio-next-generation-metrics"
-                  >
-                    {nextGenerationMetricItems.map((item) => (
-                      <div
-                        className="min-w-0 rounded-md border border-accent/30 bg-panel px-3 py-2"
-                        key={item.label}
-                      >
-                        <p className="text-[11px] text-muted">{item.label}</p>
-                        <p className="mt-1 break-words text-xs font-semibold text-soft">
-                          {item.value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                  <div
-                    className="mt-3 grid gap-2 md:grid-cols-3"
-                    data-testid="studio-next-generation-checklist"
-                  >
-                    {nextGenerationChecklistItems.map((item) => (
-                      <div
-                        className="min-w-0 rounded-md border border-accent/20 bg-panel px-3 py-2"
-                        key={item.label}
-                      >
-                        <div className="flex min-w-0 items-start justify-between gap-2">
-                          <div className="flex min-w-0 items-center gap-2">
-                            <span className="shrink-0 rounded-md border border-accent/30 bg-accent/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-accent">
-                              {item.step}
-                            </span>
-                            <p className="break-words text-[11px] font-semibold text-accent">
-                              {item.label}
-                            </p>
-                          </div>
-                          <span className="shrink-0 rounded-md border border-line bg-surface px-2 py-0.5 text-[10px] font-semibold text-soft">
-                            {item.value}
-                          </span>
-                        </div>
-                        <p className="mt-2 break-words text-[11px] leading-4 text-muted">
-                          {item.detail}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto">
-                  {inputReadinessAnalysis.missingQuestions.length ? (
-                    <button
-                      className={`${secondaryButtonClass} w-full sm:w-auto`}
-                      type="button"
-                      onClick={applyInputReadinessQuestions}
-                      data-testid="studio-next-generation-apply-questions"
-                    >
-                      {inputReadinessQuestionBlockApplied
-                        ? "보강 질문 확인"
-                        : "보강 질문 추가"}
-                    </button>
-                  ) : null}
-                  <button
-                    className={`${primaryButtonClass} w-full sm:w-auto`}
-                    type="button"
-                    onClick={generatePrompt}
-                    disabled={!rawInput.trim() || isGenerating}
-                  >
-                    {isGenerating ? "생성 중" : "전문 프롬프트 생성"}
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div
-              id="studio-learning-context"
-              className="rounded-md border border-line bg-surface px-3 py-3"
-            >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold text-soft">
-                    적용 학습 컨텍스트
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-muted">
-                    생성 시 상위 학습 메모리 {appliedContextMemories.length}개와
-                    최근 피드백 {appliedFeedbackCount}개를 함께 반영합니다.
-                  </p>
-                </div>
-                <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                  <button
-                    type="button"
-                    className={secondaryButtonClass}
-                    onClick={enableAllMemoryScopes}
-                  >
-                    전체 켜기
-                  </button>
-                  <button
-                    type="button"
-                    className={secondaryButtonClass}
-                    onClick={disableAllMemoryScopes}
-                  >
-                    메모리 제외
-                  </button>
-                  <a className={secondaryButtonClass} href="/learning">
-                    전체 보기
-                  </a>
-                </div>
-              </div>
-              <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                {learningContextSummaryItems.map((item) => (
-                  <div
-                    key={item.label}
-                    className="rounded-md border border-line bg-panel px-3 py-2"
-                  >
-                    <p className="text-[11px] text-muted">{item.label}</p>
-                    <p className="mt-1 break-words text-xs font-semibold text-soft">
-                      {item.value}
-                    </p>
-                    <p className="mt-1 break-words text-[11px] leading-4 text-muted">
-                      {item.detail}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div
-                className="mt-3 grid gap-2 lg:grid-cols-3"
-                data-testid="studio-learning-context-workflow"
-              >
-                {learningContextWorkflowSteps.map((item) => (
-                  <div
-                    key={item.step}
-                    className="min-w-0 rounded-md border border-line bg-panel px-3 py-2.5"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-md border border-accent/40 bg-accent/10 px-2 py-1 font-mono text-[11px] font-semibold text-accent">
-                        {item.step}
-                      </span>
-                      <p className="text-[11px] font-semibold text-muted">
-                        {item.label}
-                      </p>
-                    </div>
-                    <p className="mt-2 break-words text-xs font-semibold text-soft">
-                      {item.title}
-                    </p>
-                    <p className="mt-1 text-[11px] leading-4 text-muted">
-                      {item.detail}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {memoryScopeOptions.map((item) => (
-                  <div
-                    key={item.scope}
-                    className={`flex min-h-14 items-start gap-3 rounded-md border px-3 py-2.5 transition ${
-                      enabledMemoryScopes[item.scope]
-                        ? "border-accent bg-accent/10"
-                        : "border-line bg-panel text-muted hover:text-foreground"
-                    }`}
-                  >
-                    <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-3">
-                      <input
-                        type="checkbox"
-                        className="mt-1 size-4 shrink-0 accent-current"
-                        checked={enabledMemoryScopes[item.scope]}
-                        onChange={() => toggleMemoryScope(item.scope)}
-                      />
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-soft">
-                          {item.label}
-                        </span>
-                        <span className="mt-0.5 block text-xs leading-4 text-muted">
-                          {item.description}
-                        </span>
-                      </span>
-                    </label>
-                    <div className="flex shrink-0 flex-col items-end gap-2">
-                      <span className="rounded-md border border-line bg-panel px-2 py-1 font-mono text-xs text-soft">
-                        {learningMemoryScopeCounts[item.scope]}
-                      </span>
-                      <a
-                        className="text-xs font-semibold text-accent hover:text-accent-strong"
-                        href={`/learning?scope=${item.scope}`}
-                      >
-                        점검
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {appliedLearningMemories.length ? (
-                <ul className="mt-3 divide-y divide-line">
-                  {appliedLearningMemories.map((memory) => (
-                    <li key={memory.id} className="py-3 first:pt-0 last:pb-0">
-                      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="rounded-md border border-line bg-panel px-2 py-1 text-xs font-semibold text-soft">
-                              {memoryScopeLabels[memory.scope]}
-                            </span>
-                            <span className="font-mono text-xs text-accent">
-                              {memory.confidence.toFixed(2)}
-                            </span>
-                          </div>
-                          <p className="mt-2 break-words text-sm font-semibold text-soft">
-                            {memory.title}
-                          </p>
-                          <p className="mt-1 break-words text-xs leading-5 text-muted">
-                            {getMemoryPreview(memory.content)}
-                          </p>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="mt-3 rounded-md border border-line bg-panel px-3 py-3">
-                  <p className="text-xs leading-5 text-muted">
-                    {enabledMemoryScopeCount === 0
-                      ? "모든 학습 메모리 scope가 꺼져 있습니다. 이번 생성에는 최근 피드백만 학습 신호로 반영됩니다."
-                      : memories.length
-                        ? "선택한 scope에 적용할 학습 메모리가 없습니다. 필요한 scope를 켜거나 Learning에서 메모리를 확인하세요."
-                        : "아직 적용할 학습 메모리가 없습니다. 회사 기준을 저장하거나 Library 피드백을 남기면 다음 생성부터 자동 반영됩니다."}
-                  </p>
-                </div>
-              )}
-            </div>
+            <StudioDecisionControlsPanel
+              goal={goal}
+              domain={domain}
+              goalOptions={goalOptions}
+              domainOptions={domainOptions}
+              promptLanguageDecision={promptLanguageDecision}
+              languageDecisionSummaryItems={languageDecisionSummaryItems}
+              outputLanguage={outputLanguage}
+              recommendedOutputLanguage={recommendedOutputLanguage}
+              recommendedTargetModels={recommendedTargetModels}
+              targetModelDecision={targetModelDecision}
+              targetModelRecommendationApplied={targetModelRecommendationApplied}
+              modelsTouched={modelsTouched}
+              targetModelSelectionSummaryItems={targetModelSelectionSummaryItems}
+              selectedModels={selectedModels}
+              nextGenerationSummary={nextGenerationSummary}
+              nextGenerationMetricItems={nextGenerationMetricItems}
+              nextGenerationChecklistItems={nextGenerationChecklistItems}
+              inputReadinessAnalysis={inputReadinessAnalysis}
+              inputReadinessQuestionBlockApplied={
+                inputReadinessQuestionBlockApplied
+              }
+              rawInput={rawInput}
+              isGenerating={isGenerating}
+              appliedContextMemories={appliedContextMemories}
+              appliedFeedbackCount={appliedFeedbackCount}
+              learningContextSummaryItems={learningContextSummaryItems}
+              learningContextWorkflowSteps={learningContextWorkflowSteps}
+              enabledMemoryScopes={enabledMemoryScopes}
+              learningMemoryScopeCounts={learningMemoryScopeCounts}
+              appliedLearningMemories={appliedLearningMemories}
+              enabledMemoryScopeCount={enabledMemoryScopeCount}
+              memories={memories}
+              setGoal={setGoal}
+              setDomain={setDomain}
+              setInputAnalysisCopied={setInputAnalysisCopied}
+              setOutputLanguage={setOutputLanguage}
+              setManualSelectedModels={setManualSelectedModels}
+              toggleModel={toggleModel}
+              applyInputReadinessQuestions={applyInputReadinessQuestions}
+              generatePrompt={generatePrompt}
+              enableAllMemoryScopes={enableAllMemoryScopes}
+              disableAllMemoryScopes={disableAllMemoryScopes}
+              toggleMemoryScope={toggleMemoryScope}
+            />
             <div className="rounded-md border border-line bg-surface px-3 py-3">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -3855,435 +3164,30 @@ export function StudioWorkspace({
                 </div>
               </div>
 
-              <aside className="space-y-5 p-5">
-                {generated.improvementSource ? (
-                  <div className="rounded-md border border-line bg-surface px-4 py-3">
-                    <p className="text-xs text-muted">Library 연결</p>
-                    <p className="mt-1 break-words text-sm font-semibold text-soft">
-                      {generated.title}
-                    </p>
-                    <p className="mt-2 text-xs leading-5 text-muted">
-                      {generated.improvementSource.sourceVersionModel
-                        ? `${modelLabels[generated.improvementSource.sourceVersionModel]} 버전을 기준으로 만든 ${formatImprovementDepthLabel(
-                            generatedImprovementDepth,
-                          )}입니다.`
-                        : `Library 선택 버전을 기준으로 만든 ${formatImprovementDepthLabel(
-                            generatedImprovementDepth,
-                          )}입니다.`}
-                    </p>
-                  </div>
-                ) : null}
-
-                <div className="rounded-md border border-line bg-surface px-4 py-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold">학습 반영</p>
-                    <span className="shrink-0 rounded-md border border-line bg-panel px-2 py-1 font-mono text-xs text-soft">
-                      {generatedLearningContext
-                        ? `${generatedLearningContext.appliedMemoryCount}+${generatedLearningContext.recentFeedbackCount}`
-                        : "미기록"}
-                    </span>
-                  </div>
-                  {generatedLearningContext ? (
-                    <>
-                      <p className="mt-2 text-xs leading-5 text-muted">
-                        메모리 {generatedLearningContext.appliedMemoryCount}개와
-                        최근 피드백{" "}
-                        {generatedLearningContext.recentFeedbackCount}개를 생성
-                        당시 컨텍스트로 사용했습니다.
-                      </p>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {generatedEnabledScopeLabels.length ? (
-                          generatedEnabledScopeLabels.map((label) => (
-                            <span
-                              key={label}
-                              className="rounded-md border border-accent/40 bg-accent/10 px-2 py-1 text-xs font-semibold text-accent"
-                            >
-                              {label}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="rounded-md border border-line bg-panel px-2 py-1 text-xs text-muted">
-                            메모리 scope 없음
-                          </span>
-                        )}
-                      </div>
-                      {generatedDisabledScopeLabels.length ? (
-                        <p className="mt-2 text-xs leading-5 text-muted">
-                          제외 scope · {generatedDisabledScopeLabels.join(", ")}
-                        </p>
-                      ) : null}
-                      {generatedLearningContext.appliedMemoryTitles.length ? (
-                        <ul className="mt-3 space-y-2 text-xs leading-5 text-muted">
-                          {generatedLearningContext.appliedMemoryTitles
-                            .slice(0, 3)
-                            .map((title) => (
-                              <li key={title} className="break-words">
-                                - {title}
-                              </li>
-                            ))}
-                        </ul>
-                      ) : (
-                        <p className="mt-3 text-xs leading-5 text-muted">
-                          생성 당시 적용된 학습 메모리는 없습니다.
-                        </p>
-                      )}
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} mt-4 w-full`}
-                        onClick={copyLearningContextReport}
-                      >
-                        {learningContextReportCopied
-                          ? "학습 리포트 복사됨"
-                          : studioManualCopy?.id === "learning-report"
-                            ? "학습 리포트 복사 실패"
-                            : "학습 리포트 복사"}
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <p className="mt-2 text-xs leading-5 text-muted">
-                        이 결과는 학습 컨텍스트 메타 저장 전 생성됐습니다.
-                      </p>
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} mt-4 w-full`}
-                        onClick={copyLearningContextReport}
-                      >
-                        {learningContextReportCopied
-                          ? "학습 리포트 복사됨"
-                          : studioManualCopy?.id === "learning-report"
-                            ? "학습 리포트 복사 실패"
-                            : "학습 리포트 복사"}
-                      </button>
-                    </>
-                  )}
-                </div>
-
-                <div>
-                  <p className="text-sm text-muted">품질 점수</p>
-                  <p className="mt-1 font-mono text-4xl font-semibold text-accent">
-                    {activeVersion.qualityScore.toFixed(1)}
-                  </p>
-                  <p className="mt-2 text-xs text-muted">
-                    {generated.source === "openai"
-                      ? `OpenAI · ${generated.modelUsed}`
-                      : "Local builder"}
-                  </p>
-                  <p className="mt-2 text-xs text-muted">
-                    언어 전략 ·{" "}
-                    {languageStrategyLabels[generated.languageStrategy ?? "hybrid"]}
-                  </p>
-                  <p className="mt-2 text-xs text-muted">
-                    답변 언어 ·{" "}
-                    {outputLanguageLabels[generated.outputLanguage ?? "korean"]}
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <ScoreBar label="명확성" value={activeVersion.scoreBreakdown.clarity} />
-                  <ScoreBar label="맥락" value={activeVersion.scoreBreakdown.context} />
-                  <ScoreBar
-                    label="출력 형식"
-                    value={activeVersion.scoreBreakdown.outputFormat}
-                  />
-                  <ScoreBar
-                    label="제약 조건"
-                    value={activeVersion.scoreBreakdown.constraints}
-                  />
-                  <ScoreBar
-                    label="전문성"
-                    value={activeVersion.scoreBreakdown.expertise}
-                  />
-                  <ScoreBar
-                    label="도구 적합성"
-                    value={activeVersion.scoreBreakdown.modelFit}
-                  />
-                  <ScoreBar
-                    label="재사용성"
-                    value={activeVersion.scoreBreakdown.reusability}
-                  />
-                </div>
-
-                {qualityImprovementBaseline ? (
-                  <div className="rounded-md border border-line bg-surface px-4 py-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-semibold">재생성 비교</p>
-                      <span
-                        className={`shrink-0 rounded-md border px-2 py-1 font-mono text-xs ${
-                          qualityComparison
-                            ? qualityComparison.scoreDelta > 0
-                              ? "border-success/50 text-success"
-                              : qualityComparison.scoreDelta < 0
-                                ? "border-danger/50 text-danger"
-                                : "border-line text-soft"
-                            : "border-line text-muted"
-                        }`}
-                      >
-                        {qualityComparison
-                          ? formatScoreDelta(qualityComparison.scoreDelta)
-                          : "대기"}
-                      </span>
-                    </div>
-                    {qualityComparison ? (
-                      <>
-                        <p className="mt-2 text-xs leading-5 text-muted">
-                          {qualityImprovementBaseline.version.qualityScore.toFixed(
-                            1,
-                          )}{" "}
-                          → {activeVersion.qualityScore.toFixed(1)} · 개선{" "}
-                          {qualityComparison.improvedCount}개, 하락{" "}
-                          {qualityComparison.regressedCount}개
-                        </p>
-                        {regenerationSaveDecision ? (
-                          <div
-                            className={`mt-3 rounded-md border px-3 py-2 ${
-                              regenerationSaveDecisionClassNames[
-                                regenerationSaveDecision.status
-                              ]
-                            }`}
-                          >
-                            <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-                              <p className="text-xs font-semibold">
-                                저장 판정 · {regenerationSaveDecision.label}
-                              </p>
-                              <span className="font-mono text-[11px]">
-                                {formatScoreDelta(qualityComparison.scoreDelta)}
-                              </span>
-                            </div>
-                            <p className="mt-1 text-xs leading-5">
-                              {regenerationSaveDecision.detail}
-                            </p>
-                          </div>
-                        ) : null}
-                        <div className="mt-3 space-y-2">
-                          {qualityComparison.scoreChanges.map((item) => (
-                            <div
-                              key={item.key}
-                              className="flex items-center justify-between gap-3 text-xs"
-                            >
-                              <span className="text-muted">{item.label}</span>
-                              <span
-                                className={`font-mono ${
-                                  item.delta > 0
-                                    ? "text-success"
-                                    : item.delta < 0
-                                      ? "text-danger"
-                                      : "text-soft"
-                                }`}
-                              >
-                                {item.previous.toFixed(1)} →{" "}
-                                {item.current.toFixed(1)} (
-                                {formatScoreDelta(item.delta)})
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                        {targetAiReadinessComparison ? (
-                          <div className="mt-4 border-t border-line pt-3">
-                            <p className="text-xs font-semibold text-soft">
-                              전달 준비 비교
-                            </p>
-                            <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                              {targetAiReadinessStatusOrder.map((status) => {
-                                const delta =
-                                  targetAiReadinessComparison.deltas[status];
-
-                                return (
-                                  <div
-                                    className="rounded-md border border-line bg-panel-strong px-3 py-2"
-                                    key={status}
-                                  >
-                                    <p className="text-[11px] text-muted">
-                                      {targetAiReadinessStatusLabels[status]}
-                                    </p>
-                                    <div className="mt-1 flex items-baseline justify-between gap-2">
-                                      <span
-                                        className={`font-mono text-sm font-semibold ${
-                                          targetAiReadinessStatusClassNames[
-                                            status
-                                          ]
-                                        }`}
-                                      >
-                                        {
-                                          targetAiReadinessComparison.current[
-                                            status
-                                          ]
-                                        }
-                                      </span>
-                                      <span
-                                        className={`font-mono text-[11px] ${
-                                          delta === 0
-                                            ? "text-muted"
-                                            : status === "ready"
-                                              ? delta > 0
-                                                ? "text-success"
-                                                : "text-danger"
-                                              : delta < 0
-                                                ? "text-success"
-                                                : "text-danger"
-                                        }`}
-                                      >
-                                        {formatCountDelta(delta)}
-                                      </span>
-                                    </div>
-                                    <p className="mt-1 text-[11px] text-muted">
-                                      이전{" "}
-                                      {
-                                        targetAiReadinessComparison.previous[
-                                          status
-                                        ]
-                                      }
-                                    </p>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        ) : null}
-                        <div className="mt-4 flex flex-col gap-2">
-                          <button
-                            type="button"
-                            className={`${secondaryButtonClass} w-full`}
-                            onClick={copyQualityComparisonReport}
-                          >
-                            {qualityComparisonCopied
-                              ? "비교 리포트 복사됨"
-                              : studioManualCopy?.id === "quality-comparison"
-                                ? "비교 리포트 복사 실패"
-                                : "비교 리포트 복사"}
-                          </button>
-                          <button
-                            type="button"
-                            className={`${secondaryButtonClass} w-full`}
-                            onClick={() => {
-                              setQualityImprovementBaseline(null);
-                              setQualityComparisonCopied(false);
-                              setStudioManualCopy(null);
-                            }}
-                          >
-                            비교 기준 해제
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <p className="mt-2 text-xs leading-5 text-muted">
-                          품질 진단 기반 입력이 반영됐습니다. 다시 생성하면 현재
-                          결과와 기준 버전의 점수 변화를 비교합니다.
-                        </p>
-                        <button
-                          type="button"
-                          className={`${secondaryButtonClass} mt-4 w-full`}
-                          onClick={() => {
-                            setQualityImprovementBaseline(null);
-                            setQualityComparisonCopied(false);
-                          }}
-                        >
-                          비교 기준 해제
-                        </button>
-                      </>
-                    )}
-                  </div>
-                ) : null}
-
-                <div className="rounded-md border border-line bg-surface px-4 py-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold">품질 진단</p>
-                    <span className="shrink-0 rounded-md border border-line bg-panel px-2 py-1 font-mono text-xs text-soft">
-                      {qualityInsights.length}개
-                    </span>
-                  </div>
-                  <ul className="mt-3 space-y-3">
-                    {qualityInsights.length ? (
-                      qualityInsights.map((insight) => (
-                        <li key={insight.key} className="text-sm leading-5">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span
-                              className={`rounded-md border px-2 py-1 text-xs font-semibold ${
-                                insight.severity === "improve"
-                                  ? "border-danger/50 text-danger"
-                                  : insight.severity === "watch"
-                                    ? "border-attention/50 text-attention"
-                                    : "border-line text-soft"
-                              }`}
-                            >
-                              {insight.label} {insight.score.toFixed(1)}
-                            </span>
-                          </div>
-                          <p className="mt-2 text-xs leading-5 text-muted">
-                            {insight.reason}
-                          </p>
-                          <p className="mt-1 text-xs leading-5 text-soft">
-                            {insight.action}
-                          </p>
-                        </li>
-                      ))
-                    ) : (
-                      <li className="text-xs leading-5 text-muted">
-                        현재 점수 기준으로 낮은 항목은 없습니다. 저장 전 실제
-                        사용 목적과 최신 맥락만 확인하세요.
-                      </li>
-                    )}
-                  </ul>
-                  <button
-                    type="button"
-                    className={`${secondaryButtonClass} mt-4 w-full`}
-                    onClick={applyQualityImprovementBrief}
-                    disabled={!qualityInsights.length}
-                  >
-                    재생성 입력으로 반영
-                  </button>
-                </div>
-
-                <div>
-                  <p className="mb-2 text-sm font-semibold">가정</p>
-                  <ul className="space-y-2 text-sm leading-5 text-muted">
-                    {activeVersion.assumptions.map((item) => (
-                      <li key={item}>- {item}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <p className="mb-2 text-sm font-semibold">추가 정보</p>
-                  <ul className="space-y-2 text-sm leading-5 text-muted">
-                    {activeVersion.missingContext.length ? (
-                      activeVersion.missingContext.map((item) => (
-                        <li key={item}>- {item}</li>
-                      ))
-                    ) : (
-                      <li>- 현재 입력만으로 생성 가능</li>
-                    )}
-                  </ul>
-                  {activeVersion.missingContext.length ? (
-                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                      <a
-                        className={`${secondaryButtonClass} w-full`}
-                        href="/profile?returnTo=%2Fstudio"
-                      >
-                        개인 프로필 보강
-                      </a>
-                      <a
-                        className={`${secondaryButtonClass} w-full`}
-                        href="/company?returnTo=%2Fstudio"
-                      >
-                        회사 정보 보강
-                      </a>
-                      <button
-                        type="button"
-                        className={`${secondaryButtonClass} w-full sm:col-span-2`}
-                        onClick={copyMissingContextQuestions}
-                      >
-                        {contextQuestionsCopied
-                          ? "보강 질문 복사됨"
-                          : studioManualCopy?.id === "missing-context"
-                            ? "보강 질문 복사 실패"
-                            : "보강 질문 복사"}
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
-              </aside>
+              <StudioResultInsightsPanel
+                generated={generated}
+                activeVersion={activeVersion}
+                generatedImprovementDepth={generatedImprovementDepth}
+                generatedLearningContext={generatedLearningContext}
+                generatedEnabledScopeLabels={generatedEnabledScopeLabels}
+                generatedDisabledScopeLabels={generatedDisabledScopeLabels}
+                qualityImprovementBaseline={qualityImprovementBaseline}
+                qualityComparison={qualityComparison}
+                regenerationSaveDecision={regenerationSaveDecision}
+                targetAiReadinessComparison={targetAiReadinessComparison}
+                qualityInsights={qualityInsights}
+                learningContextReportCopied={learningContextReportCopied}
+                qualityComparisonCopied={qualityComparisonCopied}
+                contextQuestionsCopied={contextQuestionsCopied}
+                studioManualCopy={studioManualCopy}
+                copyLearningContextReport={copyLearningContextReport}
+                copyQualityComparisonReport={copyQualityComparisonReport}
+                applyQualityImprovementBrief={applyQualityImprovementBrief}
+                copyMissingContextQuestions={copyMissingContextQuestions}
+                setQualityImprovementBaseline={setQualityImprovementBaseline}
+                setQualityComparisonCopied={setQualityComparisonCopied}
+                setStudioManualCopy={setStudioManualCopy}
+              />
             </div>
           ) : (
             <div className="flex min-h-[640px] items-center justify-center px-5 text-center text-sm text-muted">

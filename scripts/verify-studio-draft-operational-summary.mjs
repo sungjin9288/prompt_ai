@@ -7,6 +7,7 @@ const studioWorkspaceSource = readSource(
 );
 const source = [
   readConcatenatedSources([
+    "src/components/studio/studio-view-types.ts",
     "src/lib/studio-view/hrefs.ts",
     "src/lib/studio-view/draft-summary.ts",
     "src/lib/studio-view/learning-memory.ts",
@@ -14,6 +15,12 @@ const source = [
     "src/lib/studio-view/reports.ts",
   ]),
   studioWorkspaceSource,
+  readConcatenatedSources([
+    "src/components/studio/studio-input-analysis-panel.tsx",
+    "src/components/studio/studio-loaded-draft-panel.tsx",
+    "src/components/studio/studio-decision-controls-panel.tsx",
+    "src/components/studio/studio-result-insights-panel.tsx",
+  ]),
 ].join("\n");
 const inputAnalysis = readSource("src/lib/prompt/input-analysis.ts");
 const readme = readSource("README.md");

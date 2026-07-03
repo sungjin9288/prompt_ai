@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { LiveAnnouncer } from "@/components/common/live-announcer";
 
 type NavGroup = "운영" | "작업" | "기준" | "시스템";
 
@@ -230,6 +231,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         {children}
       </main>
+      <LiveAnnouncer />
     </div>
   );
 }

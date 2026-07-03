@@ -1,3 +1,5 @@
+import { announce } from "@/lib/browser/announcer";
+
 const clipboardWriteTimeoutMs = 800;
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
@@ -11,7 +13,7 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
   ]);
 }
 
-export async function copyTextToClipboard(text: string) {
+async function writeToClipboard(text: string) {
   if (typeof document === "undefined") {
     return false;
   }
@@ -38,4 +40,14 @@ export async function copyTextToClipboard(text: string) {
       document.body.removeChild(textarea);
     }
   }
+}
+
+export async function copyTextToClipboard(text: string) {
+  const copied = await writeToClipboard(text);
+
+  if (copied) {
+    announce("클립보드에 복사했습니다.");
+  }
+
+  return copied;
 }

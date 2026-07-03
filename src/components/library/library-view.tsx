@@ -45,6 +45,12 @@ import {
 import { formatAbsoluteInternalHref } from "@/lib/navigation/href";
 import { writeStudioDraft } from "@/lib/studio/draft";
 import { copyTextToClipboard } from "@/lib/browser/clipboard";
+import { announce } from "@/lib/browser/announcer";
+import {
+  normalizeImportedPrompt,
+  type ParsedPromptImport,
+} from "@/lib/library/import";
+import { PromptImportDialog } from "@/components/library/prompt-import-dialog";
 import {
   formatPromptImprovementDepth,
   generationEngineLabels,
@@ -241,6 +247,7 @@ export function LibraryView({
   const [comment, setComment] = useState("");
   const [latestFeedbackId, setLatestFeedbackId] = useState("");
   const [copied, setCopied] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [targetAiPackageCopiedKey, setTargetAiPackageCopiedKey] =
     useState("");
   const [
@@ -2468,6 +2475,21 @@ export function LibraryView({
     );
   }
 
+  function importPrompt(parsed: ParsedPromptImport) {
+    const imported = normalizeImportedPrompt(parsed, {
+      id: makeId("prompt"),
+      versionIds: parsed.versions.map(() => makeId("version")),
+      timestamp: new Date().toISOString(),
+    });
+
+    setPrompts((current) => [imported, ...current]);
+    setImportDialogOpen(false);
+    router.push(
+      buildPromptLibraryHref(imported.id, imported.versions[0]?.targetModel),
+    );
+    announce("프롬프트를 가져왔습니다.");
+  }
+
   async function copyLibraryText(copy: LibraryManualCopy) {
     const copiedToClipboard = await copyTextToClipboard(copy.body);
 
@@ -3900,6 +3922,21 @@ export function LibraryView({
       <PageHeader
         title="프롬프트 라이브러리"
         description="저장된 프롬프트를 검색하고, 언어 전략과 AI별 버전을 확인하며, 피드백을 학습 데이터로 축적합니다."
+        action={
+          <button
+            type="button"
+            className={secondaryButtonClass}
+            onClick={() => setImportDialogOpen(true)}
+          >
+            가져오기
+          </button>
+        }
+      />
+
+      <PromptImportDialog
+        open={importDialogOpen}
+        onClose={() => setImportDialogOpen(false)}
+        onImport={importPrompt}
       />
 
       {companyUpdateNoticeVisible ? (

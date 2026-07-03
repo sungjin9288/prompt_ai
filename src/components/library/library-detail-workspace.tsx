@@ -53,6 +53,13 @@ import {
   buildImprovementScoreComparison,
 } from "@/lib/library/prompt-metrics";
 import type { SelectedOperationalSummary } from "@/lib/library/report-notes";
+import {
+  buildPromptExportFilename,
+  buildPromptJson,
+  buildPromptMarkdown,
+} from "@/lib/library/export";
+import { downloadTextFile } from "@/lib/browser/download";
+import { announce } from "@/lib/browser/announcer";
 import type { LibraryManualCopy } from "./library-view-types";
 
 type WorkflowStep = {
@@ -317,6 +324,32 @@ export function LibraryDetailWorkspace({
   setTargetAiPackagePreviewOpen,
   setTargetAiPackagePreviewMode,
 }: LibraryDetailWorkspaceProps) {
+  function exportSelectedPromptAsMarkdown() {
+    if (!selected || !activeVersion) {
+      return;
+    }
+
+    downloadTextFile(
+      buildPromptExportFilename(selected, "md"),
+      buildPromptMarkdown(selected, activeVersion),
+      "text/markdown;charset=utf-8",
+    );
+    announce("내보냈습니다.");
+  }
+
+  function exportSelectedPromptAsJson() {
+    if (!selected) {
+      return;
+    }
+
+    downloadTextFile(
+      buildPromptExportFilename(selected, "json"),
+      buildPromptJson(selected),
+      "application/json",
+    );
+    announce("내보냈습니다.");
+  }
+
   return (
         <Panel id="library-detail-workspace" className="min-h-[720px]">
           {selected && activeVersion ? (
@@ -377,6 +410,22 @@ export function LibraryDetailWorkspace({
                   aria-label="태그 추가"
                   className="min-h-8 w-32 rounded-md border border-line bg-panel px-2 py-1 text-xs text-foreground placeholder:text-muted focus:outline-none"
                 />
+                <button
+                  type="button"
+                  data-testid="library-detail-export-markdown"
+                  className="inline-flex h-7 min-w-[64px] items-center justify-center gap-1 rounded-md border border-line bg-panel px-2 text-xs text-muted transition hover:bg-surface hover:text-foreground"
+                  onClick={exportSelectedPromptAsMarkdown}
+                >
+                  Markdown 내보내기
+                </button>
+                <button
+                  type="button"
+                  data-testid="library-detail-export-json"
+                  className="inline-flex h-7 min-w-[64px] items-center justify-center gap-1 rounded-md border border-line bg-panel px-2 text-xs text-muted transition hover:bg-surface hover:text-foreground"
+                  onClick={exportSelectedPromptAsJson}
+                >
+                  JSON 내보내기
+                </button>
               </div>
 
               <div className="grid min-h-[640px] min-w-0 gap-0 xl:grid-cols-[1fr_300px]">

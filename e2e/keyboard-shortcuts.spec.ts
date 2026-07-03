@@ -32,14 +32,29 @@ test("navigates with the g then l go-to sequence", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("navigation", { name: "주요 메뉴" }).waitFor();
 
-  await page.keyboard.press("g");
-  await page.keyboard.press("l");
-
-  await expect(page).toHaveURL(/\/library$/);
+  // The listener attaches in a post-hydration effect, so retry the sequence
+  // until it takes.
+  await expect(async () => {
+    await page.keyboard.press("g");
+    await page.keyboard.press("l");
+    await expect(page).toHaveURL(/\/library$/, { timeout: 800 });
+  }).toPass({ timeout: 6000, intervals: [900] });
 });
 
 test("ignores shortcuts while a text input has focus", async ({ page }) => {
   await page.goto("/studio");
+  await page.getByRole("navigation", { name: "주요 메뉴" }).waitFor();
+
+  const dialog = page.getByRole("dialog", { name: "키보드 단축키" });
+
+  // First prove the global listener is live (post-hydration); otherwise a
+  // dropped keypress would make the guard assertion pass for the wrong reason.
+  await expect(async () => {
+    await page.keyboard.press("Shift+Slash");
+    await expect(dialog).toBeVisible({ timeout: 800 });
+  }).toPass({ timeout: 6000, intervals: [900] });
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
 
   const textInput = page.locator('input[type="text"], textarea').first();
   await textInput.waitFor({ state: "visible" });
@@ -49,7 +64,5 @@ test("ignores shortcuts while a text input has focus", async ({ page }) => {
   await page.keyboard.press("l");
 
   await expect(page).toHaveURL(/\/studio$/);
-  await expect(
-    page.getByRole("dialog", { name: "키보드 단축키" }),
-  ).toBeHidden();
+  await expect(dialog).toBeHidden();
 });

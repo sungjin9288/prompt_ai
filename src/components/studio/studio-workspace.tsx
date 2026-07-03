@@ -73,6 +73,8 @@ import {
 } from "@/lib/studio/draft";
 import { buildStudioDraftLoadedNotice, getStudioDraftDisplaySourceLabel } from "@/lib/studio/draft-display";
 import { copyTextToClipboard } from "@/lib/browser/clipboard";
+import { openExternalUrl } from "@/lib/browser/open-external-url";
+import { getExternalAiTarget } from "@/lib/prompt/external-ai";
 import {
   buildSavedPromptLibraryHref,
   buildSavedPromptSkillHref,
@@ -1737,6 +1739,37 @@ export function StudioWorkspace({
     );
   }
 
+  async function copyPromptAndOpenExternalAi() {
+    if (!activeVersion) {
+      return;
+    }
+
+    if (externalHandoffBlockedByPendingRegeneration) {
+      setGenerationNotice(
+        "보강 브리프가 원문에 반영된 상태입니다. 새 결과를 생성한 뒤 복사하세요.",
+      );
+      return;
+    }
+
+    const externalAiTarget = getExternalAiTarget(activeVersion.targetModel);
+    const copiedToClipboard = await copyTextToClipboard(activeVersion.content);
+
+    setCopied(copiedToClipboard);
+    setStudioManualCopy(
+      copiedToClipboard
+        ? null
+        : {
+            id: "prompt",
+            title: "현재 버전",
+            body: activeVersion.content,
+          },
+    );
+
+    if (copiedToClipboard) {
+      openExternalUrl(externalAiTarget.url);
+    }
+  }
+
   async function copyQualityReport() {
     if (!generated || !activeVersion) {
       return;
@@ -2874,6 +2907,20 @@ export function StudioWorkspace({
 	                                ? "품질 리포트 복사 실패"
 	                                : "품질 리포트 복사"}
 	                          </button>
+	                          {activeVersion ? (
+	                            <button
+	                              className={`${primaryButtonClass} w-full`}
+	                              type="button"
+	                              onClick={copyPromptAndOpenExternalAi}
+	                              disabled={
+	                                externalHandoffBlockedByPendingRegeneration
+	                              }
+	                              title={`프롬프트를 복사하고 ${getExternalAiTarget(activeVersion.targetModel).label}을 새 탭에서 엽니다.`}
+	                              data-testid="studio-result-copy-and-open-external-ai"
+	                            >
+	                              {`복사 후 ${getExternalAiTarget(activeVersion.targetModel).label}에서 열기`}
+	                            </button>
+	                          ) : null}
 	                        </div>
 	                      </div>
 	                      <div className="rounded-md border border-line bg-surface px-3 py-3">

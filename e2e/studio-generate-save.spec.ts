@@ -14,6 +14,18 @@ const RAW_INPUT =
 test("generates a prompt locally, saves it, and opens it in the Library", async ({
   page,
 }) => {
+  // Stub window.open so the "copy and open external AI" action never truly
+  // navigates away from the test page; we only assert it was called.
+  await page.addInitScript(() => {
+    (window as unknown as { __openedUrls: string[] }).__openedUrls = [];
+    window.open = (url?: string | URL) => {
+      (window as unknown as { __openedUrls: string[] }).__openedUrls.push(
+        String(url ?? ""),
+      );
+      return null;
+    };
+  });
+
   await page.goto("/studio");
 
   await expect(
@@ -36,6 +48,26 @@ test("generates a prompt locally, saves it, and opens it in the Library", async 
 
   // The generated prompt body from the local builder is present.
   await expect(page.getByText("Role:", { exact: false }).first()).toBeVisible();
+
+  // The "copy and open external AI" action appears with the mapped target label
+  // and copies the prompt while opening the mapped AI in a new tab on click.
+  const copyAndOpenButton = page.getByTestId(
+    "studio-result-copy-and-open-external-ai",
+  );
+  await expect(copyAndOpenButton).toBeVisible();
+  await expect(copyAndOpenButton).toBeEnabled();
+  await expect(copyAndOpenButton).toHaveText(/복사 후 .+에서 열기/);
+
+  await copyAndOpenButton.click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as unknown as { __openedUrls: string[] }).__openedUrls
+            .length,
+      ),
+    )
+    .toBeGreaterThan(0);
 
   // Save to the Library.
   await page

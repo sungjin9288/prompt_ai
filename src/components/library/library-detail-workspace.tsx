@@ -12,6 +12,7 @@ import {
   textareaClass,
 } from "@/components/ui";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
+import { EmptyState } from "@/components/common/empty-state";
 import {
   TargetAiHandoffPreviewPanel,
   type HandoffPreviewMode,
@@ -2133,10 +2134,19 @@ export function LibraryDetailWorkspace({
               </div>
             </>
           ) : (
-            <div className="flex min-h-[720px] items-center justify-center px-5 text-center text-sm text-muted">
-              {prompts.length
-                ? "필터 조건에 맞는 프롬프트가 없습니다."
-                : "저장된 프롬프트가 없습니다. Studio에서 생성 후 저장하세요."}
+            <div className="flex min-h-[720px] items-center justify-center px-5">
+              {prompts.length ? (
+                <EmptyState
+                  title="조건에 맞는 프롬프트가 없어요"
+                  description="검색어나 필터를 조정하면 저장한 프롬프트를 다시 찾을 수 있어요."
+                />
+              ) : (
+                <EmptyState
+                  title="아직 저장된 프롬프트가 없어요"
+                  description="Studio에서 원문을 전문 프롬프트로 만들고 저장하면, 여기에서 검색하고 버전을 비교하며 개선할 수 있어요."
+                  action={{ label: "Studio에서 첫 프롬프트 만들기", href: "/studio" }}
+                />
+              )}
             </div>
           )}
         </Panel>

@@ -1,4 +1,5 @@
 import { Panel, PanelHeader, inputClass } from "@/components/ui";
+import { EmptyState } from "@/components/common/empty-state";
 import {
   languageStrategyLabels,
   modelLabels,
@@ -60,9 +61,10 @@ export function SkillsSavedListPanel({
           </button>
         ))}
         {filteredSkills.length === 0 ? (
-          <div className="px-5 py-10 text-sm text-muted">
-            저장된 스킬이 없습니다.
-          </div>
+          <EmptyState
+            title="저장된 스킬이 없어요"
+            description="위 후보에서 좋은 프롬프트를 골라 스킬 템플릿으로 저장하면, 반복 업무를 한 번에 실행할 수 있어요."
+          />
         ) : null}
       </div>
     </Panel>

@@ -1,4 +1,5 @@
 import { Panel, PanelHeader } from "@/components/ui";
+import { EmptyState } from "@/components/common/empty-state";
 import { languageStrategyLabels, outputLanguageLabels } from "@/lib/prompt";
 import type { getSkillCandidates } from "@/lib/skills/skill-builder";
 
@@ -45,9 +46,11 @@ export function SkillsCandidatesPanel({
         ))}
 
         {candidates.length === 0 ? (
-          <div className="px-5 py-10 text-sm leading-6 text-muted">
-            아직 후보가 없습니다. Studio에서 프롬프트를 생성하고 Library에 저장하세요.
-          </div>
+          <EmptyState
+            title="아직 스킬 후보가 없어요"
+            description="Studio에서 프롬프트를 생성해 Library에 저장하면, 반복 실행할 스킬 후보로 여기에 나타나요."
+            action={{ label: "Studio 열기", href: "/studio" }}
+          />
         ) : null}
       </div>
     </Panel>

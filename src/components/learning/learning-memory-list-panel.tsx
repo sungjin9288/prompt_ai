@@ -11,6 +11,7 @@ import {
   textareaClass,
 } from "@/components/ui";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
+import { EmptyState } from "@/components/common/empty-state";
 import type { LearningMemory, MemoryScope } from "@/lib/prompt";
 import { splitMemoryContentDisplay } from "@/lib/learning/memory";
 import {
@@ -332,9 +333,11 @@ export function LearningMemoryListPanel({
             })}
 
             {filtered.length === 0 ? (
-              <div className="px-5 py-12 text-sm text-muted">
-                아직 학습 메모리가 없습니다. Library에서 프롬프트에 피드백을 남기면 자동으로 생성됩니다.
-              </div>
+              <EmptyState
+                title="아직 학습 메모리가 없어요"
+                description="Library에서 프롬프트에 피드백을 남기면 개인화 기준이 자동으로 쌓여요. 아래에서 직접 추가할 수도 있어요."
+                action={{ label: "Library 열기", href: "/library" }}
+              />
             ) : null}
           </div>
         </Panel>

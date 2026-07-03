@@ -193,6 +193,7 @@ export interface LibraryDetailWorkspaceProps {
   setNewTagInput: React.Dispatch<React.SetStateAction<string>>;
   isSelectedPinned: boolean;
   togglePromptPin: (promptId: string) => void;
+  duplicateSelectedPrompt: (promptId: string) => void;
   requestSelectedPromptDelete: () => void;
   confirmPromptDelete: () => void;
   cancelPromptDelete: () => void;
@@ -313,6 +314,7 @@ export function LibraryDetailWorkspace({
   setNewTagInput,
   isSelectedPinned,
   togglePromptPin,
+  duplicateSelectedPrompt,
   requestSelectedPromptDelete,
   confirmPromptDelete,
   cancelPromptDelete,
@@ -425,6 +427,16 @@ export function LibraryDetailWorkspace({
                   onClick={exportSelectedPromptAsJson}
                 >
                   JSON 내보내기
+                </button>
+                <button
+                  type="button"
+                  data-testid="library-detail-duplicate"
+                  aria-label="프롬프트 복제"
+                  title="프롬프트 복제"
+                  className="inline-flex h-7 min-w-[64px] items-center justify-center gap-1 rounded-md border border-line bg-panel px-2 text-xs text-muted transition hover:bg-surface hover:text-foreground"
+                  onClick={() => duplicateSelectedPrompt(selected.id)}
+                >
+                  복제
                 </button>
               </div>
 

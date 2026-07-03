@@ -92,6 +92,8 @@ import {
   getPromptStudioSourceHref,
   type LibraryFilterHrefOptions,
 } from "@/lib/library/hrefs";
+import { buildPromptLibraryHref } from "@/lib/skills-view/hrefs";
+import { duplicatePromptAsset } from "@/lib/library/duplicate";
 import {
   getImprovementActions,
   getImprovementQualityDelta,
@@ -2447,6 +2449,25 @@ export function LibraryView({
     });
   }
 
+  function duplicateSelectedPrompt(promptId: string) {
+    const target = prompts.find((prompt) => prompt.id === promptId);
+
+    if (!target) {
+      return;
+    }
+
+    const duplicate = duplicatePromptAsset(target, {
+      id: makeId("prompt"),
+      versionIds: target.versions.map(() => makeId("version")),
+      timestamp: new Date().toISOString(),
+    });
+
+    setPrompts((current) => [duplicate, ...current]);
+    router.push(
+      buildPromptLibraryHref(duplicate.id, duplicate.versions[0]?.targetModel),
+    );
+  }
+
   async function copyLibraryText(copy: LibraryManualCopy) {
     const copiedToClipboard = await copyTextToClipboard(copy.body);
 
@@ -4688,6 +4709,7 @@ export function LibraryView({
           setNewTagInput={setNewTagInput}
           isSelectedPinned={selected ? isPromptPinned(selected) : false}
           togglePromptPin={togglePromptPin}
+          duplicateSelectedPrompt={duplicateSelectedPrompt}
           cancelPromptDelete={cancelPromptDelete}
           comment={comment}
           companyContextHref={companyContextHref}

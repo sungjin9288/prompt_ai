@@ -198,7 +198,7 @@ assert.equal(
 );
 assert.equal(
   unansweredQuestionInputAnalysis.score,
-  70,
+  65,
   "Unanswered appended question scaffolding should not inflate prompt input score",
 );
 assert.ok(

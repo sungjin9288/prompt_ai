@@ -3,16 +3,14 @@ import { describe, expect, it } from "vitest";
 import { analyzePromptInputReadiness } from "@/lib/prompt/input-analysis";
 
 describe("analyzePromptInputReadiness", () => {
-  it("scores the floor (5 points per missing item = 20) and reports missing status for fully empty input", () => {
+  it("scores fully empty input as 0 and reports missing status", () => {
     const analysis = analyzePromptInputReadiness({
       domain: "",
       goal: "",
       rawInput: "",
     });
 
-    // Every item defaults to "missing" (5 pts) rather than 0, since getItemScore
-    // never returns 0 - the floor for 4 missing items is 20, not 0.
-    expect(analysis.score).toBe(20);
+    expect(analysis.score).toBe(0);
     expect(analysis.status).toBe("missing");
     expect(analysis.statusLabel).toBe("보강 필요");
   });
@@ -133,7 +131,7 @@ describe("analyzePromptInputReadiness", () => {
     expect(analysis.missingQuestions).toHaveLength(0);
   });
 
-  it("stays at review status when score is 80+ but not every item is individually ready", () => {
+  it("stays at review status when three items are ready but the context item is missing", () => {
     const analysis = analyzePromptInputReadiness({
       domain: "",
       goal: "Write something",
@@ -141,10 +139,9 @@ describe("analyzePromptInputReadiness", () => {
     });
     const contextItem = analysis.items.find((item) => item.label === "맥락");
 
-    // Score reaches the 80-point ready threshold, but the "맥락" (context) item
-    // is still "missing" - the overall status requires every item to be ready,
-    // not just the aggregate score, so it stays at "review".
-    expect(analysis.score).toBeGreaterThanOrEqual(80);
+    // Three ready items (25 each) with a missing context item (0) score 75,
+    // below the 80-point ready threshold, so the overall status stays "review".
+    expect(analysis.score).toBe(75);
     expect(contextItem?.status).toBe("missing");
     expect(analysis.status).toBe("review");
   });

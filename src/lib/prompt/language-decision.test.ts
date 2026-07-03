@@ -120,11 +120,10 @@ describe("decidePromptLanguageStrategy", () => {
     expect(decision.confidence).toBe("moderate");
   });
 
-  it("treats a couple of English words as a strong english signal, not the ambiguous fallback", () => {
-    // Note: even very short English-only input (e.g. "Hi") satisfies the
-    // mostlyEnglish check (englishChars > 0 && englishChars >= koreanChars * 3
-    // with koreanChars = 0), so it resolves as a strong "english" decision
-    // rather than falling through to the ambiguous default.
+  it("keeps very short English-only input as english strategy with only moderate confidence", () => {
+    // "Hi" satisfies the mostlyEnglish check (koreanChars = 0), so the
+    // strategy stays "english", but with fewer than 12 English characters
+    // there is not enough signal to claim strong confidence.
     const decision = decidePromptLanguageStrategy({
       rawInput: "Hi",
       goal: "",
@@ -133,7 +132,7 @@ describe("decidePromptLanguageStrategy", () => {
     });
 
     expect(decision.strategy).toBe("english");
-    expect(decision.confidence).toBe("strong");
+    expect(decision.confidence).toBe("moderate");
   });
 
   it("returns a label consistent with the strategy", () => {

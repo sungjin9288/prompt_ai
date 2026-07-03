@@ -148,7 +148,7 @@ function getItemScore(status: PromptInputReadinessStatus) {
     return 25;
   }
 
-  return status === "review" ? 15 : 5;
+  return status === "review" ? 15 : 0;
 }
 
 function getOverallStatus(

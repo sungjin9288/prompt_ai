@@ -141,7 +141,7 @@ export function decidePromptLanguageStrategy(
       label: languageStrategyLabels.english,
       reason:
         "원문이 영어 중심이고 별도 한국어 맥락 보존 필요성이 낮아 전체 영어 지시문으로 작성합니다.",
-      confidence: "strong",
+      confidence: englishChars >= 12 ? "strong" : "moderate",
       signals: ["영어 중심 원문", "한국어 맥락 낮음"],
     };
   }

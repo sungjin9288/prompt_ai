@@ -203,10 +203,10 @@ function buildBasePrompt(
 - If a Korean term has no reliable English equivalent, keep the original Korean term and explain it briefly.`;
 
   return `Role:
-You are a senior prompt strategist who rewrites rough user requests into precise, copy-ready AI task instructions for the ${domainProfile.name} domain.
+You are a senior ${domainProfile.name} expert. Carry out the task described in the source input and produce a professional, directly usable result. This is the finished prompt to paste into the target AI tool — it must make the tool do the work, not merely describe how to write a prompt.
 
 Objective:
-Rewrite the user's source input into a professional prompt for "${request.goal || "professional prompt creation"}". The result must be specific enough for the selected AI tool to execute directly.
+Accomplish "${request.goal || "the request described in the source input"}" using the source input. The result must be specific and complete enough for the selected AI tool to execute directly.
 
 ${languageRules}
 
@@ -217,11 +217,11 @@ Source input:
 ${request.rawInput}
 
 Task instructions:
-1. Interpret the user's intent, expected deliverable, hidden constraints, and likely success criteria.
-2. Reflect the user profile, company profile, domain rules, and recent feedback in the rewritten prompt.
-3. Include clear sections for role, objective, background, source input, instructions, constraints, output format, and quality checklist.
-4. Separate missing information into explicit questions or assumptions instead of inventing facts.
-5. Make the final prompt copy-ready for the target AI tool.
+1. Interpret the intent, expected deliverable, hidden constraints, and likely success criteria of the source input.
+2. Apply the user profile, company profile, domain rules, and recent feedback throughout the result.
+3. Produce the deliverable with clearly separated sections: background, the steps or analysis you followed, key decisions, and the final output.
+4. Separate missing information into explicit questions or stated assumptions instead of inventing facts.
+5. Keep every part concrete, executable, and ready to use as-is.
 
 Constraints:
 - Do not invent unverified facts, numbers, legal/medical/financial judgments, or company claims.
@@ -230,15 +230,15 @@ Constraints:
 - Mark uncertainty as assumptions, questions, or verification-needed items.
 
 Required output format:
-1. Final prompt
-2. Reflected user/company/domain context
-3. Missing information or assumptions
-4. Quality checklist
+1. The direct answer or deliverable for the objective
+2. The user, company, and domain context reflected in the result
+3. Assumptions and any information that still needs confirmation
+4. A verification or quality checklist for the result
 
 Quality bar:
-- The task for the target AI must be unambiguous.
-- The expected output format must be concrete.
-- User and company context must appear inside the actual prompt, not only in explanation.
+- The deliverable must directly satisfy the objective and be unambiguous.
+- The output structure must be concrete.
+- User and company context must appear inside the result, not only in explanation.
 - The structure must be reusable for repeated work.
 
 Uncertainty handling:
@@ -271,10 +271,10 @@ ${languageReminder}`;
     return `${basePrompt}
 
 GPT-specific instructions:
-- Structure the response in three stages: intent analysis, prompt rewrite, and improvement suggestions.
+- Work through the task in clear stages: interpret the request, produce the deliverable, then note improvements or follow-ups.
 - If information is missing, ask up to five clarification questions and also provide an executable assumption-based version.
 - Use tables, checklists, and step-by-step action plans when they improve clarity.
-- End with editable variables so the user can quickly revise the prompt in follow-up turns.
+- End with editable variables so the user can quickly adjust the result in follow-up turns.
 
 Language reminder:
 ${languageReminder}`;

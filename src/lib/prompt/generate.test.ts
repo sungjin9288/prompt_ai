@@ -44,6 +44,17 @@ describe("createPromptPackage", () => {
     expect(asset.versions[0].content).toContain(baseRequest.rawInput);
   });
 
+  it("frames the result as a finished task prompt, not a meta rewrite instruction", () => {
+    const asset = createPromptPackage(baseRequest);
+    const content = asset.versions[0].content;
+
+    expect(content).not.toContain("prompt strategist");
+    expect(content).not.toContain("rewritten prompt");
+    expect(content).not.toContain("Final prompt");
+    expect(content).toContain("expert");
+    expect(content).toContain("finished prompt to paste into the target AI tool");
+  });
+
   it("adds GPT-specific instructions only for the gpt version", () => {
     const asset = createPromptPackage(baseRequest);
     const gptVersion = asset.versions.find((version) => version.targetModel === "gpt");

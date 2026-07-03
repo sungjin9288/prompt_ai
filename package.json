@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "smoke:chrome-extension": "node scripts/verify-chrome-extension-smoke.mjs",
     "smoke:integrations": "node scripts/write-integrations-smoke-evidence.mjs",
     "smoke:learning-feedback": "node scripts/verify-learning-operational-summary.mjs",
@@ -53,6 +54,7 @@
     "postcss": "8.5.15"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

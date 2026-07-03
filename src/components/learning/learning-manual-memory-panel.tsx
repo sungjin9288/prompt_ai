@@ -180,7 +180,10 @@ export function LearningManualMemoryPanel({
               {manualSaved ? "저장됨" : "학습 메모리 저장"}
             </button>
             {manualValidationMessage ? (
-              <p className="rounded-md border border-attention/40 bg-surface px-3 py-2 text-xs leading-5 text-attention">
+              <p
+                role="alert"
+                className="rounded-md border border-attention/40 bg-surface px-3 py-2 text-xs leading-5 text-attention"
+              >
                 {manualValidationMessage}
               </p>
             ) : null}

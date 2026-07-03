@@ -190,7 +190,10 @@ export function LearningMemoryListPanel({
                         </select>
                       </label>
                       {editValidationMessage ? (
-                        <p className="rounded-md border border-attention/40 bg-background px-3 py-2 text-xs leading-5 text-attention">
+                        <p
+                          role="alert"
+                          className="rounded-md border border-attention/40 bg-background px-3 py-2 text-xs leading-5 text-attention"
+                        >
                           {editValidationMessage}
                         </p>
                       ) : null}

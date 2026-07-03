@@ -240,12 +240,9 @@ export function decideTargetModels(
       return scoreDelta || modelOrder.indexOf(a) - modelOrder.indexOf(b);
     });
 
-  const targetModels = ranked
+  const normalizedTargetModels = ranked
     .filter((model, index) => index < 2 || scores[model] >= 4)
     .slice(0, 3);
-  const normalizedTargetModels = targetModels.length
-    ? targetModels
-    : (["gpt", "claude"] as TargetModel[]);
   const normalizedSignals = uniqueSignals(
     signals.length ? signals : ["기본 범용 구조화"],
   );

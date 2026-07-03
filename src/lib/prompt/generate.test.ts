@@ -165,7 +165,7 @@ describe("createPromptPackage", () => {
     });
 
     expect(asset.targetModels.length).toBeGreaterThan(0);
-    expect(asset.targetModelDecision.targetModels).toEqual(asset.targetModels);
+    expect(asset.targetModelDecision?.targetModels).toEqual(asset.targetModels);
   });
 
   it("falls back to 범용 as the domain when none is provided", () => {

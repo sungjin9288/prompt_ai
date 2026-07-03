@@ -16,6 +16,12 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-full">
       <body className="min-h-full antialiased">
+        <a
+          href="#main-content"
+          className="sr-only rounded-md bg-accent px-4 py-2 text-sm font-semibold text-background focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50"
+        >
+          본문 바로가기
+        </a>
         <AppShell>{children}</AppShell>
       </body>
     </html>

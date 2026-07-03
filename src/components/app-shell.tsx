@@ -131,7 +131,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <select
                 value={currentItem.href}
                 onChange={(event) => router.push(event.target.value)}
-                className="h-11 w-full rounded-md border border-line bg-panel px-3 text-sm font-medium text-foreground outline-none focus:border-accent"
+                className="h-11 w-full rounded-md border border-control-border bg-panel px-3 text-sm font-medium text-foreground focus:border-accent"
               >
                 {navItems.map((item) => (
                   <option key={item.href} value={item.href}>
@@ -224,7 +224,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto min-h-[calc(100vh-73px)] max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <main
+        id="main-content"
+        className="mx-auto min-h-[calc(100vh-73px)] max-w-7xl px-4 py-6 sm:px-6 lg:px-8"
+      >
         {children}
       </main>
     </div>

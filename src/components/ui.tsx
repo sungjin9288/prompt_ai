@@ -87,19 +87,19 @@ export function Field({
 }
 
 export const inputClass =
-  "w-full rounded-md border border-line bg-surface px-3 py-2.5 text-sm text-foreground transition placeholder:text-muted focus:border-accent";
+  "w-full rounded-md border border-control-border bg-surface px-3 py-2.5 text-sm text-foreground transition placeholder:text-muted focus:border-accent";
 
 export const textareaClass =
-  "w-full resize-y rounded-md border border-line bg-surface px-3 py-2.5 text-sm leading-6 text-foreground transition placeholder:text-muted focus:border-accent";
+  "w-full resize-y rounded-md border border-control-border bg-surface px-3 py-2.5 text-sm leading-6 text-foreground transition placeholder:text-muted focus:border-accent";
 
 export const selectClass =
-  "w-full rounded-md border border-line bg-surface px-3 py-2.5 text-sm text-foreground transition focus:border-accent";
+  "w-full rounded-md border border-control-border bg-surface px-3 py-2.5 text-sm text-foreground transition focus:border-accent";
 
 export const primaryButtonClass =
   "inline-flex min-h-10 items-center justify-center rounded-md bg-accent px-4 py-2 text-sm font-semibold text-background transition hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50";
 
 export const secondaryButtonClass =
-  "inline-flex min-h-10 items-center justify-center rounded-md border border-line bg-panel-strong px-4 py-2 text-sm font-semibold text-foreground transition hover:border-accent disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex min-h-10 items-center justify-center rounded-md border border-control-border bg-panel-strong px-4 py-2 text-sm font-semibold text-foreground transition hover:border-accent disabled:cursor-not-allowed disabled:opacity-50";
 
 export function ScoreBar({ label, value }: { label: string; value: number }) {
   return (

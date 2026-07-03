@@ -34,6 +34,7 @@ export function ManualCopyPanel({
 
   return (
     <div
+      role="alert"
       className={`rounded-md border border-line ${className} px-3 py-3`}
       data-testid={testId}
     >

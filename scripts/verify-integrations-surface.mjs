@@ -33,12 +33,6 @@ const connectionReadinessPanel = readSource(
 const environmentPlaybookPanel = readSource(
   "src/components/integrations/environment-playbook-panel.tsx",
 );
-const operatorNextActionsPanel = readSource(
-  "src/components/integrations/operator-next-actions-panel.tsx",
-);
-const externalAiOperatorGuidePanel = readSource(
-  "src/components/integrations/external-ai-operator-guide-panel.tsx",
-);
 const view = readSource(
   "src/components/integrations/integrations-view.tsx",
 );
@@ -59,10 +53,6 @@ const mcpReadme = readSource("mcp/README.md");
 
 function assertIncludes(source, text, message) {
   assert.ok(source.includes(text), message);
-}
-
-function assertNotIncludes(source, text, message) {
-  assert.ok(!source.includes(text), message);
 }
 
 const {
@@ -119,16 +109,6 @@ assertIncludes(
   "EnvironmentPlaybookPanel",
   "Integrations view should render the environment playbook panel",
 );
-assertIncludes(
-  view,
-  "OperatorNextActionsPanel",
-  "Integrations view should render the operator next actions panel",
-);
-assertIncludes(
-  view,
-  "ExternalAiOperatorGuidePanel",
-  "Integrations view should render the external AI operator guide panel",
-);
 
 for (const requiredText of [
   "Integrations quick navigation",
@@ -142,80 +122,18 @@ for (const requiredText of [
   "환경별 install gate",
   "confirmSave 결과",
   "환경별 실행 책임",
-  "오늘 실행 순서",
-  "운영 가이드",
   "입력 수집",
   "증거 저장",
   "검토 전달",
   "피드백 저장",
-  "준비도 확인",
-  "Refine 테스트",
   "실행 가이드",
-  "Feedback 확인",
-  "localhost:3000",
   "source app",
-  "local evidence",
   "MCP feedback",
-  "검증 게이트 요약",
-  "GateSummaryPanel",
-  "integrationGateSummary",
-  "Local-first automation",
-  "Evidence saved before delivery",
-  "Review-required delivery",
-  "Confirmed feedback save",
-  "PROMPT_AI_STUDIO_URL and local refine API",
-  "Integrated summary and Chrome, MCP bridge, MCP client, Learning smoke evidence files",
-  "The operator saves local smoke evidence before any prompt package leaves the Studio workflow.",
   "reviewRequired handoff package",
   "confirmSave true",
-  "Refine API 확인",
-  "Smoke 증거 확인",
-  "전달 책임 확인",
-  "Feedback inbox 확인",
-  "로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장",
-  "OperatorNextActionsPanel",
-  "ExternalAiOperatorGuidePanel",
-  "ConnectionSurfaceSummaryPanel",
-  "executionContractRows",
-  "ExecutionContractDetail",
-  "ExecutionContractMatrix",
-  "연결 계약 매트릭스",
-  'data-testid="integrations-execution-contract-matrix"',
-  "선택 텍스트와 source URL",
-  "대상 AI별 실행 프롬프트",
-  "파일 범위, 검증 명령, 완료 기준",
-  "save_execution_feedback으로 inbox/audit event 기록",
-  "executionEvidenceRows",
-  "ExecutionEvidenceChecklist",
-  "실행 증거 체크",
-  'data-testid="integrations-execution-evidence-checklist"',
-  "local app과 refine API",
-  "reviewRequired true, target handoff package",
-  "03 증거 저장",
-  "Chrome, MCP bridge, MCP client, Learning smoke evidence file",
-  "copy-ready prompt, missing context review",
-  "rating, result summary, inbox record",
-  "smokeEvidenceRows",
-  "SmokeEvidencePath",
-  "Smoke 증거 경로",
-  'data-testid="integrations-smoke-evidence-path"',
-  "Integrated preflight",
-  "Chrome, MCP bridge, MCP client, Learning packets and integrations-smoke-summary.md",
-  "Integrated smoke summary",
-  "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
-  "npm run smoke:mcp-client -- --out output/smoke/mcp-client-smoke.md",
-  "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
-  "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
-  "Learning smoke evidence",
-  "Evidence",
-  "Chrome, MCP bridge, MCP client, Learning smoke evidence",
-  "외부 AI 전달 전 로컬 증거 저장",
   "ConnectionSurfacesPanel",
   "ConnectionSurfaceRow",
   "ConnectionSurfaceDetail",
-  "AutomationPrinciplesPanel",
-  "automationPrincipleRows",
-  "AutomationPrincipleRow",
   "McpToolContractPanel",
   "RolloutOrderPanel",
   "운영 흐름",
@@ -243,9 +161,7 @@ for (const requiredText of [
   "#integrations-readiness",
   "#integrations-environment-guide",
   "#integrations-feedback-inbox",
-  "#integrations-operator-guide",
   'id="integrations-operation-flow"',
-  'id="integrations-next-actions"',
   'id="integrations-refine-tester"',
   'id="integrations-mcp-connection"',
   'id="integrations-readiness"',
@@ -256,8 +172,6 @@ for (const requiredText of [
   "ChatGPT / Claude / Gemini",
   "Codex",
   "MCP",
-  "지원 환경 요약",
-  'data-testid="integrations-surface-summary"',
   "입력 수집",
   "검토 전달",
   "개발 지시",
@@ -267,16 +181,10 @@ for (const requiredText of [
   "로컬 증거 저장과 붙여넣기 전 최종 리뷰",
   "파일 범위, 검증 명령, 완료 기준을 포함합니다.",
   "refine, context, handoff, feedback 도구를 연결합니다.",
-  "Refine automatically, save evidence, deliver with review.",
-  "English or Korean-English hybrid",
-  "chrome-selection, mcp-refine, local-smoke-evidence, target-ai-handoff",
-  "로컬 smoke evidence,",
   "refine_prompt",
   "get_context_profile",
   "create_handoff_package",
   "save_execution_feedback",
-  "POST /api/integrations/refine",
-  "extensions/chrome",
   "connectionSurfaces",
   "handoff surface",
   "Payload",
@@ -305,62 +213,7 @@ assert.match(
 );
 assert.match(
   view,
-  /const connectionSurfaces = \[[\s\S]*?channel: "Chrome"[\s\S]*?href: "#integrations-refine-tester"[\s\S]*?status: "입력 수집"[\s\S]*?summary: "선택 텍스트를 local refine API로 보냅니다\."[\s\S]*?channel: "ChatGPT \/ Claude \/ Gemini"[\s\S]*?href: "#integrations-environment-guide"[\s\S]*?status: "검토 전달"[\s\S]*?channel: "Codex"[\s\S]*?href: "#integrations-operator-guide"[\s\S]*?status: "개발 지시"[\s\S]*?channel: "MCP"[\s\S]*?href: "#integrations-mcp-connection"[\s\S]*?status: "도구 호출"/,
-  "Integrations connection surfaces should define top-level summary links for Chrome, external Gen AI, Codex, and MCP",
-);
-assert.match(
-  view,
-  /function ConnectionSurfaceSummaryPanel\(\)[\s\S]*?지원 환경 요약[\s\S]*?data-testid="integrations-surface-summary"[\s\S]*?connectionSurfaces\.map[\s\S]*?href=\{surface\.href\}[\s\S]*?surface\.channel[\s\S]*?surface\.status[\s\S]*?surface\.summary[\s\S]*?<ConnectionSurfaceSummaryPanel \/>/,
-  "Integrations should render a compact support-environment summary before detailed navigation",
-);
-assert.match(
-  view,
-  /const executionContractRows = \[[\s\S]*?surface: "Chrome"[\s\S]*?capture: "선택 텍스트와 source URL"[\s\S]*?package: "reviewRequired handoff package"[\s\S]*?surface: "ChatGPT \/ Claude \/ Gemini"[\s\S]*?package: "대상 AI별 실행 프롬프트"[\s\S]*?surface: "Codex"[\s\S]*?package: "파일 범위, 검증 명령, 완료 기준"[\s\S]*?surface: "MCP"[\s\S]*?package: "refine_prompt 또는 create_handoff_package 결과"[\s\S]*?feedback: "save_execution_feedback으로 inbox\/audit event 기록"/,
-  "Integrations execution contract matrix should define per-surface capture, package, review, and feedback contracts",
-);
-assert.match(
-  view,
-  /function ExecutionContractDetail[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?<dt[\s\S]*?\{label\}[\s\S]*?<dd[\s\S]*?\{value\}[\s\S]*?function ExecutionContractMatrix\(\)[\s\S]*?연결 계약 매트릭스[\s\S]*?data-testid="integrations-execution-contract-matrix"[\s\S]*?executionContractRows\.map[\s\S]*?row\.surface[\s\S]*?<ExecutionContractDetail label="Capture" value=\{row\.capture\} \/>[\s\S]*?<ExecutionContractDetail label="Package" value=\{row\.package\} \/>[\s\S]*?<ExecutionContractDetail[\s\S]*?label="Review gate"[\s\S]*?value=\{row\.reviewGate\}[\s\S]*?<ExecutionContractDetail label="Feedback" value=\{row\.feedback\} \/>/,
-  "Integrations execution contract matrix should render each surface with capture, package, review, and feedback details",
-);
-assert.match(
-  view,
-  /const executionEvidenceRows = \[[\s\S]*?label: "01 로컬 연결"[\s\S]*?localhost:3000, POST \/api\/integrations\/refine[\s\S]*?label: "02 정제 결과"[\s\S]*?reviewRequired true, target handoff package[\s\S]*?label: "03 증거 저장"[\s\S]*?Chrome, MCP bridge, MCP client, Learning smoke evidence file[\s\S]*?href: "#integrations-smoke-evidence-path"[\s\S]*?label: "04 전달 승인"[\s\S]*?copy-ready prompt, missing context review[\s\S]*?label: "05 피드백 증거"[\s\S]*?rating, result summary, inbox record/,
-  "Integrations execution evidence checklist should define local, refine, smoke evidence, delivery, and feedback evidence gates",
-);
-assert.match(
-  view,
-  /function ExecutionEvidenceChecklist\(\)[\s\S]*?실행 증거 체크[\s\S]*?data-testid="integrations-execution-evidence-checklist"[\s\S]*?executionEvidenceRows\.map[\s\S]*?row\.label[\s\S]*?row\.action[\s\S]*?row\.evidence[\s\S]*?row\.href[\s\S]*?row\.linkLabel/,
-  "Integrations execution evidence checklist should render actionable proof rows with detail links",
-);
-assert.match(
-  view,
-  /const smokeEvidenceRows = \[[\s\S]*?label: "Integrated preflight"[\s\S]*?npm run smoke:integrations[\s\S]*?Chrome, MCP bridge, MCP client, Learning packets and integrations-smoke-summary\.md[\s\S]*?result: "Integrated smoke summary"[\s\S]*?label: "MCP bridge"[\s\S]*?npm run smoke:mcp -- --out output\/smoke\/mcp-bridge-smoke\.md[\s\S]*?tools\/list, refine_prompt, create_handoff_package, local evidence file[\s\S]*?result: "MCP smoke evidence"[\s\S]*?label: "MCP client"[\s\S]*?npm run smoke:mcp-client -- --out output\/smoke\/mcp-client-smoke\.md[\s\S]*?initialize, tools\/list, refine_prompt, confirmSave feedback[\s\S]*?result: "MCP client smoke evidence"[\s\S]*?label: "Chrome popup"[\s\S]*?npm run smoke:chrome-extension -- --out output\/smoke\/chrome-extension-smoke\.md[\s\S]*?manifest, local-only permissions, popup evidence fallback[\s\S]*?result: "Chrome smoke evidence"[\s\S]*?label: "Learning feedback"[\s\S]*?npm run smoke:learning-feedback -- --out output\/smoke\/learning-feedback-smoke\.md[\s\S]*?low-confidence validation draft, Library filter, queue fallback[\s\S]*?\/learning\?review=low-confidence&q=feedback-improvement#learning-feedback-improvement-queue[\s\S]*?result: "Learning smoke evidence"/,
-  "Integrations smoke evidence path should define integrated, MCP bridge, MCP client, Chrome, and Learning evidence output commands",
-);
-assert.match(
-  view,
-  /const smokeEvidenceRunOrder = \[[\s\S]*?npm run smoke:integrations[\s\S]*?label: "01 로컬 packet"[\s\S]*?Chrome, MCP bridge, MCP client, Learning smoke packet과 통합 summary를 한 번에 갱신합니다\.[\s\S]*?reviewRequired actual result[\s\S]*?label: "02 실제 증빙"[\s\S]*?외부 전달 전에 실제 Chrome, MCP bridge, MCP client, Learning 증빙 필드를 기록합니다\.[\s\S]*?confirmSave reviewed feedback[\s\S]*?label: "03 피드백 기록"[\s\S]*?외부 AI 결과를 검토한 뒤 학습 가치가 있을 때만 피드백을 저장합니다\./,
-  "Integrations smoke evidence path should define the operator run order from local packet to reviewed feedback",
-);
-assert.match(
-  view,
-  /function SmokeEvidencePath\(\)[\s\S]*?Smoke 증거 경로[\s\S]*?data-testid="integrations-smoke-evidence-run-order"[\s\S]*?smokeEvidenceRunOrder\.map[\s\S]*?step\.label[\s\S]*?step\.task[\s\S]*?step\.gate[\s\S]*?md:grid-cols-2 xl:grid-cols-5[\s\S]*?data-testid="integrations-smoke-evidence-path"[\s\S]*?smokeEvidenceRows\.map[\s\S]*?href=\{row\.href\}[\s\S]*?row\.label[\s\S]*?row\.command[\s\S]*?row\.evidence[\s\S]*?row\.result/,
-  "Integrations smoke evidence path should render command, evidence, result, and detail link for each smoke route",
-);
-assert.match(
-  view,
-  /function GateSummaryPanel\(\)[\s\S]*?className="grid grid-cols-2 gap-3 px-5 pb-5 md:grid-cols-4"[\s\S]*?data-testid="integrations-gate-summary-metrics"[\s\S]*?integrationGateSummary\.map[\s\S]*?gate\.label[\s\S]*?gate\.detail[\s\S]*?gate\.check[\s\S]*?gate\.href[\s\S]*?gate\.linkLabel[\s\S]*?<GateSummaryPanel \/>/,
-  "Integrations gate summary should keep a compact two-column mobile grid and four-column desktop grid",
-);
-assert.match(
-  view,
-  /<ConnectionSurfaceSummaryPanel \/>[\s\S]*?<ExecutionContractMatrix \/>[\s\S]*?<ExecutionEvidenceChecklist \/>[\s\S]*?<SmokeEvidencePath \/>[\s\S]*?<QuickNavigation \/>[\s\S]*?<GateSummaryPanel \/>/,
-  "Integrations view should keep support-environment summary, execution contract matrix, evidence checklist, smoke evidence path, quick navigation, and gate summary in reading order",
-);
-assert.match(
-  view,
-  /const integrationOperationFlow = \[[\s\S]*?phase: "Capture"[\s\S]*?phase: "Refine"[\s\S]*?artifact: "Chrome, MCP bridge, MCP client, Learning smoke evidence"[\s\S]*?detailHref: "#integrations-smoke-evidence-path"[\s\S]*?gate: "외부 AI 전달 전 로컬 증거 저장"[\s\S]*?phase: "Evidence"[\s\S]*?phase: "Deliver"[\s\S]*?phase: "Feedback"[\s\S]*?function OperationFlowCards\(\)[\s\S]*?className="grid gap-3 px-5 pb-4 md:grid-cols-2 xl:grid-cols-5"[\s\S]*?data-testid="integrations-operation-flow-cards"[\s\S]*?integrationOperationFlow\.map[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
+  /const integrationOperationFlow = \[[\s\S]*?phase: "Capture"[\s\S]*?phase: "Refine"[\s\S]*?artifact: "Chrome, MCP bridge, MCP client, Learning smoke evidence"[\s\S]*?detailHref: "#integrations-readiness"[\s\S]*?gate: "외부 AI 전달 전 로컬 증거 저장"[\s\S]*?phase: "Evidence"[\s\S]*?phase: "Deliver"[\s\S]*?phase: "Feedback"[\s\S]*?function OperationFlowCards\(\)[\s\S]*?className="grid gap-3 px-5 pb-4 md:grid-cols-2 xl:grid-cols-5"[\s\S]*?data-testid="integrations-operation-flow-cards"[\s\S]*?integrationOperationFlow\.map[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
   "Integrations operation flow should render readable cards for capture, refine, evidence, delivery, and feedback before the detailed wide table",
 );
 assert.match(
@@ -380,11 +233,6 @@ assert.match(
 );
 assert.match(
   view,
-  /const automationPrincipleRows = \[[\s\S]*?label: "Refine API"[\s\S]*?POST \/api\/integrations\/refine[\s\S]*?label: "Chrome extension"[\s\S]*?extensions\/chrome[\s\S]*?label: "Context priority"[\s\S]*?company → user → learning → skill[\s\S]*?label: "Language strategy"[\s\S]*?English or Korean-English hybrid[\s\S]*?label: "Audit source"[\s\S]*?chrome-selection, mcp-refine, local-smoke-evidence, target-ai-handoff[\s\S]*?function AutomationPrincipleRow[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?\{label\}[\s\S]*?\{value\}[\s\S]*?function AutomationPrinciplesPanel\(\)[\s\S]*?Refine automatically, save evidence, deliver with review\.[\s\S]*?로컬 smoke evidence[\s\S]*?automationPrincipleRows\.map[\s\S]*?<AutomationPrincipleRow[\s\S]*?label=\{row\.label\}[\s\S]*?value=\{row\.value\}[\s\S]*?<AutomationPrinciplesPanel \/>/,
-  "Integrations view should render automation principles through a dedicated data list and row component",
-);
-assert.match(
-  view,
   /function McpToolContractDetail[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?<dt[\s\S]*?\{label\}[\s\S]*?<dd[\s\S]*?\{value\}[\s\S]*?function McpToolContractCard[\s\S]*?tool: \(typeof mcpToolContracts\)\[number\][\s\S]*?tool\.name[\s\S]*?<McpToolContractDetail label="Input" value=\{tool\.input\} \/>[\s\S]*?<McpToolContractDetail label="Output" value=\{tool\.output\} \/>[\s\S]*?function McpToolContractCards\(\)[\s\S]*?data-testid="mcp-tool-contract-cards"[\s\S]*?mcpToolContracts\.map[\s\S]*?<McpToolContractCard key=\{tool\.name\} tool=\{tool\} \/>/,
   "Integrations view should render MCP tool contracts through readable cards before the detailed table",
 );
@@ -400,386 +248,10 @@ assert.match(
 );
 assert.match(
   view,
-  /<ConnectionSurfacesPanel \/>[\s\S]*?<AutomationPrinciplesPanel \/>[\s\S]*?<McpToolContractPanel \/>[\s\S]*?<RolloutOrderPanel \/>/,
-  "Integrations view should keep connection surfaces, principles, MCP contracts, and rollout order in reading order",
+  /<ConnectionSurfacesPanel \/>[\s\S]*?<McpToolContractPanel \/>[\s\S]*?<RolloutOrderPanel \/>/,
+  "Integrations view should keep connection surfaces, MCP contracts, and rollout order in reading order",
 );
 
-for (const requiredText of [
-  '"use client"',
-  "운영자 다음 조치",
-  "지금 유저가 직접 확인해야 하는 설치, 연결, smoke evidence, 전달, 피드백 저장, release gate 순서를 먼저 고정합니다.",
-  "operatorNextActions",
-  "로컬 서버 유지",
-  "연결 표면 1개 검증",
-  "로컬 smoke evidence 저장",
-  "외부 AI 전달 전 검토",
-  "실행 결과 피드백 저장",
-  "검증·커밋 정리",
-  "operatorTask",
-  "completionGate",
-  "내가 할 일",
-  "완료 기준",
-  "터미널에서 npm run dev를 유지하고 localhost:3000 접속을 확인합니다.",
-  "브라우저에서 /integrations가 열리고 refine API tester가 응답합니다.",
-  "Chrome extension 또는 MCP client 중 하나를 먼저 연결하고 smoke test를 실행합니다.",
-  "Chrome handoff 또는 MCP refine_prompt 결과에 reviewRequired가 포함됩니다.",
-  "외부 AI에 붙여넣기 전에 통합 smoke preflight로 local evidence packet을 갱신합니다.",
-  "Chrome, MCP bridge, MCP client, Learning feedback smoke evidence 파일이 모두 생성됩니다.",
-  "npm run smoke:integrations",
-  "정제 결과를 그대로 자동 전송하지 않고, 복사 전에 최종 prompt package를 검토합니다.",
-  "대상 AI, 언어 전략, 가정, 누락 맥락을 확인한 handoff package만 전달합니다.",
-  "외부 AI 실행 결과를 요약하고, 저장 동의가 있을 때만 feedback inbox에 남깁니다.",
-  "confirmSave true로 저장된 피드백이 Feedback inbox에서 조회됩니다.",
-  "관련 변경을 묶기 전 release evidence를 새로 만들고 release-candidate를 실행합니다.",
-  "verify:evidence pass 기록과 verify:release-candidate 통과가 확인됩니다.",
-  "npm run verify:evidence -- --out-dir docs/evidence; npm run verify:release-candidate",
-  "OperatorNextAction",
-  "operatorActionSummaryItems",
-  "operatorEvidenceFieldGroups",
-  "buildOperatorNextActionChecklist",
-  "buildOperatorNextActionsChecklist",
-  "OperatorActionSummary",
-  "OperatorEvidenceFieldChecklist",
-  "OperatorActionToolbar",
-  "OperatorActionDetail",
-  "OperatorActionList",
-  "OperatorManualCopyTextarea",
-  "OperatorManualCopyNotice",
-  'data-testid="operator-next-actions-summary"',
-  'data-testid="operator-evidence-field-checklist"',
-  'data-testid="operator-next-actions-toolbar"',
-  'data-testid="operator-next-actions-list"',
-  "Actual evidence fields",
-  "실제 증빙 필드",
-  "Chrome loaded extension",
-  "runtime, source, review gate, target AI, session, evidence result, feedback record",
-  "MCP client",
-  "client, target AI, tool sequence, review gate, evidence result, integrated smoke result, feedback record",
-  "Learning feedback",
-  "low-confidence condition, Studio validation draft, Library validation filter, release evidence command, release candidate command, feedback memory action",
-  "## Actual evidence fields",
-  "현재 순서",
-  "서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장 → release gate",
-  "첫 검증",
-  "Chrome extension 또는 MCP client 중 하나만 먼저 연결",
-  "전달 원칙",
-  "smoke evidence 저장 후 reviewRequired package만 전달",
-  "학습 루프",
-  "confirmSave true 저장 후 release evidence로 변경 이력을 남김",
-  "# Prompt AI Studio Operator Next Action:",
-  "# Prompt AI Studio Operator Next Actions",
-  "Gate: local-first automation, smoke evidence saved, review-required external delivery, confirmed feedback save.",
-  "Save local smoke evidence before external AI delivery.",
-  "Run release evidence and release-candidate checks before a grouped commit or handoff.",
-  "Detail link: /integrations",
-  "Final review:",
-  "다음 조치 복사",
-  "다음 조치 Studio로",
-  "조치 복사",
-  "전체 다음 조치 복사",
-  "전체 다음 조치 Studio로",
-  "`${item.label} 조치 복사`",
-  "`${item.label} Studio로`",
-  "copyOperatorAction",
-  "copyOperatorActions",
-  "openOperatorActionInStudio",
-  "openOperatorActionsInStudio",
-  "copyTextToClipboard",
-  "writeStudioDraft",
-  "draftError",
-  "Studio 초안을 저장하지 못했습니다. 아래 다음 조치 패키지를 직접 선택해 복사하세요.",
-  'setCopyState("draftError")',
-  "setManualCopyText(rawInput)",
-  'source: "integrations-operations-checklist"',
-  'router.push("/studio?draft=integrations-operations-checklist")',
-  'sourceTitle: "Integrations 운영자 다음 조치"',
-  'sourceHref: "/integrations#integrations-next-actions"',
-  "External AI integrations · single operator action",
-  "Confirm this single operator action before moving to the next connection step.",
-  "Do not send unreviewed content to an external AI account.",
-  'targetModels: ["gpt", "claude", "codex", "gemini"]',
-  "Operator next actions manual copy",
-  "운영자 다음 조치 패키지를 복사했습니다.",
-  "조치 패키지를 복사했습니다.",
-  "아래 다음 조치 패키지를 직접 선택해 복사하세요.",
-  "Keep the Studio dev server running before testing any external surface.",
-  "Install one connection surface first, then run the matching smoke test.",
-  "Save the local smoke evidence before any external AI delivery.",
-  "Paste only the reviewed handoff package into GPT, Claude, Codex, or Gemini.",
-  "Save execution feedback only after confirming the external AI result.",
-  "Generate release evidence and run the release-candidate gate before grouped commit or handoff.",
-  "#integrations-operation-flow",
-  "#integrations-readiness",
-  "#integrations-environment-guide",
-  "#integrations-feedback-inbox",
-]) {
-  assertIncludes(
-    operatorNextActionsPanel,
-    requiredText,
-    `Operator next actions panel should include ${requiredText}`,
-  );
-}
-
-assert.match(
-  operatorNextActionsPanel,
-  /const operatorActionSummaryItems = \[[\s\S]*?label: "현재 순서"[\s\S]*?서버 유지 → 연결 1개 검증 → smoke evidence 저장 → 외부 AI 전달 → 피드백 저장 → release gate[\s\S]*?label: "첫 검증"[\s\S]*?Chrome extension 또는 MCP client 중 하나만 먼저 연결[\s\S]*?label: "전달 원칙"[\s\S]*?smoke evidence 저장 후 reviewRequired package만 전달[\s\S]*?label: "학습 루프"[\s\S]*?confirmSave true 저장 후 release evidence로 변경 이력을 남김/,
-  "Operator next actions panel should define a compact summary before the detailed action list",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function OperatorActionSummary\(\)[\s\S]*?data-testid="operator-next-actions-summary"[\s\S]*?operatorActionSummaryItems\.map[\s\S]*?item\.label[\s\S]*?item\.value[\s\S]*?<OperatorActionSummary \/>/,
-  "Operator next actions panel should render a compact summary from dedicated summary items",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /const operatorEvidenceFieldGroups = \[[\s\S]*?runtime, source, review gate, target AI, session, evidence result, feedback record[\s\S]*?label: "Chrome loaded extension"[\s\S]*?client, target AI, tool sequence, review gate, evidence result, integrated smoke result, feedback record[\s\S]*?label: "MCP client"[\s\S]*?low-confidence condition, Studio validation draft, Library validation filter, release evidence command, release candidate command, feedback memory action[\s\S]*?label: "Learning feedback"/,
-  "Operator next actions panel should define the actual evidence fields for Chrome, MCP, and Learning smoke runs",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function buildOperatorNextActionsChecklist\(\)[\s\S]*?## Actual evidence fields[\s\S]*?operatorEvidenceFieldGroups\.flatMap[\s\S]*?`\- \$\{item\.label\}: \$\{item\.fields\}`[\s\S]*?operatorNextActions\.flatMap/,
-  "Operator next actions checklist should include actual evidence fields before step details",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function OperatorEvidenceFieldChecklist\(\)[\s\S]*?data-testid="operator-evidence-field-checklist"[\s\S]*?실제 증빙 필드[\s\S]*?operatorEvidenceFieldGroups\.map[\s\S]*?item\.label[\s\S]*?item\.fields[\s\S]*?<OperatorEvidenceFieldChecklist \/>/,
-  "Operator next actions panel should render the actual evidence field checklist before action controls",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function OperatorActionToolbar[\s\S]*?data-testid="operator-next-actions-toolbar"[\s\S]*?전체 다음 조치 복사[\s\S]*?onClick=\{onCopyAll\}[\s\S]*?다음 조치 복사[\s\S]*?전체 다음 조치 Studio로[\s\S]*?onClick=\{onOpenAllInStudio\}[\s\S]*?다음 조치 Studio로[\s\S]*?<OperatorActionToolbar[\s\S]*?onCopyAll=\{copyOperatorActions\}[\s\S]*?onOpenAllInStudio=\{openOperatorActionsInStudio\}/,
-  "Operator next actions panel should render the whole-checklist actions through a dedicated toolbar",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function OperatorActionDetail[\s\S]*?label: string[\s\S]*?value: string[\s\S]*?<dt[\s\S]*?\{label\}[\s\S]*?<dd[\s\S]*?\{value\}/,
-  "Operator next actions panel should render repeated detail cells through a dedicated detail component",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function OperatorActionList[\s\S]*?data-testid="operator-next-actions-list"[\s\S]*?operatorNextActions\.map[\s\S]*?item\.label[\s\S]*?item\.action[\s\S]*?<OperatorActionDetail[\s\S]*?label="내가 할 일"[\s\S]*?value=\{item\.operatorTask\}[\s\S]*?<OperatorActionDetail[\s\S]*?label="완료 기준"[\s\S]*?value=\{item\.completionGate\}[\s\S]*?<OperatorActionDetail label="Evidence" value=\{item\.evidence\} \/>[\s\S]*?href=\{item\.href\}[\s\S]*?onCopyAction\(item\)[\s\S]*?onOpenActionInStudio\(item\)[\s\S]*?<OperatorActionList[\s\S]*?onCopyAction=\{copyOperatorAction\}[\s\S]*?onOpenActionInStudio=\{openOperatorActionInStudio\}/,
-  "Operator next actions panel should render operator steps through a dedicated list wired to copy and Studio actions",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function OperatorManualCopyTextarea[\s\S]*?value: string[\s\S]*?Operator next actions manual copy[\s\S]*?className=\{`\$\{textareaClass\} min-h-40 font-mono text-xs`\}[\s\S]*?readOnly[\s\S]*?value=\{value\}/,
-  "Operator next actions panel should render manual fallback text through a dedicated textarea component",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function OperatorManualCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?const isError = copyState === "error" \|\| copyState === "draftError"[\s\S]*?복사에 실패했습니다\. 아래 다음 조치 패키지를 직접 선택해 복사하세요\.[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 다음 조치 패키지를 직접 선택해 복사하세요\.[\s\S]*?운영자 다음 조치 패키지를 복사했습니다\.[\s\S]*?isError \? "text-danger" : "text-accent"[\s\S]*?<OperatorManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<OperatorManualCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
-  "Operator next actions panel should render copy status, draft fallback, and manual fallback through a dedicated notice",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function openOperatorActionsInStudio\(\)[\s\S]*?const rawInput = buildOperatorNextActionsChecklist\(\)[\s\S]*?const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "integrations-operations-checklist"[\s\S]*?rawInput[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setCopyState\("draftError"\)[\s\S]*?setManualCopyText\(rawInput\)[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=integrations-operations-checklist"\)/,
-  "Operator next actions panel should keep the whole next-actions checklist in manual fallback when Studio draft storage fails",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function openOperatorActionsInStudio\(\)[\s\S]*?writeStudioDraft\(\{[\s\S]*?sourceTitle: "Integrations 운영자 다음 조치"[\s\S]*?sourceHref: "\/integrations#integrations-next-actions"/,
-  "Operator next actions full Studio draft should return to the next actions anchor",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function openOperatorActionInStudio\(item: OperatorNextAction\)[\s\S]*?const rawInput = buildOperatorNextActionChecklist\(item\)[\s\S]*?const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "integrations-operations-checklist"[\s\S]*?rawInput[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setCopyState\("draftError"\)[\s\S]*?setManualCopyText\(rawInput\)[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=integrations-operations-checklist"\)/,
-  "Operator next actions panel should keep the single next-action checklist in manual fallback when Studio draft storage fails",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /function openOperatorActionInStudio\(item: OperatorNextAction\)[\s\S]*?writeStudioDraft\(\{[\s\S]*?sourceTitle: `Integrations \$\{item\.label\}`[\s\S]*?sourceHref: "\/integrations#integrations-next-actions"/,
-  "Operator next actions single Studio draft should return to the next actions anchor",
-);
-assert.match(
-  operatorNextActionsPanel,
-  /<OperatorActionSummary \/>[\s\S]*?<OperatorActionToolbar[\s\S]*?<OperatorActionList[\s\S]*?<OperatorManualCopyNotice/,
-  "Operator next actions panel should keep summary, toolbar, action list, and copy fallback in reading order",
-);
-
-for (const requiredText of [
-  '"use client"',
-  "외부 AI 운영 가이드",
-  "ExternalAiOperatorStep",
-  "commands: string[]",
-  "McpDefaultExample",
-  "ExternalAiOperatorSummary",
-  "TargetAiDeliveryRule",
-  "ExternalAiEvidenceCheck",
-  "targetAiDeliveryRules",
-  "externalAiEvidenceChecks",
-  "TargetAiDeliveryRuleCard",
-  "TargetAiDeliveryRules",
-  "ExternalAiEvidenceChecklist",
-  "ExternalAiOperatorStepItem",
-  "ExternalAiOperatorStepList",
-  "ExternalAiOperatorGate",
-  "McpDefaultExamples",
-  "ExternalAiOperatorManualCopyTextarea",
-  "ExternalAiOperatorCopyNotice",
-  "externalAiOperatorSteps",
-  "externalAiOperatorSummaryItems",
-  "check: string",
-  'data-testid="external-ai-operator-summary"',
-  'data-testid="external-ai-delivery-rules"',
-  "운영 단계",
-  "첫 실행",
-  "전달 gate",
-  "피드백 저장",
-  "Target AI delivery rules",
-  "general prompt package",
-  "context-heavy prompt package",
-  "implementation brief",
-  "research and source package",
-  "목표, 제약, 원하는 출력 형식을 확인합니다.",
-  "긴 맥락과 판단 기준을 함께 전달합니다.",
-  "파일 범위, 검증 명령, 완료 기준을 포함합니다.",
-  "자료 비교, 멀티모달 힌트, 출처 맥락을 분리합니다.",
-  "실행 증거 체크",
-  "localhost:3000과 POST /api/integrations/refine 응답을 확인합니다.",
-  "reviewRequired true와 target handoff package를 확인합니다.",
-  "npm run smoke:integrations로 Chrome, MCP bridge, MCP client, Learning smoke evidence file을 먼저 남깁니다.",
-  "copy-ready prompt와 missing context review를 확인한 뒤 붙여넣습니다.",
-  "rating, result summary, inbox record를 confirmSave true 후 확인합니다.",
-  "Execution evidence checklist",
-  "Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff.",
-  "Keep local-smoke-evidence before target-ai-handoff.",
-  "mcpDefaultExamples",
-  "buildExternalAiOperatorGuidePackage",
-  "# Prompt AI Studio External AI Operator Guide",
-  "로컬 앱 실행",
-  "/integrations가 열린다.",
-  "연결 표면 1개 선택",
-  "Chrome 또는 MCP 하나만 먼저 연결한다.",
-  "review-required 결과 확인",
-  "target AI, 가정, 누락 맥락을 확인한다.",
-  "로컬 smoke evidence 저장",
-  "local evidence file이 갱신된다.",
-  "npm run smoke:integrations",
-  "npm run smoke:chrome-extension -- --out output/smoke/chrome-extension-smoke.md",
-  "npm run smoke:mcp -- --out output/smoke/mcp-bridge-smoke.md",
-  "npm run smoke:mcp-client -- --out output/smoke/mcp-client-smoke.md",
-  "npm run smoke:learning-feedback -- --out output/smoke/learning-feedback-smoke.md",
-  "외부 AI로 넘기기 전에 통합 preflight로 Chrome, MCP bridge, MCP client, Learning feedback 증거 파일을 남깁니다.",
-  "외부 AI에 수동 전달",
-  "검토한 package만 붙여넣는다.",
-  "실행 결과 저장 판단",
-  "confirmSave true 저장 기록을 확인한다.",
-  "Gate: local-first automation, smoke evidence saved, review-required external delivery, confirmed feedback save.",
-  "자동화는 정제까지, 외부 전달은 증거 저장 후 검토 복사.",
-  "smoke evidence, handoff package, reviewRequired",
-  "MCP 기본값 예시",
-  "PROMPT_AI_STUDIO_TARGET_AI=codex",
-  "PROMPT_AI_STUDIO_SOURCE_URL=mcp://codex",
-  "운영 가이드 복사",
-  "운영 가이드 Studio로",
-  "외부 AI 운영 가이드 복사",
-  "외부 AI 운영 가이드 Studio로",
-  "copyOperatorGuide",
-  "openOperatorGuideInStudio",
-  "copyTextToClipboard",
-  "writeStudioDraft",
-  "draftError",
-  "Studio 초안을 저장하지 못했습니다. 아래 운영 가이드를 직접 선택해 복사하세요.",
-  'setCopyState("draftError")',
-  "setManualCopyText(rawInput)",
-  'source: "integrations-operations-checklist"',
-  'router.push("/studio?draft=integrations-operations-checklist")',
-  'sourceTitle: "Integrations 외부 AI 운영 가이드"',
-  'sourceHref: "/integrations#integrations-operator-guide"',
-  'targetModels: ["gpt", "claude", "codex", "gemini"]',
-  "External AI operator guide manual copy",
-  "외부 AI 운영 가이드를 복사했습니다.",
-  "복사에 실패했습니다. 아래 운영 가이드를 직접 선택해 복사하세요.",
-  "- Check:",
-  'id="integrations-operator-guide"',
-]) {
-  assertIncludes(
-    externalAiOperatorGuidePanel,
-    requiredText,
-    `External AI operator guide panel should include ${requiredText}`,
-  );
-}
-
-assert.match(
-  externalAiOperatorGuidePanel,
-  /const externalAiOperatorSummaryItems = \[[\s\S]*?label: "운영 단계"[\s\S]*?externalAiOperatorSteps\.length[\s\S]*?label: "첫 실행"[\s\S]*?externalAiOperatorSteps\[0\]\.action[\s\S]*?label: "전달 gate"[\s\S]*?review-required[\s\S]*?label: "피드백 저장"[\s\S]*?confirmSave/,
-  "External AI operator guide should derive step count, first run step, delivery gate, and feedback save gate",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /function ExternalAiOperatorSummary\(\)[\s\S]*?className="grid grid-cols-2 gap-2 border-b border-line px-5 py-4 xl:grid-cols-4"[\s\S]*?data-testid="external-ai-operator-summary"[\s\S]*?externalAiOperatorSummaryItems\.map[\s\S]*?break-words text-xs font-semibold text-soft[\s\S]*?<ExternalAiOperatorSummary \/>/,
-  "External AI operator guide should render the operator summary as a compact two-column mobile grid",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /const targetAiDeliveryRules = \[[\s\S]*?general prompt package[\s\S]*?target: "GPT"[\s\S]*?context-heavy prompt package[\s\S]*?target: "Claude"[\s\S]*?implementation brief[\s\S]*?target: "Codex"[\s\S]*?research and source package[\s\S]*?target: "Gemini"[\s\S]*?\] satisfies TargetAiDeliveryRule\[\]/,
-  "External AI operator guide should define target AI delivery rules for GPT, Claude, Codex, and Gemini",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /function TargetAiDeliveryRuleCard[\s\S]*?rule: TargetAiDeliveryRule[\s\S]*?rule\.target[\s\S]*?rule\.mode[\s\S]*?rule\.guard[\s\S]*?function TargetAiDeliveryRules\(\)[\s\S]*?data-testid="external-ai-delivery-rules"[\s\S]*?targetAiDeliveryRules\.map[\s\S]*?<TargetAiDeliveryRuleCard key=\{rule\.target\} rule=\{rule\} \/>[\s\S]*?<TargetAiDeliveryRules \/>/,
-  "External AI operator guide should render target AI delivery rules through dedicated cards",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /"## Target AI delivery rules"[\s\S]*?targetAiDeliveryRules\.flatMap[\s\S]*?`### \$\{rule\.target\}`[\s\S]*?`- Mode: \$\{rule\.mode\}`[\s\S]*?`- Guard: \$\{rule\.guard\}`[\s\S]*?"## Execution evidence checklist"/,
-  "External AI operator guide package should include target AI delivery rules before the operator steps",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /const externalAiEvidenceChecks = \[[\s\S]*?action: "localhost:3000과 POST \/api\/integrations\/refine 응답[\s\S]*?label: "01 로컬 연결"[\s\S]*?action: "reviewRequired true와 target handoff package[\s\S]*?label: "02 정제 결과"[\s\S]*?action:[\s\S]*?"npm run smoke:integrations로 Chrome, MCP bridge, MCP client, Learning smoke evidence file[\s\S]*?label: "03 증거 저장"[\s\S]*?action: "copy-ready prompt와 missing context review[\s\S]*?label: "04 전달 승인"[\s\S]*?action: "rating, result summary, inbox record[\s\S]*?label: "05 피드백 증거"[\s\S]*?\] satisfies ExternalAiEvidenceCheck\[\]/,
-  "External AI operator guide should define execution evidence checks for local, refine, smoke evidence, delivery, and feedback proof",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /"## Execution evidence checklist"[\s\S]*?externalAiEvidenceChecks\.flatMap[\s\S]*?`### \$\{check\.label\}`[\s\S]*?`- Action: \$\{check\.action\}`[\s\S]*?`- Evidence: \$\{check\.evidence\}`[\s\S]*?Audit source order: chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff\.[\s\S]*?Keep local-smoke-evidence before target-ai-handoff\.[\s\S]*?"## 내가 할 일"/,
-  "External AI operator guide package should include execution evidence checks and audit source order before operator steps",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /"## 내가 할 일"[\s\S]*?externalAiOperatorSteps\.flatMap[\s\S]*?`### \$\{index \+ 1\}\. \$\{step\.action\}`[\s\S]*?step\.commands\.map[\s\S]*?`- Check: \$\{step\.check\}`[\s\S]*?`- Detail: \$\{step\.detail\}`/,
-  "External AI operator guide package should include each step's short check before detail",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /function ExternalAiEvidenceChecklist\(\)[\s\S]*?실행 증거 체크[\s\S]*?local-smoke-evidence가 target-ai-handoff보다[\s\S]*?externalAiEvidenceChecks\.map[\s\S]*?check\.label[\s\S]*?check\.action[\s\S]*?check\.evidence[\s\S]*?<ExternalAiEvidenceChecklist \/>/,
-  "External AI operator guide should render execution evidence checks before the operator step list",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /function ExternalAiOperatorStepItem[\s\S]*?index: number[\s\S]*?step: ExternalAiOperatorStep[\s\S]*?String\(index \+ 1\)\.padStart\(2, "0"\)[\s\S]*?step\.action[\s\S]*?step\.commands\.map[\s\S]*?command[\s\S]*?step\.detail[\s\S]*?확인: \{step\.check\}[\s\S]*?function ExternalAiOperatorStepList\(\)[\s\S]*?externalAiOperatorSteps\.map[\s\S]*?<ExternalAiOperatorStepItem[\s\S]*?index=\{index\}[\s\S]*?key=\{step\.action\}[\s\S]*?step=\{step\}[\s\S]*?<ExternalAiOperatorStepList \/>/,
-  "External AI operator guide should render the execution steps and short checks through a dedicated step list",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /function ExternalAiOperatorGate\(\)[\s\S]*?Operator Gate[\s\S]*?자동화는 정제까지, 외부 전달은 증거 저장 후 검토 복사\.[\s\S]*?smoke evidence, handoff package, reviewRequired[\s\S]*?<ExternalAiOperatorGate \/>/,
-  "External AI operator guide should render the operator gate through a dedicated component",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /function McpDefaultExamples\(\)[\s\S]*?MCP 기본값 예시[\s\S]*?mcpDefaultExamples\.map[\s\S]*?item\.surface[\s\S]*?item\.env[\s\S]*?<McpDefaultExamples \/>/,
-  "External AI operator guide should render MCP defaults through a dedicated component",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /function ExternalAiOperatorManualCopyTextarea[\s\S]*?value: string[\s\S]*?External AI operator guide manual copy[\s\S]*?className=\{`\$\{textareaClass\} min-h-48 font-mono text-xs`\}[\s\S]*?readOnly[\s\S]*?value=\{value\}/,
-  "External AI operator guide should render manual fallback text through a dedicated textarea component",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /function ExternalAiOperatorCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?const isError = copyState === "error" \|\| copyState === "draftError"[\s\S]*?복사에 실패했습니다\. 아래 운영 가이드를 직접 선택해 복사하세요\.[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 운영 가이드를 직접 선택해 복사하세요\.[\s\S]*?외부 AI 운영 가이드를 복사했습니다\.[\s\S]*?isError \? "text-danger" : "text-accent"[\s\S]*?<ExternalAiOperatorManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<ExternalAiOperatorCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
-  "External AI operator guide should render copy status, draft fallback, and manual fallback through a dedicated notice",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /function openOperatorGuideInStudio\(\)[\s\S]*?const rawInput = buildExternalAiOperatorGuidePackage\(\)[\s\S]*?const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "integrations-operations-checklist"[\s\S]*?rawInput[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setCopyState\("draftError"\)[\s\S]*?setManualCopyText\(rawInput\)[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=integrations-operations-checklist"\)/,
-  "External AI operator guide should keep the operator guide in manual fallback when Studio draft storage fails",
-);
-assert.match(
-  externalAiOperatorGuidePanel,
-  /<ExternalAiOperatorSummary \/>[\s\S]*?<TargetAiDeliveryRules \/>[\s\S]*?<ExternalAiEvidenceChecklist \/>[\s\S]*?<ExternalAiOperatorStepList \/>[\s\S]*?<ExternalAiOperatorGate \/>[\s\S]*?<McpDefaultExamples \/>[\s\S]*?<ExternalAiOperatorCopyNotice/,
-  "External AI operator guide should keep summary, target AI rules, evidence checks, steps, gate, MCP defaults, and copy notice in reading order",
-);
 
 for (const requiredText of [
   '"use client"',
@@ -2673,26 +2145,6 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "Integrations 지원 환경 요약: Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고, 외부 AI 표면은 로컬 smoke evidence 저장 후 reviewRequired package만 전달하는 기준을 명시",
-  "README should document the integrations support environment summary",
-);
-assertIncludes(
-  readme,
-  "Integrations 연결 계약 매트릭스: Chrome, ChatGPT/Claude/Gemini, Codex, MCP별 capture, package, review gate, feedback 산출물을 같은 카드 구조로 보여줘 각 환경이 같은 review-required/confirmSave 계약을 어떻게 지키는지 한눈에 확인하게 합니다.",
-  "README should document the integrations execution contract matrix",
-);
-assertIncludes(
-  readme,
-  "Integrations 실행 증거 체크: 로컬 연결, 정제 결과, 증거 저장, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 합니다.",
-  "README should document the integrations execution evidence checklist",
-);
-assertIncludes(
-  readme,
-  "Integrations Smoke 증거 경로: `npm run smoke:integrations` local packet summary, actual evidence, reviewed feedback record 순서를 먼저 보여주고 Integrated preflight, MCP bridge, MCP client, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 합니다.",
-  "README should document the integrations smoke evidence path",
-);
-assertIncludes(
-  readme,
   "Capture, Refine, Evidence, Deliver, Feedback",
   "README should document the integrations operation flow phases",
 );
@@ -2700,11 +2152,6 @@ assertIncludes(
   readme,
   "Capture, Refine, Evidence, Deliver, Feedback 단계별 owner, artifact, gate를 카드로 먼저 보여준 뒤 상세 표를 유지합니다.",
   "README should document responsive integrations operation flow cards",
-);
-assertIncludes(
-  readme,
-  "Integrations 자동화 원칙과 출시 순서는 기본 모드를 `Refine automatically, save evidence, deliver with review.`로 표시하고 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따르게 합니다.",
-  "README should document local smoke evidence in automation principles and rollout order",
 );
 assertIncludes(
   readme,
@@ -2720,66 +2167,6 @@ assertIncludes(
   readme,
   "섹션별 용도 설명",
   "README should document integrations quick navigation descriptions",
-);
-assertIncludes(
-  readme,
-  "검증 게이트 요약",
-  "README should document integrations gate summary",
-);
-assertIncludes(
-  readme,
-  "로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장",
-  "README should document integrations gate summary stages",
-);
-assertIncludes(
-  readme,
-  "게이트별 상세 이동",
-  "README should document integrations gate summary links",
-);
-assertIncludes(
-  readme,
-  "Integrations 검증 게이트 요약은 모바일 2열과 데스크톱 4열로 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 짧게 훑게 합니다.",
-  "README should document responsive integrations gate summary metrics",
-);
-assertIncludes(
-  readme,
-  "Integrations 외부 AI 운영 가이드",
-  "README should document the external AI operator guide panel",
-);
-assertIncludes(
-  readme,
-  "로컬 앱 실행, 연결 표면 1개 선택, review-required 결과 확인",
-  "README should document the external AI operator guide steps",
-);
-assertIncludes(
-  readme,
-  "운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여주고",
-  "README should document external AI operator guide summary metrics",
-);
-assertIncludes(
-  readme,
-  "`npm run smoke:integrations` 로컬 smoke evidence 저장, 외부 AI 수동 전달, confirmSave 피드백 저장 판단 순서와 단계별 확인 기준",
-  "README should document external AI operator guide smoke evidence step",
-);
-assertIncludes(
-  readme,
-  "운영 가이드 복사/`integrations-operations-checklist` Studio 초안에는 실행 증거 체크와 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
-  "README should document external AI operator guide copied package evidence checklist and audit source order",
-);
-assertIncludes(
-  readme,
-  "Studio 초안 원본 경로는 `#integrations-operator-guide`로 돌아오며",
-  "README should document external AI operator guide Studio source anchor",
-);
-assertIncludes(
-  readme,
-  "운영 가이드 복사",
-  "README should document external AI operator guide copy",
-);
-assertIncludes(
-  readme,
-  "Studio 초안 전송 제공",
-  "README should document external AI operator guide Studio handoff",
 );
 assertIncludes(
   readme,
@@ -2843,43 +2230,8 @@ assertIncludes(
 );
 assertIncludes(
   readme,
-  "저장 실패 시 이동하지 않고 수동 복사용 다음 조치 원문을 표시",
-  "README should document operator next actions Studio draft fallback",
-);
-assertIncludes(
-  readme,
-  "Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며",
-  "README should document operator next actions Studio source anchor",
-);
-assertIncludes(
-  readme,
-  "`npm run smoke:integrations` 로컬 smoke evidence 저장",
-  "README should document operator next actions integrated smoke command",
-);
-assertIncludes(
-  readme,
-  "Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 보여줍니다.",
-  "README should document operator next actions actual evidence fields",
-);
-assertIncludes(
-  readme,
   "`npm run smoke:integrations`를 포함한 smoke 명령, smoke evidence 저장과 review-required 승인 gate",
   "README should document connection readiness integrated smoke command",
-);
-assertIncludes(
-  readme,
-  "Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
-  "README should document integrations operations checklist source return action label",
-);
-assertIncludes(
-  readme,
-  "Studio 초안 원본 경로는 `#integrations-operator-guide`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
-  "README should document external AI operator guide Studio source return action label",
-);
-assertIncludes(
-  readme,
-  "저장 실패 시 이동하지 않고 수동 복사용 운영 가이드 원문을 표시",
-  "README should document external AI operator guide Studio draft fallback",
 );
 assertIncludes(
   readme,
@@ -3113,38 +2465,8 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations 지원 환경 요약은 Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고, 외부 AI 표면은 로컬 smoke evidence 저장 후 reviewRequired package만 전달하는 기준을 명시해야 한다.",
-  "PRD should document the integrations support environment summary",
-);
-assertIncludes(
-  prd,
-  "Integrations 연결 계약 매트릭스는 Chrome, ChatGPT/Claude/Gemini, Codex, MCP별 capture, package, review gate, feedback 산출물을 같은 카드 구조로 보여줘 각 환경이 같은 review-required/confirmSave 계약을 어떻게 지키는지 한눈에 확인하게 해야 한다.",
-  "PRD should document the integrations execution contract matrix",
-);
-assertIncludes(
-  prd,
-  "Integrations 실행 증거 체크는 로컬 연결, 정제 결과, 증거 저장, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 해야 한다.",
-  "PRD should document the integrations execution evidence checklist",
-);
-assertIncludes(
-  prd,
-  "Integrations Smoke 증거 경로는 `npm run smoke:integrations` local packet summary, actual evidence, reviewed feedback record 순서를 먼저 보여주고 Integrated preflight, MCP bridge, MCP client, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 해야 한다.",
-  "PRD should document the integrations smoke evidence path",
-);
-assertIncludes(
-  prd,
   "Integrations 운영 흐름은 Capture, Refine, Evidence, Deliver, Feedback 단계별 owner, artifact, gate를 카드로 먼저 보여준 뒤 상세 표를 유지해야 한다.",
   "PRD should document the evidence step in the integrations operation flow",
-);
-assertIncludes(
-  prd,
-  "Integrations 자동화 원칙과 출시 순서는 기본 모드를 `Refine automatically, save evidence, deliver with review.`로 표시하고 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따라야 한다.",
-  "PRD should document local smoke evidence in automation principles and rollout order",
-);
-assertIncludes(
-  prd,
-  "Integrations 검증 게이트 요약은 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 모바일 2열과 데스크톱 4열로 먼저 보여줘야 한다.",
-  "PRD should document integrations gate summary evidence stage",
 );
 assertIncludes(
   prd,
@@ -3198,53 +2520,13 @@ assertIncludes(
 );
 assertIncludes(
   prd,
-  "Integrations operations checklist 계열 Studio 전송은 운영자 다음 조치, 외부 AI 운영 가이드, 환경별 실행 가이드, MCP smoke runbook 초안의 복귀 액션 라벨을 `Integrations 원본 섹션으로 돌아가기`로 표시해 각 초안이 저장한 원본 섹션 앵커로 돌아가야 하며, 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
+  "Integrations operations checklist 계열 Studio 전송은 환경별 실행 가이드, MCP smoke runbook 초안의 복귀 액션 라벨을 `Integrations 원본 섹션으로 돌아가기`로 표시해 각 초안이 저장한 원본 섹션 앵커로 돌아가야 하며, 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
   "PRD should document integrations operations checklist Studio draft return actions and fallback",
-);
-assertIncludes(
-  prd,
-  "`npm run smoke:integrations` 로컬 smoke evidence 저장",
-  "PRD should document operator next actions integrated smoke command",
-);
-assertIncludes(
-  prd,
-  "Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 확인하게 해야 한다.",
-  "PRD should document operator next actions actual evidence fields",
-);
-assertNotIncludes(
-  prd,
-  "Integrations operations checklist 계열 Studio 전송은 운영자 다음 조치, 외부 AI 운영 가이드, 환경별 실행 가이드, MCP smoke runbook 초안 저장에 실패하면 Studio로 이동하지 않고 해당 원문을 수동 복사용 textarea로 표시해야 한다.",
-  "PRD should not keep integrations operations checklist fallback-only draft wording",
-);
-assertIncludes(
-  prd,
-  "Integrations 운영자 다음 조치 Studio 초안의 원본 경로는 `/integrations#integrations-next-actions`로 저장하고 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해 Studio에서 원본으로 돌아갈 때 운영자 다음 조치 섹션을 복원해야 한다.",
-  "PRD should document operator next actions Studio source anchor",
-);
-assertIncludes(
-  prd,
-  "Integrations 외부 AI 운영 가이드 Studio 초안의 원본 경로는 `/integrations#integrations-operator-guide`로 저장하고 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해 Studio에서 원본으로 돌아갈 때 외부 AI 운영 가이드 섹션을 복원해야 한다.",
-  "PRD should document external AI operator guide Studio source anchor",
 );
 assertIncludes(
   prd,
   "Integrations 연결 준비도는 연결 표면, 첫 실행 표면, `npm run smoke:integrations`를 포함한 smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여줘야 한다.",
   "PRD should document connection readiness summary metrics",
-);
-assertIncludes(
-  prd,
-  "Integrations 외부 AI 운영 가이드는 운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여주고, 외부 AI 전달 전 `npm run smoke:integrations` 로컬 smoke evidence 저장 단계와 실행 증거 체크를 포함해야 한다.",
-  "PRD should document external AI operator guide summary metrics and evidence checklist",
-);
-assertIncludes(
-  prd,
-  "Integrations 외부 AI 운영 가이드 단계는 각 action의 확인 기준을 짧은 check로 함께 보여줘 운영자가 다음 단계로 넘어가도 되는지 바로 판단할 수 있어야 한다.",
-  "PRD should document external AI operator guide step checks",
-);
-assertIncludes(
-  prd,
-  "운영 가이드 복사와 `integrations-operations-checklist` Studio 초안은 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함해야 한다.",
-  "PRD should document external AI operator guide copied package audit source order",
 );
 assertIncludes(
   prd,
@@ -3333,26 +2615,6 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations 지원 환경 요약에서 Chrome, ChatGPT/Claude/Gemini, Codex, MCP의 역할과 현재 gate를 모바일 2열과 데스크톱 4열로 먼저 보여주고, 외부 AI 표면은 로컬 smoke evidence 저장 후 reviewRequired package만 전달하는 기준을 명시하게 한다",
-  "Development brief should document the integrations support environment summary",
-);
-assertIncludes(
-  developmentBrief,
-  "Integrations 연결 계약 매트릭스에서 Chrome, ChatGPT/Claude/Gemini, Codex, MCP별 capture, package, review gate, feedback 산출물을 같은 카드 구조로 보여줘 각 환경이 같은 review-required/confirmSave 계약을 어떻게 지키는지 한눈에 확인하게 한다",
-  "Development brief should document the integrations execution contract matrix",
-);
-assertIncludes(
-  developmentBrief,
-  "Integrations 실행 증거 체크에서 로컬 연결, 정제 결과, 증거 저장, 전달 승인, 피드백 증거별로 남아야 할 evidence와 이동 링크를 먼저 보여줘 외부 AI 실행 전후의 검증 기준을 놓치지 않게 한다",
-  "Development brief should document the integrations execution evidence checklist",
-);
-assertIncludes(
-  developmentBrief,
-  "Integrations Smoke 증거 경로에서 `npm run smoke:integrations` local packet summary, actual evidence, reviewed feedback record 순서를 먼저 보여주고 Integrated preflight, MCP bridge, MCP client, Chrome popup, Learning feedback 큐 smoke가 각각 command, evidence, result로 어떻게 이어지는지 대조하며 상세 섹션으로 이동하게 한다",
-  "Development brief should document the integrations smoke evidence path",
-);
-assertIncludes(
-  developmentBrief,
   "Integrations 연결 준비도 점검에서 연결 표면, 첫 실행 표면, `npm run smoke:integrations`를 포함한 smoke 명령, smoke evidence 저장과 review-required 승인 gate를 모바일 2열 요약으로 먼저 보여주고",
   "Development brief should document connection readiness summary metrics",
 );
@@ -3378,11 +2640,6 @@ assertIncludes(
 );
 assertIncludes(
   developmentBrief,
-  "Integrations 자동화 원칙과 출시 순서는 기본 모드를 `Refine automatically, save evidence, deliver with review.`로 표시하고 `local-smoke-evidence`를 `target-ai-handoff` 전에 남기도록 보여줘 감사 출처와 출시 단계가 같은 evidence-first 흐름을 따르게 한다",
-  "Development brief should document local smoke evidence in automation principles and rollout order",
-);
-assertIncludes(
-  developmentBrief,
   "상세 섹션 앵커 이동",
   "Development brief should document operation flow detail anchors",
 );
@@ -3395,66 +2652,6 @@ assertIncludes(
   developmentBrief,
   "섹션별 용도 설명",
   "Development brief should document integrations quick navigation descriptions",
-);
-assertIncludes(
-  developmentBrief,
-  "검증 게이트 요약",
-  "Development brief should document integrations gate summary",
-);
-assertIncludes(
-  developmentBrief,
-  "로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장",
-  "Development brief should document integrations gate summary stages",
-);
-assertIncludes(
-  developmentBrief,
-  "Integrations 검증 게이트 요약은 모바일 2열과 데스크톱 4열로 로컬 정제, 증거 저장, 검토 후 전달, 명시적 피드백 저장 상태를 짧게 훑게 한다",
-  "Development brief should document responsive integrations gate summary metrics",
-);
-assertIncludes(
-  developmentBrief,
-  "게이트별 상세 이동",
-  "Development brief should document integrations gate summary links",
-);
-assertIncludes(
-  developmentBrief,
-  "Integrations 외부 AI 운영 가이드",
-  "Development brief should document the external AI operator guide panel",
-);
-assertIncludes(
-  developmentBrief,
-  "로컬 앱 실행, 연결 표면 1개 선택, review-required 결과 확인",
-  "Development brief should document the external AI operator guide steps",
-);
-assertIncludes(
-  developmentBrief,
-  "운영 단계, 첫 실행, review-required 전달 gate, confirmSave 피드백 저장 gate를 모바일 2열 요약으로 먼저 보여주고",
-  "Development brief should document external AI operator guide summary metrics",
-);
-assertIncludes(
-  developmentBrief,
-  "단계별 짧은 check",
-  "Development brief should document external AI operator guide step checks",
-);
-assertIncludes(
-  developmentBrief,
-  "`npm run smoke:integrations` 로컬 smoke evidence 저장, 외부 AI 수동 전달, confirmSave 피드백 저장 판단 순서",
-  "Development brief should document external AI operator guide smoke evidence step",
-);
-assertIncludes(
-  developmentBrief,
-  "운영 가이드 복사/`integrations-operations-checklist` Studio 초안에는 실행 증거 체크와 `chrome-selection -> mcp-refine -> local-smoke-evidence -> target-ai-handoff` 감사 출처 순서를 포함",
-  "Development brief should document external AI operator guide copied package evidence checklist and audit source order",
-);
-assertIncludes(
-  developmentBrief,
-  "운영 가이드 복사",
-  "Development brief should document external AI operator guide copy",
-);
-assertIncludes(
-  developmentBrief,
-  "Studio 초안 전송 제공",
-  "Development brief should document external AI operator guide Studio handoff",
 );
 assertIncludes(
   developmentBrief,
@@ -3510,41 +2707,6 @@ assertIncludes(
   developmentBrief,
   "integrations-operations-checklist",
   "Development brief should document integrations operations checklist source",
-);
-assertIncludes(
-  developmentBrief,
-  "저장 실패 시 이동하지 않고 수동 복사용 다음 조치 원문 표시",
-  "Development brief should document operator next actions Studio draft fallback",
-);
-assertIncludes(
-  developmentBrief,
-  "Studio 초안 원본 경로는 `#integrations-next-actions`로 돌아오며, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하고",
-  "Development brief should document operator next actions Studio source anchor",
-);
-assertIncludes(
-  developmentBrief,
-  "`npm run smoke:integrations` 로컬 smoke evidence 저장",
-  "Development brief should document operator next actions integrated smoke command",
-);
-assertIncludes(
-  developmentBrief,
-  "Chrome loaded extension, MCP client, Learning feedback 실제 증빙 필드를 먼저 확인하게 한다.",
-  "Development brief should document operator next actions actual evidence fields",
-);
-assertIncludes(
-  developmentBrief,
-  "Integrations operations checklist 계열 Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시해",
-  "Development brief should document integrations operations checklist source return action label",
-);
-assertIncludes(
-  developmentBrief,
-  "저장 실패 시 이동하지 않고 수동 복사용 운영 가이드 원문 표시",
-  "Development brief should document external AI operator guide Studio draft fallback",
-);
-assertIncludes(
-  developmentBrief,
-  "Studio 초안 원본 경로는 `#integrations-operator-guide`로 돌아오고, Studio 복귀 액션 라벨은 `Integrations 원본 섹션으로 돌아가기`로 표시하며",
-  "Development brief should document external AI operator guide Studio source anchor",
 );
 assertIncludes(
   developmentBrief,

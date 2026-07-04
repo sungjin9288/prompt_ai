@@ -10,10 +10,6 @@ import {
   primaryButtonClass,
   secondaryButtonClass,
 } from "@/components/ui";
-import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import {
   languageStrategyLabels,
@@ -981,48 +977,6 @@ export function DashboardView() {
       href: improvementLibraryHref({ improvement: "unmeasured" }),
       label: "측정 불가",
       value: improvementSummary.unmeasuredCount.toString(),
-    },
-  ];
-  const dashboardOperatingFlowItems: ContextOperatingFlowItem[] = [
-    {
-      actionLabel: "Data 열기",
-      detail: `${dataReadinessDone}/${dataReadinessChecks.length} 준비 · ${dataReadinessScore}%`,
-      href: "/data",
-      label: "준비",
-      step: "01",
-      title: "데이터와 백업 상태 확인",
-    },
-    {
-      actionLabel: "첫 실행 열기",
-      detail: dashboardNextActionQueueFirstAction
-        ? `${learningOpsPriorityLabel(
-            dashboardNextActionQueueFirstAction.priority,
-          )} · ${dashboardNextActionQueueFirstAction.categoryLabel}`
-        : "정기 점검",
-      href: dashboardNextActionQueueFirstAction?.href ?? "/learning",
-      label: "첫 실행",
-      step: "02",
-      title: dashboardNextActionQueueFirstAction?.label ?? "학습 기준 점검",
-    },
-    {
-      actionLabel: "Studio 열기",
-      detail: engineStatusFailed
-        ? "Fallback"
-        : engineStatus?.mode === "openai"
-          ? "OpenAI 보강"
-          : "Local fallback",
-      href: "/studio",
-      label: "생성",
-      step: "03",
-      title: "Studio에서 프롬프트 생성",
-    },
-    {
-      actionLabel: "Library 열기",
-      detail: "복사 · Studio 전송 · 저장",
-      href: "/library",
-      label: "검증",
-      step: "04",
-      title: "결과와 이력 확인",
     },
   ];
   const dashboardExecutionSummaryItems = [
@@ -2273,17 +2227,6 @@ export function DashboardView() {
           ))}
         </div>
       </section>
-
-      <div className="mb-6">
-        <ContextOperatingFlow
-          badge="Studio에서 시작"
-          badgeHref="/studio"
-          description="준비 상태를 확인하고 첫 실행 항목을 처리한 뒤 생성 결과를 저장 이력까지 확인합니다."
-          items={dashboardOperatingFlowItems}
-          testId="dashboard-operating-flow"
-          title="오늘 운영 흐름"
-        />
-      </div>
 
       <div
         className="mb-6 grid gap-3 md:grid-cols-3 xl:grid-cols-6"

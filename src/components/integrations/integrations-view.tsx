@@ -7,10 +7,6 @@ import {
   PanelHeader,
   secondaryButtonClass,
 } from "@/components/ui";
-import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
 import { McpFeedbackInboxPanel } from "./mcp-feedback-inbox-panel";
 import { IntegrationRefineTester } from "./integration-refine-tester";
 import { McpConnectionPanel } from "./mcp-connection-panel";
@@ -415,49 +411,6 @@ const integrationQuickLinks = [
   href: string;
   label: string;
 }>;
-
-const integrationExecutionStrip: ContextOperatingFlowItem[] = [
-  {
-    actionLabel: "준비도 확인",
-    detail: "dev server와 local refine API가 먼저 살아 있어야 합니다.",
-    href: "#integrations-readiness",
-    label: "로컬 앱",
-    step: "01",
-    title: "localhost:3000",
-  },
-  {
-    actionLabel: "Refine 테스트",
-    detail: "Chrome, Studio, MCP가 원문과 source context를 보냅니다.",
-    href: "#integrations-refine-tester",
-    label: "입력 수집",
-    step: "02",
-    title: "source app",
-  },
-  {
-    actionLabel: "Smoke 증거 확인",
-    detail: "외부 AI 전달 전에 Chrome, MCP bridge, MCP client, Learning smoke evidence를 남깁니다.",
-    href: "#integrations-smoke-evidence-path",
-    label: "증거 저장",
-    step: "03",
-    title: "local evidence",
-  },
-  {
-    actionLabel: "실행 가이드",
-    detail: "reviewRequired package를 사람이 확인한 뒤 외부 AI에 전달합니다.",
-    href: "#integrations-environment-guide",
-    label: "검토 전달",
-    step: "04",
-    title: "GPT/Claude/Codex/Gemini",
-  },
-  {
-    actionLabel: "Feedback 확인",
-    detail: "confirmSave true인 실행 결과만 feedback inbox에 남깁니다.",
-    href: "#integrations-feedback-inbox",
-    label: "피드백 저장",
-    step: "05",
-    title: "MCP feedback",
-  },
-];
 
 const integrationGateSummary = [
   {
@@ -1021,16 +974,6 @@ export function IntegrationsView() {
           </Link>
         }
       />
-
-      <div>
-        <ContextOperatingFlow
-          badge="review-required handoff"
-          description="외부 AI 연결은 자동 정제와 사람 검토를 분리합니다. 먼저 로컬에서 정제하고, 검토 가능한 패키지만 전달한 뒤, 확인된 결과만 학습 루프로 되돌립니다."
-          items={integrationExecutionStrip}
-          testId="integrations-execution-flow"
-          title="연결 실행 순서"
-        />
-      </div>
 
       <ConnectionSurfaceSummaryPanel />
 

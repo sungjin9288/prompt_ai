@@ -133,17 +133,9 @@ assertIncludes(
   'data-testid="studio-input-analysis-preflight"',
   "Studio should expose an input analysis preflight before generation",
 );
-assertIncludes(
-  'testId="studio-generation-operating-flow"',
-  "Studio should expose a shared generation operating flow before the workspace panels",
-);
 assertMatches(
   /import \{[\s\S]*?analyzePromptInputReadiness[\s\S]*?\} from "@\/lib\/prompt";/,
   "Studio should import the prompt input readiness analyzer",
-);
-assertMatches(
-  /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
-  "Studio should reuse the shared context operating flow component",
 );
 assertMatches(
   /const currentInputSummary = useMemo\([\s\S]*?summarizeDraftInput\(rawInput\)[\s\S]*?\[rawInput\]/,
@@ -263,10 +255,6 @@ assert.ok(
   "Company-context language decision should expose the Korean company-context signal",
 );
 assertMatches(
-  /const studioGenerationOperatingFlowItems =[\s\S]*?useMemo<ContextOperatingFlowItem\[\]>\([\s\S]*?actionLabel: "원문 확인"[\s\S]*?href: "#studio-raw-input"[\s\S]*?label: "입력"[\s\S]*?step: "01"[\s\S]*?title: rawInput\.trim\(\) \? inputReadinessLabel : "원문 필요"[\s\S]*?actionLabel: "판단 기준 확인"[\s\S]*?href: "#studio-decision-controls"[\s\S]*?label: "AI 판단"[\s\S]*?step: "02"[\s\S]*?actionLabel: "학습 기준 확인"[\s\S]*?href: "#studio-learning-context"[\s\S]*?label: "컨텍스트"[\s\S]*?step: "03"[\s\S]*?actionLabel: "생성 위치로 이동"[\s\S]*?href: "#studio-next-generation-action"[\s\S]*?label: "실행"[\s\S]*?step: "04"/,
-  "Studio generation operating flow should map the shared input readiness label, AI decision, learning context, and execution anchors",
-);
-assertMatches(
   /const studioPreparationSteps = useMemo\(\(\) => \{[\s\S]*?label: "준비"[\s\S]*?rawInput\.trim\(\) \? inputReadinessLabel : "원문 필요"[\s\S]*?currentInputSummary\.inputLineCount[\s\S]*?currentInputSummary\.inputCharCount[\s\S]*?label: "생성"[\s\S]*?formatModelLabels\(selectedModels\)[\s\S]*?promptLanguageDecision\.label[\s\S]*?outputLanguageLabels\[outputLanguage\][\s\S]*?label: "학습"[\s\S]*?appliedContextMemories\.length[\s\S]*?appliedFeedbackCount[\s\S]*?enabledMemoryScopeCount[\s\S]*?label: "저장"[\s\S]*?savePlanLabel[\s\S]*?sourceLabel/,
   "Studio input readiness summary should group the shared input readiness label, generation, learning, and save state",
 );
@@ -325,14 +313,6 @@ assertMatches(
 assertMatches(
   /const inputReadinessQuestionBlockApplied = rawInput\.includes\([\s\S]*?"추가로 답할 보강 질문:"[\s\S]*?function applyInputReadinessQuestions\(\)[\s\S]*?inputReadinessAnalysis\.missingQuestions\.length[\s\S]*?inputReadinessQuestionBlockApplied[\s\S]*?이미 추가된 보강 질문에 답을 채운 뒤 다시 생성하세요\.[\s\S]*?focusRawInput\(\)[\s\S]*?return[\s\S]*?missingQuestions\.flatMap[\s\S]*?`- \$\{question\}`[\s\S]*?"  답:"[\s\S]*?setRawInput\(\(current\) => `\$\{current\.trim\(\)\}\$\{questionBlock\}`\)[\s\S]*?입력 분석 보강 질문을 원문에 추가했습니다[\s\S]*?focusRawInput\(\)/,
   "Studio should append input-analysis missing questions only once, keep answer lines, and focus the raw input",
-);
-assertMatches(
-  /<ContextOperatingFlow[\s\S]*?badge=\{[\s\S]*?rawInput\.trim\(\)[\s\S]*?\? inputReadinessLabel[\s\S]*?: "원문 필요"[\s\S]*?\}[\s\S]*?description="Studio는 원문을 바로 생성하지 않고 입력 상태, AI 판단, 학습 컨텍스트, 저장 흐름을 먼저 확인한 뒤 전문 프롬프트를 만듭니다\."[\s\S]*?items=\{studioGenerationOperatingFlowItems\}[\s\S]*?testId="studio-generation-operating-flow"[\s\S]*?title="Studio 생성 운영 흐름"/,
-  "Studio should render the shared generation operating flow with the shared input readiness label before detailed controls",
-);
-assertMatches(
-  /id="studio-raw-input"[\s\S]*?id="studio-decision-controls"[\s\S]*?id="studio-next-generation-action"[\s\S]*?id="studio-learning-context"/,
-  "Studio generation operating flow anchors should point to stable sections in the workspace",
 );
 assertMatches(
   /data-testid="studio-next-generation-summary"[\s\S]*?다음 실행[\s\S]*?nextGenerationSummary\.status[\s\S]*?nextGenerationSummary\.title[\s\S]*?nextGenerationSummary\.detail[\s\S]*?nextGenerationSummary\.evidence[\s\S]*?nextGenerationSummary\.source[\s\S]*?inputReadinessAnalysis\.missingQuestions\.length[\s\S]*?onClick=\{applyInputReadinessQuestions\}[\s\S]*?data-testid="studio-next-generation-apply-questions"[\s\S]*?inputReadinessQuestionBlockApplied[\s\S]*?보강 질문 확인[\s\S]*?보강 질문 추가[\s\S]*?onClick=\{generatePrompt\}[\s\S]*?disabled=\{!rawInput\.trim\(\) \|\| isGenerating\}[\s\S]*?전문 프롬프트 생성/,
@@ -423,7 +403,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Studio 생성 준비 요약의 상단 배지와 첫 번째 준비 항목은 생성 운영 흐름, 입력 분석 배지, 다음 실행 입력 품질 지표와 같은 입력 준비도 라벨을 사용합니다.",
+  "Studio 생성 준비 요약의 상단 배지와 첫 번째 준비 항목은 입력 분석 배지, 다음 실행 입력 품질 지표와 같은 입력 준비도 라벨을 사용합니다.",
   "README should document the shared input-readiness label in the preparation summary",
 );
 assertFileIncludes(
@@ -435,16 +415,6 @@ assertFileIncludes(
   readme,
   "Studio 입력 분석 리포트는 clipboard fallback과 수동 복사용 textarea를 제공하고, 보강 질문을 원문에 추가해 생성 전 입력을 바로 다듬을 수 있게 합니다.",
   "README should document Studio input analysis copy fallback and question-append action",
-);
-assertFileIncludes(
-  readme,
-  "Studio 생성 운영 흐름은 원문 입력, AI 판단, 학습 컨텍스트, 생성 실행 위치를 상단에서 같은 순서로 보여주고 각 상세 섹션으로 바로 이동하게 합니다.",
-  "README should document Studio shared generation operating flow",
-);
-assertFileIncludes(
-  readme,
-  "Studio 생성 운영 흐름의 입력 단계는 입력 분석 상태와 100점 점수를 먼저 보여주고, 세부 줄 수와 목표/분야는 상세 설명으로 보존합니다.",
-  "README should document Studio operating-flow input readiness score",
 );
 assertFileIncludes(
   readme,
@@ -503,8 +473,8 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Studio 생성 운영 흐름, 입력 분석 배지, 다음 실행의 입력 품질 지표는 같은 입력 준비도 라벨을 사용해 상태 해석이 화면마다 달라지지 않게 합니다.",
-  "README should document the shared input-readiness label across the operating flow, analysis badge, and final input-quality metric",
+  "입력 분석 배지와 다음 실행의 입력 품질 지표는 같은 입력 준비도 라벨을 사용해 상태 해석이 화면마다 달라지지 않게 합니다.",
+  "README should document the shared input-readiness label across the analysis badge and final input-quality metric",
 );
 assertFileIncludes(
   readme,
@@ -533,7 +503,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prd,
-  "Studio 생성 준비 요약의 상단 배지와 첫 번째 준비 항목은 생성 운영 흐름, 입력 분석 배지, 다음 실행 입력 품질 지표와 같은 입력 준비도 라벨을 사용해야 한다.",
+  "Studio 생성 준비 요약의 상단 배지와 첫 번째 준비 항목은 입력 분석 배지, 다음 실행 입력 품질 지표와 같은 입력 준비도 라벨을 사용해야 한다.",
   "PRD should document the shared input-readiness label in the preparation summary",
 );
 assertFileIncludes(
@@ -583,8 +553,8 @@ assertFileIncludes(
 );
 assertFileIncludes(
   prd,
-  "Studio 생성 운영 흐름, 입력 분석 배지, 다음 실행의 입력 품질 지표는 같은 입력 준비도 라벨을 사용해 상태 해석이 화면마다 달라지지 않게 해야 한다.",
-  "PRD should document the shared input-readiness label across the operating flow, analysis badge, and final input-quality metric",
+  "입력 분석 배지와 다음 실행의 입력 품질 지표는 같은 입력 준비도 라벨을 사용해 상태 해석이 화면마다 달라지지 않게 해야 한다.",
+  "PRD should document the shared input-readiness label across the analysis badge and final input-quality metric",
 );
 assertFileIncludes(
   prd,
@@ -595,11 +565,6 @@ assertFileIncludes(
   prd,
   "대상 AI 자동 추천 이유는 실제 추천 모델명과 일치해야 하며, Codex 실행 신호가 포함된 기획 입력은 GPT와 Codex 조합으로 설명해야 한다.",
   "PRD should document target AI recommendation reason/model consistency",
-);
-assertFileIncludes(
-  prd,
-  "Studio 생성 운영 흐름의 입력 단계는 입력 분석 상태와 100점 점수를 먼저 보여주고, 세부 줄 수와 목표/분야는 상세 설명으로 보존해야 한다.",
-  "PRD should document Studio operating-flow input readiness score",
 );
 assertFileIncludes(
   prd,
@@ -618,7 +583,7 @@ assertFileIncludes(
 );
 assertFileIncludes(
   developmentBrief,
-  "생성 준비 요약의 상단 배지와 첫 번째 준비 항목은 생성 운영 흐름, 입력 분석 배지, 다음 실행 입력 품질 지표와 같은 입력 준비도 라벨을 사용",
+  "생성 준비 요약의 상단 배지와 첫 번째 준비 항목은 입력 분석 배지, 다음 실행 입력 품질 지표와 같은 입력 준비도 라벨을 사용",
   "Development brief should document the shared input-readiness label in the preparation summary",
 );
 assertFileIncludes(
@@ -668,8 +633,8 @@ assertFileIncludes(
 );
 assertFileIncludes(
   developmentBrief,
-  "생성 운영 흐름, 입력 분석 배지, 다음 실행의 입력 품질 지표는 같은 입력 준비도 라벨을 사용해 상태 해석이 화면마다 달라지지 않게 함",
-  "Development brief should document the shared input-readiness label across the operating flow, analysis badge, and final input-quality metric",
+  "입력 분석 배지와 다음 실행의 입력 품질 지표는 같은 입력 준비도 라벨을 사용해 상태 해석이 화면마다 달라지지 않게 함",
+  "Development brief should document the shared input-readiness label across the analysis badge and final input-quality metric",
 );
 assertFileIncludes(
   developmentBrief,
@@ -680,11 +645,6 @@ assertFileIncludes(
   developmentBrief,
   "대상 AI 자동 추천 이유는 실제 추천 모델명과 일치해야 하며, Codex 실행 신호가 포함된 기획 입력은 GPT와 Codex 조합으로 설명",
   "Development brief should document target AI recommendation reason/model consistency",
-);
-assertFileIncludes(
-  developmentBrief,
-  "생성 운영 흐름의 입력 단계는 입력 분석 상태와 100점 점수를 먼저 보여주고, 세부 줄 수와 목표/분야는 상세 설명으로 보존",
-  "Development brief should document Studio operating-flow input readiness score",
 );
 assertFileIncludes(
   developmentBrief,

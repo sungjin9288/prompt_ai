@@ -11,10 +11,6 @@ import {
   secondaryButtonClass,
   textareaClass,
 } from "@/components/ui";
-import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import { StudioInputAnalysisPanel } from "@/components/studio/studio-input-analysis-panel";
 import { StudioLoadedDraftPanel } from "@/components/studio/studio-loaded-draft-panel";
@@ -1109,63 +1105,6 @@ export function StudioWorkspace({
       rawInput,
     ],
   );
-  const studioGenerationOperatingFlowItems =
-    useMemo<ContextOperatingFlowItem[]>(
-      () => [
-        {
-          actionLabel: "원문 확인",
-          detail: rawInput.trim()
-            ? `${currentInputSummary.inputLineCount}줄 · ${currentInputSummary.inputCharCount}자 · ${goal} · ${domain}`
-            : "원문을 먼저 입력해야 생성 기준이 완성됩니다.",
-          href: "#studio-raw-input",
-          label: "입력",
-          step: "01",
-          title: rawInput.trim() ? inputReadinessLabel : "원문 필요",
-        },
-        {
-          actionLabel: "판단 기준 확인",
-          detail: `${formatModelLabels(selectedModels)} · ${outputLanguageLabels[outputLanguage]}`,
-          href: "#studio-decision-controls",
-          label: "AI 판단",
-          step: "02",
-          title: promptLanguageDecision.label,
-        },
-        {
-          actionLabel: "학습 기준 확인",
-          detail: `최근 피드백 ${appliedFeedbackCount}개 · scope ${enabledMemoryScopeCount}/4`,
-          href: "#studio-learning-context",
-          label: "컨텍스트",
-          step: "03",
-          title: `메모리 ${appliedContextMemories.length}개`,
-        },
-        {
-          actionLabel: "생성 위치로 이동",
-          detail: `${nextGenerationSummary.evidence} · 출처 ${nextGenerationSummary.source}`,
-          href: "#studio-next-generation-action",
-          label: "실행",
-          step: "04",
-          title: nextGenerationSummary.status,
-        },
-      ],
-      [
-        appliedContextMemories.length,
-        appliedFeedbackCount,
-        currentInputSummary.inputCharCount,
-        currentInputSummary.inputLineCount,
-        domain,
-        enabledMemoryScopeCount,
-        goal,
-        inputReadinessLabel,
-        nextGenerationSummary.evidence,
-        nextGenerationSummary.source,
-        nextGenerationSummary.status,
-        outputLanguage,
-        promptLanguageDecision.label,
-        rawInput,
-        selectedModels,
-      ],
-    );
-
   useEffect(() => {
     const draft = readStudioDraft();
 
@@ -2189,18 +2128,6 @@ export function StudioWorkspace({
           </div>
         </div>
       ) : null}
-
-      <ContextOperatingFlow
-        badge={
-          rawInput.trim()
-            ? inputReadinessLabel
-            : "원문 필요"
-        }
-        description="Studio는 원문을 바로 생성하지 않고 입력 상태, AI 판단, 학습 컨텍스트, 저장 흐름을 먼저 확인한 뒤 전문 프롬프트를 만듭니다."
-        items={studioGenerationOperatingFlowItems}
-        testId="studio-generation-operating-flow"
-        title="Studio 생성 운영 흐름"
-      />
 
       <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
         <Panel>

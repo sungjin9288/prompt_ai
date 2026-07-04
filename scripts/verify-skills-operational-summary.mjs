@@ -142,18 +142,6 @@ assert.match(
 );
 
 assertMatches(
-  /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
-  "Skills should reuse the shared context operating flow component",
-);
-assertMatches(
-  /const skillsOperatingFlowItems = useMemo<ContextOperatingFlowItem\[\]>\([\s\S]*?actionLabel: "후보 확인"[\s\S]*?href: "#skills-candidates"[\s\S]*?label: "원본"[\s\S]*?step: "01"[\s\S]*?actionLabel: "템플릿 편집"[\s\S]*?href: "#skills-template"[\s\S]*?label: "템플릿"[\s\S]*?step: "02"[\s\S]*?actionLabel: "실행 영역으로 이동"[\s\S]*?href: "#skills-runner"[\s\S]*?label: "실행"[\s\S]*?step: "03"[\s\S]*?actionLabel: "운영 요약 확인"[\s\S]*?href: "#skills-operations"[\s\S]*?label: "개선"[\s\S]*?step: "04"/,
-  "Skills operating flow should map candidate, template, run, and operations anchors",
-);
-assertMatches(
-  /<ContextOperatingFlow[\s\S]*?badge=\{draft\.name\.trim\(\) \? "스킬 편집 중" : "스킬 선택 필요"\}[\s\S]*?description="Skills는 좋은 프롬프트를 바로 자동화하지 않고 원본 확인, 템플릿 정리, 실행 저장, 운영 개선 순서로 반복 업무 자산을 만듭니다\."[\s\S]*?items=\{skillsOperatingFlowItems\}[\s\S]*?testId="skills-operating-flow"[\s\S]*?title="Skills 운영 흐름"/,
-  "Skills should render the shared operating flow before candidate and template panels",
-);
-assertMatches(
   /const skillOperationalSummaryItems = \[[\s\S]*?label: "전체 실행"[\s\S]*?skillRunStats\.totalRuns[\s\S]*?label: "실행 스킬"[\s\S]*?skillRunStats\.activeSkills[\s\S]*?label: "피드백"[\s\S]*?skillRunStats\.feedbackCount[\s\S]*?label: "최근 실행"[\s\S]*?skillRunStats\.latestRun[\s\S]*?label: "반복 상위"[\s\S]*?skillRunStats\.topSkills\.length[\s\S]*?label: "개선 큐"[\s\S]*?skillRunStats\.improvementQueue\.length[\s\S]*?data-testid="skills-operational-metrics"[\s\S]*?grid grid-cols-2 gap-3 text-xs sm:grid-cols-3[\s\S]*?skillOperationalSummaryItems\.map[\s\S]*?min-w-0 rounded-md border border-line bg-surface px-3 py-3[\s\S]*?break-words text-sm font-semibold text-accent/,
   "Skills operational metrics should show run, feedback, latest-run, top-skill, and improvement queue signals in a compact two-column mobile grid and three-column desktop grid",
 );
@@ -299,11 +287,6 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Skills 운영 흐름은 원본 확인, 템플릿 정리, 실행 저장, 운영 개선을 상단에서 같은 순서로 보여주고 각 상세 섹션으로 바로 이동하게 합니다.",
-  "README should document Skills operating flow",
-);
-assertFileIncludes(
-  readme,
   "Skills 운영 요약 지표는 모바일 2열과 데스크톱 3열로 전체 실행, 실행 스킬, 피드백, 최근 실행, 반복 상위, 개선 큐를 짧게 훑게 합니다.",
   "README should document the compact responsive Skills operational metrics",
 );
@@ -366,11 +349,6 @@ assertFileIncludes(
   readme,
   "Skills 원본 Library 프롬프트 카드에서 Studio 저장 출처, 세부 초안 유형, 출처 제목을 표시하고 원본 링크 fallback에 원본 경로와 함께 포함",
   "README should document Skills source prompt saved-source/sourceVariant/source-title display and fallback metadata",
-);
-assertFileIncludes(
-  prd,
-  "Skills 운영 흐름은 원본 확인, 템플릿 정리, 실행 저장, 운영 개선을 상단에서 같은 순서로 보여주고 각 상세 섹션으로 바로 이동하게 해야 한다.",
-  "PRD should document Skills operating flow",
 );
 assertFileIncludes(
   prd,

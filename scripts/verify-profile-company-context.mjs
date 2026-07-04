@@ -3,18 +3,11 @@ import { readSource } from "./lib/read-source.mjs";
 
 const profileSource = readSource("src/components/profile/profile-editor.tsx");
 const companySource = readSource("src/components/company/company-editor.tsx");
-const sharedFlowSource = readSource(
-  "src/components/context/context-operating-flow.tsx",
-);
 const readme = readSource("README.md");
 const prd = readSource("docs/personalized-prompt-ai-prd.md");
 const developmentBrief = readSource("docs/codex-development-brief.md");
 const promptTypesSource = readSource("src/lib/prompt/types.ts");
 const sourceRegistrySource = readSource("src/lib/studio/source-registry.ts");
-
-function assertSharedMatches(pattern, message) {
-  assert.match(sharedFlowSource, pattern, message);
-}
 
 function assertProfileMatches(pattern, message) {
   assert.match(profileSource, pattern, message);
@@ -32,43 +25,13 @@ function assertFileNotIncludes(fileSource, text, message) {
   assert.ok(!fileSource.includes(text), message);
 }
 
-assertSharedMatches(
-  /export interface ContextOperatingFlowItem[\s\S]*?actionLabel: string[\s\S]*?detail: string[\s\S]*?disabled\?: boolean[\s\S]*?href\?: string[\s\S]*?onAction\?: \(\) => void[\s\S]*?step: string[\s\S]*?title: string/,
-  "Context operating flow should expose a shared typed item shape",
-);
-assertSharedMatches(
-  /export function ContextOperatingFlow\([\s\S]*?badgeHref[\s\S]*?data-testid=\{testId\}[\s\S]*?\{title\}[\s\S]*?\{description\}[\s\S]*?badgeHref \?[\s\S]*?href=\{badgeHref\}[\s\S]*?\{badge\}[\s\S]*?items\.map\(\(item\) =>[\s\S]*?item\.step[\s\S]*?item\.label[\s\S]*?item\.title[\s\S]*?item\.detail[\s\S]*?item\.onAction[\s\S]*?disabled=\{item\.disabled\}[\s\S]*?onClick=\{item\.onAction\}[\s\S]*?item\.href/,
-  "Shared context operating flow should render title, description, optional badge link, item status, action buttons, and links",
-);
-assertSharedMatches(
-  /grid gap-2 lg:grid-cols-4 lg:gap-3[\s\S]*?grid-cols-\[auto_1fr_auto\][\s\S]*?lg:block[\s\S]*?lg:mt-3 lg:w-full/,
-  "Shared context operating flow should use compact row layout on mobile and full cards on desktop",
-);
-assert.doesNotMatch(
-  profileSource,
-  /interface ProfileOperatingFlowItem/,
-  "Profile should use the shared operating flow item type instead of a local duplicate",
-);
-assert.doesNotMatch(
-  companySource,
-  /interface CompanyOperatingFlowItem/,
-  "Company should use the shared operating flow item type instead of a local duplicate",
-);
-assertProfileMatches(
-  /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
-  "Profile should import the shared context operating flow component",
-);
 assertProfileMatches(
   /import \{ writeStudioDraft \} from "@\/lib\/studio\/draft";/,
   "Profile should import the Studio draft writer for context application handoff",
 );
 assertProfileMatches(
-  /const missingReadinessCount = readinessItems\.length - readyCount[\s\S]*?const profileOperatingFlowItems: ContextOperatingFlowItem\[\] = \[[\s\S]*?readyCount[\s\S]*?readinessItems\.length[\s\S]*?completion[\s\S]*?nextMissingItem[\s\S]*?copyProfileContextQuestions[\s\S]*?saveProfileContext[\s\S]*?returnPath/,
-  "Profile operating flow should summarize readiness, question copy, learning save, and return path without new persistence state",
-);
-assertProfileMatches(
-  /<ContextOperatingFlow[\s\S]*?badge="user scope 학습 반영"[\s\S]*?description="필수 맥락을 채우고, 부족한 질문을 정리한 뒤 저장해서 다음 Studio 생성에 반영합니다\."[\s\S]*?items=\{profileOperatingFlowItems\}[\s\S]*?testId="profile-operating-flow"[\s\S]*?title="개인화 기준 운영 흐름"/,
-  "Profile view should render the shared operating flow before the detailed form",
+  /const readyCount = readinessItems\.filter\(\(item\) => item\.ready\)\.length/,
+  "Profile should compute a ready-item count from readiness items without new persistence state",
 );
 assertProfileMatches(
   /className="grid grid-cols-2 gap-3 md:grid-cols-2"[\s\S]*?data-testid="profile-readiness-metrics"[\s\S]*?min-w-0 rounded-md border border-line bg-surface p-3[\s\S]*?break-words text-xs font-semibold/,
@@ -106,27 +69,13 @@ assertProfileMatches(
   /data-testid="profile-context-application-preview"[\s\S]*?data-testid="profile-context-application-workflow"[\s\S]*?profileApplicationWorkflowSteps\.map[\s\S]*?item\.step[\s\S]*?item\.label[\s\S]*?item\.title[\s\S]*?item\.detail[\s\S]*?프롬프트 기준 미리보기/,
   "Profile application preview should render numbered workflow cards before the prompt wording preview",
 );
-assertFileIncludes(
-  profileSource,
-  "필수 맥락을 채우고, 부족한 질문을 정리한 뒤 저장해서 다음 Studio 생성에 반영합니다.",
-  "Profile operating flow should explain the user's next sequence in plain Korean",
-);
-
-assertCompanyMatches(
-  /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
-  "Company should import the shared context operating flow component",
-);
 assertCompanyMatches(
   /import \{ writeStudioDraft \} from "@\/lib\/studio\/draft";/,
   "Company should import the Studio draft writer for context application handoff",
 );
 assertCompanyMatches(
-  /const missingReadinessCount = readinessItems\.length - readyCount[\s\S]*?const companyOperatingFlowItems: ContextOperatingFlowItem\[\] = \[[\s\S]*?readyCount[\s\S]*?readinessItems\.length[\s\S]*?completion[\s\S]*?nextMissingItem[\s\S]*?copyCompanyContextQuestions[\s\S]*?saveCompanyContext[\s\S]*?returnPath/,
-  "Company operating flow should summarize readiness, question copy, learning save, and return path without new persistence state",
-);
-assertCompanyMatches(
-  /<ContextOperatingFlow[\s\S]*?badge="company scope 학습 반영"[\s\S]*?description="브랜드 맥락을 채우고, 부족한 질문을 정리한 뒤 저장해서 회사답게 보이는 프롬프트 기준으로 반영합니다\."[\s\S]*?items=\{companyOperatingFlowItems\}[\s\S]*?testId="company-operating-flow"[\s\S]*?title="회사 기준 운영 흐름"/,
-  "Company view should render the shared operating flow before the detailed form",
+  /const readyCount = readinessItems\.filter\(\(item\) => item\.ready\)\.length/,
+  "Company should compute a ready-item count from readiness items without new persistence state",
 );
 assertCompanyMatches(
   /className="grid grid-cols-2 gap-3 md:grid-cols-2"[\s\S]*?data-testid="company-readiness-metrics"[\s\S]*?min-w-0 rounded-md border border-line bg-surface p-3[\s\S]*?break-words text-xs font-semibold/,
@@ -165,12 +114,6 @@ assertCompanyMatches(
   "Company application preview should render numbered workflow cards before the prompt wording preview",
 );
 assertFileIncludes(
-  companySource,
-  "브랜드 맥락을 채우고, 부족한 질문을 정리한 뒤 저장해서 회사답게 보이는 프롬프트 기준으로 반영합니다.",
-  "Company operating flow should explain the company's next sequence in plain Korean",
-);
-
-assertFileIncludes(
   promptTypesSource,
   '"profile-context-application"',
   "Prompt source type list should include Profile context application drafts",
@@ -203,16 +146,6 @@ assertFileIncludes(
 
 assertFileIncludes(
   readme,
-  "Profile/Company 상단 운영 흐름은 필수 맥락 입력, 보강 질문 복사, user/company scope 학습 반영, 원래 작업 화면 복귀를 먼저 보여줍니다.",
-  "README should document the Profile/Company operating flow",
-);
-assertFileIncludes(
-  readme,
-  "공통 운영 흐름 컴포넌트는 모바일에서는 단계별 행으로 압축하고 데스크톱에서는 4단계 카드로 보여줘 같은 정보와 액션을 유지합니다.",
-  "README should document the responsive shared operating flow",
-);
-assertFileIncludes(
-  readme,
   "Profile/Company 기본 맥락 준비도는 모바일 2열로 필수 항목 상태를 압축해 보강할 항목을 빠르게 확인하게 합니다.",
   "README should document responsive Profile/Company readiness metrics",
 );
@@ -235,16 +168,6 @@ assertFileIncludes(
   readme,
   "Profile/Company AI 적용 프리뷰는 `01 기준 확인`, `02 적용 문구`, `03 Studio 전송` 단계 카드로 기준 점검, 영어/한영 하이브리드 지시문 적용, 외부 AI handoff 순서를 먼저 보여줍니다.",
   "README should document the numbered Profile/Company AI application workflow cards",
-);
-assertFileIncludes(
-  prd,
-  "Profile/Company 상단 운영 흐름은 필수 맥락 입력, 보강 질문 복사, user/company scope 학습 반영, 원래 작업 화면 복귀를 먼저 보여줘야 한다.",
-  "PRD should document the Profile/Company operating flow",
-);
-assertFileIncludes(
-  prd,
-  "공통 운영 흐름 컴포넌트는 모바일에서는 단계별 행으로 압축하고 데스크톱에서는 4단계 카드로 보여주되 같은 정보와 액션을 유지해야 한다.",
-  "PRD should document the responsive shared operating flow",
 );
 assertFileIncludes(
   prd,

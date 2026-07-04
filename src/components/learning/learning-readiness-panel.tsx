@@ -5,10 +5,6 @@ import {
   primaryButtonClass,
   secondaryButtonClass,
 } from "@/components/ui";
-import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import type { LearningMemory } from "@/lib/prompt";
 import {
@@ -34,7 +30,6 @@ type LearningNextActionGuide = {
 
 interface LearningReadinessPanelProps {
   learningReadiness: ReturnType<typeof getLearningReadiness>;
-  learningOperatingFlowItems: ContextOperatingFlowItem[];
   memories: LearningMemory[];
   scopeCounts: Record<LearningScopeFilter, number>;
   averageConfidence: number;
@@ -56,7 +51,6 @@ interface LearningReadinessPanelProps {
 
 export function LearningReadinessPanel({
   learningReadiness,
-  learningOperatingFlowItems,
   memories,
   scopeCounts,
   averageConfidence,
@@ -76,14 +70,6 @@ export function LearningReadinessPanel({
       <PageHeader
         title="학습 메모리"
         description="피드백에서 추출된 사용자, 회사, 분야, 스킬 기준을 확인합니다. 이 메모리는 다음 프롬프트 생성에 함께 반영됩니다."
-      />
-
-      <ContextOperatingFlow
-        badge={learningReadiness.label}
-        description="Learning은 저장된 기준을 바로 재사용하지 않고 준비도, 낮은 신뢰도, 수동 보강, Studio 전송 순서로 점검합니다."
-        items={learningOperatingFlowItems}
-        testId="learning-operating-flow"
-        title="Learning 운영 흐름"
       />
 
       <div

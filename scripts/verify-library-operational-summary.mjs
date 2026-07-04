@@ -40,42 +40,6 @@ function assertFileNotIncludes(fileSource, text, message) {
 }
 
 assertIncludes(
-  "ContextOperatingFlow",
-  "Library should reuse the shared context operating flow component",
-);
-assertIncludes(
-  "type ContextOperatingFlowItem",
-  "Library operating flow items should use the shared typed item contract",
-);
-assertMatches(
-  /const libraryOperatingFlowItems = useMemo<ContextOperatingFlowItem\[\]>/,
-  "Library should derive a typed top-level operating flow",
-);
-assertIncludes(
-  'testId="library-operating-flow"',
-  "Library should expose a stable test id for its top operating flow",
-);
-assertIncludes(
-  'title="Library 운영 흐름"',
-  "Library operating flow should have a clear visible title",
-);
-assertIncludes(
-  'href: "#library-filters"',
-  "Library operating flow should link to the filter workspace",
-);
-assertIncludes(
-  'href: "#library-results"',
-  "Library operating flow should link to filtered results",
-);
-assertIncludes(
-  'href: "#library-selected-operational-summary"',
-  "Library operating flow should link to the selected operational summary",
-);
-assertIncludes(
-  'href: "#library-detail-workspace"',
-  "Library operating flow should link to the selected detail workspace",
-);
-assertIncludes(
   'id="library-filters"',
   "Library filter panel should expose a stable anchor",
 );
@@ -105,11 +69,6 @@ assertMatches(
 );
 assertFileIncludes(
   readme,
-  "Library 운영 흐름은 검색 조건, 목록 결과, 선택 프롬프트 운영 요약, 출처/이력 추적을 상단에서 같은 순서로 보여주고 각 상세 섹션으로 바로 이동하게 합니다.",
-  "README should document the Library top operating flow",
-);
-assertFileIncludes(
-  readme,
   "Library 선택 운영 요약의 저장 방식, 출처, 체인은 모바일 2열과 데스크톱 3열로 압축해 상세 패널에서도 보존 방식과 다음 조치를 빠르게 확인하게 합니다.",
   "README should document the compact responsive Library selected operational summary",
 );
@@ -127,11 +86,6 @@ assertFileIncludes(
   readme,
   "Library Studio 저장 방식, 저장 출처, 운영 묶음 리포트와 각 대표 후보의 Studio 초안은 `Library 필터로 돌아가기`, `Library 후보로 돌아가기`, `Library 운영 묶음으로 돌아가기` 복귀 액션 라벨로 해당 조건이나 후보를 복원하며, 저장이 실패하면 이동하지 않고 해당 조치 패널의 수동 복사용 원문 textarea를 표시합니다.",
   "README should document Library filter operation Studio draft return actions and storage fallback",
-);
-assertFileIncludes(
-  prd,
-  "Library 운영 흐름은 검색 조건, 목록 결과, 선택 프롬프트 운영 요약, 출처/이력 추적을 상단에서 같은 순서로 보여주고 각 상세 섹션으로 바로 이동하게 해야 한다.",
-  "PRD should require the Library top operating flow",
 );
 assertFileIncludes(
   prd,

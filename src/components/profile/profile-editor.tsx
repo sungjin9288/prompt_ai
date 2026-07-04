@@ -12,10 +12,6 @@ import {
   secondaryButtonClass,
   textareaClass,
 } from "@/components/ui";
-import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
 import { copyTextToClipboard } from "@/lib/browser/clipboard";
 import { normalizeInternalHref } from "@/lib/navigation/href";
 import type { UserProfile } from "@/lib/prompt";
@@ -426,46 +422,6 @@ export function ProfileEditor({ returnTo }: { returnTo?: string }) {
     router.push(withProfileUpdatedSignal(returnPath));
   }
 
-  const profileOperatingFlowItems: ContextOperatingFlowItem[] = [
-    {
-      actionLabel: nextMissingItem ? "입력하기" : "확장 기준 입력",
-      detail: `${readyCount}/${readinessItems.length} 준비 · ${completion}%`,
-      href: `#${nextMissingItem?.id || "profile-avoid-phrases"}`,
-      label: "필수 맥락",
-      step: "01",
-      title: nextMissingItem
-        ? `${nextMissingItem.label}부터 보강`
-        : "기본 개인 맥락 완료",
-    },
-    {
-      actionLabel: questionsCopied ? "복사됨" : "질문 복사",
-      detail:
-        missingReadinessCount > 0
-          ? `${missingReadinessCount}개 부족 항목 기준 질문`
-          : "전체 기준 재검토 질문",
-      label: "질문",
-      onAction: copyProfileContextQuestions,
-      step: "02",
-      title: "부족한 맥락을 질문으로 정리",
-    },
-    {
-      actionLabel: saved ? "반영됨" : "학습 반영",
-      detail: "저장 시 user scope 학습 메모리 갱신",
-      label: "저장",
-      onAction: saveProfileContext,
-      step: "03",
-      title: "개인 기준을 다음 생성에 반영",
-    },
-    {
-      actionLabel: getReturnLabel(returnPath),
-      detail: "보강 후 원래 작업 화면으로 복귀",
-      href: returnPath,
-      label: "복귀",
-      step: "04",
-      title: "작업 흐름으로 돌아가기",
-    },
-  ];
-
   return (
     <>
       <PageHeader
@@ -479,14 +435,6 @@ export function ProfileEditor({ returnTo }: { returnTo?: string }) {
       />
 
       <div className="space-y-5">
-        <ContextOperatingFlow
-          badge="user scope 학습 반영"
-          description="필수 맥락을 채우고, 부족한 질문을 정리한 뒤 저장해서 다음 Studio 생성에 반영합니다."
-          items={profileOperatingFlowItems}
-          testId="profile-operating-flow"
-          title="개인화 기준 운영 흐름"
-        />
-
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
           <Panel>
             <PanelHeader

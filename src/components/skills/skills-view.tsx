@@ -4,10 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/ui";
 import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
-import {
   decidePromptLanguageStrategy,
   languageStrategyLabels,
   modelLabels,
@@ -225,60 +221,6 @@ export function SkillsView({
       languageDecision: skillLanguageDecision,
     }),
     [draft, skillLanguageDecision],
-  );
-  const skillsOperatingFlowItems = useMemo<ContextOperatingFlowItem[]>(
-    () => [
-      {
-        actionLabel: "후보 확인",
-        detail: selectedPrompt
-          ? `${selectedPrompt.domain} · 피드백 ${selectedPrompt.feedback.length}개`
-          : `추천 후보 ${candidates.length}개에서 시작합니다.`,
-        href: "#skills-candidates",
-        label: "원본",
-        step: "01",
-        title: selectedPrompt ? selectedPrompt.title : "스킬 후보 선택",
-      },
-      {
-        actionLabel: "템플릿 편집",
-        detail: `${modelLabels[draftWithAutomaticLanguage.targetModel]} · ${skillLanguageDecision.label} · 답변 ${outputLanguageLabels[getSkillOutputLanguage(draftWithAutomaticLanguage)]}`,
-        href: "#skills-template",
-        label: "템플릿",
-        step: "02",
-        title: draft.name.trim() || "스킬 이름 필요",
-      },
-      {
-        actionLabel: "실행 영역으로 이동",
-        detail: savedRunPrompt
-          ? `최근 저장 · 품질 ${savedRunPrompt.versions[0]?.qualityScore.toFixed(1) ?? "-"}`
-          : `현재 실행 이력 ${selectedSkillRuns.length || draft.usageCount}회`,
-        href: "#skills-runner",
-        label: "실행",
-        step: "03",
-        title: runPrompt ? "실행 프롬프트 준비" : "샘플 실행 필요",
-      },
-      {
-        actionLabel: "운영 요약 확인",
-        detail: `반복 상위 ${skillRunStats.topSkills.length}개 · 개선 큐 ${skillRunStats.improvementQueue.length}개`,
-        href: "#skills-operations",
-        label: "개선",
-        step: "04",
-        title: `전체 실행 ${skillRunStats.totalRuns}개`,
-      },
-    ],
-    [
-      candidates.length,
-      draft.name,
-      draft.usageCount,
-      draftWithAutomaticLanguage,
-      runPrompt,
-      savedRunPrompt,
-      selectedPrompt,
-      selectedSkillRuns.length,
-      skillLanguageDecision.label,
-      skillRunStats.improvementQueue.length,
-      skillRunStats.topSkills.length,
-      skillRunStats.totalRuns,
-    ],
   );
   const skillExecutionWorkflowSteps = useMemo(
     () => [
@@ -976,14 +918,6 @@ export function SkillsView({
       <PageHeader
         title="스킬 빌더"
         description="저장된 프롬프트와 학습 메모리를 반복 업무 템플릿으로 전환합니다."
-      />
-
-      <ContextOperatingFlow
-        badge={draft.name.trim() ? "스킬 편집 중" : "스킬 선택 필요"}
-        description="Skills는 좋은 프롬프트를 바로 자동화하지 않고 원본 확인, 템플릿 정리, 실행 저장, 운영 개선 순서로 반복 업무 자산을 만듭니다."
-        items={skillsOperatingFlowItems}
-        testId="skills-operating-flow"
-        title="Skills 운영 흐름"
       />
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[360px_1fr]">

@@ -306,24 +306,12 @@ assertDataMatches(
   "Data readiness panel should render document RAG draft input and chunk preview before environment readiness",
 );
 assertDataMatches(
-  /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
-  "Data view should use the shared context operating flow component",
-);
-assertDataMatches(
-  /const dataOperationFlowItems: ContextOperatingFlowItem\[\] = \[[\s\S]*?backupIsCurrent[\s\S]*?handleGenerateBackup[\s\S]*?readinessDoneCount[\s\S]*?readinessItems\.length[\s\S]*?documentRagReadyCount[\s\S]*?documentRagChunks\.length[\s\S]*?runtimeReadiness\.data[\s\S]*?formatReleaseGateStage\(runtimeReadiness\.data\.releaseGate\.stage\)/,
-  "Data operating flow should summarize backup, readiness, document RAG, and runtime gate state without adding new persistence state",
-);
-assertDataMatches(
-  /<ContextOperatingFlow[\s\S]*?badge="destructive action 분리"[\s\S]*?description="백업을 먼저 고정하고 준비도, 문서\/RAG, Supabase 전환 gate를 순서대로 확인합니다\."[\s\S]*?items=\{dataOperationFlowItems\}[\s\S]*?testId="data-operating-flow"[\s\S]*?title="데이터 운영 흐름"/,
-  "Data view should render the shared safe operating flow before detailed data sections",
-);
-assertDataMatches(
   /const dataSafetyWorkflowSteps = \[[\s\S]*?label: "백업 고정"[\s\S]*?step: "01"[\s\S]*?label: "준비도 확인"[\s\S]*?step: "02"[\s\S]*?label: "실행 분리"[\s\S]*?step: "03"[\s\S]*?data-testid="data-safety-workflow"[\s\S]*?dataSafetyWorkflowSteps\.map[\s\S]*?item\.step[\s\S]*?item\.label[\s\S]*?item\.title[\s\S]*?item\.detail/,
   "Data view should render numbered backup, readiness, and separated execution workflow cards",
 );
 assertDataMatches(
-  /<ContextOperatingFlow[\s\S]*?title="데이터 운영 흐름"[\s\S]*?data-testid="data-safety-workflow"[\s\S]*?<Panel>[\s\S]*?<PanelHeader[\s\S]*?title="워크스페이스 스냅샷"/,
-  "Data safety workflow should sit between the top operating flow and workspace snapshot details",
+  /data-testid="data-safety-workflow"[\s\S]*?<Panel>[\s\S]*?<PanelHeader[\s\S]*?title="워크스페이스 스냅샷"/,
+  "Data safety workflow should sit before workspace snapshot details",
 );
 assertDataMatches(
   /function CountGrid\(\{ counts \}: \{ counts: WorkspaceBackupCounts \}\)[\s\S]*?className="grid grid-cols-2 gap-3 xl:grid-cols-4"[\s\S]*?data-testid="data-workspace-count-metrics"[\s\S]*?프롬프트[\s\S]*?버전[\s\S]*?피드백[\s\S]*?학습 메모리[\s\S]*?삭제 보관함/,
@@ -332,10 +320,6 @@ assertDataMatches(
 assertDataMatches(
   /className="grid grid-cols-2 gap-3 text-sm leading-6 text-soft md:grid-cols-2"[\s\S]*?data-testid="data-workspace-context-summary"[\s\S]*?사용자 프로필[\s\S]*?회사 프로필[\s\S]*?col-span-2[\s\S]*?최근 백업/,
   "Data workspace context summary should show user and company in two mobile columns while keeping the backup summary full-width",
-);
-assertDataMatches(
-  /href: "#data-readiness"[\s\S]*?href: "#data-document-rag"[\s\S]*?href: "#data-supabase-migration"/,
-  "Data operating flow should link to readiness, RAG, and migration sections in order",
 );
 assertFileIncludes(
   dataSource,
@@ -2572,11 +2556,6 @@ assertFileIncludes(
   readme,
   "`copyGate`는 `resolve waiting items` 또는 `operator review required`",
   "README should explain the execution packet manifest copyGate field",
-);
-assertFileIncludes(
-  readme,
-  "Data 상단 운영 흐름은 백업, 데이터 준비도, 문서/RAG, Supabase 전환 gate를 먼저 보여주고 백업 생성과 각 상세 섹션 이동을 안전한 순서로 분리합니다.",
-  "README should document the Data operating flow summary",
 );
 assertFileIncludes(
   readme,

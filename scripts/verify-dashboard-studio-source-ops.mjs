@@ -193,20 +193,12 @@ assertDashboardMatches(
   "Dashboard next-action queue should render numbered workflow cards before first-action and verification controls",
 );
 assertDashboardMatches(
-  /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
-  "Dashboard should use the shared context operating flow component",
-);
-assertDashboardMatches(
-  /const dashboardOperatingFlowItems: ContextOperatingFlowItem\[\] = \[[\s\S]*?actionLabel: "Data 열기"[\s\S]*?dataReadinessDone[\s\S]*?dataReadinessChecks\.length[\s\S]*?dataReadinessScore[\s\S]*?dashboardNextActionQueueFirstAction[\s\S]*?learningOpsPriorityLabel\([\s\S]*?dashboardNextActionQueueFirstAction\.priority[\s\S]*?actionLabel: "Studio 열기"[\s\S]*?engineStatusFailed[\s\S]*?engineStatus\?\.mode === "openai"[\s\S]*?"OpenAI 보강"[\s\S]*?"Local fallback"[\s\S]*?actionLabel: "Library 열기"[\s\S]*?"복사 · Studio 전송 · 저장"/,
-  "Dashboard operating flow should summarize readiness, first action, generation engine, and verification flow from existing state",
-);
-assertDashboardMatches(
   /const dashboardExecutionSummaryItems = \[[\s\S]*?dashboardNextActionQueueFirstAction[\s\S]*?learningOpsPriorityLabel\([\s\S]*?dashboardNextActionQueueFirstAction\.priority[\s\S]*?label: "먼저 처리"[\s\S]*?engineStatusFailed[\s\S]*?engineStatus\?\.mode === "openai"[\s\S]*?OpenAI Responses API[\s\S]*?label: "생성 상태"[\s\S]*?Local fallback[\s\S]*?improvementSummary\.reimprovementQueue\.length[\s\S]*?feedbackImprovementReviewCount[\s\S]*?label: "검증 위치"[\s\S]*?prompts\.length/,
   "Dashboard execution summary should derive first action, generation status, and Library verification from existing state",
 );
 assertDashboardMatches(
-  /data-testid="dashboard-execution-summary"[\s\S]*?<ContextOperatingFlow[\s\S]*?badge="Studio에서 시작"[\s\S]*?badgeHref="\/studio"[\s\S]*?description="준비 상태를 확인하고 첫 실행 항목을 처리한 뒤 생성 결과를 저장 이력까지 확인합니다\."[\s\S]*?items=\{dashboardOperatingFlowItems\}[\s\S]*?testId="dashboard-operating-flow"[\s\S]*?title="오늘 운영 흐름"[\s\S]*?workflowItems\.map/,
-  "Dashboard should render the execution summary before the shared operating flow and detailed workflow shortcuts",
+  /data-testid="dashboard-execution-summary"[\s\S]*?workflowItems\.map/,
+  "Dashboard should render the execution summary before the detailed workflow shortcuts",
 );
 assertDashboardMatches(
   /const workflowItems = \[[\s\S]*?href: "\/studio"[\s\S]*?step: "01"[\s\S]*?title: "작성"[\s\S]*?href: "\/library"[\s\S]*?step: "02"[\s\S]*?title: "저장"[\s\S]*?href: "\/learning"[\s\S]*?step: "03"[\s\S]*?title: "학습"[\s\S]*?href: "\/skills"[\s\S]*?step: "04"[\s\S]*?title: "스킬화"[\s\S]*?href: "\/integrations"[\s\S]*?step: "05"[\s\S]*?title: "연결"[\s\S]*?Chrome, MCP, 외부 AI 전달 흐름을 검토 후 실행[\s\S]*?href: "\/data"[\s\S]*?step: "06"[\s\S]*?title: "백업"/,
@@ -217,8 +209,8 @@ assertDashboardMatches(
   "Dashboard workflow shortcuts should render six scannable steps in three columns on tablet and six columns on wide screens",
 );
 assertDashboardMatches(
-  /data-testid="dashboard-execution-summary"[\s\S]*?오늘의 실행 요약[\s\S]*?첫 실행, 생성 상태, 저장 검증 위치를 한 줄로 확인합니다\.[\s\S]*?준비도 \{dataReadinessScore\}%[\s\S]*?dashboardExecutionSummaryItems\.map[\s\S]*?item\.label[\s\S]*?item\.actionLabel[\s\S]*?item\.title[\s\S]*?item\.detail[\s\S]*?<ContextOperatingFlow/,
-  "Dashboard should render the execution summary immediately before the detailed operating flow",
+  /data-testid="dashboard-execution-summary"[\s\S]*?오늘의 실행 요약[\s\S]*?첫 실행, 생성 상태, 저장 검증 위치를 한 줄로 확인합니다\.[\s\S]*?준비도 \{dataReadinessScore\}%[\s\S]*?dashboardExecutionSummaryItems\.map[\s\S]*?item\.label[\s\S]*?item\.actionLabel[\s\S]*?item\.title[\s\S]*?item\.detail/,
+  "Dashboard should render the execution summary metrics before the detailed workflow shortcuts",
 );
 assertDashboardMatches(
   /data-testid="dashboard-summary-metrics"[\s\S]*?grid-cols-2[\s\S]*?summaryMetrics\.map[\s\S]*?sm:text-sm[\s\S]*?text-2xl[\s\S]*?sm:text-3xl/,
@@ -551,11 +543,6 @@ assertFileIncludes(
   readme,
   "Dashboard의 Studio 저장 방식 패널은 저장 출처 메타 없음 큐를 별도 링크로 노출",
   "README should document the Dashboard direct missing saved-source metadata queue link",
-);
-assertFileIncludes(
-  readme,
-  "Dashboard 상단 운영 흐름은 준비 상태, 첫 실행 항목, 생성 엔진, 결과 검증 순서를 한 줄로 보여주고 각 단계에서 Data, Learning, Studio, Library로 바로 이동하게 합니다.",
-  "README should document the Dashboard operating flow summary",
 );
 assertFileIncludes(
   readme,

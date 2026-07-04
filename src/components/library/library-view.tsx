@@ -9,10 +9,6 @@ import {
   secondaryButtonClass,
 } from "@/components/ui";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
-import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
 import { type HandoffPreviewMode } from "@/components/prompt/target-ai-handoff-preview-panel";
 import {
   languageStrategies,
@@ -1920,58 +1916,6 @@ export function LibraryView({
     selectedStudioSourceLabel?.actionLabel,
     selectedStudioSourceLabel?.label,
   ]);
-  const libraryOperatingFlowItems = useMemo<ContextOperatingFlowItem[]>(
-    () => [
-      {
-        actionLabel: "조건 확인",
-        detail: hasActiveFilters
-          ? `${activeFilterItems.length}개 조건으로 ${filtered.length}개 저장본을 보고 있습니다.`
-          : `전체 ${prompts.length}개 저장본을 최근 순서로 확인합니다.`,
-        href: "#library-filters",
-        label: "검색",
-        step: "01",
-        title: hasActiveFilters ? "필터 적용 중" : "전체 Library",
-      },
-      {
-        actionLabel: "목록 확인",
-        detail: `현재 조건의 결과 ${filtered.length}개에서 저장본, 품질, 출처 배지를 비교합니다.`,
-        href: "#library-results",
-        label: "목록",
-        step: "02",
-        title: filtered.length ? "결과 비교" : "결과 없음",
-      },
-      {
-        actionLabel: "운영 요약",
-        detail:
-          selected && activeVersion
-            ? `${selected.domain} · ${modelLabels[activeVersion.targetModel]} 버전의 다음 액션을 확인합니다.`
-            : "저장본을 선택하면 AI 전달 readiness와 다음 액션을 확인합니다.",
-        href: "#library-selected-operational-summary",
-        label: "상태",
-        step: "03",
-        title: selectedOperationalSummary?.nextAction ?? "선택 대기",
-      },
-      {
-        actionLabel: "추적 확인",
-        detail: selectedOperationalSummary
-          ? `${selectedOperationalSummary.persistenceLabel} · ${selectedOperationalSummary.sourceLabel} · ${selectedOperationalSummary.chainLabel}`
-          : "저장 방식, Studio 출처, 개선 체인을 한 번에 추적합니다.",
-        href: "#library-detail-workspace",
-        label: "추적",
-        step: "04",
-        title: selectedOperationalSummary?.sourceLabel ?? "출처/이력",
-      },
-    ],
-    [
-      activeFilterItems.length,
-      activeVersion,
-      filtered.length,
-      hasActiveFilters,
-      prompts.length,
-      selected,
-      selectedOperationalSummary,
-    ],
-  );
   const selectedOperationalWorkflowSteps = useMemo(() => {
     if (!selectedOperationalSummary) {
       return [];
@@ -4004,17 +3948,6 @@ export function LibraryView({
           </div>
         </div>
       ) : null}
-
-      <div className="mb-5">
-        <ContextOperatingFlow
-          badge={`${filtered.length}/${prompts.length} 저장본`}
-          badgeHref="#library-results"
-          description="검색 조건, 목록 결과, 선택 프롬프트의 운영 요약, 출처/이력 추적을 같은 순서로 확인합니다."
-          items={libraryOperatingFlowItems}
-          testId="library-operating-flow"
-          title="Library 운영 흐름"
-        />
-      </div>
 
       {hasActiveFilters ? (
         <div className="mb-5 rounded-md border border-line bg-surface px-4 py-3">

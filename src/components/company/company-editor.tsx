@@ -12,10 +12,6 @@ import {
   secondaryButtonClass,
   textareaClass,
 } from "@/components/ui";
-import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
 import { normalizeInternalHref } from "@/lib/navigation/href";
 import type { CompanyProfile } from "@/lib/prompt";
 import { writeStudioDraft } from "@/lib/studio/draft";
@@ -438,46 +434,6 @@ export function CompanyEditor({ returnTo }: { returnTo?: string }) {
     router.push(withCompanyUpdatedSignal(returnPath));
   }
 
-  const companyOperatingFlowItems: ContextOperatingFlowItem[] = [
-    {
-      actionLabel: nextMissingItem ? "입력하기" : "확장 기준 입력",
-      detail: `${readyCount}/${readinessItems.length} 준비 · ${completion}%`,
-      href: `#${nextMissingItem?.id || "company-internal-terms"}`,
-      label: "브랜드 맥락",
-      step: "01",
-      title: nextMissingItem
-        ? `${nextMissingItem.label}부터 보강`
-        : "기본 회사 맥락 완료",
-    },
-    {
-      actionLabel: questionsCopied ? "복사됨" : "질문 복사",
-      detail:
-        missingReadinessCount > 0
-          ? `${missingReadinessCount}개 부족 항목 기준 질문`
-          : "전체 기준 재검토 질문",
-      label: "질문",
-      onAction: copyCompanyContextQuestions,
-      step: "02",
-      title: "부족한 회사 맥락을 질문으로 정리",
-    },
-    {
-      actionLabel: saved ? "반영됨" : "학습 반영",
-      detail: "저장 시 company scope 학습 메모리 갱신",
-      label: "저장",
-      onAction: saveCompanyContext,
-      step: "03",
-      title: "회사 기준을 다음 생성에 반영",
-    },
-    {
-      actionLabel: getReturnLabel(returnPath),
-      detail: "보강 후 원래 작업 화면으로 복귀",
-      href: returnPath,
-      label: "복귀",
-      step: "04",
-      title: "작업 흐름으로 돌아가기",
-    },
-  ];
-
   return (
     <>
       <PageHeader
@@ -491,14 +447,6 @@ export function CompanyEditor({ returnTo }: { returnTo?: string }) {
       />
 
       <div className="space-y-5">
-        <ContextOperatingFlow
-          badge="company scope 학습 반영"
-          description="브랜드 맥락을 채우고, 부족한 질문을 정리한 뒤 저장해서 회사답게 보이는 프롬프트 기준으로 반영합니다."
-          items={companyOperatingFlowItems}
-          testId="company-operating-flow"
-          title="회사 기준 운영 흐름"
-        />
-
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
           <Panel>
             <PanelHeader

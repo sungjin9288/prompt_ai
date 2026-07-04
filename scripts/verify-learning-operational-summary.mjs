@@ -113,16 +113,8 @@ function assertFileNotIncludes(fileSource, text, message) {
 }
 
 assertMatches(
-  /import \{[\s\S]*?ContextOperatingFlow[\s\S]*?type ContextOperatingFlowItem[\s\S]*?\} from "@\/components\/context\/context-operating-flow";/,
-  "Learning should reuse the shared context operating flow component",
-);
-assertMatches(
-  /const learningLowConfidenceReviewHref = getLearningHref\(\{[\s\S]*?query: ""[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?scope[\s\S]*?sortMode: "confidence-asc"[\s\S]*?\}\);[\s\S]*?const learningOperatingFlowItems = useMemo<ContextOperatingFlowItem\[\]>\([\s\S]*?actionLabel: "준비도 확인"[\s\S]*?href: "#readiness"[\s\S]*?label: "준비도"[\s\S]*?step: "01"[\s\S]*?actionLabel: "검토 큐 열기"[\s\S]*?href: learningLowConfidenceReviewHref[\s\S]*?label: "검토"[\s\S]*?step: "02"[\s\S]*?actionLabel: "직접 보강"[\s\S]*?href: "#learning-manual-memory"[\s\S]*?label: "보강"[\s\S]*?step: "03"[\s\S]*?actionLabel: "현재 조건 확인"[\s\S]*?feedbackImprovementFilterActive[\s\S]*?"#learning-feedback-improvement-queue"[\s\S]*?"#learning-filter-panel"[\s\S]*?label: "Studio"[\s\S]*?step: "04"/,
-  "Learning operating flow should map readiness, low-confidence review, manual memory, and Studio handoff steps",
-);
-assertMatches(
-  /<ContextOperatingFlow[\s\S]*?badge=\{learningReadiness\.label\}[\s\S]*?description="Learning은 저장된 기준을 바로 재사용하지 않고 준비도, 낮은 신뢰도, 수동 보강, Studio 전송 순서로 점검합니다\."[\s\S]*?items=\{learningOperatingFlowItems\}[\s\S]*?testId="learning-operating-flow"[\s\S]*?title="Learning 운영 흐름"/,
-  "Learning should render the shared operating flow before the readiness and filter panels",
+  /const learningLowConfidenceReviewHref = getLearningHref\(\{[\s\S]*?query: ""[\s\S]*?reviewFilter: "low-confidence"[\s\S]*?scope[\s\S]*?sortMode: "confidence-asc"[\s\S]*?\}\);/,
+  "Learning should compute a low-confidence review href from the shared learning href builder",
 );
 assertMatches(
   /data-testid="learning-summary-metrics"[\s\S]*?grid-cols-2[\s\S]*?md:grid-cols-4[\s\S]*?전체 메모리[\s\S]*?평균 신뢰도[\s\S]*?text-2xl[\s\S]*?sm:text-3xl/,
@@ -278,11 +270,6 @@ assertFileIncludes(
 );
 assertFileIncludes(
   readme,
-  "Learning 운영 흐름은 준비도 점검, 낮은 신뢰도 검토, 수동 메모리 보강, 현재 조건 Studio 전송을 상단에서 같은 순서로 보여주고 각 상세 섹션으로 바로 이동하게 합니다.",
-  "README should document the Learning operating flow",
-);
-assertFileIncludes(
-  readme,
   "Learning 상단 메모리 지표와 준비도 지표는 모바일 2열과 데스크톱 4열로 전체 메모리, scope, 신뢰도, 최근 업데이트를 빠르게 훑게 합니다.",
   "README should document the compact responsive Learning summary metrics",
 );
@@ -415,11 +402,6 @@ assertFileIncludes(
   prd,
   "필터 결과 리포트에는 현재 조건 절대 URL을 포함",
   "PRD should document Learning filtered report condition links",
-);
-assertFileIncludes(
-  prd,
-  "Learning 운영 흐름은 준비도 점검, 낮은 신뢰도 검토, 수동 메모리 보강, 현재 조건 Studio 전송을 상단에서 같은 순서로 보여주고 각 상세 섹션으로 바로 이동하게 해야 한다.",
-  "PRD should document the Learning operating flow",
 );
 assertFileIncludes(
   prd,

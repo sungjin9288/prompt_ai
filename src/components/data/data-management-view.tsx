@@ -17,10 +17,6 @@ import {
   secondaryButtonClass,
   textareaClass,
 } from "@/components/ui";
-import {
-  ContextOperatingFlow,
-  type ContextOperatingFlowItem,
-} from "@/components/context/context-operating-flow";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import { copyTextToClipboard } from "@/lib/browser/clipboard";
 import {
@@ -125,7 +121,6 @@ import {
   buildDocumentRagReadinessText,
   buildDocumentRagStudioDraftInput,
   createDocumentRagChunks,
-  documentRagReadinessItems,
   DocumentRagReadinessSummary,
 } from "./document-rag-summaries";
 import {
@@ -411,52 +406,6 @@ export function DataManagementView() {
   );
   const readinessStage = getReadinessStage(readinessScore);
   const readinessDoneCount = readinessItems.filter((item) => item.ready).length;
-  const documentRagReadyCount = documentRagReadinessItems.filter(
-    (item) => item.status === "ready",
-  ).length;
-  const dataOperationFlowItems: ContextOperatingFlowItem[] = [
-    {
-      actionLabel: backupIsCurrent ? "최신" : "백업 생성",
-      detail: backupMeta.exportedAt
-        ? `${formatBackupDate(backupMeta.exportedAt)} · ${
-            backupIsCurrent ? "최신" : `변경 ${backupCountChanges.length}개`
-          }`
-        : "아직 백업 없음",
-      disabled: backupIsCurrent,
-      label: "백업",
-      onAction: backupIsCurrent ? undefined : handleGenerateBackup,
-      step: "01",
-      title: backupIsCurrent ? "백업 상태 확인" : "현재 데이터 백업",
-    },
-    {
-      actionLabel: "준비도 보기",
-      detail: `${readinessDoneCount}/${readinessItems.length} 준비 · ${readinessScore}%`,
-      href: "#data-readiness",
-      label: "준비도",
-      step: "02",
-      title: readinessStage,
-    },
-    {
-      actionLabel: "RAG 확인",
-      detail: `${documentRagReadyCount}/${documentRagReadinessItems.length} 준비 · chunk ${documentRagChunks.length}개`,
-      href: "#data-document-rag",
-      label: "문서/RAG",
-      step: "03",
-      title: "문서 수집 기준 확인",
-    },
-    {
-      actionLabel: "전환 검토",
-      detail: runtimeReadiness.data
-        ? `${formatReleaseGateStage(runtimeReadiness.data.releaseGate.stage)} · ${runtimeReadiness.data.releaseGate.score}/100`
-        : runtimeReadiness.status === "loading"
-          ? "runtime 확인 중"
-          : "runtime 재확인 필요",
-      href: "#data-supabase-migration",
-      label: "Supabase",
-      step: "04",
-      title: "전환 gate 확인",
-    },
-  ];
   const dataSafetyWorkflowSteps = [
     {
       detail: backupIsCurrent
@@ -2170,14 +2119,6 @@ export function DataManagementView() {
       />
 
       <div className="space-y-6">
-        <ContextOperatingFlow
-          badge="destructive action 분리"
-          description="백업을 먼저 고정하고 준비도, 문서/RAG, Supabase 전환 gate를 순서대로 확인합니다."
-          items={dataOperationFlowItems}
-          testId="data-operating-flow"
-          title="데이터 운영 흐름"
-        />
-
         <div
           className="grid gap-3 md:grid-cols-3"
           data-testid="data-safety-workflow"

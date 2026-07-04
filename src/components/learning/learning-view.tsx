@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { type ContextOperatingFlowItem } from "@/components/context/context-operating-flow";
 import type { LearningMemory, MemoryScope } from "@/lib/prompt";
 import { useLearningMemoriesStore } from "@/lib/data/workspace-store";
 import { formatAbsoluteInternalHref } from "@/lib/navigation/href";
@@ -228,55 +227,6 @@ export function LearningView({
     scope,
     sortMode: "confidence-asc",
   });
-  const learningOperatingFlowItems = useMemo<ContextOperatingFlowItem[]>(
-    () => [
-      {
-        actionLabel: "준비도 확인",
-        detail: `Scope ${learningReadiness.coveredScopes.length}/4 · 낮은 신뢰도 ${learningReadiness.lowConfidenceCount}개`,
-        href: "#readiness",
-        label: "준비도",
-        step: "01",
-        title: `${learningReadiness.score}/100 · ${learningReadiness.label}`,
-      },
-      {
-        actionLabel: "검토 큐 열기",
-        detail: "신뢰도가 낮은 메모리는 재사용 전에 근거와 scope를 다시 확인합니다.",
-        href: learningLowConfidenceReviewHref,
-        label: "검토",
-        step: "02",
-        title: `낮은 신뢰도 ${learningReadiness.lowConfidenceCount}개`,
-      },
-      {
-        actionLabel: "직접 보강",
-        detail: "회사 기준, 개인 선호, 분야 규칙, 스킬 패턴을 수동 메모리로 저장합니다.",
-        href: "#learning-manual-memory",
-        label: "보강",
-        step: "03",
-        title: "수동 메모리",
-      },
-      {
-        actionLabel: "현재 조건 확인",
-        detail: feedbackImprovementFilterActive
-          ? "피드백 개선 큐를 Studio 검증 초안이나 운영 리포트로 전환합니다."
-          : "현재 필터 결과를 복사하거나 Studio 초안으로 전환합니다.",
-        href: feedbackImprovementFilterActive
-          ? "#learning-feedback-improvement-queue"
-          : "#learning-filter-panel",
-        label: "Studio",
-        step: "04",
-        title: `${filtered.length}개 조건`,
-      },
-    ],
-    [
-      feedbackImprovementFilterActive,
-      filtered.length,
-      learningLowConfidenceReviewHref,
-      learningReadiness.coveredScopes.length,
-      learningReadiness.label,
-      learningReadiness.lowConfidenceCount,
-      learningReadiness.score,
-    ],
-  );
   const learningNextActionGuide = useMemo(() => {
     if (memories.length === 0) {
       return {
@@ -956,7 +906,6 @@ export function LearningView({
     <>
       <LearningReadinessPanel
         learningReadiness={learningReadiness}
-        learningOperatingFlowItems={learningOperatingFlowItems}
         memories={memories}
         scopeCounts={scopeCounts}
         averageConfidence={averageConfidence}

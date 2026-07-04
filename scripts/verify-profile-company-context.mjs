@@ -50,7 +50,7 @@ assertProfileMatches(
   "Profile application preview should summarize language routing, target AI, and user memory state",
 );
 assertProfileMatches(
-  /const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "profile-context-application"[\s\S]*?rawInput: profileApplicationPrompt[\s\S]*?targetModels: \["gpt", "claude", "codex", "gemini"\][\s\S]*?sourceHref: "\/profile"[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setApplicationCopied\(false\)[\s\S]*?setManualCopy\(\{[\s\S]*?title: "개인화 기준 적용 프롬프트"[\s\S]*?body: profileApplicationPrompt[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 적용 프롬프트를 직접 선택해 복사하세요\.[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=profile-context-application"\)/,
+  /const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "profile-context-application"[\s\S]*?rawInput: profileApplicationPrompt[\s\S]*?targetModels: \["gpt", "claude", "codex", "gemini"\][\s\S]*?sourceHref: "\/profile"[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?copyAction\.clear\("application"\)[\s\S]*?setManualCopy\(\{[\s\S]*?title: "개인화 기준 적용 프롬프트"[\s\S]*?body: profileApplicationPrompt[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 적용 프롬프트를 직접 선택해 복사하세요\.[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=profile-context-application"\)/,
   "Profile application preview should send a traceable Studio draft and keep manual fallback when draft storage fails",
 );
 assertProfileMatches(
@@ -94,7 +94,7 @@ assertCompanyMatches(
   "Company application preview should summarize language routing, target AI, and company memory state",
 );
 assertCompanyMatches(
-  /const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "company-context-application"[\s\S]*?rawInput: companyApplicationPrompt[\s\S]*?targetModels: \["gpt", "claude", "codex", "gemini"\][\s\S]*?sourceHref: "\/company"[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?setApplicationCopied\(false\)[\s\S]*?setManualCopy\(\{[\s\S]*?title: "회사 기준 적용 프롬프트"[\s\S]*?body: companyApplicationPrompt[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 적용 프롬프트를 직접 선택해 복사하세요\.[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=company-context-application"\)/,
+  /const wroteDraft = writeStudioDraft\(\{[\s\S]*?source: "company-context-application"[\s\S]*?rawInput: companyApplicationPrompt[\s\S]*?targetModels: \["gpt", "claude", "codex", "gemini"\][\s\S]*?sourceHref: "\/company"[\s\S]*?if \(!wroteDraft\) \{[\s\S]*?copyAction\.clear\("application"\)[\s\S]*?setManualCopy\(\{[\s\S]*?title: "회사 기준 적용 프롬프트"[\s\S]*?body: companyApplicationPrompt[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 적용 프롬프트를 직접 선택해 복사하세요\.[\s\S]*?return[\s\S]*?router\.push\("\/studio\?draft=company-context-application"\)/,
   "Company application preview should send a traceable Studio draft and keep manual fallback when draft storage fails",
 );
 assertCompanyMatches(

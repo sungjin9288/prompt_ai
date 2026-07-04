@@ -21,7 +21,7 @@ import {
 } from "@/lib/data/workspace-store";
 import { upsertCompanyProfileMemory } from "@/lib/learning/memory";
 import { listToText, textToList } from "@/lib/storage/local-store";
-import { copyTextToClipboard } from "@/lib/browser/clipboard";
+import { useCopyAction } from "@/lib/browser/use-copy-action";
 
 interface CompanyReadinessItem {
   id: string;
@@ -286,9 +286,10 @@ export function CompanyEditor({ returnTo }: { returnTo?: string }) {
   const [company, setCompany] = useCompanyProfileStore();
   const [, setMemories] = useLearningMemoriesStore();
   const [saved, setSaved] = useState(false);
-  const [questionsCopied, setQuestionsCopied] = useState(false);
-  const [questionsCopyFailed, setQuestionsCopyFailed] = useState(false);
-  const [applicationCopied, setApplicationCopied] = useState(false);
+  const copyAction = useCopyAction();
+  const questionsCopied = copyAction.isCopied("questions");
+  const questionsCopyFailed = copyAction.isFailed("questions");
+  const applicationCopied = copyAction.isCopied("application");
   const [manualCopy, setManualCopy] = useState<CompanyManualCopy | null>(null);
   const readinessItems = useMemo(
     () => getCompanyReadinessItems(company),
@@ -359,19 +360,15 @@ export function CompanyEditor({ returnTo }: { returnTo?: string }) {
 
   function update<K extends keyof CompanyProfile>(key: K, value: CompanyProfile[K]) {
     setSaved(false);
-    setQuestionsCopied(false);
-    setQuestionsCopyFailed(false);
-    setApplicationCopied(false);
+    copyAction.reset();
     setManualCopy(null);
     setCompany((current) => ({ ...current, [key]: value }));
   }
 
   async function copyCompanyContextQuestions() {
     const questionsText = buildCompanyContextQuestions(company);
-    const copied = await copyTextToClipboard(questionsText);
+    const copied = await copyAction.copy("questions", questionsText);
 
-    setQuestionsCopied(copied);
-    setQuestionsCopyFailed(!copied);
     setManualCopy(
       copied
         ? null
@@ -389,9 +386,8 @@ export function CompanyEditor({ returnTo }: { returnTo?: string }) {
   }
 
   async function copyCompanyApplicationPrompt() {
-    const copied = await copyTextToClipboard(companyApplicationPrompt);
+    const copied = await copyAction.copy("application", companyApplicationPrompt);
 
-    setApplicationCopied(copied);
     setManualCopy(
       copied
         ? null
@@ -416,7 +412,7 @@ export function CompanyEditor({ returnTo }: { returnTo?: string }) {
     });
 
     if (!wroteDraft) {
-      setApplicationCopied(false);
+      copyAction.clear("application");
       setManualCopy({
         title: "회사 기준 적용 프롬프트",
         body: companyApplicationPrompt,

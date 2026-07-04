@@ -599,17 +599,17 @@ export function DataManagementView() {
   async function copyDataText(
     text: string,
     successNotice: string,
-    failureNotice = "복사에 실패했습니다. 브라우저 권한을 확인하거나 표시된 텍스트를 직접 선택하세요.",
     manualBody = text,
   ) {
     const copied = await copyTextToClipboard(text);
+    const label = getManualCopyTitle(successNotice);
 
-    setNotice(copied ? successNotice : failureNotice);
+    setNotice(copied ? successNotice : `${label} 복사 실패`);
     setManualCopy(
       copied
         ? null
         : {
-            title: getManualCopyTitle(successNotice),
+            title: label,
             body: manualBody,
           },
     );
@@ -624,7 +624,6 @@ export function DataManagementView() {
     await copyDataText(
       exportJson,
       "백업 JSON을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 텍스트 영역의 내용을 직접 선택하세요.",
       buildBackupManualCopyText({
         counts: backupMeta.counts,
         exportedAt: backupMeta.exportedAt,
@@ -719,7 +718,6 @@ export function DataManagementView() {
     await copyDataText(
       reportText,
       "복원 리포트를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 복원 리포트 식별 요약과 원문을 직접 선택하세요.",
       buildRestoreReportManualCopyText({
         ...restoreReportParams,
         reportText,
@@ -737,7 +735,6 @@ export function DataManagementView() {
     await copyDataText(
       mappingText,
       "Supabase 매핑 요약을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Supabase 매핑 식별 요약과 원문을 직접 선택하세요.",
       buildMigrationMappingManualCopyText({
         items: migrationMappingItems,
         mappingText,
@@ -755,7 +752,6 @@ export function DataManagementView() {
     await copyDataText(
       checklistText,
       "마이그레이션 체크리스트를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 마이그레이션 체크리스트 식별 요약과 원문을 직접 선택하세요.",
       buildMigrationChecklistManualCopyText({
         checklistText,
         items: migrationChecklistItems,
@@ -773,7 +769,6 @@ export function DataManagementView() {
     await copyDataText(
       dryRunText,
       "Supabase importer dry-run을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Dry-run 식별 요약과 원문을 직접 선택하세요.",
       buildSupabaseImportDryRunManualCopyText({
         dryRun: supabaseImportDryRun,
         dryRunText,
@@ -792,7 +787,6 @@ export function DataManagementView() {
     await copyDataText(
       guideText,
       "Supabase pending ID 치환 가이드를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Pending ID 치환 범위 요약과 가이드를 직접 선택하세요.",
       buildSupabaseReferenceReplacementGuideManualCopyText({
         dryRun: supabaseImportDryRun,
         guideText,
@@ -829,7 +823,6 @@ export function DataManagementView() {
     await copyDataText(
       planText,
       "Supabase import 실행 계획을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 실행 계획 식별 요약과 계획 원문을 직접 선택하세요.",
       buildSupabaseImportExecutionPlanManualCopyText({
         plan,
         planText,
@@ -862,7 +855,6 @@ export function DataManagementView() {
     await copyDataText(
       contractText,
       "Supabase importer adapter 계약을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Adapter 계약 식별 요약과 계약 원문을 직접 선택하세요.",
       buildSupabaseImporterAdapterContractManualCopyText({
         contractText,
         plan,
@@ -969,7 +961,6 @@ export function DataManagementView() {
     await copyDataText(
       preflightText,
       "Supabase import API preflight 리포트를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. API preflight 식별 요약과 리포트를 직접 선택하세요.",
       buildSupabaseImportApiPreflightReportManualCopyText({
         backupFingerprint,
         checkedAt,
@@ -1009,7 +1000,6 @@ export function DataManagementView() {
     await copyDataText(
       artifactText,
       "Supabase import API audit artifact를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. API audit artifact 식별 요약과 원문을 직접 선택하세요.",
       buildSupabaseImportApiAuditArtifactManualCopyText({
         artifactText,
         backupFingerprint,
@@ -1043,7 +1033,6 @@ export function DataManagementView() {
     await copyDataText(
       templateText,
       "Supabase import 실행 요청 템플릿을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 실행 요청 식별 요약과 템플릿을 직접 선택하세요.",
       buildSupabaseImportExecutionRequestTemplateManualCopyText({
         backupFingerprint,
         ownerUserId,
@@ -1075,7 +1064,6 @@ export function DataManagementView() {
     await copyDataText(
       checklistText,
       "Supabase import 실행 금지 체크리스트를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 실행 금지 식별 요약과 체크리스트를 직접 선택하세요.",
       buildSupabaseImportExecutionGuardChecklistManualCopyText({
         backupFingerprint,
         checklistText,
@@ -1113,7 +1101,6 @@ export function DataManagementView() {
     await copyDataText(
       rehearsalText,
       "Supabase migration rehearsal 리포트를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 리허설 식별 요약과 리포트를 직접 선택하세요.",
       buildSupabaseMigrationRehearsalReportManualCopyText({
         backupFingerprint,
         checkedAt,
@@ -1160,7 +1147,6 @@ export function DataManagementView() {
     await copyDataText(
       decisionText,
       "Supabase import 실행 판정 메모를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 실행 판정 식별 요약과 메모를 직접 선택하세요.",
       buildSupabaseImportExecutionReadinessDecisionManualCopyText({
         backupFingerprint,
         checkedAt,
@@ -1211,7 +1197,6 @@ export function DataManagementView() {
     await copyDataText(
       manifestText,
       "Supabase import execution packet manifest를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Execution packet manifest 식별 요약과 원문을 직접 선택하세요.",
       buildSupabaseImportExecutionPacketManifestManualCopyText({
         backupFingerprint: importBackupFingerprint,
         checkedAt,
@@ -1256,7 +1241,6 @@ export function DataManagementView() {
     await copyDataText(
       nextActionText,
       "Supabase import execution packet 다음 조치를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Execution packet 다음 조치 식별 요약과 원문을 직접 선택하세요.",
       buildSupabaseImportExecutionPacketNextActionManualCopyText({
         backupFingerprint: importBackupFingerprint,
         checkedAt,
@@ -1383,7 +1367,6 @@ export function DataManagementView() {
     await copyDataText(
       executionPacketText,
       "Supabase import 실행 패킷을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 실행 패킷 식별 요약과 본문을 직접 선택하세요.",
       buildSupabaseImportExecutionPacketManualCopyText({
         backupFingerprint: importBackupFingerprint,
         checkedAt,
@@ -1426,7 +1409,6 @@ export function DataManagementView() {
     await copyDataText(
       evidenceText,
       "Supabase post-import 검증 기록지를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 검증 기록 식별 요약과 본문을 직접 선택하세요.",
       buildSupabasePostImportVerificationEvidenceManualCopyText({
         backupFingerprint,
         checkedAt,
@@ -1449,7 +1431,6 @@ export function DataManagementView() {
     await copyDataText(
       verificationSql,
       "Supabase 검증 SQL을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Row count 검증 식별 요약과 SQL 원문을 직접 선택하세요.",
       buildSupabaseImportVerificationSqlManualCopyText({
         dryRun: supabaseImportDryRun,
         sql: verificationSql,
@@ -1479,7 +1460,6 @@ export function DataManagementView() {
     await copyDataText(
       verificationSql,
       "workspace_id가 반영된 Supabase 검증 SQL을 복사했습니다.",
-      "클립보드 복사에 실패했습니다. workspace_id 기준 row count 검증 요약과 SQL 원문을 직접 선택하세요.",
       buildSupabaseImportVerificationSqlManualCopyText({
         dryRun: supabaseImportDryRun,
         sql: verificationSql,
@@ -1498,7 +1478,6 @@ export function DataManagementView() {
     await copyDataText(
       relationshipSql,
       "Supabase 관계 검증 SQL 템플릿을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 관계 검증 식별 요약과 SQL 원문을 직접 선택하세요.",
       buildSupabaseRelationshipVerificationSqlManualCopyText({
         dryRun: supabaseImportDryRun,
         sql: relationshipSql,
@@ -1525,7 +1504,6 @@ export function DataManagementView() {
     await copyDataText(
       relationshipSql,
       "workspace_id가 반영된 Supabase 관계 검증 SQL을 복사했습니다.",
-      "클립보드 복사에 실패했습니다. workspace_id 기준 관계 검증 요약과 SQL 원문을 직접 선택하세요.",
       buildSupabaseRelationshipVerificationSqlManualCopyText({
         dryRun: supabaseImportDryRun,
         sql: relationshipSql,
@@ -1544,7 +1522,6 @@ export function DataManagementView() {
     await copyDataText(
       pendingIdAuditSql,
       "Supabase pending ID audit SQL 템플릿을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Pending ID audit 식별 요약과 SQL 원문을 직접 선택하세요.",
       buildSupabasePendingIdAuditSqlManualCopyText({
         dryRun: supabaseImportDryRun,
         sql: pendingIdAuditSql,
@@ -1571,7 +1548,6 @@ export function DataManagementView() {
     await copyDataText(
       pendingIdAuditSql,
       "workspace_id가 반영된 Supabase pending ID audit SQL을 복사했습니다.",
-      "클립보드 복사에 실패했습니다. workspace_id 기준 Pending ID audit 요약과 SQL 원문을 직접 선택하세요.",
       buildSupabasePendingIdAuditSqlManualCopyText({
         dryRun: supabaseImportDryRun,
         sql: pendingIdAuditSql,
@@ -1590,7 +1566,6 @@ export function DataManagementView() {
     await copyDataText(
       rlsAccessAuditSql,
       "Supabase RLS owner access audit SQL 템플릿을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. RLS owner access audit 식별 요약과 SQL 원문을 직접 선택하세요.",
       buildSupabaseRlsAccessAuditSqlManualCopyText({
         dryRun: supabaseImportDryRun,
         sql: rlsAccessAuditSql,
@@ -1622,7 +1597,6 @@ export function DataManagementView() {
     await copyDataText(
       rlsAccessAuditSql,
       "workspace_id와 owner_user_id가 반영된 RLS audit SQL을 복사했습니다.",
-      "클립보드 복사에 실패했습니다. workspace_id/owner_user_id 기준 RLS owner audit 요약과 SQL 원문을 직접 선택하세요.",
       buildSupabaseRlsAccessAuditSqlManualCopyText({
         dryRun: supabaseImportDryRun,
         ownerUserId,
@@ -1642,7 +1616,6 @@ export function DataManagementView() {
     await copyDataText(
       rlsPolicyDraftSql,
       "Supabase RLS policy draft SQL을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. RLS policy draft 식별 요약과 SQL 원문을 직접 선택하세요.",
       buildSupabaseRlsPolicyDraftSqlManualCopyText({
         dryRun: supabaseImportDryRun,
         sql: rlsPolicyDraftSql,
@@ -1660,7 +1633,6 @@ export function DataManagementView() {
     await copyDataText(
       checklistText,
       "Supabase RLS smoke test 체크리스트 템플릿을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. RLS smoke test 식별 요약과 체크리스트를 직접 선택하세요.",
       buildSupabaseRlsSmokeTestChecklistManualCopyText({
         checklistText,
         dryRun: supabaseImportDryRun,
@@ -1692,7 +1664,6 @@ export function DataManagementView() {
     await copyDataText(
       checklistText,
       "workspace_id와 owner_user_id가 반영된 RLS smoke test 체크리스트를 복사했습니다.",
-      "클립보드 복사에 실패했습니다. workspace_id/owner_user_id 기준 RLS smoke test 요약과 체크리스트를 직접 선택하세요.",
       buildSupabaseRlsSmokeTestChecklistManualCopyText({
         checklistText,
         dryRun: supabaseImportDryRun,
@@ -1713,7 +1684,6 @@ export function DataManagementView() {
     await copyDataText(
       reportText,
       "Supabase 검증 판정 리포트 템플릿을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Supabase 검증 판정 요약과 리포트 원문을 직접 선택하세요.",
       buildSupabaseVerificationReportManualCopyText({
         dryRun: supabaseImportDryRun,
         reportText,
@@ -1748,7 +1718,6 @@ export function DataManagementView() {
     await copyDataText(
       reportText,
       "workspace_id와 owner_user_id가 반영된 Supabase 검증 판정 리포트를 복사했습니다.",
-      "클립보드 복사에 실패했습니다. workspace_id/owner_user_id 기준 Supabase 검증 판정 요약과 리포트 원문을 직접 선택하세요.",
       buildSupabaseVerificationReportManualCopyText({
         dryRun: supabaseImportDryRun,
         ownerUserId,
@@ -1769,7 +1738,6 @@ export function DataManagementView() {
     await copyDataText(
       packageText,
       "Supabase migration handoff package 템플릿을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. Supabase migration handoff 요약과 패키지 원문을 직접 선택하세요.",
       buildSupabaseMigrationHandoffPackageManualCopyText({
         dryRun: supabaseImportDryRun,
         packageText,
@@ -1804,7 +1772,6 @@ export function DataManagementView() {
     await copyDataText(
       packageText,
       "workspace_id와 owner_user_id가 반영된 Supabase migration handoff package를 복사했습니다.",
-      "클립보드 복사에 실패했습니다. workspace_id/owner_user_id 기준 Supabase migration handoff 요약과 패키지 원문을 직접 선택하세요.",
       buildSupabaseMigrationHandoffPackageManualCopyText({
         dryRun: supabaseImportDryRun,
         ownerUserId,
@@ -1820,7 +1787,6 @@ export function DataManagementView() {
     await copyDataText(
       environmentTemplateText,
       ".env.local 템플릿을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 환경 변수 노출 기준과 .env.local 템플릿을 직접 선택하세요.",
       buildEnvironmentTemplateManualCopyText({
         templateText: environmentTemplateText,
       }),
@@ -1833,7 +1799,6 @@ export function DataManagementView() {
     await copyDataText(
       readinessText,
       "운영 환경 readiness 체크리스트를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 운영 환경 readiness 요약과 체크리스트를 직접 선택하세요.",
       buildEnvironmentReadinessManualCopyText({
         checklistText: readinessText,
         runtimeStatus: runtimeReadiness.data,
@@ -1847,7 +1812,6 @@ export function DataManagementView() {
     await copyDataText(
       readinessText,
       "문서/RAG 준비도 리포트를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 문서/RAG 준비도 요약과 리포트를 직접 선택하세요.",
       buildDocumentRagReadinessManualCopyText({
         reportText: readinessText,
       }),
@@ -1912,7 +1876,6 @@ export function DataManagementView() {
     await copyDataText(
       packetText,
       "문서/RAG 수집 패킷을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 문서/RAG 수집 패킷 요약과 원문을 직접 선택하세요.",
       buildDocumentRagIngestionPacketManualCopyText({
         chunks: documentRagChunks,
         packetText,
@@ -1974,7 +1937,6 @@ export function DataManagementView() {
     await copyDataText(
       runtimeStatusJson,
       "런타임 상태 JSON을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 런타임 요약과 JSON을 직접 선택하세요.",
       buildRuntimeStatusManualCopyText({
         json: runtimeStatusJson,
         runtimeStatus: runtimeReadiness.data,
@@ -1994,7 +1956,6 @@ export function DataManagementView() {
     await copyDataText(
       diagnosticsText,
       "런타임 진단 리포트를 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 런타임 진단 요약과 리포트를 직접 선택하세요.",
       buildRuntimeDiagnosticsManualCopyText({
         diagnosticsText,
         runtimeStatus: runtimeReadiness.data,
@@ -2014,7 +1975,6 @@ export function DataManagementView() {
     await copyDataText(
       actionPlanText,
       "운영자 조치 계획을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 운영자 조치 요약과 계획을 직접 선택하세요.",
       buildOperatorActionPlanManualCopyText({
         actionPlanText,
         runtimeStatus: runtimeReadiness.data,
@@ -2047,7 +2007,6 @@ export function DataManagementView() {
     await copyDataText(
       runtimeSnapshotsJson,
       "런타임 readiness 스냅샷 JSON을 클립보드에 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 런타임 스냅샷 요약과 JSON을 직접 선택하세요.",
       buildRuntimeSnapshotsManualCopyText({
         json: runtimeSnapshotsJson,
         snapshots: runtimeSnapshots,
@@ -2068,7 +2027,6 @@ export function DataManagementView() {
     await copyDataText(
       comparisonText,
       "런타임 readiness 스냅샷 비교 리포트를 복사했습니다.",
-      "클립보드 복사에 실패했습니다. 런타임 스냅샷 비교 요약과 리포트를 직접 선택하세요.",
       buildRuntimeSnapshotComparisonManualCopyText({
         comparisonText,
         currentStatus: runtimeReadiness.data,

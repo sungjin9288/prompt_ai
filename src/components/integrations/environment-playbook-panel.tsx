@@ -379,7 +379,7 @@ function EnvironmentCopyNotice({
   const isError = copyState === "error" || copyState === "draftError";
   const message =
     copyState === "error"
-      ? "복사에 실패했습니다. 아래 체크리스트를 직접 선택해 복사하세요."
+      ? "복사 실패. 아래 체크리스트를 직접 선택해 복사하세요."
       : copyState === "draftError"
         ? "Studio 초안을 저장하지 못했습니다. 아래 체크리스트를 직접 선택해 복사하세요."
       : `${copyState} 체크리스트를 복사했습니다.`;

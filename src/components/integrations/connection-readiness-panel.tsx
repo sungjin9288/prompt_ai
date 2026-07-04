@@ -682,7 +682,7 @@ function ConnectionReadinessCopyNotice({
 
   const message =
     copyState === "error"
-      ? "복사에 실패했습니다. 아래 내용을 직접 선택해 복사하세요."
+      ? "복사 실패. 아래 내용을 직접 선택해 복사하세요."
       : copyState === "checklist"
         ? "연결 준비도 체크리스트를 복사했습니다."
         : copyState === "chrome-smoke"

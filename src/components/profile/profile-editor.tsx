@@ -12,7 +12,7 @@ import {
   secondaryButtonClass,
   textareaClass,
 } from "@/components/ui";
-import { copyTextToClipboard } from "@/lib/browser/clipboard";
+import { useCopyAction } from "@/lib/browser/use-copy-action";
 import { normalizeInternalHref } from "@/lib/navigation/href";
 import type { UserProfile } from "@/lib/prompt";
 import { writeStudioDraft } from "@/lib/studio/draft";
@@ -274,9 +274,10 @@ export function ProfileEditor({ returnTo }: { returnTo?: string }) {
   const [profile, setProfile] = useUserProfileStore();
   const [, setMemories] = useLearningMemoriesStore();
   const [saved, setSaved] = useState(false);
-  const [questionsCopied, setQuestionsCopied] = useState(false);
-  const [questionsCopyFailed, setQuestionsCopyFailed] = useState(false);
-  const [applicationCopied, setApplicationCopied] = useState(false);
+  const copyAction = useCopyAction();
+  const questionsCopied = copyAction.isCopied("questions");
+  const questionsCopyFailed = copyAction.isFailed("questions");
+  const applicationCopied = copyAction.isCopied("application");
   const [manualCopy, setManualCopy] = useState<ProfileManualCopy | null>(null);
   const readinessItems = useMemo(
     () => getProfileReadinessItems(profile),
@@ -347,19 +348,15 @@ export function ProfileEditor({ returnTo }: { returnTo?: string }) {
 
   function update<K extends keyof UserProfile>(key: K, value: UserProfile[K]) {
     setSaved(false);
-    setQuestionsCopied(false);
-    setQuestionsCopyFailed(false);
-    setApplicationCopied(false);
+    copyAction.reset();
     setManualCopy(null);
     setProfile((current) => ({ ...current, [key]: value }));
   }
 
   async function copyProfileContextQuestions() {
     const questionsText = buildProfileContextQuestions(profile);
-    const copied = await copyTextToClipboard(questionsText);
+    const copied = await copyAction.copy("questions", questionsText);
 
-    setQuestionsCopied(copied);
-    setQuestionsCopyFailed(!copied);
     setManualCopy(
       copied
         ? null
@@ -377,9 +374,8 @@ export function ProfileEditor({ returnTo }: { returnTo?: string }) {
   }
 
   async function copyProfileApplicationPrompt() {
-    const copied = await copyTextToClipboard(profileApplicationPrompt);
+    const copied = await copyAction.copy("application", profileApplicationPrompt);
 
-    setApplicationCopied(copied);
     setManualCopy(
       copied
         ? null
@@ -404,7 +400,7 @@ export function ProfileEditor({ returnTo }: { returnTo?: string }) {
     });
 
     if (!wroteDraft) {
-      setApplicationCopied(false);
+      copyAction.clear("application");
       setManualCopy({
         title: "개인화 기준 적용 프롬프트",
         body: profileApplicationPrompt,

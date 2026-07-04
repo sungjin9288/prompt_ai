@@ -384,7 +384,7 @@ assert.match(
 );
 assert.match(
   environmentPlaybookPanel,
-  /function EnvironmentCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?const isError = copyState === "error" \|\| copyState === "draftError"[\s\S]*?복사에 실패했습니다\. 아래 체크리스트를 직접 선택해 복사하세요\.[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 체크리스트를 직접 선택해 복사하세요\.[\s\S]*?`\$\{copyState\} 체크리스트를 복사했습니다\.`[\s\S]*?isError \? "text-danger" : "text-accent"[\s\S]*?<EnvironmentManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<EnvironmentCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
+  /function EnvironmentCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?const isError = copyState === "error" \|\| copyState === "draftError"[\s\S]*?복사 실패\. 아래 체크리스트를 직접 선택해 복사하세요\.[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 체크리스트를 직접 선택해 복사하세요\.[\s\S]*?`\$\{copyState\} 체크리스트를 복사했습니다\.`[\s\S]*?isError \? "text-danger" : "text-accent"[\s\S]*?<EnvironmentManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<EnvironmentCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
   "Environment playbook panel should render copy status, draft fallback, and manual fallback through a dedicated notice",
 );
 assert.match(
@@ -818,7 +818,7 @@ assert.match(
 );
 assert.match(
   mcpConnectionPanel,
-  /function McpSetupManualCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?const isError = copyState === "error" \|\| copyState === "draftError"[\s\S]*?복사에 실패했습니다\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 runbook을 직접 선택해 복사하세요\.[\s\S]*?MCP client smoke 증빙을 복사했습니다\.[\s\S]*?MCP save_execution_feedback payload를 복사했습니다\.[\s\S]*?MCP feedback inbox 확인 명령을 복사했습니다\.[\s\S]*?복사했습니다\.[\s\S]*?isError \? "text-danger" : "text-accent"[\s\S]*?<McpSetupManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<McpSetupManualCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
+  /function McpSetupManualCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?const isError = copyState === "error" \|\| copyState === "draftError"[\s\S]*?복사 실패\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 runbook을 직접 선택해 복사하세요\.[\s\S]*?MCP client smoke 증빙을 복사했습니다\.[\s\S]*?MCP save_execution_feedback payload를 복사했습니다\.[\s\S]*?MCP feedback inbox 확인 명령을 복사했습니다\.[\s\S]*?복사했습니다\.[\s\S]*?isError \? "text-danger" : "text-accent"[\s\S]*?<McpSetupManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<McpSetupManualCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
   "MCP connection panel should render copy status, draft fallback, and fallback through a dedicated notice",
 );
 assert.match(
@@ -1132,7 +1132,7 @@ assert.match(
 );
 assert.match(
   connectionReadinessPanel,
-  /function ConnectionReadinessCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?복사에 실패했습니다\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?연결 준비도 체크리스트를 복사했습니다\.[\s\S]*?Chrome loaded smoke 체크리스트를 복사했습니다\.[\s\S]*?Chrome loaded extension 증빙 패킷을 복사했습니다\.[\s\S]*?실제 Chrome loaded extension 증빙을 복사했습니다\.[\s\S]*?Chrome save_execution_feedback payload를 복사했습니다\.[\s\S]*?Chrome feedback inbox 확인 명령을 복사했습니다\.[\s\S]*?Smoke test 명령을 복사했습니다\.[\s\S]*?<ConnectionReadinessManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<ConnectionReadinessCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
+  /function ConnectionReadinessCopyNotice[\s\S]*?copyState === "idle"[\s\S]*?return null[\s\S]*?복사 실패\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?연결 준비도 체크리스트를 복사했습니다\.[\s\S]*?Chrome loaded smoke 체크리스트를 복사했습니다\.[\s\S]*?Chrome loaded extension 증빙 패킷을 복사했습니다\.[\s\S]*?실제 Chrome loaded extension 증빙을 복사했습니다\.[\s\S]*?Chrome save_execution_feedback payload를 복사했습니다\.[\s\S]*?Chrome feedback inbox 확인 명령을 복사했습니다\.[\s\S]*?Smoke test 명령을 복사했습니다\.[\s\S]*?<ConnectionReadinessManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<ConnectionReadinessCopyNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
   "Connection readiness panel should render copy status and manual fallback through a dedicated notice",
 );
 assert.match(
@@ -1393,7 +1393,7 @@ assert.match(
 );
 assert.match(
   mcpFeedbackInboxPanel,
-  /function FeedbackCopyStatusNotice[\s\S]*?getFeedbackCopyStatusMessage\(copyState\)[\s\S]*?text-sm text-accent[\s\S]*?copyState !== "error" && copyState !== "draftError"[\s\S]*?const errorMessage[\s\S]*?copyState === "draftError"[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?복사에 실패했습니다\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?<FeedbackManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<FeedbackCopyStatusNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
+  /function FeedbackCopyStatusNotice[\s\S]*?getFeedbackCopyStatusMessage\(copyState\)[\s\S]*?text-sm text-accent[\s\S]*?copyState !== "error" && copyState !== "draftError"[\s\S]*?const errorMessage[\s\S]*?copyState === "draftError"[\s\S]*?Studio 초안을 저장하지 못했습니다\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?복사 실패\. 아래 내용을 직접 선택해 복사하세요\.[\s\S]*?<FeedbackManualCopyTextarea value=\{manualCopyText\} \/>[\s\S]*?<FeedbackCopyStatusNotice[\s\S]*?copyState=\{copyState\}[\s\S]*?manualCopyText=\{manualCopyText\}/,
   "MCP feedback inbox should render success, copy fallback, and Studio draft fallback through a dedicated notice component",
 );
 assert.match(

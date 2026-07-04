@@ -157,7 +157,7 @@ function collectCopyDataTextCalls(node, calls = []) {
   ) {
     calls.push({
       argumentCount: node.arguments.length,
-      manualFallbackExpression: node.arguments[3]?.getText(dataSourceFile) ?? "",
+      manualFallbackExpression: node.arguments[2]?.getText(dataSourceFile) ?? "",
       line: getLineNumber(node.getStart(dataSourceFile)),
     });
   }
@@ -171,7 +171,7 @@ function collectCopyDataTextCalls(node, calls = []) {
 
 const copyDataTextCalls = collectCopyDataTextCalls(dataSourceFile);
 const copyDataTextCallsMissingManualFallback = copyDataTextCalls.filter(
-  (call) => call.argumentCount < 4,
+  (call) => call.argumentCount < 3,
 );
 const copyDataTextCallsMissingManualFallbackBuilder = copyDataTextCalls.filter(
   (call) => !/^build[A-Za-z0-9]+ManualCopyText\(/.test(call.manualFallbackExpression),
@@ -185,7 +185,7 @@ assert.ok(
 assert.equal(
   copyDataTextCallsMissingManualFallback.length,
   0,
-  `Every Data copyDataText call should include success notice, failure notice, and metadata-rich manual fallback body. Missing calls: ${JSON.stringify(
+  `Every Data copyDataText call should include success notice and metadata-rich manual fallback body. Missing calls: ${JSON.stringify(
     copyDataTextCallsMissingManualFallback,
   )}`,
 );

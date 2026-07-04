@@ -126,6 +126,7 @@ import { DashboardImprovementPanel } from "./dashboard-improvement-panel";
 import { DashboardPersonalizationPanel } from "./dashboard-personalization-panel";
 import { DashboardSkillOpsPanel } from "./dashboard-skill-ops-panel";
 import { DashboardPerformancePanel } from "./dashboard-performance-panel";
+import { DashboardActivitySection } from "./dashboard-activity-section";
 
 const workflowItems = [
   {
@@ -2687,6 +2688,8 @@ export function DashboardView() {
           />
         </div>
       </div>
+
+      <DashboardActivitySection />
     </>
   );
 }

@@ -1,5 +1,5 @@
-import { ActivityView } from "@/components/activity/activity-view";
+import { redirect } from "next/navigation";
 
 export default function ActivityPage() {
-  return <ActivityView />;
+  redirect("/#activity");
 }

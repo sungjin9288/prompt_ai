@@ -9,7 +9,7 @@ const navGroupMatches = [...source.matchAll(/group: "([^"]+)"/g)];
 
 assert.equal(
   navItemMatches.length,
-  9,
+  8,
   "App shell should keep every primary navigation item documented with summary and next action",
 );
 

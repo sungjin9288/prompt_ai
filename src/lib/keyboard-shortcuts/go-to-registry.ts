@@ -10,7 +10,7 @@ export const goToShortcuts: GoToShortcut[] = [
   { key: "l", href: "/library", label: "라이브러리" },
   { key: "m", href: "/learning", label: "학습" },
   { key: "k", href: "/skills", label: "스킬" },
-  { key: "a", href: "/activity", label: "활동" },
+  { key: "a", href: "/#activity", label: "활동" },
   { key: "i", href: "/integrations", label: "연결" },
   { key: "x", href: "/context", label: "맥락" },
   { key: "d", href: "/data", label: "데이터" },

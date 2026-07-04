@@ -48,17 +48,14 @@
 - Studio 현재 버전/품질 리포트/학습 리포트/보강 질문/비교 리포트 복사의 clipboard fallback, 실패 상태, 수동 복사용 textarea 표시
 - localStorage 기반 라이브러리
 - 대상 AI 도구별 라이브러리 필터링
-- Dashboard 대상 AI 성과에서 Library 모델 필터로 이동
 - 언어 전략별 라이브러리 필터링
-- Dashboard 언어 전략 성과에서 Library 언어 전략 필터로 이동
 - 답변 언어별 라이브러리 필터링
-- Dashboard 답변 언어 성과에서 Library 답변 언어 필터로 이동
+- Dashboard 성과 요약 패널은 대상 AI/생성 엔진/언어 전략/답변 언어 네 축을 한 패널에 압축해 각 버킷의 품질/성공률과 Library 필터 이동 링크를 보여줍니다.
 - Library 검색어/필터/정렬 URL 동기화, 조건별 해제, 상단 적용 조건 요약과 공유/초기화 액션
 - Library 개선본 원본 대비 점수 변화 기준 개선 효과순 정렬
 - Library 언어 전략/답변 언어/대상 AI/생성 엔진/개선 상태 필터의 옵션별 개수 표시
 - Library 학습 scope 필터와 URL 공유
 - Library 목록/상세의 생성 엔진 배지와 OpenAI 모델명 표시
-- Dashboard 생성 엔진별 품질/피드백 성과 요약과 Library 생성 엔진 필터 이동
 - Dashboard 생성 엔진 상태 표시: OpenAI 보강 가능 여부와 로컬 fallback 모드 확인
 - Library 상세 프롬프트/버전 딥링크와 상세 링크 복사
 - Library 현재 버전/공유 링크/상세 링크/학습 리포트/보강 질문/비교·개선 브리프 복사의 clipboard fallback, 실패 상태, 수동 복사용 textarea 표시

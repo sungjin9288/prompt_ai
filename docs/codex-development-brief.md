@@ -180,11 +180,9 @@ Studio 초안 출처 관리:
 - URL 기반 정렬 진입
 - 태그 필터
 - AI 도구 필터
-- Dashboard AI 도구 성과에서 URL 필터 진입
 - 언어 전략 필터
-- Dashboard 언어 전략 성과에서 URL 필터 진입
 - 답변 언어 필터
-- Dashboard 답변 언어 성과에서 URL 필터 진입
+- Dashboard 성과 요약 패널의 대상 AI/생성 엔진/언어 전략/답변 언어 버킷에서 URL 필터 진입
 - Dashboard 개선본 원본 대비 평균 개선폭과 차수별/AI 도구별/분야별 개선 효과 집계
 - 수동 필터 변경 시 URL 동기화
 - 수동 검색어 변경 시 URL 동기화
@@ -192,7 +190,6 @@ Studio 초안 출처 관리:
 - 개선본 원본 대비 점수 변화 기준 개선 효과순 정렬
 - 언어 전략/답변 언어/대상 AI/생성 엔진/개선 상태 필터의 옵션별 개수 표시
 - 목록/상세의 생성 엔진 배지와 OpenAI 모델명 표시
-- Dashboard 생성 엔진별 품질/피드백 성과 요약과 Library 생성 엔진 필터 이동
 - Dashboard 생성 엔진 상태 표시: OpenAI 보강 가능 여부와 로컬 fallback 모드 확인
 - Dashboard 개선 효과 수치와 재개선 후보 KPI에서 Library 개선 상태 필터로 이동
 - Dashboard 출처 상태 조치에서 보관함 원본/측정 불가의 사유별 count를 `sourceReason` Library 필터 링크로 제공하고 Library 목록/상세 출처 사유 배지, 필터 결과 대표 후보, 후보별 메모 복사/Studio 초안 전송, 조치 리포트 복사/Studio 초안 전송을 화면에 표시하며, Dashboard 후보별 메모 복사/Studio 초안 전송과 후보 제목, 원본 상태, 상세 링크를 포함한 전체 Markdown 계획 복사/Studio 초안 전송

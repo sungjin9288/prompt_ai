@@ -32,23 +32,10 @@ import {
   isWorkspaceBackupMetaCurrent,
   summarizeWorkspaceBackupData,
 } from "@/lib/storage/workspace-backup";
-import {
-  getLeadingLanguageStrategy,
-  summarizeLanguageStrategyPerformance,
-} from "@/lib/analytics/language-strategy";
-import {
-  getLeadingOutputLanguage,
-  summarizeOutputLanguagePerformance,
-} from "@/lib/analytics/output-language";
-import {
-  getLeadingTargetModel,
-  getRecommendedTargetModel,
-  summarizeTargetModelPerformance,
-} from "@/lib/analytics/target-model";
-import {
-  getLeadingGenerationEngine,
-  summarizeGenerationEnginePerformance,
-} from "@/lib/analytics/generation-engine";
+import { summarizeLanguageStrategyPerformance } from "@/lib/analytics/language-strategy";
+import { summarizeOutputLanguagePerformance } from "@/lib/analytics/output-language";
+import { summarizeTargetModelPerformance } from "@/lib/analytics/target-model";
+import { summarizeGenerationEnginePerformance } from "@/lib/analytics/generation-engine";
 import {
   formatAbsoluteInternalHref,
   normalizeInternalHref,
@@ -74,20 +61,12 @@ import {
   type StudioSourceSummaryItem,
   completion,
   formatTimestamp,
-  strategyStatusLabel,
-  outputLanguageStatusLabel,
-  targetModelStatusLabel,
-  generationEngineStatusLabel,
   formatTargetModelLabels,
 } from "@/lib/dashboard/shared";
 import {
   buildPromptLibraryHref,
   buildSkillHref,
-  targetModelLibraryHref,
   improvementLibraryHref,
-  languageStrategyLibraryHref,
-  outputLanguageLibraryHref,
-  generationEngineLibraryHref,
   studioPersistenceLibraryHref,
   studioSourceLibraryHref,
   learningScopeLibraryHref,
@@ -146,6 +125,7 @@ import { DashboardNextActionQueuePanel } from "./dashboard-next-action-queue-pan
 import { DashboardImprovementPanel } from "./dashboard-improvement-panel";
 import { DashboardPersonalizationPanel } from "./dashboard-personalization-panel";
 import { DashboardSkillOpsPanel } from "./dashboard-skill-ops-panel";
+import { DashboardPerformancePanel } from "./dashboard-performance-panel";
 
 const workflowItems = [
   {
@@ -504,37 +484,17 @@ export function DashboardView() {
     () => summarizeLanguageStrategyPerformance(prompts, skills),
     [prompts, skills],
   );
-  const leadingLanguageStrategy = useMemo(
-    () => getLeadingLanguageStrategy(languageSummaries),
-    [languageSummaries],
-  );
   const outputLanguageSummaries = useMemo(
     () => summarizeOutputLanguagePerformance(prompts, skills),
     [prompts, skills],
-  );
-  const leadingOutputLanguage = useMemo(
-    () => getLeadingOutputLanguage(outputLanguageSummaries),
-    [outputLanguageSummaries],
   );
   const targetModelSummaries = useMemo(
     () => summarizeTargetModelPerformance(prompts, skills),
     [prompts, skills],
   );
-  const leadingTargetModel = useMemo(
-    () => getLeadingTargetModel(targetModelSummaries),
-    [targetModelSummaries],
-  );
-  const recommendedTargetModel = useMemo(
-    () => getRecommendedTargetModel(targetModelSummaries),
-    [targetModelSummaries],
-  );
   const generationEngineSummaries = useMemo(
     () => summarizeGenerationEnginePerformance(prompts),
     [prompts],
-  );
-  const leadingGenerationEngine = useMemo(
-    () => getLeadingGenerationEngine(generationEngineSummaries),
-    [generationEngineSummaries],
   );
   const learningScopeSummaries = useMemo(
     () => summarizeLearningContextUsage(prompts, memories),
@@ -2376,156 +2336,12 @@ export function DashboardView() {
         setDashboardNextActionQueueManualCopy={setDashboardNextActionQueueManualCopy}
       />
 
-      <Panel className="mt-6">
-        <PanelHeader
-          title="AI 도구 성과"
-          description="GPT, Claude, Codex, Gemini별 생성 품질과 피드백 성공률을 추적합니다."
-        />
-        <div className="grid gap-0 divide-y divide-line lg:grid-cols-[1fr_260px] lg:divide-x lg:divide-y-0">
-          <div className="grid gap-4 px-5 py-5 md:grid-cols-2 xl:grid-cols-5">
-            {targetModelSummaries.map((item) => (
-              <Link
-                key={item.targetModel}
-                href={targetModelLibraryHref(item.targetModel)}
-                className="rounded-md border border-line bg-surface px-4 py-4 transition hover:border-accent hover:bg-panel-strong"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="break-words text-sm font-semibold">
-                      {item.label}
-                    </p>
-                    <p className="mt-1 text-xs text-muted">
-                      최근 {formatTimestamp(item.latestPromptAt)}
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-md border border-line bg-panel px-2 py-1 text-xs text-soft">
-                    {targetModelStatusLabel(item.status)}
-                  </span>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
-                  <div>
-                    <p className="text-muted">버전</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.promptCount}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">품질</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.averageQuality ? item.averageQuality.toFixed(1) : "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">성공률</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.feedbackCount ? `${item.successRate}%` : "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">스킬</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.skillCount}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-          <div className="px-5 py-5">
-            <p className="text-sm font-semibold">현재 우세 도구</p>
-            <p className="mt-2 text-2xl font-semibold text-accent">
-              {leadingTargetModel?.label ?? "아직 없음"}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              {recommendedTargetModel.reason}
-            </p>
-            <Link
-              href={targetModelLibraryHref(leadingTargetModel?.targetModel)}
-              className={`${primaryButtonClass} mt-4 w-full`}
-            >
-              모델별 피드백 보기
-            </Link>
-          </div>
-        </div>
-      </Panel>
-
-      <Panel className="mt-6">
-        <PanelHeader
-          title="생성 엔진 성과"
-          description="로컬 규칙 기반 빌더와 OpenAI 보강본의 품질, 피드백, 모델 사용을 비교합니다."
-        />
-        <div className="grid gap-0 divide-y divide-line lg:grid-cols-[1fr_260px] lg:divide-x lg:divide-y-0">
-          <div className="grid gap-4 px-5 py-5 md:grid-cols-2">
-            {generationEngineSummaries.map((item) => (
-              <Link
-                key={item.engine}
-                href={generationEngineLibraryHref(item.engine)}
-                className="rounded-md border border-line bg-surface px-4 py-4 transition hover:border-accent hover:bg-panel-strong"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="break-words text-sm font-semibold">
-                      {item.label}
-                    </p>
-                    <p className="mt-1 text-xs text-muted">
-                      최근 {formatTimestamp(item.latestPromptAt)}
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-md border border-line bg-panel px-2 py-1 text-xs text-soft">
-                    {generationEngineStatusLabel(item.status)}
-                  </span>
-                </div>
-                <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
-                  <div>
-                    <p className="text-muted">프롬프트</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.promptCount}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">품질</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.averageQuality ? item.averageQuality.toFixed(1) : "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">성공률</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.feedbackCount ? `${item.successRate}%` : "-"}
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-4 text-xs leading-5 text-muted">
-                  {item.modelUsage.length
-                    ? item.modelUsage
-                        .slice(0, 2)
-                        .map((usage) => `${usage.model} ${usage.count}`)
-                        .join(" · ")
-                    : item.engine === "openai"
-                      ? "OpenAI 모델 사용 기록 없음"
-                      : "오프라인 규칙 기반 생성"}
-                </p>
-              </Link>
-            ))}
-          </div>
-          <div className="px-5 py-5">
-            <p className="text-sm font-semibold">현재 우세 엔진</p>
-            <p className="mt-2 text-2xl font-semibold text-accent">
-              {leadingGenerationEngine?.label ?? "아직 없음"}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              피드백이 쌓이면 OpenAI 보강이 실제 품질과 성공률을 얼마나 개선하는지
-              로컬 빌더와 비교할 수 있습니다.
-            </p>
-            <Link
-              href={generationEngineLibraryHref(leadingGenerationEngine?.engine)}
-              className={`${primaryButtonClass} mt-4 w-full`}
-            >
-              엔진별 프롬프트 보기
-            </Link>
-          </div>
-        </div>
-      </Panel>
+      <DashboardPerformancePanel
+        targetModelSummaries={targetModelSummaries}
+        generationEngineSummaries={generationEngineSummaries}
+        languageSummaries={languageSummaries}
+        outputLanguageSummaries={outputLanguageSummaries}
+      />
 
       <Panel className="mt-6">
         <PanelHeader
@@ -2727,149 +2543,6 @@ export function DashboardView() {
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </Panel>
-
-      <Panel className="mt-6">
-        <PanelHeader
-          title="언어 전략 성과"
-          description="영어 지시문과 한영 하이브리드 중 어떤 전략이 더 잘 작동하는지 추적합니다."
-        />
-        <div className="grid gap-0 divide-y divide-line lg:grid-cols-[1fr_240px] lg:divide-x lg:divide-y-0">
-          <div className="grid gap-4 px-5 py-5 md:grid-cols-2">
-            {languageSummaries.map((item) => (
-              <Link
-                key={item.strategy}
-                href={languageStrategyLibraryHref(item.strategy)}
-                className="rounded-md border border-line bg-surface px-4 py-4 transition hover:border-accent hover:bg-panel-strong"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-semibold">{item.label}</p>
-                    <p className="mt-1 text-xs text-muted">
-                      최근 {formatTimestamp(item.latestPromptAt)}
-                    </p>
-                  </div>
-                  <span className="rounded-md border border-line bg-panel px-2 py-1 text-xs text-soft">
-                    {strategyStatusLabel(item.status)}
-                  </span>
-                </div>
-                <div className="mt-4 grid grid-cols-4 gap-3 text-xs">
-                  <div>
-                    <p className="text-muted">프롬프트</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.promptCount}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">품질</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.averageQuality ? item.averageQuality.toFixed(1) : "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">성공률</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.feedbackCount ? `${item.successRate}%` : "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">스킬</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.skillCount}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-          <div className="px-5 py-5">
-            <p className="text-sm font-semibold">현재 우세 전략</p>
-            <p className="mt-2 text-2xl font-semibold text-accent">
-              {leadingLanguageStrategy?.label ?? "아직 없음"}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              피드백이 3개 이상 쌓이면 성공률 기준으로 전략 판단이 더 안정됩니다.
-            </p>
-            <Link
-              href={languageStrategyLibraryHref(leadingLanguageStrategy?.strategy)}
-              className={`${primaryButtonClass} mt-4 w-full`}
-            >
-              피드백 확인
-            </Link>
-          </div>
-        </div>
-      </Panel>
-
-      <Panel className="mt-6">
-        <PanelHeader
-          title="답변 언어 성과"
-          description="한국어, 영어, 입력 언어 동일 옵션별 품질과 피드백 성공률을 추적합니다."
-        />
-        <div className="grid gap-0 divide-y divide-line lg:grid-cols-[1fr_240px] lg:divide-x lg:divide-y-0">
-          <div className="grid gap-4 px-5 py-5 md:grid-cols-3">
-            {outputLanguageSummaries.map((item) => (
-              <Link
-                key={item.outputLanguage}
-                href={outputLanguageLibraryHref(item.outputLanguage)}
-                className="rounded-md border border-line bg-surface px-4 py-4 transition hover:border-accent hover:bg-panel-strong"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-semibold">{item.label}</p>
-                    <p className="mt-1 text-xs text-muted">
-                      최근 {formatTimestamp(item.latestPromptAt)}
-                    </p>
-                  </div>
-                  <span className="rounded-md border border-line bg-panel px-2 py-1 text-xs text-soft">
-                    {outputLanguageStatusLabel(item.status)}
-                  </span>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
-                  <div>
-                    <p className="text-muted">프롬프트</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.promptCount}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">품질</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.averageQuality ? item.averageQuality.toFixed(1) : "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">성공률</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.feedbackCount ? `${item.successRate}%` : "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted">스킬</p>
-                    <p className="mt-1 font-mono text-base font-semibold">
-                      {item.skillCount}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-          <div className="px-5 py-5">
-            <p className="text-sm font-semibold">현재 우세 답변 언어</p>
-            <p className="mt-2 text-2xl font-semibold text-accent">
-              {leadingOutputLanguage?.label ?? "아직 없음"}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              답변 언어는 선호도와 업무 목적의 영향이 큽니다. 피드백이 쌓이면
-              반복 업무별 기본값을 조정할 근거로 사용합니다.
-            </p>
-            <Link
-              href={outputLanguageLibraryHref(leadingOutputLanguage?.outputLanguage)}
-              className={`${primaryButtonClass} mt-4 w-full`}
-            >
-              언어별 피드백 보기
-            </Link>
           </div>
         </div>
       </Panel>

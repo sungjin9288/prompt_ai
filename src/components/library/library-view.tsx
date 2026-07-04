@@ -40,6 +40,7 @@ import {
 } from "@/lib/data/workspace-store";
 import { formatAbsoluteInternalHref } from "@/lib/navigation/href";
 import { writeStudioDraft } from "@/lib/studio/draft";
+import { useLoadSampleWorkspace } from "@/lib/samples/use-load-sample-workspace";
 import { copyTextToClipboard } from "@/lib/browser/clipboard";
 import { announce } from "@/lib/browser/announcer";
 import {
@@ -203,6 +204,7 @@ export function LibraryView({
   const [prompts, setPrompts] = usePromptAssetsStore();
   const [deletedPrompts, setDeletedPrompts] = useDeletedPromptAssetsStore();
   const [, setMemories] = useLearningMemoriesStore();
+  const loadSampleWorkspace = useLoadSampleWorkspace();
   const [query, setQuery] = useState(initialQuery ?? "");
   const [sortMode, setSortMode] = useState<LibrarySortMode>(
     initialSortMode ?? "recent",
@@ -4717,6 +4719,7 @@ export function LibraryView({
           latestFeedbackId={latestFeedbackId}
           learningContextReportCopiedFor={learningContextReportCopiedFor}
           linkedImprovementPrompts={linkedImprovementPrompts}
+          loadSampleWorkspace={loadSampleWorkspace}
           manualCopy={manualCopy}
           noSourceMetaNoteCopiedFor={noSourceMetaNoteCopiedFor}
           openComparisonImprovementInStudio={openComparisonImprovementInStudio}

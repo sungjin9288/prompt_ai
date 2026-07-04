@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { primaryButtonClass } from "@/components/ui";
+import { primaryButtonClass, secondaryButtonClass } from "@/components/ui";
 
 function InboxIcon() {
   return (
@@ -25,12 +25,14 @@ export function EmptyState({
   description,
   icon,
   action,
+  secondaryAction,
   className = "",
 }: {
   title: string;
   description: string;
   icon?: ReactNode;
   action?: { label: string; href: string };
+  secondaryAction?: { label: string; onClick: () => void };
   className?: string;
 }) {
   return (
@@ -48,6 +50,15 @@ export function EmptyState({
         <Link href={action.href} className={primaryButtonClass}>
           {action.label}
         </Link>
+      ) : null}
+      {secondaryAction ? (
+        <button
+          type="button"
+          className={secondaryButtonClass}
+          onClick={secondaryAction.onClick}
+        >
+          {secondaryAction.label}
+        </button>
       ) : null}
     </div>
   );

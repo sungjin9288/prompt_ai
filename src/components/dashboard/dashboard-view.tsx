@@ -11,6 +11,8 @@ import {
   secondaryButtonClass,
 } from "@/components/ui";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
+import { EmptyState } from "@/components/common/empty-state";
+import { useLoadSampleWorkspace } from "@/lib/samples/use-load-sample-workspace";
 import {
   languageStrategyLabels,
   outputLanguageLabels,
@@ -176,6 +178,7 @@ export function DashboardView() {
   const [memories, setMemories] = useLearningMemoriesStore();
   const [skills] = usePromptSkillsStore();
   const [backupMeta] = useWorkspaceBackupMetaStore();
+  const loadSampleWorkspace = useLoadSampleWorkspace();
   const [engineStatus, setEngineStatus] =
     useState<GenerationEngineStatus | null>(null);
   const [engineStatusFailed, setEngineStatusFailed] = useState(false);
@@ -2647,9 +2650,15 @@ export function DashboardView() {
               );
             })}
             {prompts.length === 0 ? (
-              <div className="px-5 py-12 text-sm text-muted">
-                아직 저장된 프롬프트가 없습니다. Studio에서 첫 작업을 생성하세요.
-              </div>
+              <EmptyState
+                title="아직 저장된 프롬프트가 없습니다"
+                description="Studio에서 첫 작업을 생성하거나, 샘플 데이터를 불러와 라이브러리·학습·대시보드를 바로 둘러볼 수 있어요."
+                action={{ label: "Studio에서 첫 작업 생성", href: "/studio" }}
+                secondaryAction={{
+                  label: "샘플 데이터 불러오기",
+                  onClick: loadSampleWorkspace,
+                }}
+              />
             ) : null}
           </div>
         </Panel>

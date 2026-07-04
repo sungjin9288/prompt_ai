@@ -79,6 +79,7 @@ type VersionComparison = {
 
 export interface LibraryDetailWorkspaceProps {
   prompts: PromptAsset[];
+  loadSampleWorkspace: () => void;
   selected: PromptAsset | undefined;
   activeVersion: PromptAsset["versions"][number] | undefined;
   sourcePrompt: PromptAsset | undefined;
@@ -214,6 +215,7 @@ export interface LibraryDetailWorkspaceProps {
 
 export function LibraryDetailWorkspace({
   prompts,
+  loadSampleWorkspace,
   selected,
   activeVersion,
   sourcePrompt,
@@ -2269,6 +2271,10 @@ export function LibraryDetailWorkspace({
                   title="아직 저장된 프롬프트가 없어요"
                   description="Studio에서 원문을 전문 프롬프트로 만들고 저장하면, 여기에서 검색하고 버전을 비교하며 개선할 수 있어요."
                   action={{ label: "Studio에서 첫 프롬프트 만들기", href: "/studio" }}
+                  secondaryAction={{
+                    label: "샘플 데이터 불러오기",
+                    onClick: loadSampleWorkspace,
+                  }}
                 />
               )}
             </div>

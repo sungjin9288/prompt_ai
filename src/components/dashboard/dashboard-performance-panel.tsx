@@ -48,41 +48,53 @@ function PerformanceBucketRow({
   feedbackCount,
   successRate,
 }: PerformanceBucketRowProps) {
+  const qualityText = averageQuality ? averageQuality.toFixed(1) : "데이터 없음";
+  const successRateText = feedbackCount ? `${successRate}%` : "데이터 없음";
+  const rowLabel = `${label} · 버전/프롬프트 ${promptCount} · 품질 ${qualityText} · 성공률 ${successRateText} · ${statusLabel} · 로 이동`;
+
   return (
-    <Link
-      href={href}
-      className="flex items-center justify-between gap-3 rounded-md border border-line bg-surface px-3 py-2 transition hover:border-accent hover:bg-panel-strong"
-    >
-      <div className="min-w-0">
-        <p className="truncate text-sm font-semibold">{label}</p>
-        <p className="mt-0.5 text-xs text-muted">
-          최근 {formatTimestamp(latestPromptAt)} · {statusLabel}
-        </p>
-      </div>
-      <div className="flex shrink-0 items-center gap-3 font-mono text-xs">
-        <span title="버전/프롬프트">{promptCount}</span>
-        <span title="품질">
-          {averageQuality ? averageQuality.toFixed(1) : "-"}
-        </span>
-        <span title="성공률">
-          {feedbackCount ? `${successRate}%` : "-"}
-        </span>
-      </div>
-    </Link>
+    <li>
+      <Link
+        href={href}
+        aria-label={rowLabel}
+        className="flex items-center justify-between gap-3 rounded-md border border-line bg-surface px-3 py-2 transition hover:border-accent hover:bg-panel-strong"
+      >
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold">{label}</p>
+          <p className="mt-0.5 text-xs text-muted">
+            최근 {formatTimestamp(latestPromptAt)} · {statusLabel}
+          </p>
+        </div>
+        <div
+          aria-hidden="true"
+          className="flex shrink-0 items-center gap-3 font-mono text-sm"
+        >
+          <span>{promptCount}</span>
+          <span>{qualityText}</span>
+          <span>{successRateText}</span>
+        </div>
+      </Link>
+    </li>
   );
 }
 
 function PerformanceGroup({
   title,
   children,
+  isEmpty,
 }: {
   title: string;
   children: React.ReactNode;
+  isEmpty: boolean;
 }) {
   return (
     <div className="min-w-0">
-      <p className="mb-2 text-xs font-semibold text-soft">{title}</p>
-      <div className="space-y-1.5">{children}</div>
+      <h3 className="mb-2 text-xs font-semibold text-soft">{title}</h3>
+      {isEmpty ? (
+        <p className="text-xs text-muted">데이터 없음</p>
+      ) : (
+        <ul className="space-y-1.5">{children}</ul>
+      )}
     </div>
   );
 }
@@ -100,7 +112,10 @@ export function DashboardPerformancePanel({
         description="대상 AI, 생성 엔진, 언어 전략, 답변 언어별 품질/피드백 성과를 한 화면에서 훑고 Library 필터로 이동합니다."
       />
       <div className="grid gap-5 px-5 py-5 md:grid-cols-2">
-        <PerformanceGroup title="대상 AI">
+        <PerformanceGroup
+          title="대상 AI"
+          isEmpty={targetModelSummaries.length === 0}
+        >
           {targetModelSummaries.map((item) => (
             <PerformanceBucketRow
               key={item.targetModel}
@@ -115,7 +130,10 @@ export function DashboardPerformancePanel({
             />
           ))}
         </PerformanceGroup>
-        <PerformanceGroup title="생성 엔진">
+        <PerformanceGroup
+          title="생성 엔진"
+          isEmpty={generationEngineSummaries.length === 0}
+        >
           {generationEngineSummaries.map((item) => (
             <PerformanceBucketRow
               key={item.engine}
@@ -130,7 +148,10 @@ export function DashboardPerformancePanel({
             />
           ))}
         </PerformanceGroup>
-        <PerformanceGroup title="언어 전략">
+        <PerformanceGroup
+          title="언어 전략"
+          isEmpty={languageSummaries.length === 0}
+        >
           {languageSummaries.map((item) => (
             <PerformanceBucketRow
               key={item.strategy}
@@ -145,7 +166,10 @@ export function DashboardPerformancePanel({
             />
           ))}
         </PerformanceGroup>
-        <PerformanceGroup title="답변 언어">
+        <PerformanceGroup
+          title="답변 언어"
+          isEmpty={outputLanguageSummaries.length === 0}
+        >
           {outputLanguageSummaries.map((item) => (
             <PerformanceBucketRow
               key={item.outputLanguage}

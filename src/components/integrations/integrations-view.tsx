@@ -119,7 +119,7 @@ function OperationStepNumber({ index }: { index: number }) {
 function OperationFlowCards() {
   return (
     <div
-      className="grid gap-3 px-5 pb-4 md:grid-cols-2 xl:grid-cols-5"
+      className="grid gap-3 px-5 pb-4 md:hidden"
       data-testid="integrations-operation-flow-cards"
     >
       {integrationOperationFlow.map((step, index) => (
@@ -169,7 +169,7 @@ function OperationFlowCards() {
 
 function OperationFlowTable() {
   return (
-    <div className="overflow-x-auto">
+    <div className="hidden overflow-x-auto md:block">
       <table className="w-full min-w-[1180px] border-collapse text-left text-sm">
         <thead className="border-b border-line text-xs uppercase tracking-[0.12em] text-muted">
           <tr>
@@ -403,7 +403,7 @@ function McpToolContractCard({
 function McpToolContractCards() {
   return (
     <div
-      className="grid gap-3 px-5 pb-4 md:grid-cols-2"
+      className="grid gap-3 px-5 pb-4 md:hidden"
       data-testid="mcp-tool-contract-cards"
     >
       {mcpToolContracts.map((tool) => (
@@ -421,7 +421,7 @@ function McpToolContractPanel() {
         description="외부 클라이언트가 호출할 최소 도구를 먼저 고정합니다."
       />
       <McpToolContractCards />
-      <div className="overflow-x-auto">
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[680px] border-collapse text-left text-sm">
           <thead className="border-b border-line text-xs uppercase tracking-[0.12em] text-muted">
             <tr>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { PageHeader, Panel } from "@/components/ui";
+import { Panel } from "@/components/ui";
 import { EmptyState } from "@/components/common/empty-state";
 import {
   useLearningMemoriesStore,
@@ -162,10 +162,16 @@ export function ActivityView() {
 
   return (
     <div>
-      <PageHeader
-        title="최근 활동"
-        description="생성, 개선, 스킬 실행, 피드백, 메모리 추가 이력을 최신순으로 확인합니다."
-      />
+      <div className="mb-6 flex min-w-0 flex-col gap-4 border-b border-line pb-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="min-w-0 max-w-3xl">
+          <h2 className="break-words text-xl font-semibold tracking-normal text-foreground sm:text-2xl">
+            최근 활동
+          </h2>
+          <p className="mt-2 break-words text-sm leading-6 text-muted">
+            생성, 개선, 스킬 실행, 피드백, 메모리 추가 이력을 최신순으로 확인합니다.
+          </p>
+        </div>
+      </div>
       {isWorkspaceEmpty ? (
         <Panel>
           <EmptyState
@@ -198,9 +204,9 @@ export function ActivityView() {
               {groups.map((group) => (
                 <Panel key={group.dayKey}>
                   <div className="border-b border-line px-5 py-3">
-                    <h2 className="text-sm font-semibold text-soft">
+                    <h3 className="text-sm font-semibold text-soft">
                       {formatDayLabel(group.dayKey, todayKey, yesterdayKey)}
-                    </h2>
+                    </h3>
                   </div>
                   <ol className="divide-y divide-line">
                     {group.events.map((event) => (

@@ -213,12 +213,12 @@ assert.match(
 );
 assert.match(
   view,
-  /const integrationOperationFlow = \[[\s\S]*?phase: "Capture"[\s\S]*?phase: "Refine"[\s\S]*?artifact: "Chrome, MCP bridge, MCP client, Learning smoke evidence"[\s\S]*?detailHref: "#integrations-readiness"[\s\S]*?gate: "외부 AI 전달 전 로컬 증거 저장"[\s\S]*?phase: "Evidence"[\s\S]*?phase: "Deliver"[\s\S]*?phase: "Feedback"[\s\S]*?function OperationFlowCards\(\)[\s\S]*?className="grid gap-3 px-5 pb-4 md:grid-cols-2 xl:grid-cols-5"[\s\S]*?data-testid="integrations-operation-flow-cards"[\s\S]*?integrationOperationFlow\.map[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
+  /const integrationOperationFlow = \[[\s\S]*?phase: "Capture"[\s\S]*?phase: "Refine"[\s\S]*?artifact: "Chrome, MCP bridge, MCP client, Learning smoke evidence"[\s\S]*?detailHref: "#integrations-readiness"[\s\S]*?gate: "외부 AI 전달 전 로컬 증거 저장"[\s\S]*?phase: "Evidence"[\s\S]*?phase: "Deliver"[\s\S]*?phase: "Feedback"[\s\S]*?function OperationFlowCards\(\)[\s\S]*?className="grid gap-3 px-5 pb-4 md:hidden"[\s\S]*?data-testid="integrations-operation-flow-cards"[\s\S]*?integrationOperationFlow\.map[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
   "Integrations operation flow should render readable cards for capture, refine, evidence, delivery, and feedback before the detailed wide table",
 );
 assert.match(
   view,
-  /function OperationFlowTable\(\)[\s\S]*?<div className="overflow-x-auto">[\s\S]*?min-w-\[1180px\][\s\S]*?integrationOperationFlow\.map[\s\S]*?OperationStepNumber[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
+  /function OperationFlowTable\(\)[\s\S]*?<div className="hidden overflow-x-auto md:block">[\s\S]*?min-w-\[1180px\][\s\S]*?integrationOperationFlow\.map[\s\S]*?OperationStepNumber[\s\S]*?step\.phase[\s\S]*?step\.owner[\s\S]*?step\.artifact[\s\S]*?step\.gate[\s\S]*?step\.detailHref[\s\S]*?step\.detailLabel/,
   "Integrations operation flow table should keep the detailed wide comparison view",
 );
 assert.match(

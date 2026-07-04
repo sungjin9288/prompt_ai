@@ -86,7 +86,7 @@ export function DashboardPersonalizationPanel({
                   </div>
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
                     <Link
-                      href="/profile?returnTo=/"
+                      href="/context?section=profile&returnTo=%2F#profile"
                       className={`${secondaryButtonClass} min-h-9 px-3 py-1.5 text-xs`}
                     >
                       개인 기준 편집
@@ -119,7 +119,7 @@ export function DashboardPersonalizationPanel({
                   </div>
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
                     <Link
-                      href="/company?returnTo=/"
+                      href="/context?section=company&returnTo=%2F#company"
                       className={`${secondaryButtonClass} min-h-9 px-3 py-1.5 text-xs`}
                     >
                       회사 기준 편집

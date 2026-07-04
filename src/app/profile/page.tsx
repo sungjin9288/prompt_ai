@@ -1,4 +1,4 @@
-import { ProfileEditor } from "@/components/profile/profile-editor";
+import { redirect } from "next/navigation";
 
 export default async function ProfilePage({
   searchParams,
@@ -9,6 +9,11 @@ export default async function ProfilePage({
   const returnTo = Array.isArray(params.returnTo)
     ? params.returnTo[0]
     : params.returnTo;
+  const query = new URLSearchParams({ section: "profile" });
 
-  return <ProfileEditor returnTo={returnTo} />;
+  if (returnTo) {
+    query.set("returnTo", returnTo);
+  }
+
+  redirect(`/context?${query.toString()}#profile`);
 }

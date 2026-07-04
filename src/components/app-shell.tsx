@@ -77,17 +77,10 @@ const navItems = [
   },
   {
     group: "기준",
-    href: "/profile",
-    label: "개인",
-    nextAction: "선호 저장",
-    summary: "사용자 업무 방식과 응답 선호 관리",
-  },
-  {
-    group: "기준",
-    href: "/company",
-    label: "회사",
-    nextAction: "브랜드 기준 저장",
-    summary: "회사 톤과 제품 맥락 관리",
+    href: "/context",
+    label: "맥락",
+    nextAction: "기준 저장",
+    summary: "개인/회사 업무 방식과 브랜드 기준 관리",
   },
   {
     group: "시스템",

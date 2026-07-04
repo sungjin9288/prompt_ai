@@ -12,8 +12,7 @@ export const goToShortcuts: GoToShortcut[] = [
   { key: "k", href: "/skills", label: "스킬" },
   { key: "a", href: "/activity", label: "활동" },
   { key: "i", href: "/integrations", label: "연결" },
-  { key: "p", href: "/profile", label: "개인" },
-  { key: "c", href: "/company", label: "회사" },
+  { key: "x", href: "/context", label: "맥락" },
   { key: "d", href: "/data", label: "데이터" },
 ];
 

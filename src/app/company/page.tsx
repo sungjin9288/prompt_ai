@@ -1,4 +1,4 @@
-import { CompanyEditor } from "@/components/company/company-editor";
+import { redirect } from "next/navigation";
 
 export default async function CompanyPage({
   searchParams,
@@ -9,6 +9,11 @@ export default async function CompanyPage({
   const returnTo = Array.isArray(params.returnTo)
     ? params.returnTo[0]
     : params.returnTo;
+  const query = new URLSearchParams({ section: "company" });
 
-  return <CompanyEditor returnTo={returnTo} />;
+  if (returnTo) {
+    query.set("returnTo", returnTo);
+  }
+
+  redirect(`/context?${query.toString()}#company`);
 }

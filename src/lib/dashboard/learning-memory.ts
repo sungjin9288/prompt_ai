@@ -348,7 +348,7 @@ export function summarizePersonalizationActions({
 
   if (profileCompletion < 80) {
     actions.push({
-      href: "/profile?returnTo=/",
+      href: "/context?section=profile&returnTo=%2F#profile",
       label: "개인 프로필 보강",
       priority: "high",
       description: `현재 ${profileCompletion}%입니다. 역할, 산업, 목표, 선호 출력 형식을 먼저 채우세요.`,
@@ -357,7 +357,7 @@ export function summarizePersonalizationActions({
 
   if (companyCompletion < 80) {
     actions.push({
-      href: "/company?returnTo=/",
+      href: "/context?section=company&returnTo=%2F#company",
       label: "회사 기준 보강",
       priority: "high",
       description: `현재 ${companyCompletion}%입니다. 제품, 고객군, 브랜드 톤을 명확히 저장하세요.`,
@@ -366,7 +366,7 @@ export function summarizePersonalizationActions({
 
   if (profileCompletion >= 80 && userMemoryCount === 0) {
     actions.push({
-      href: "/profile?returnTo=/",
+      href: "/context?section=profile&returnTo=%2F#profile",
       label: "개인 기준 메모리 반영",
       priority: "medium",
       description: "프로필 저장으로 user scope 학습 메모리를 만들어 다음 생성에 반영하세요.",
@@ -375,7 +375,7 @@ export function summarizePersonalizationActions({
 
   if (companyCompletion >= 80 && companyMemoryCount === 0) {
     actions.push({
-      href: "/company?returnTo=/",
+      href: "/context?section=company&returnTo=%2F#company",
       label: "회사 기준 메모리 반영",
       priority: "medium",
       description: "회사 기준 저장으로 company scope 학습 메모리를 만들어 다음 생성에 반영하세요.",

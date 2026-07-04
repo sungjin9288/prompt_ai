@@ -484,13 +484,13 @@ export function StudioResultInsightsPanel({
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             <a
               className={`${secondaryButtonClass} w-full`}
-              href="/profile?returnTo=%2Fstudio"
+              href="/context?section=profile&returnTo=%2Fstudio#profile"
             >
               개인 프로필 보강
             </a>
             <a
               className={`${secondaryButtonClass} w-full`}
-              href="/company?returnTo=%2Fstudio"
+              href="/context?section=company&returnTo=%2Fstudio#company"
             >
               회사 정보 보강
             </a>

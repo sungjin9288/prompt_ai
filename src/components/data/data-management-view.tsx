@@ -344,7 +344,7 @@ export function DataManagementView() {
           userProfile.goals.length > 0 &&
           userProfile.preferredOutputs.length > 0,
         actionLabel: "개인 설정",
-        href: "/profile",
+        href: "/context?section=profile#profile",
       },
       {
         label: "회사 기준",
@@ -356,7 +356,7 @@ export function DataManagementView() {
           companyProfile.customers.length > 0 &&
           Boolean(companyProfile.brandTone.trim()),
         actionLabel: "회사 설정",
-        href: "/company",
+        href: "/context?section=company#company",
       },
       {
         label: "생성 데이터",

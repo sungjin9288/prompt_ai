@@ -29,13 +29,20 @@ export function buildContextEditorHref({
   pathname: "/company" | "/profile";
   returnTo?: string;
 }) {
+  const section = pathname === "/company" ? "company" : "profile";
   const normalizedReturnTo =
     normalizeInternalHref(returnTo) ??
     normalizeInternalHref(fallbackReturnTo) ??
     "/library";
-  const params = new URLSearchParams({ returnTo: normalizedReturnTo });
+  const params = new URLSearchParams({
+    section,
+    returnTo: normalizedReturnTo,
+  });
 
-  return normalizeInternalHref(`${pathname}?${params.toString()}`) ?? pathname;
+  return (
+    normalizeInternalHref(`/context?${params.toString()}#${section}`) ??
+    "/context"
+  );
 }
 
 export function getPromptStudioPersistenceFilter(prompt: PromptAsset) {

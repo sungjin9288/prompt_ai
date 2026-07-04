@@ -80,11 +80,11 @@ export function buildStudioDraftSourceHref(draft: StudioDraft) {
   }
 
   if (draft.source.startsWith("profile-")) {
-    return "/profile";
+    return "/context?section=profile#profile";
   }
 
   if (draft.source.startsWith("company-")) {
-    return "/company";
+    return "/context?section=company#company";
   }
 
   return "/learning";

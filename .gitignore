@@ -22,6 +22,9 @@
 # production
 /build
 
+# packaged Chrome extension artifacts (regenerate via npm run package:extension)
+/output/extension/
+
 # misc
 .DS_Store
 *.pem

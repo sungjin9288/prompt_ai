@@ -52,16 +52,25 @@ function setStatus(message, state = "idle") {
 
 function setRuntimeEvidence(api = getChromeExtensionApi()) {
   runtimeEvidence.textContent = api
-    ? "extension runtime connected · local Studio URL only"
+    ? "extension runtime connected · local http or any https Studio URL"
     : "preview only · Chrome runtime unavailable";
+}
+
+function isAllowedStudioUrl(url) {
+  const localHostnames = new Set(["localhost", "127.0.0.1"]);
+
+  if (url.protocol === "https:") {
+    return true;
+  }
+
+  return url.protocol === "http:" && localHostnames.has(url.hostname);
 }
 
 function normalizeStudioUrl(value) {
   try {
     const url = new URL(value || defaultStudioUrl);
-    const localHostnames = new Set(["localhost", "127.0.0.1"]);
 
-    if (!["http:"].includes(url.protocol) || !localHostnames.has(url.hostname)) {
+    if (!isAllowedStudioUrl(url)) {
       return defaultStudioUrl;
     }
 

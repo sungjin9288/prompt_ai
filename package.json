@@ -9,6 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "icons:extension": "node scripts/generate-extension-icons.mjs",
+    "package:extension": "node scripts/package-chrome-extension.mjs",
     "smoke:chrome-extension": "node scripts/verify-chrome-extension-smoke.mjs",
     "smoke:integrations": "node scripts/write-integrations-smoke-evidence.mjs",
     "smoke:learning-feedback": "node scripts/verify-learning-operational-summary.mjs",

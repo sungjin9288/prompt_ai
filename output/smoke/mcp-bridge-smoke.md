@@ -9,9 +9,9 @@
 - external services: not contacted
 - operator gate: local packet only; connect a real MCP client only after review.
 - branch: main
-- commit: 0916706
+- commit: afaea8b
 - workingTree: dirty
-- changedFiles: 5
+- changedFiles: 14
 
 ## Verified contract
 - initialize returns the expected MCP protocol version and tool capability.

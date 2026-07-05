@@ -1567,6 +1567,11 @@ for (const requiredText of [
   '"storage"',
   '"http://localhost/*"',
   '"http://127.0.0.1/*"',
+  '"https://*/*"',
+  '"icons/icon-16.png"',
+  '"icons/icon-32.png"',
+  '"icons/icon-48.png"',
+  '"icons/icon-128.png"',
 ]) {
   assertIncludes(
     chromeManifest,
@@ -1600,7 +1605,7 @@ for (const requiredText of [
   "review-required handoff",
   'aria-label="Chrome smoke evidence"',
   "Smoke evidence",
-  "local only",
+  "local or https",
   "evidencePanel",
   "evidenceList",
   "evidenceRow",
@@ -1710,6 +1715,7 @@ for (const requiredText of [
   "globalThis.chrome",
   "Chrome extension runtime is unavailable; settings were normalized for this preview only.",
   "normalizeStudioUrl",
+  "isAllowedStudioUrl",
   "normalizeTargetAI",
   "normalizeTextSetting",
   "localHostnames",
@@ -1765,7 +1771,7 @@ for (const requiredText of [
   'source: "chrome-refine"',
   "initializePopup",
   "Load this folder as an unpacked Chrome extension to read page selections and restore handoff packages.",
-  "extension runtime connected · local Studio URL only",
+  "extension runtime connected · local http or any https Studio URL",
   "preview only · Chrome runtime unavailable",
   "getRefineApiUrl()",
   "api.storage.session.get",
@@ -1793,7 +1799,7 @@ assert.match(
 );
 assert.match(
   chromePopupJs,
-  /function setRuntimeEvidence\(api = getChromeExtensionApi\(\)\)[\s\S]*?runtimeEvidence\.textContent = api[\s\S]*?extension runtime connected · local Studio URL only[\s\S]*?preview only · Chrome runtime unavailable[\s\S]*?initializePopup[\s\S]*?await hydrateSettings\(\)[\s\S]*?setRuntimeEvidence\(\)/,
+  /function setRuntimeEvidence\(api = getChromeExtensionApi\(\)\)[\s\S]*?runtimeEvidence\.textContent = api[\s\S]*?extension runtime connected · local http or any https Studio URL[\s\S]*?preview only · Chrome runtime unavailable[\s\S]*?initializePopup[\s\S]*?await hydrateSettings\(\)[\s\S]*?setRuntimeEvidence\(\)/,
   "Chrome popup script should expose the loaded extension runtime state before smoke evidence is reviewed",
 );
 assert.match(
@@ -1839,8 +1845,8 @@ assertIncludes(
 );
 assertIncludes(
   chromeReadme,
-  "Invalid or non-local URLs fall back to `http://localhost:3000`.",
-  "Chrome extension README should document the local Studio URL guard",
+  "Invalid or disallowed URLs fall back to `http://localhost:3000`.",
+  "Chrome extension README should document the local/https Studio URL guard",
 );
 assertIncludes(
   chromeReadme,

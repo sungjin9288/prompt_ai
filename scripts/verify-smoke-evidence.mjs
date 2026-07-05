@@ -37,7 +37,7 @@ const expectedSmokeFiles = [
       /external services: not contacted/,
       /operator gate: local packet only; load unpacked Chrome review is still a separate manual check/,
       ...gitProvenancePatterns,
-      /Host permissions stay local-only/,
+      /Host permissions cover local dev origins plus any https production origin/,
       /does not load Chrome or contact external AI services/,
     ],
   },

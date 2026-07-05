@@ -58,7 +58,7 @@ function buildChromeSmokeEvidenceText() {
     "",
     "## Verified contract",
     "- MV3 popup and service worker are present.",
-    "- Host permissions stay local-only.",
+    "- Host permissions cover local dev origins plus any https production origin.",
     "- Selection capture, session restore, reviewRequired handoff, and evidence fallback strings are present.",
     "- This smoke does not load Chrome or contact external AI services.",
   ].join("\n");
@@ -86,14 +86,29 @@ assert.equal(
 );
 assert.deepEqual(
   [...manifest.host_permissions].sort(),
-  ["http://127.0.0.1/*", "http://localhost/*"],
-  "Chrome extension should only request local host permissions.",
+  ["http://127.0.0.1/*", "http://localhost/*", "https://*/*"],
+  "Chrome extension should request local host permissions plus any https origin.",
 );
 
 for (const permission of ["activeTab", "contextMenus", "scripting", "storage"]) {
   assert.ok(
     manifest.permissions.includes(permission),
     `Chrome extension should request ${permission}.`,
+  );
+}
+
+for (const size of [16, 32, 48, 128]) {
+  const iconPath = `icons/icon-${size}.png`;
+
+  assert.equal(
+    manifest.icons?.[String(size)],
+    iconPath,
+    `Chrome extension manifest icons should map ${size} to ${iconPath}.`,
+  );
+  assert.equal(
+    manifest.action?.default_icon?.[String(size)],
+    iconPath,
+    `Chrome extension manifest action.default_icon should map ${size} to ${iconPath}.`,
   );
 }
 
@@ -138,6 +153,7 @@ for (const requiredText of [
   "http://localhost:3000",
   "getChromeExtensionApi",
   "localHostnames",
+  "isAllowedStudioUrl",
   "normalizeStudioUrl",
   "api.storage.local",
   "api.storage.session",
@@ -150,6 +166,7 @@ for (const requiredText of [
   "navigator.clipboard.writeText",
   "evidenceFallback.hidden = false",
   "preview only · Chrome runtime unavailable",
+  "extension runtime connected · local http or any https Studio URL",
 ]) {
   assertIncludes(
     popupJs,
@@ -191,8 +208,8 @@ const chromeSmokeEvidenceText = buildChromeSmokeEvidenceText();
 
 assert.match(
   chromeSmokeEvidenceText,
-  /Host permissions stay local-only/,
-  "Chrome smoke evidence should record local-only host permissions",
+  /Host permissions cover local dev origins plus any https production origin/,
+  "Chrome smoke evidence should record the local + https host permission contract",
 );
 assert.match(
   chromeSmokeEvidenceText,

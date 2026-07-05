@@ -58,12 +58,13 @@ or reused.
 
 The popup stores `Studio URL`, `Target AI`, `Domain`, and `Goal` in
 `chrome.storage.local` so repeated refine tests keep the same operating context.
-Keep `Studio URL` local-only:
+`Studio URL` accepts either of these forms:
 
-- `http://localhost:3000`
-- `http://127.0.0.1:3000`
+- local-only `http://localhost:3000` or `http://127.0.0.1:3000` for development
+- any `https://` origin for a production Studio deployment
 
-Invalid or non-local URLs fall back to `http://localhost:3000`.
+Plain `http://` on a non-local host, and any protocol other than `http:`/`https:`,
+are rejected. Invalid or disallowed URLs fall back to `http://localhost:3000`.
 
 ## Static preview
 
@@ -71,3 +72,40 @@ Opening `popup.html` outside the loaded extension is only a layout preview. In
 that mode the popup shows `Chrome extension runtime is unavailable`, skips page
 selection and session restore, and keeps the form visible for static smoke
 checks.
+
+## Production Studio URL
+
+To point the extension at a deployed Studio instead of a local dev server,
+open the popup, set `Studio URL` to the production `https://` origin (for
+example `https://studio.example.com`), and click out of the field to save it.
+The setting is stored in `chrome.storage.local` per browser profile, so each
+operator configures their own Studio URL. `defaultStudioUrl` in `popup.js`
+still points at `http://localhost:3000` until a later phase wires in a fixed
+production default.
+
+## Icons
+
+Extension icons are generated (not hand-drawn) from a small SVG mark rendered
+through headless Chromium:
+
+```bash
+npm run icons:extension
+```
+
+This writes `icons/icon-16.png`, `icons/icon-32.png`, `icons/icon-48.png`, and
+`icons/icon-128.png` deterministically, with no network access. Regenerate and
+commit the PNGs whenever the brand mark changes.
+
+## Packaging for the Chrome Web Store
+
+Build a store-upload zip of the extension (manifest, popup, background,
+icons — README excluded):
+
+```bash
+npm run package:extension
+```
+
+The artifact is written to
+`output/extension/prompt-ai-studio-refine-v<version>.zip`, where `<version>`
+comes from `manifest.json`. `output/extension/` is git-ignored; the zip is a
+build artifact and is not committed.

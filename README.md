@@ -376,6 +376,8 @@ Library의 저장된 프롬프트 상세에서도 부족한 정보가 남아 있
 ```bash
 npm run dev
 npm run start
+npm run icons:extension
+npm run package:extension
 npm run smoke:chrome-extension
 npm run smoke:integrations
 npm run smoke:learning-feedback

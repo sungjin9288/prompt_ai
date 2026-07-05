@@ -222,6 +222,7 @@
 - Library 프롬프트 가져오기: 내보낸 JSON을 붙여넣거나 파일로 불러와 검증 후 새 저장본으로 추가하며, 잘못된 입력은 화면에서 안전하게 안내
 - 샘플 데이터 불러오기(첫 실행 온보딩): 워크스페이스가 비어 있을 때 Dashboard와 Library의 빈 상태 화면에서 `샘플 데이터 불러오기` 버튼으로 실제 `createPromptPackage` 생성기를 통과한 예시 프롬프트 6개, 스킬 2개, 학습 메모리 3개를 로컬 스토어에 채워 Library, 버전 비교, 학습, 대시보드를 바로 둘러볼 수 있습니다. 모든 샘플은 `sample-` 접두사 id로 식별되며 기존 데이터는 덮어쓰지 않고 이미 있는 항목은 건너뛰어 다시 눌러도 중복되지 않습니다.
 - 마케팅 랜딩/pricing/legal 4 페이지: `/welcome`(제품 소개), `/pricing`(Free/Pro 요금제), `/privacy`, `/terms`를 제공하며 서로 footer에서 상호 링크합니다.
+- Chrome Web Store 등록 패키지: `store/chrome/` 아래 목록 문안(ko/en), 스크린샷 4장, 제출 런북을 제공합니다. 실제 스토어 제출은 운영자 게이트($5 개발자 계정, 배포된 production URL)가 필요합니다.
 
 ## Getting Started
 
@@ -384,6 +385,7 @@ Library의 저장된 프롬프트 상세에서도 부족한 정보가 남아 있
 - 보안 헤더(`X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, `Permissions-Policy`)는 `next.config.ts`의 `headers()`에서 모든 경로에 적용됩니다. Content-Security-Policy는 이번 단계에서 추가하지 않았습니다 (`docs/launch-plan.md` 후속 작업 참고).
 - `/api/integrations/refine`은 Chrome 확장과 localhost 개발 origin만 명시적으로 CORS를 허용하는 자체 origin 검사를 갖고 있으며, 위 보안 헤더는 이 라우트의 CORS 동작에 영향을 주지 않습니다.
 - 아이콘/OG 이미지는 `npm run icons:app`으로 재생성할 수 있습니다 (`src/app/icon.png`, `src/app/apple-icon.png`, `src/app/favicon.ico`, `public/og.png`).
+- Chrome Web Store 등록 자산은 `store/chrome/`에 있습니다: 목록 문안(`listing.ko.md`/`listing.en.md`), 스크린샷(`screenshots/`), 제출 런북(`SUBMISSION.md`). 스크린샷은 `npm run dev`로 로컬 서버를 띄운 상태에서 `npm run screenshots:store`로 재생성합니다 (1280×800 PNG 4장, `store/chrome/screenshots/screenshot-{1..4}.png`).
 
 ## Scripts
 
@@ -393,6 +395,7 @@ npm run start
 npm run icons:app
 npm run icons:extension
 npm run package:extension
+npm run screenshots:store
 npm run smoke:chrome-extension
 npm run smoke:integrations
 npm run smoke:learning-feedback

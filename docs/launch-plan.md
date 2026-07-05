@@ -43,8 +43,18 @@ Free(주 10회) → Lite($4.99/월) → Pro($8.25/월, 무제한·메모리·핫
   준거법). `chromeStoreUrl`/`supportEmail` config seam 추가, `sitemap.ts`에 4개
   라우트 등록, 각 페이지 자체 footer로 상호 링크. 법무 문서는 템플릿 기반으로
   작성되었으므로 유료 출시 전 운영자의 법률 검토가 필요합니다.
-- **P52 스토어 등록 패키지** (게이트: 개발자 계정 $5): 목록 문안(ko/en), 스크린샷,
-  제출 런북.
+- **P52 스토어 등록 패키지 — 완료** (자율, 제출 자체는 운영자 게이트): `store/chrome/`
+  아래 목록 문안(`listing.ko.md`/`listing.en.md` — 이름/짧은 설명/자세한 설명/
+  카테고리/언어/Single purpose/권한 정당화/데이터 사용 공개 매핑), 4장의
+  1280×800 스크린샷(`screenshots/screenshot-{1..4}.png` — in-page 개선 결과,
+  `/improve` 품질 점수, 샘플 데이터가 채워진 `/library`, 샘플 데이터가 채워진
+  대시보드), `npm run screenshots:store`(`scripts/generate-store-screenshots.mjs`)
+  재생성 스크립트, 제출 런북(`SUBMISSION.md` — 사전 체크리스트, 개발자 계정
+  생성, zip/스크린샷 업로드, 개인정보 처리 관행 탭 매핑, 권한 정당화 입력,
+  심사 제출, 예상 심사 기간, 승인 후 `chromeStoreUrl` 반영 절차)을 갖췄습니다.
+  개인정보처리방침 URL과 웹사이트 URL은 `{PRODUCTION_URL}` 자리표시자로
+  남겨두었으며, 실제 제출은 Chrome Web Store 개발자 계정($5)과 배포된
+  production URL이 확보된 뒤 운영자가 진행합니다.
 - **P53 상용화 스캐폴딩** (게이트: Stripe/OpenAI/Supabase 키): entitlement 모델
   (Free=로컬 무제한 / Pro=OpenAI 개선+동기화), 결제·계정 seam과 활성화 런북만.
 

@@ -12,3 +12,9 @@ export const siteName = "Prompt AI Studio";
 
 export const siteDescription =
   "프롬프트를 전문가 수준으로 다듬는 로컬 우선 워크스페이스 — 별도 서버나 계정 없이 브라우저에서 바로 시작합니다.";
+
+export const chromeStoreUrl = "";
+
+export const supportEmail = "support@example.com";
+
+export const githubRepoUrl = "https://github.com/sungjin9288/prompt_ai";

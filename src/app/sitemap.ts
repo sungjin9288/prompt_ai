@@ -11,6 +11,10 @@ const publicRoutes = [
   "/integrations",
   "/data",
   "/improve",
+  "/welcome",
+  "/pricing",
+  "/privacy",
+  "/terms",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -37,7 +37,12 @@ Free(주 10회) → Lite($4.99/월) → Pro($8.25/월, 무제한·메모리·핫
   않음 — Tailwind 인라인 스타일과의 상호작용을 별도로 검증해야 하므로 후속 phase 후보로
   남김. 실제 Vercel 프로젝트 연결과 배포 실행은 운영자 게이트(아래 체크리스트) 이후
   진행.
-- **P51 랜딩·가격·법무** (자율): 마케팅 랜딩, /pricing, /privacy, /terms.
+- **P51 랜딩·가격·법무 — 완료** (자율): `/welcome` 마케팅 랜딩(히어로, 기능 4종,
+  가격 티저), `/pricing`(Free 이용 가능 / Pro 준비 중), `/privacy`(로컬 저장 원칙,
+  확장 권한 표, Chrome Web Store 요구사항 대응), `/terms`(14개 조항, 대한민국
+  준거법). `chromeStoreUrl`/`supportEmail` config seam 추가, `sitemap.ts`에 4개
+  라우트 등록, 각 페이지 자체 footer로 상호 링크. 법무 문서는 템플릿 기반으로
+  작성되었으므로 유료 출시 전 운영자의 법률 검토가 필요합니다.
 - **P52 스토어 등록 패키지** (게이트: 개발자 계정 $5): 목록 문안(ko/en), 스크린샷,
   제출 런북.
 - **P53 상용화 스캐폴딩** (게이트: Stripe/OpenAI/Supabase 키): entitlement 모델

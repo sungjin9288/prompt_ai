@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import {
   LearningView,
   type LearningReviewFilter,
   type LearningScopeFilter,
   type LearningSortMode,
 } from "@/components/learning/learning-view";
+
+export const metadata: Metadata = {
+  title: "학습",
+};
 
 const validLearningScopes: LearningScopeFilter[] = [
   "all",

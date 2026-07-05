@@ -373,11 +373,23 @@ Library의 저장된 프롬프트 상세에서도 부족한 정보가 남아 있
 - Learning에서 조건 링크를 복사했을 때 현재 필터가 포함된 절대 URL이 클립보드에 들어가는지 확인합니다.
 - Skills에서 원본/실행 Library 링크 복사 후 새 탭에 붙여넣어 같은 Library 상세가 열리는지 확인합니다.
 
+## Deployment
+
+이 앱은 로컬 우선으로 설계되어 있어 별도 환경 변수 없이도 Vercel의 Next.js 기본 설정만으로 배포할 수 있습니다.
+
+- Vercel에 이 저장소를 연결하고 프레임워크 프리셋을 Next.js로 두면 추가 설정 없이 `npm run build`/`npm run start`가 그대로 동작합니다. `vercel.json`은 필요하지 않습니다.
+- 배포 환경에 `NEXT_PUBLIC_APP_URL`을 실제 배포 도메인(예: `https://prompt-ai-studio.vercel.app`)으로 설정하면 메타데이터 `metadataBase`, OG 이미지, `robots.txt`, `sitemap.xml`이 해당 도메인 기준으로 생성됩니다. 설정하지 않으면 `http://localhost:3000`으로 fallback합니다.
+- `OPENAI_API_KEY`/`OPENAI_MODEL`, Supabase 관련 변수(`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_PROJECT_REF`, `SUPABASE_IMPORT_EXECUTION_ENABLED`)는 모두 선택 사항입니다. 비어 있으면 로컬 규칙 기반 생성과 로컬 스토리지만으로 전체 기능이 동작합니다.
+- 보안 헤더(`X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, `Permissions-Policy`)는 `next.config.ts`의 `headers()`에서 모든 경로에 적용됩니다. Content-Security-Policy는 이번 단계에서 추가하지 않았습니다 (`docs/launch-plan.md` 후속 작업 참고).
+- `/api/integrations/refine`은 Chrome 확장과 localhost 개발 origin만 명시적으로 CORS를 허용하는 자체 origin 검사를 갖고 있으며, 위 보안 헤더는 이 라우트의 CORS 동작에 영향을 주지 않습니다.
+- 아이콘/OG 이미지는 `npm run icons:app`으로 재생성할 수 있습니다 (`src/app/icon.png`, `src/app/apple-icon.png`, `src/app/favicon.ico`, `public/og.png`).
+
 ## Scripts
 
 ```bash
 npm run dev
 npm run start
+npm run icons:app
 npm run icons:extension
 npm run package:extension
 npm run smoke:chrome-extension

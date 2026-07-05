@@ -29,8 +29,14 @@ Free(주 10회) → Lite($4.99/월) → Pro($8.25/월, 무제한·메모리·핫
   composer에 "개선" 버튼 → 초안 읽기 → /api/integrations/refine → 결과를 입력창에 삽입.
 - **P49 /improve 경량 페이지 — 완료** (자율): `?draft=&source=extension&origin=` 초점형 개선
   페이지, 기존 studio draft 흐름 재사용.
-- **P50 배포** (게이트: Vercel 계정): 메타데이터(OG/robots/sitemap)/보안 헤더 + Vercel
-  hobby 배포.
+- **P50 배포 코드 준비 — 완료** (자율): `src/lib/site/config.ts` 공용 site config seam,
+  루트/주요 라우트 메타데이터(title template, OG, Twitter card), `robots.ts`/`sitemap.ts`,
+  브랜드 마크 기반 `icon.png`/`apple-icon.png`/`favicon.ico`/`public/og.png`
+  (`npm run icons:app`), `next.config.ts` 보안 헤더(X-Content-Type-Options,
+  Referrer-Policy, X-Frame-Options, Permissions-Policy). CSP는 이번 단계에 포함하지
+  않음 — Tailwind 인라인 스타일과의 상호작용을 별도로 검증해야 하므로 후속 phase 후보로
+  남김. 실제 Vercel 프로젝트 연결과 배포 실행은 운영자 게이트(아래 체크리스트) 이후
+  진행.
 - **P51 랜딩·가격·법무** (자율): 마케팅 랜딩, /pricing, /privacy, /terms.
 - **P52 스토어 등록 패키지** (게이트: 개발자 계정 $5): 목록 문안(ko/en), 스크린샷,
   제출 런북.

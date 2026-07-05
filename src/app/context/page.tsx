@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { ContextView } from "@/components/context/context-view";
 import { resolveContextSection } from "@/lib/context/section";
+
+export const metadata: Metadata = {
+  title: "컨텍스트",
+};
 
 export default async function ContextPage({
   searchParams,

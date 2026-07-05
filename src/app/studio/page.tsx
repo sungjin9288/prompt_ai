@@ -1,4 +1,9 @@
+import type { Metadata } from "next";
 import { StudioWorkspace } from "@/components/studio/studio-workspace";
+
+export const metadata: Metadata = {
+  title: "스튜디오",
+};
 
 export default async function StudioPage({
   searchParams,

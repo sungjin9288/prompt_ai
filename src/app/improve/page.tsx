@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { ImproveView } from "@/components/improve/improve-view";
 import { resolveImproveParams } from "@/lib/improve/params";
+
+export const metadata: Metadata = {
+  title: "빠른 개선",
+};
 
 export default async function ImprovePage({
   searchParams,

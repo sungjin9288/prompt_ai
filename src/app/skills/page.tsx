@@ -1,4 +1,9 @@
+import type { Metadata } from "next";
 import { SkillsView } from "@/components/skills/skills-view";
+
+export const metadata: Metadata = {
+  title: "스킬",
+};
 
 interface SkillsPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

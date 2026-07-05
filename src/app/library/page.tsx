@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { LibraryView } from "@/components/library/library-view";
 import {
   languageStrategies,
@@ -12,6 +13,10 @@ import {
 } from "@/lib/prompt";
 import type { PromptSourceHealthIssueReason } from "@/lib/analytics/prompt-improvement";
 import { promptStudioDraftSourceOptions } from "@/lib/studio/source-registry";
+
+export const metadata: Metadata = {
+  title: "라이브러리",
+};
 
 interface LibraryPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

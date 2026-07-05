@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>In-page composer fixture</title>
+  </head>
+  <body>
+    <!-- ChatGPT-like: #prompt-textarea as a ProseMirror contenteditable div. -->
+    <form data-fixture="chatgpt">
+      <div id="prompt-textarea" contenteditable="true" class="ProseMirror">
+        chatgpt draft
+      </div>
+    </form>
+
+    <!-- Claude-like: contenteditable .ProseMirror inside a form. -->
+    <form data-fixture="claude">
+      <div contenteditable="true" class="ProseMirror">claude draft</div>
+    </form>
+
+    <!-- Gemini-like: Quill editor inside <rich-textarea>. -->
+    <div data-fixture="gemini">
+      <rich-textarea>
+        <div class="ql-editor" contenteditable="true">gemini draft</div>
+      </rich-textarea>
+    </div>
+  </body>
+</html>

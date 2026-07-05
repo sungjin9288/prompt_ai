@@ -13,6 +13,7 @@ const packagedEntries = [
   "popup.js",
   "popup.css",
   "background.js",
+  "content",
   "icons",
 ];
 

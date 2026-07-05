@@ -9,9 +9,9 @@
 - external services: not contacted
 - operator gate: local packet only; external AI handoff still requires review-required output and confirmSave review.
 - branch: main
-- commit: afaea8b
+- commit: b774201
 - workingTree: dirty
-- changedFiles: 14
+- changedFiles: 9
 
 ## Verified contract
 - Learning renders readiness, low-confidence review, manual memory, and Studio handoff steps in order.

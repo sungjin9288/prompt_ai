@@ -1,0 +1,120 @@
+/*
+ * In-page improve UI styles.
+ *
+ * Everything is namespaced under `pas-` and the root container uses
+ * `all: initial` so host page (chatgpt.com / claude.ai / gemini.google.com)
+ * styles cannot leak in and our styles cannot leak out. High z-index keeps the
+ * button above the composer chrome.
+ */
+
+.pas-inpage-root {
+  all: initial;
+  position: fixed;
+  right: 20px;
+  bottom: 96px;
+  z-index: 2147483000;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.pas-inpage-root *,
+.pas-inpage-root *::before,
+.pas-inpage-root *::after {
+  box-sizing: border-box;
+}
+
+.pas-inpage-improve {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #2fb7a4;
+  border-radius: 9999px;
+  background: #13171d;
+  color: #67d4c3;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.pas-inpage-improve:hover {
+  background: #191e26;
+}
+
+.pas-inpage-improve[disabled] {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.pas-inpage-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #67d4c3;
+}
+
+.pas-inpage-bar {
+  margin-top: 8px;
+  max-width: 320px;
+  padding: 10px 12px;
+  border: 1px solid #303744;
+  border-radius: 10px;
+  background: #13171d;
+  color: #eef2f7;
+  font-size: 12px;
+  line-height: 1.5;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.pas-inpage-bar[hidden] {
+  display: none;
+}
+
+.pas-inpage-bar-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #cbd5e1;
+}
+
+.pas-inpage-bar-error .pas-inpage-bar-label {
+  color: #ff7b7b;
+}
+
+.pas-inpage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pas-inpage-action {
+  padding: 5px 10px;
+  border: 1px solid #303744;
+  border-radius: 8px;
+  background: #191e26;
+  color: #eef2f7;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pas-inpage-action:hover {
+  border-color: #2fb7a4;
+  color: #67d4c3;
+}
+
+.pas-inpage-hint {
+  margin-top: 8px;
+  max-width: 320px;
+  padding: 8px 12px;
+  border: 1px solid #303744;
+  border-radius: 10px;
+  background: #13171d;
+  color: #98a2b3;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.pas-inpage-hint[hidden] {
+  display: none;
+}

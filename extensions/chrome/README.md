@@ -54,6 +54,44 @@ can restore the last review-required result with target, source page, and saved
 time context. Use `Clear` when the restored package should no longer be copied
 or reused.
 
+## In-page 개선 (ChatGPT / Claude / Gemini)
+
+The extension also injects an in-page **개선** button through MV3 content
+scripts on `chatgpt.com`, `chat.openai.com`, `claude.ai`, and
+`gemini.google.com`. Clicking **개선** reads the draft from the site's composer,
+sends it through the background service worker to `POST /api/integrations/refine`
+(so the fetch runs with the extension's `host_permissions`, not the host page's
+CSP/CORS), and replaces the composer text with the improved prompt. The result
+bar offers `되돌리기` (undo — restores the original draft), `복사` (copy the
+improved prompt), and `Studio에서 열기` (opens `${studioUrl}/studio` for now; a
+dedicated `/improve` page ships in the next phase and flips only the
+`buildStudioOpenUrl` helper). The `Studio에서 열기` link omits the draft query
+param for now to keep the URL short.
+
+Site DOM is third-party and changes over time, so each adapter in
+`content/adapters.js` uses a fallback selector chain and fails **silently**
+(no button) when nothing matches:
+
+- **ChatGPT**: `#prompt-textarea` (ProseMirror contenteditable, or a `<textarea>`
+  in older builds) → `form div[contenteditable="true"]` → `form textarea`.
+- **Claude**: `div[contenteditable="true"].ProseMirror` → a
+  `div[contenteditable="true"]` inside the composer form/fieldset.
+- **Gemini**: `rich-textarea .ql-editor` (Quill) → `div[contenteditable="true"]`.
+
+`setText` uses `document.execCommand("insertText")` (with a `selectAll` first)
+for contenteditable so the site's undo stack and React/ProseMirror/Quill state
+stay in sync, and the native value setter for a `<textarea>`. These are SPAs, so
+a debounced `MutationObserver` re-attaches the button when the composer appears,
+disappears, or the route changes, and double-mounting is guarded by the root
+element id.
+
+**Limitations**: the selectors may break when the target sites update their
+markup; when that happens the button simply does not appear (the host page is
+never broken). If Studio is unreachable or returns a non-2xx/timeout, the result
+bar shows `Studio에 연결할 수 없습니다. 확장 팝업에서 Studio URL을 확인하세요.`.
+The refine call reuses the same `prompt-ai-studio:url` storage key the popup
+writes, with the same local-http / any-https URL guard.
+
 ## Local settings
 
 The popup stores `Studio URL`, `Target AI`, `Domain`, and `Goal` in
@@ -99,7 +137,7 @@ commit the PNGs whenever the brand mark changes.
 ## Packaging for the Chrome Web Store
 
 Build a store-upload zip of the extension (manifest, popup, background,
-icons — README excluded):
+content scripts, icons — README excluded):
 
 ```bash
 npm run package:extension

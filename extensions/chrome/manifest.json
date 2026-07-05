@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Prompt AI Studio Refine",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Send selected browser text to Prompt AI Studio and receive a review-required target AI handoff package.",
   "action": {
     "default_popup": "popup.html",
@@ -22,6 +22,19 @@
   "background": {
     "service_worker": "background.js"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*"
+      ],
+      "js": ["content/adapters.js", "content/inpage.js"],
+      "css": ["content/inpage.css"],
+      "run_at": "document_idle"
+    }
+  ],
   "host_permissions": [
     "http://localhost/*",
     "http://127.0.0.1/*",

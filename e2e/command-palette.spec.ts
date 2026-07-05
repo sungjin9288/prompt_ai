@@ -27,7 +27,11 @@ test("opens with a keyboard shortcut and navigates to a search result", async ({
 
   await input.fill("라이브러리");
 
-  const libraryOption = page.getByRole("option", { name: "라이브러리" });
+  // Scope to the palette dialog: the mobile nav <select> also exposes an
+  // option whose accessible name contains "라이브러리", and it can linger in
+  // the accessibility tree during the dev-server CSS-injection window even at
+  // desktop widths, tripping strict mode on an unscoped page-level locator.
+  const libraryOption = dialog.getByRole("option", { name: "라이브러리" });
   await expect(libraryOption).toBeVisible();
 
   await input.press("Enter");

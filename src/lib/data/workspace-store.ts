@@ -77,3 +77,7 @@ export function useRuntimeReadinessSnapshotsStore(): StoreState<
     [],
   );
 }
+
+export function usePlanStore(): StoreState<string | null> {
+  return useStoredState<string | null>(storageKeys.plan, null);
+}

@@ -55,8 +55,21 @@ Free(주 10회) → Lite($4.99/월) → Pro($8.25/월, 무제한·메모리·핫
   개인정보처리방침 URL과 웹사이트 URL은 `{PRODUCTION_URL}` 자리표시자로
   남겨두었으며, 실제 제출은 Chrome Web Store 개발자 계정($5)과 배포된
   production URL이 확보된 뒤 운영자가 진행합니다.
-- **P53 상용화 스캐폴딩** (게이트: Stripe/OpenAI/Supabase 키): entitlement 모델
-  (Free=로컬 무제한 / Pro=OpenAI 개선+동기화), 결제·계정 seam과 활성화 런북만.
+- **P53 상용화 스캐폴딩 — 완료** (자율, 결제 코드 제외): `src/lib/entitlements/`에 순수
+  entitlement 모델(`Plan = "free" | "pro"`, `ProFeature` 유니온, `resolveEntitlements`)을
+  추가했습니다. 지금은 항상 free로 귀결되며(unknown/tamper된 storedPlan은 free로 정규화),
+  나중에 결제가 붙어도 `resolveEntitlements` 입력 소스 하나만 교체하면 되도록 seam을
+  분리했습니다. Studio의 생성 엔진 상태 카드(검증 미고정 영역)는 OpenAI 보강이 켜져
+  있지 않으면 `Pro 준비 중` 칩과 `/pricing` 링크만 보여주고 로컬 엔진 기능은 그대로
+  둡니다. `/pricing`은 `src/lib/entitlements/labels.ts` 공용 상수에서 plan/feature 문구를
+  가져오도록 리팩터링했으며 렌더링 결과는 P51과 동일합니다. `docs/commercialization-runbook.md`에
+  OpenAI 키 활성화, Supabase 동기화(현재 있는 것/없는 것 구분), Stripe 결제(Payment Link +
+  webhook 1개, 토스페이먼츠 대안 포함), 가격 결정 체크리스트를 단계별 비용 표시와 함께
+  정리했습니다. 결제 연동 코드, 실제 키, Supabase 인증/RLS 적용은 이 phase에 포함되지
+  않았으며 모두 운영자 게이트 이후 진행합니다.
+
+**모든 phase(P47~P53) 완료.** 다음 단계는 아래 운영자 게이트 체크리스트를 운영자가 직접
+진행하는 것이며, 추가 자율 개발 phase는 계획되어 있지 않습니다.
 
 ## 과금 기본안 (조정 가능)
 
@@ -68,6 +81,11 @@ Free(주 10회) → Lite($4.99/월) → Pro($8.25/월, 무제한·메모리·핫
 - [ ] Vercel 계정 연결·프로젝트 생성 (hobby 무료)
 - [ ] 도메인 (선택)
 - [ ] Chrome Web Store 개발자 계정 ($5 일회)
-- [ ] OpenAI API 키 (Pro 기능 활성화 시)
-- [ ] Stripe 계정 (결제 활성화 시)
-- [ ] Supabase 프로젝트 (동기화 활성화 시)
+- [ ] OpenAI API 키 (Pro 기능 활성화 시) — 활성화 절차와 비용 통제는
+      `docs/commercialization-runbook.md` 1단계 참고
+- [ ] Stripe 계정 (결제 활성화 시) — 통합 형태(Payment Link + webhook 1개)와 국내 결제
+      대안은 `docs/commercialization-runbook.md` 3단계 참고
+- [ ] Supabase 프로젝트 (동기화 활성화 시) — 이미 있는 dry-run/스키마 인프라와 남은 작업
+      (인증, RLS 적용, 쓰기 경로 전환)은 `docs/commercialization-runbook.md` 2단계 참고
+- [ ] Pro 가격/트라이얼 정책 결정 — `docs/commercialization-runbook.md` 4단계 체크리스트
+      전체 완료 후 `resolveEntitlements` 입력을 실제 billing 소스로 교체

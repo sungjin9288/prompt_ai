@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -11,6 +12,13 @@ import {
   secondaryButtonClass,
   textareaClass,
 } from "@/components/ui";
+import { useEntitlements } from "@/lib/entitlements/use-entitlements";
+import { isProFeatureEnabled } from "@/lib/entitlements/resolve";
+import {
+  proChipDescription,
+  proChipLabel,
+  pricingHref,
+} from "@/lib/entitlements/labels";
 import { ManualCopyPanel } from "@/components/common/manual-copy-panel";
 import { StudioInputAnalysisPanel } from "@/components/studio/studio-input-analysis-panel";
 import { StudioLoadedDraftPanel } from "@/components/studio/studio-loaded-draft-panel";
@@ -217,6 +225,13 @@ export function StudioWorkspace({
   const [engineStatus, setEngineStatus] =
     useState<GenerationEngineStatus | null>(null);
   const [engineStatusFailed, setEngineStatusFailed] = useState(false);
+  const entitlements = useEntitlements();
+  const openaiEnhancementEnabled = isProFeatureEnabled(
+    entitlements,
+    "openai-enhancement",
+  );
+  const openaiEngineAvailable =
+    Boolean(engineStatus?.configured) && openaiEnhancementEnabled;
   const [improvementSource, setImprovementSource] =
     useState<PromptImprovementSource | null>(null);
   const [qualityImprovementBaseline, setQualityImprovementBaseline] =
@@ -2271,14 +2286,24 @@ export function StudioWorkspace({
                   <p className="mt-1 text-xs leading-5 text-muted">
                     {engineStatusFailed
                       ? "상태 확인 실패. 생성 시 로컬 fallback이 적용됩니다."
-                      : engineStatus?.configured
-                        ? `OpenAI Responses API · ${engineStatus.model}`
-                        : "로컬 프롬프트 빌더 · OpenAI 키 없음"}
+                      : openaiEngineAvailable
+                        ? `OpenAI Responses API · ${engineStatus?.model}`
+                        : "로컬 프롬프트 빌더 · 무제한 무료"}
                   </p>
                 </div>
-                <span className="shrink-0 rounded-md border border-line bg-panel px-3 py-2 text-xs font-semibold text-soft">
-                  {engineStatus?.mode === "openai" ? "보강 가능" : "Fallback"}
-                </span>
+                {openaiEngineAvailable ? (
+                  <span className="shrink-0 rounded-md border border-line bg-panel px-3 py-2 text-xs font-semibold text-soft">
+                    보강 가능
+                  </span>
+                ) : (
+                  <Link
+                    href={pricingHref}
+                    title={proChipDescription}
+                    className="shrink-0 rounded-md border border-accent/40 bg-panel px-3 py-2 text-xs font-semibold text-accent transition hover:bg-panel-strong"
+                  >
+                    {proChipLabel}
+                  </Link>
+                )}
               </div>
             </div>
             {generationNotice ? (

@@ -2,23 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { Panel, PanelHeader } from "@/components/ui";
+import {
+  freeFeatureLabels,
+  planLabels,
+  proFeatureListLabels,
+  proPlanStatusLabel,
+} from "@/lib/entitlements/labels";
 
 export const metadata: Metadata = {
   title: "가격",
 };
 
-const freeFeatures = [
-  "로컬 생성 엔진 무제한 사용",
-  "라이브러리, 버전 관리, 학습 루프 전체 기능",
-  "Chrome 확장 in-page 개선",
-  "모든 데이터 브라우저 로컬 보관",
-];
+const freeFeatures = freeFeatureLabels;
 
-const proFeatures = [
-  "OpenAI 기반 고급 개선·Refine",
-  "기기 간 클라우드 동기화",
-  "우선 지원",
-];
+const proFeatures = proFeatureListLabels;
 
 const faqItems = [
   {
@@ -57,7 +54,10 @@ export default function PricingPage() {
 
       <section className="grid gap-4 py-8 sm:grid-cols-2">
         <Panel className="flex flex-col">
-          <PanelHeader title="Free · 현재 이용 가능" description="₩0" />
+          <PanelHeader
+            title={`${planLabels.free} · 현재 이용 가능`}
+            description="₩0"
+          />
           <div className="flex flex-1 flex-col gap-4 p-5">
             <ul className="flex flex-1 flex-col gap-2 text-sm text-muted">
               {freeFeatures.map((feature) => (
@@ -77,7 +77,10 @@ export default function PricingPage() {
         </Panel>
 
         <Panel className="flex flex-col">
-          <PanelHeader title="Pro · 준비 중" description="가격 출시 시 공개" />
+          <PanelHeader
+            title={`${planLabels.pro} · ${proPlanStatusLabel}`}
+            description="가격 출시 시 공개"
+          />
           <div className="flex flex-1 flex-col gap-4 p-5">
             <ul className="flex flex-1 flex-col gap-2 text-sm text-muted">
               {proFeatures.map((feature) => (

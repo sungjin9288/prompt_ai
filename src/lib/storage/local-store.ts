@@ -13,6 +13,7 @@ export const storageKeys = {
   studioMemoryScopes: "prompt-ai-studio:studio-memory-scopes",
   backupMeta: "prompt-ai-studio:backup-meta",
   runtimeReadinessSnapshots: "prompt-ai-studio:runtime-readiness-snapshots",
+  plan: "prompt-ai-studio:plan",
 };
 
 export function readStoredJson<T>(key: string, fallback: T): T {

@@ -223,6 +223,7 @@
 - 샘플 데이터 불러오기(첫 실행 온보딩): 워크스페이스가 비어 있을 때 Dashboard와 Library의 빈 상태 화면에서 `샘플 데이터 불러오기` 버튼으로 실제 `createPromptPackage` 생성기를 통과한 예시 프롬프트 6개, 스킬 2개, 학습 메모리 3개를 로컬 스토어에 채워 Library, 버전 비교, 학습, 대시보드를 바로 둘러볼 수 있습니다. 모든 샘플은 `sample-` 접두사 id로 식별되며 기존 데이터는 덮어쓰지 않고 이미 있는 항목은 건너뛰어 다시 눌러도 중복되지 않습니다.
 - 마케팅 랜딩/pricing/legal 4 페이지: `/welcome`(제품 소개), `/pricing`(Free/Pro 요금제), `/privacy`, `/terms`를 제공하며 서로 footer에서 상호 링크합니다.
 - Chrome Web Store 등록 패키지: `store/chrome/` 아래 목록 문안(ko/en), 스크린샷 4장, 제출 런북을 제공합니다. 실제 스토어 제출은 운영자 게이트($5 개발자 계정, 배포된 production URL)가 필요합니다.
+- 상용화 스캐폴딩: `src/lib/entitlements/`의 순수 entitlement 모델(Free/Pro plan, `openai-enhancement`/`cloud-sync` feature seam)과 `docs/commercialization-runbook.md` 활성화 런북을 제공합니다. Studio 생성 엔진 상태 카드는 Pro 기능이 꺼져 있으면 `Pro 준비 중` 칩과 `/pricing` 링크만 보여주고 어떤 기능도 막지 않으며, 결제/키/Supabase 연동 코드는 아직 포함되어 있지 않습니다.
 
 ## Getting Started
 

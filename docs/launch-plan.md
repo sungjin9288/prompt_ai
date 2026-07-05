@@ -23,11 +23,11 @@ Free(주 10회) → Lite($4.99/월) → Pro($8.25/월, 무제한·메모리·핫
 
 ## 페이즈
 
-- **P47 확장 프로덕션화** (자율): HTTPS 프로덕션 origin 허용 + 설정 UI, 아이콘 생성,
+- **P47 확장 프로덕션화 — 완료** (자율): HTTPS 프로덕션 origin 허용 + 설정 UI, 아이콘 생성,
   zip 패키징 스크립트, verify-chrome-extension-smoke 동기.
-- **P48 in-page 통합** (자율, 핵심 패리티): chatgpt.com/claude.ai/gemini.google.com
+- **P48 in-page 통합 — 완료** (자율, 핵심 패리티): chatgpt.com/claude.ai/gemini.google.com
   composer에 "개선" 버튼 → 초안 읽기 → /api/integrations/refine → 결과를 입력창에 삽입.
-- **P49 /improve 경량 페이지** (자율): `?draft=&source=extension&origin=` 초점형 개선
+- **P49 /improve 경량 페이지 — 완료** (자율): `?draft=&source=extension&origin=` 초점형 개선
   페이지, 기존 studio draft 흐름 재사용.
 - **P50 배포** (게이트: Vercel 계정): 메타데이터(OG/robots/sitemap)/보안 헤더 + Vercel
   hobby 배포.

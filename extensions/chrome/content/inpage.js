@@ -36,14 +36,23 @@
     return Promise.reject(new Error("확장 런타임을 사용할 수 없습니다."));
   }
 
-  // Studio URL for the "Studio에서 열기" link. The dedicated /improve page ships
-  // in the next phase; for now this opens ${studioUrl}/studio. Keep the URL
-  // construction in ONE helper so the next phase flips only this function.
-  // The draft query param is omitted for now to avoid leaking long drafts into
-  // a URL and to keep the link short; the next phase re-adds it against /improve.
-  function buildStudioOpenUrl(studioUrl) {
+  // Studio URL for the "Studio에서 열기" link. Opens the focused /improve page
+  // with the improved prompt (not the original draft) pre-filled, plus
+  // source/origin so /improve can show provenance and pick a default target
+  // AI. The draft is capped before encoding to keep the URL a reasonable size.
+  var improveDraftMaxLength = 4000;
+
+  function buildStudioOpenUrl(studioUrl, draft, origin) {
     var base = (studioUrl || "http://localhost:3000").replace(/\/$/, "");
-    return base + "/studio";
+    var cappedDraft = (draft || "").slice(0, improveDraftMaxLength);
+    var params =
+      "source=extension" +
+      "&origin=" +
+      encodeURIComponent(origin || "unknown") +
+      "&draft=" +
+      encodeURIComponent(cappedDraft);
+
+    return base + "/improve?" + params;
   }
 
   function getAdapter() {
@@ -204,14 +213,26 @@
         sendRefineMessage({ type: "pas-studio-url" }).then(
           function (response) {
             var studioUrl = response && response.studioUrl;
-            window.open(buildStudioOpenUrl(studioUrl), "_blank", "noopener");
+            window.open(
+              buildStudioOpenUrl(studioUrl, state.improvedPrompt, adapter.id),
+              "_blank",
+              "noopener",
+            );
           },
           function () {
-            window.open(buildStudioOpenUrl(), "_blank", "noopener");
+            window.open(
+              buildStudioOpenUrl(undefined, state.improvedPrompt, adapter.id),
+              "_blank",
+              "noopener",
+            );
           },
         );
       } catch {
-        window.open(buildStudioOpenUrl(), "_blank", "noopener");
+        window.open(
+          buildStudioOpenUrl(undefined, state.improvedPrompt, adapter.id),
+          "_blank",
+          "noopener",
+        );
       }
     }
 

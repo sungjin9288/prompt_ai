@@ -377,6 +377,17 @@ const promptStudioSourceRegistry = {
     studioNextAction:
       "Chrome, 외부 Gen AI, Codex, MCP 연결 운영 기준을 점검하고 다음 개선 액션을 정리하세요.",
   },
+  "integrations-improve-page": {
+    dashboardLabel: "Integrations /improve 개선",
+    dashboardDescription: "/improve 페이지에서 계속 편집으로 저장됨",
+    dashboardNextAction: "확장 프로그램 초안 개선 결과가 이어졌는지 확인",
+    libraryFilterLabel: "Integrations /improve 개선",
+    librarySourceLabel: "Integrations /improve 페이지 초안",
+    sourceActionLabel: "/improve로 돌아가기",
+    studioLabel: "Integrations /improve 페이지 초안",
+    studioNextAction:
+      "확장 프로그램 또는 /improve 페이지에서 넘어온 초안을 이어서 개선하세요.",
+  },
   "mcp-feedback-improvement": {
     dashboardLabel: "MCP feedback 개선",
     dashboardDescription: "Integrations MCP feedback inbox에서 저장됨",

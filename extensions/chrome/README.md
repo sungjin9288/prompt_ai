@@ -63,10 +63,12 @@ sends it through the background service worker to `POST /api/integrations/refine
 (so the fetch runs with the extension's `host_permissions`, not the host page's
 CSP/CORS), and replaces the composer text with the improved prompt. The result
 bar offers `되돌리기` (undo — restores the original draft), `복사` (copy the
-improved prompt), and `Studio에서 열기` (opens `${studioUrl}/studio` for now; a
-dedicated `/improve` page ships in the next phase and flips only the
-`buildStudioOpenUrl` helper). The `Studio에서 열기` link omits the draft query
-param for now to keep the URL short.
+improved prompt), and `Studio에서 열기` (opens the focused
+`${studioUrl}/improve?source=extension&origin=<adapterId>&draft=<encoded>`
+page with the **improved** prompt pre-filled — not the original draft, since
+that is what the user has at hand and wants to keep working with. The draft is
+capped to 4000 characters before encoding via the single `buildStudioOpenUrl`
+helper; the `/improve` textarea stays editable either way).
 
 Site DOM is third-party and changes over time, so each adapter in
 `content/adapters.js` uses a fallback selector chain and fails **silently**

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Prompt AI Studio Refine",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Send selected browser text to Prompt AI Studio and receive a review-required target AI handoff package.",
   "action": {
     "default_popup": "popup.html",

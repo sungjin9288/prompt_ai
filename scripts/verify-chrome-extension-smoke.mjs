@@ -97,8 +97,8 @@ assert.deepEqual(
 
 assert.equal(
   manifest.version,
-  "0.3.0",
-  "Chrome extension version should be 0.3.0 for the in-page improve phase.",
+  "0.4.0",
+  "Chrome extension version should be 0.4.0 for the /improve handoff phase.",
 );
 
 const contentScript = manifest.content_scripts?.[0];
@@ -248,7 +248,9 @@ for (const requiredText of [
   "복사",
   "Studio에서 열기",
   "buildStudioOpenUrl",
-  '"/studio"',
+  '"/improve?"',
+  "source=extension",
+  "state.improvedPrompt, adapter.id",
   'type: "pas-refine"',
   'type: "pas-studio-url"',
   "window.pasInpageAdapters",

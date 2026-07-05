@@ -189,6 +189,7 @@ export const promptStudioDraftSources = [
   "learning-feedback-improvement",
   "learning-memory",
   "integrations-operations-checklist",
+  "integrations-improve-page",
   "mcp-feedback-improvement",
   "mcp-feedback-report",
   "data-document-rag",

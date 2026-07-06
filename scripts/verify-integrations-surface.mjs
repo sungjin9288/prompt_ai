@@ -1584,7 +1584,7 @@ for (const requiredText of [
   "Chrome Refine",
   "Studio URL",
   'id="studioUrl"',
-  "http://localhost:3000",
+  "https://prompt-ai-studio.netlify.app",
   "Refine selected text",
   "Handoff package",
   'id="clearButton"',
@@ -1845,7 +1845,7 @@ assertIncludes(
 );
 assertIncludes(
   chromeReadme,
-  "Invalid or disallowed URLs fall back to `http://localhost:3000`.",
+  "Invalid or disallowed URLs fall back to `https://prompt-ai-studio.netlify.app`.",
   "Chrome extension README should document the local/https Studio URL guard",
 );
 assertIncludes(

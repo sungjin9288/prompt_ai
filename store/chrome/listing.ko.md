@@ -2,8 +2,8 @@
 
 이 문서는 Chrome Web Store 개발자 대시보드의 "스토어 등록정보(Store listing)" 탭에
 그대로 붙여넣기 위한 필드별 문안입니다. 각 필드는 실제 폼의 글자 수 제한과 함께
-표시했습니다. `{PRODUCTION_URL}`은 Vercel 배포가 완료된 뒤 실제 도메인으로
-치환해야 하는 운영자 채움 자리표시자입니다.
+표시했습니다. 프로덕션 URL은 `https://prompt-ai-studio.netlify.app`으로
+확정되어 있습니다.
 
 ## 이름 (제한: 45자)
 
@@ -69,8 +69,8 @@ Prompt AI Studio Refine은 ChatGPT, Claude, Gemini의 입력창 옆에 "개선" 
 
 ■ 권한 사용 요약
 이 확장이 요청하는 각 권한과 정확한 사용 목적은 아래 "권한 정당화" 섹션과
-`{PRODUCTION_URL}/privacy`에 항상 최신 상태로 게시되어 있습니다. 확장은
-명시된 목적 외에는 어떤 권한도 사용하지 않습니다.
+`https://prompt-ai-studio.netlify.app/privacy`에 항상 최신 상태로 게시되어
+있습니다. 확장은 명시된 목적 외에는 어떤 권한도 사용하지 않습니다.
 
 ■ 문의
 설치, 설정, 버그 신고는 앱 내 `/welcome` 페이지 또는 개인정보 처리방침에
@@ -91,20 +91,14 @@ Prompt AI Studio Refine은 ChatGPT, Claude, Gemini의 입력창 옆에 "개선" 
 ## 개인정보처리방침 URL
 
 ```
-{PRODUCTION_URL}/privacy
+https://prompt-ai-studio.netlify.app/privacy
 ```
-
-- 운영자 채움 필요: Vercel 배포 완료 후 실제 프로덕션 도메인으로 치환합니다.
-- 배포 전에는 이 URL을 등록 폼에 넣을 수 없습니다 — `SUBMISSION.md`의
-  사전 제출 체크리스트 참고.
 
 ## 웹사이트
 
 ```
-{PRODUCTION_URL}/welcome
+https://prompt-ai-studio.netlify.app/welcome
 ```
-
-- 운영자 채움 필요: 위와 동일하게 실제 프로덕션 도메인으로 치환합니다.
 
 ## Single purpose(단일 목적) 설명
 
@@ -179,7 +173,8 @@ in-page "개선" 버튼을 표시할 세 AI 채팅 서비스의 입력창 DOM을
 ## 데이터 사용 공개 매핑 (참고)
 
 `SUBMISSION.md`의 "개인정보 처리 관행(Privacy practices)" 탭 체크리스트에서
-사용할 사실 기반 매핑입니다. 자세한 내용은 `{PRODUCTION_URL}/privacy` 참고.
+사용할 사실 기반 매핑입니다. 자세한 내용은
+`https://prompt-ai-studio.netlify.app/privacy` 참고.
 
 | 항목 | 답변 근거 |
 |---|---|

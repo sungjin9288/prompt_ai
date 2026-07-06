@@ -29,14 +29,15 @@ Free(주 10회) → Lite($4.99/월) → Pro($8.25/월, 무제한·메모리·핫
   composer에 "개선" 버튼 → 초안 읽기 → /api/integrations/refine → 결과를 입력창에 삽입.
 - **P49 /improve 경량 페이지 — 완료** (자율): `?draft=&source=extension&origin=` 초점형 개선
   페이지, 기존 studio draft 흐름 재사용.
-- **P50 배포 코드 준비 — 완료** (자율): `src/lib/site/config.ts` 공용 site config seam,
-  루트/주요 라우트 메타데이터(title template, OG, Twitter card), `robots.ts`/`sitemap.ts`,
-  브랜드 마크 기반 `icon.png`/`apple-icon.png`/`favicon.ico`/`public/og.png`
-  (`npm run icons:app`), `next.config.ts` 보안 헤더(X-Content-Type-Options,
+- **P50 배포 코드 준비 — 완료** (자율 + 운영자 게이트 완료): `src/lib/site/config.ts` 공용
+  site config seam, 루트/주요 라우트 메타데이터(title template, OG, Twitter card),
+  `robots.ts`/`sitemap.ts`, 브랜드 마크 기반 `icon.png`/`apple-icon.png`/`favicon.ico`/
+  `public/og.png` (`npm run icons:app`), `next.config.ts` 보안 헤더(X-Content-Type-Options,
   Referrer-Policy, X-Frame-Options, Permissions-Policy). CSP는 이번 단계에 포함하지
   않음 — Tailwind 인라인 스타일과의 상호작용을 별도로 검증해야 하므로 후속 phase 후보로
-  남김. 실제 Vercel 프로젝트 연결과 배포 실행은 운영자 게이트(아래 체크리스트) 이후
-  진행.
+  남김. **실제 배포 완료**: `https://prompt-ai-studio.netlify.app`에 Netlify로 배포되었습니다
+  (Vercel 팀이 fair-use 정책에 막혀 Netlify로 전환한 뒤 진행). 모든 라우트 200, 보안 헤더,
+  refine API 동작을 확인했습니다.
 - **P51 랜딩·가격·법무 — 완료** (자율): `/welcome` 마케팅 랜딩(히어로, 기능 4종,
   가격 티저), `/pricing`(Free 이용 가능 / Pro 준비 중), `/privacy`(로컬 저장 원칙,
   확장 권한 표, Chrome Web Store 요구사항 대응), `/terms`(14개 조항, 대한민국
@@ -78,7 +79,8 @@ Free(주 10회) → Lite($4.99/월) → Pro($8.25/월, 무제한·메모리·핫
 
 ## 운영자 게이트 체크리스트
 
-- [ ] Vercel 계정 연결·프로젝트 생성 (hobby 무료)
+- [x] 프로덕션 배포 — Netlify에 배포 완료 (`https://prompt-ai-studio.netlify.app`).
+      Vercel 팀이 fair-use 정책에 막혀 Netlify로 전환했습니다.
 - [ ] 도메인 (선택)
 - [ ] Chrome Web Store 개발자 계정 ($5 일회)
 - [ ] OpenAI API 키 (Pro 기능 활성화 시) — 활성화 절차와 비용 통제는

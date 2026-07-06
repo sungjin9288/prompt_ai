@@ -378,10 +378,13 @@ Library의 저장된 프롬프트 상세에서도 부족한 정보가 남아 있
 
 ## Deployment
 
-이 앱은 로컬 우선으로 설계되어 있어 별도 환경 변수 없이도 Vercel의 Next.js 기본 설정만으로 배포할 수 있습니다.
+이 앱은 로컬 우선으로 설계되어 있어 별도 환경 변수 없이도 배포할 수 있습니다.
+현재 **Netlify**에 배포되어 있으며 (`https://prompt-ai-studio.netlify.app`),
+Vercel 팀은 fair-use 정책 제한에 막혀 Netlify로 전환했습니다.
 
-- Vercel에 이 저장소를 연결하고 프레임워크 프리셋을 Next.js로 두면 추가 설정 없이 `npm run build`/`npm run start`가 그대로 동작합니다. `vercel.json`은 필요하지 않습니다.
-- 배포 환경에 `NEXT_PUBLIC_APP_URL`을 실제 배포 도메인(예: `https://prompt-ai-studio.vercel.app`)으로 설정하면 메타데이터 `metadataBase`, OG 이미지, `robots.txt`, `sitemap.xml`이 해당 도메인 기준으로 생성됩니다. 설정하지 않으면 `http://localhost:3000`으로 fallback합니다.
+- 저장소 루트의 `netlify.toml`이 빌드 설정을 고정합니다: `command = "npm run build"`, `publish = ".next"`, `@netlify/plugin-nextjs` 플러그인으로 Next.js App Router(SSR, 라우트 핸들러 포함)를 그대로 서빙합니다.
+- 배포는 Netlify CLI로 실행합니다: `netlify deploy --build --prod`. (Netlify 대시보드에서 저장소를 연결해 자동 배포로 전환할 수도 있습니다.)
+- 배포 환경에 `NEXT_PUBLIC_APP_URL`을 실제 배포 도메인(`https://prompt-ai-studio.netlify.app`)으로 설정하면 메타데이터 `metadataBase`, OG 이미지, `robots.txt`, `sitemap.xml`이 해당 도메인 기준으로 생성됩니다. `netlify env:set NEXT_PUBLIC_APP_URL https://prompt-ai-studio.netlify.app`로 설정했습니다. 로컬 개발 환경처럼 설정하지 않으면 `http://localhost:3000`으로 fallback합니다.
 - `OPENAI_API_KEY`/`OPENAI_MODEL`, Supabase 관련 변수(`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_PROJECT_REF`, `SUPABASE_IMPORT_EXECUTION_ENABLED`)는 모두 선택 사항입니다. 비어 있으면 로컬 규칙 기반 생성과 로컬 스토리지만으로 전체 기능이 동작합니다.
 - 보안 헤더(`X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, `Permissions-Policy`)는 `next.config.ts`의 `headers()`에서 모든 경로에 적용됩니다. Content-Security-Policy는 이번 단계에서 추가하지 않았습니다 (`docs/launch-plan.md` 후속 작업 참고).
 - `/api/integrations/refine`은 Chrome 확장과 localhost 개발 origin만 명시적으로 CORS를 허용하는 자체 origin 검사를 갖고 있으며, 위 보안 헤더는 이 라우트의 CORS 동작에 영향을 주지 않습니다.

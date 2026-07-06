@@ -2,9 +2,8 @@
 
 Field-by-field copy for the Chrome Web Store developer dashboard "Store
 listing" tab, in the secondary locale (English). Character limits from the
-actual form are noted per field. `{PRODUCTION_URL}` is an operator-fill
-placeholder to be replaced with the real domain once the Vercel deployment is
-live.
+actual form are noted per field. The production URL is
+`https://prompt-ai-studio.netlify.app`.
 
 ## Name (limit: 45 characters)
 
@@ -74,8 +73,8 @@ into a clearer, more professional prompt without leaving the page.
 ■ Permissions summary
 Every permission this extension requests, and exactly what it is used for, is
 listed in the "Permission justification" section below and kept current at
-`{PRODUCTION_URL}/privacy`. The extension does not use any permission beyond
-its stated purpose.
+`https://prompt-ai-studio.netlify.app/privacy`. The extension does not use any
+permission beyond its stated purpose.
 
 ■ Support
 For install help, setup questions, or bug reports, see the `/welcome` page in
@@ -95,20 +94,14 @@ the app or the support email listed in the privacy policy.
 ## Privacy policy URL
 
 ```
-{PRODUCTION_URL}/privacy
+https://prompt-ai-studio.netlify.app/privacy
 ```
-
-- Operator fill required: replace with the real production domain once
-  deployed. Cannot be filled in before deployment — see the pre-submission
-  checklist in `SUBMISSION.md`.
 
 ## Website
 
 ```
-{PRODUCTION_URL}/welcome
+https://prompt-ai-studio.netlify.app/welcome
 ```
-
-- Operator fill required: same placeholder rule as above.
 
 ## Single purpose description
 
@@ -187,7 +180,8 @@ site outside these four hosts.
 ## Data use disclosure mapping (reference)
 
 Factual mapping to use when filling out the "Privacy practices" tab checklist
-in `SUBMISSION.md`. See `{PRODUCTION_URL}/privacy` for the full policy.
+in `SUBMISSION.md`. See `https://prompt-ai-studio.netlify.app/privacy` for the
+full policy.
 
 | Item | Basis for answer |
 |---|---|

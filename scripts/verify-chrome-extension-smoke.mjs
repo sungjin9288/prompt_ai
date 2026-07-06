@@ -97,8 +97,8 @@ assert.deepEqual(
 
 assert.equal(
   manifest.version,
-  "0.4.0",
-  "Chrome extension version should be 0.4.0 for the /improve handoff phase.",
+  "0.5.0",
+  "Chrome extension version should be 0.5.0 for the production Studio URL default phase.",
 );
 
 const contentScript = manifest.content_scripts?.[0];
@@ -307,7 +307,7 @@ for (const requiredText of [
 }
 
 for (const requiredText of [
-  "http://localhost:3000",
+  "https://prompt-ai-studio.netlify.app",
   "getChromeExtensionApi",
   "localHostnames",
   "isAllowedStudioUrl",

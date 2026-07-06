@@ -1,4 +1,4 @@
-const defaultStudioUrl = "http://localhost:3000";
+const defaultStudioUrl = "https://prompt-ai-studio.netlify.app";
 const defaultTargetAI = "codex";
 const defaultDomain = "개발";
 const defaultGoal = "전문 프롬프트로 변환";

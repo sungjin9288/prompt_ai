@@ -3,7 +3,7 @@ const selectionMenuId = "prompt-ai-studio-refine-selection";
 // Reuse the SAME storage key popup.js writes so the in-page flow reads the
 // operator's configured Studio URL. Do NOT invent a second key.
 const studioUrlStorageKey = "prompt-ai-studio:url";
-const defaultStudioUrl = "http://localhost:3000";
+const defaultStudioUrl = "https://prompt-ai-studio.netlify.app";
 const refineTimeoutMs = 15000;
 
 // Identical body to isAllowedStudioUrl in popup.js. MV3 plain scripts can't

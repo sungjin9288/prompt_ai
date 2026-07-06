@@ -104,7 +104,7 @@ The popup stores `Studio URL`, `Target AI`, `Domain`, and `Goal` in
 - any `https://` origin for a production Studio deployment
 
 Plain `http://` on a non-local host, and any protocol other than `http:`/`https:`,
-are rejected. Invalid or disallowed URLs fall back to `http://localhost:3000`.
+are rejected. Invalid or disallowed URLs fall back to `https://prompt-ai-studio.netlify.app`.
 
 ## Static preview
 
@@ -115,13 +115,15 @@ checks.
 
 ## Production Studio URL
 
-To point the extension at a deployed Studio instead of a local dev server,
-open the popup, set `Studio URL` to the production `https://` origin (for
-example `https://studio.example.com`), and click out of the field to save it.
-The setting is stored in `chrome.storage.local` per browser profile, so each
-operator configures their own Studio URL. `defaultStudioUrl` in `popup.js`
-still points at `http://localhost:3000` until a later phase wires in a fixed
-production default.
+`defaultStudioUrl` in `popup.js` and `background.js` points at
+`https://prompt-ai-studio.netlify.app`, the live Prompt AI Studio deployment,
+so a store-installed extension works with zero setup. To point the extension
+at a different Studio deployment (for example a staging environment) instead,
+open the popup, set `Studio URL` to that `https://` origin, and click out of
+the field to save it. The setting is stored in `chrome.storage.local` per
+browser profile, so each operator configures their own Studio URL. Local
+development still works: set `Studio URL` to `http://localhost:3000` or
+`http://127.0.0.1:3000` while running `npm run dev`.
 
 ## Icons
 
